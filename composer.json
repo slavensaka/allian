@@ -1,0 +1,25 @@
+{
+	"name": "Slaven Sakačić",
+  	"description": "Allian project",
+  	"version": "0.1",
+  	"keywords": [
+    	"allian, translate"
+  	],
+    "require": {
+        "vlucas/phpdotenv": "2.0.1"
+    },
+    "maintainers": [
+	    {
+	      "name": "Slaven Sakačić",
+	      "email": "slavensakacic@gmail.com"
+	    }
+  	],
+    "autoload": {
+	    "classmap": [
+	      "database"
+	    ],
+	    "psr-4": {
+	      "Allian\\":"app/"
+	    }
+	}
+}

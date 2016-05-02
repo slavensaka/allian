@@ -1,0 +1,16 @@
+<?php
+
+require_once "/database/DataObject.class.php";
+
+class ConferenceSchedule extends DataObject {
+
+	protected $data = array(
+	    "conf_id" => "",
+	    "orderID" => "",
+	    "conf_tag" => "",
+	    "user_code" => "",
+	    "interpreter_code" => "",
+	    "start_datetime" => "",
+	    "end_datetime" => "",
+	);
+}
