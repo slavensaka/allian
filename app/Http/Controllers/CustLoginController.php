@@ -11,15 +11,16 @@ class CustLoginController extends Controller {
      * @ApiMethod(type="get")
      * @ApiRoute(name="/user/get/{id}")
      * @ApiParams(name="id", type="integer", nullable=false, description="User id")
-     * @ApiParams(name="data", type="object", sample="{'user_id':'int','user_name':'string','profile':{'email':'string','age':'integer'}}")
+     * @ApiParams(name="data", type="object",sample="{'user_id':'int','user_name':'string','profile':{'email':'string','age':'integer'}}")
+     * @ApiHeaders(name="Test", type="test", description="Testing the header")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="object", sample="{
      *  'transaction_id':'int',
      *  'transaction_status':'string'
      * }")
      */
-	public function testing() {
-		// NON
+	public function testing($request, $response, $service, $app) {
+		$service->render('./docs/index.html');
 	}
 
     public function postTesting($request, $response, $service, $app){

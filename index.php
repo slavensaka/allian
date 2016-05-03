@@ -42,5 +42,6 @@ $klein->onHttpError(function ($code, $router) {
 $custLogin = new CustLoginController();
 $klein->respond('GET', '/login', array($custLogin, 'testing'));
 $klein->respond('POST', '/login/[i:id]', array($custLogin, 'postTesting'));
+$klein->respond('GET', '/testing', array($custLogin, 'testing'));
 
 $klein->dispatch();
