@@ -6,7 +6,8 @@
     	"allian, translate"
   	],
     "require": {
-        "vlucas/phpdotenv": "2.0.1"
+        "vlucas/phpdotenv": "2.0.1",
+		"klein/klein": "^2.1"
     },
     "maintainers": [
 	    {

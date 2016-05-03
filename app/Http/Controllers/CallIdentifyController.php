@@ -1,10 +1,12 @@
 <?php
 
-
-namespace App\Http\Controllers;
+namespace Allian\Http\Controllers;
 
 class CallIdentifyController extends Controller {
 
-	public function __construct() {
+	public function testing() {
+		return "game of thrones";
     }
+
+
 }
