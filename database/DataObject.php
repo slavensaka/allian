@@ -1,5 +1,7 @@
 <?php
 
+namespace Database;
+
 use Dotenv\Dotenv;
 
 abstract class DataObject {
@@ -7,10 +9,10 @@ abstract class DataObject {
 	protected $data = array();
 
 	public function __construct( $data ) {
-    foreach ( $data as $key => $value ) {
-      if ( array_key_exists( $key, $this->data ) ) $this->data[$key] = $value;
-    }
-  }
+	    foreach ( $data as $key => $value ) {
+	      if ( array_key_exists( $key, $this->data ) ) $this->data[$key] = $value;
+    	}
+  	}
 
 	public function lorem(){
    		$novi = getenv('APP_MODE');
@@ -31,10 +33,10 @@ abstract class DataObject {
 
 	protected function connect() {
 		try {
-			$conn = new PDO( getenv('DB_DSN'), getenv('DB_USERNAME'), getenv('DB_PASSWORD') );
-			$conn->setAttribute( PDO::ATTR_PERSISTENT, true );
-			$conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-		} catch ( PDOException $e ) {
+			$conn = new \PDO( getenv('DB_DSN'), getenv('DB_USERNAME'), getenv('DB_PASSWORD') );
+			$conn->setAttribute( \PDO::ATTR_PERSISTENT, true );
+			$conn->setAttribute( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
+		} catch ( \PDOException $e ) {
 			die( "Connection failed: " . $e->getMessage());
 		}
 		return $conn;

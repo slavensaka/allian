@@ -1,6 +1,6 @@
 <?php
 
-require_once "DataObject.class.php";
+namespace Allian\Models;
 
 class LogEntry extends DataObject {
 

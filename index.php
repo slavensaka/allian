@@ -1,22 +1,13 @@
 <?php
 require 'vendor/autoload.php';
-require_once '/app/Models/CustLogin.class.php';
-// require_once("database/DataObject.class.php");
 
-use Allian\Http\Controllers\CallIdentifyController;
+use Allian\Http\Controllers\CustLoginController;
 
 $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
-echo $novi = CallIdentifyController::testing();
-// $CustomerID = isset( $_GET["CustomerID"] ) ? (int)$_GET["CustomerID"] : 0;
 
-// $CustomerID = 304;
-// if ( !$customer = CustLogin::getCustLogin($CustomerID)) {
-//   echo 'Error: Customer not found.';
-//   exit;
-// }
-// header('Content-type: application/json');
-// echo json_encode($customer);
+// echo DataObject::lorem();
+
 
 // define('ROOT_DIR', __DIR__);
 // define('ROOT_PATH', substr(ROOT_DIR, strlen($_SERVER['DOCUMENT_ROOT'])));
@@ -33,12 +24,12 @@ $klein->onHttpError(function ($code, $router) {
     switch ($code) {
         case 404:
             $router->response()->body(
-                'Y U so lost?!'
+                'Y U so lost?! Page not Found, 404!'
             );
             break;
         case 405:
             $router->response()->body(
-                'You can\'t do that!'
+                'You can\'t do that! Method not allowed!'
             );
             break;
         default:
@@ -47,6 +38,9 @@ $klein->onHttpError(function ($code, $router) {
             );
     }
 });
+// if(is_callable(array($custLogin, 'testing'))) echo "JE"; else echo "Nije";
+$custLogin = new CustLoginController();
+$klein->respond('GET', '/login', array($custLogin, 'testing'));
+$klein->respond('POST', '/login/[i:id]', array($custLogin, 'postTesting'));
 
-// $klein->respond('GET', '/posts', );
 $klein->dispatch();

@@ -1,6 +1,6 @@
 <?php
 
-require_once "/database/DataObject.class.php";
+namespace Allian\Models;
 
 class LangPair extends DataObject {
 
