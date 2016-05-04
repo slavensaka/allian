@@ -11,7 +11,7 @@ $classes = array(
 );
 
 $output_dir  = __DIR__ . '/docs';
-$output_file = 'index.html'; // defaults to index.html
+$output_file = 'index.html';
 
 try {
     $builder = new Builder($classes, $output_dir, 'Allian Translate API', $output_file);
@@ -20,4 +20,4 @@ try {
     echo 'There was an error generating the documentation: ', $e->getMessage();
 }
 
-// Command  php apidoc.php
+// php apidoc.php

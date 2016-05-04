@@ -46,6 +46,29 @@ class CustLogin extends DataObject {
   	);
 
 
+  	public static function authenticate( $Email, $LoginPassword ) {
+	    $conn = parent::connect();
+	    $sql = "SELECT * FROM " . getenv('TBL_CUSTLOGIN') . " WHERE Email = :Email";
+	    try {
+		    $st = $conn->prepare( $sql );
+		    $st->bindValue( ":Email", $Email, \PDO::PARAM_STR  );
+		    $st->execute();
+		    $row = $st->fetch();
+		    parent::disconnect( $conn );
+		    if ( $row ) {
+		    	if ($row['LoginPassword'] == $LoginPassword) {
+		    		return new CustLogin( $row );
+		    	}
+
+		      	// return $row;
+		    }
+		      	// return new CustLogin( $row );
+	    } catch ( \PDOException $e ) {
+		      parent::disconnect( $conn );
+		      die( "Query failed: " . $e->getMessage() );
+	    }
+  	}
+
   	public static function getMembers( $startRow, $numRows, $order ) {
 	    $conn = parent::connect();
 	    $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM " . getenv('TBL_CUSTLOGIN') . " ORDER BY $order LIMIT :startRow, :numRows";

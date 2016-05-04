@@ -19,16 +19,33 @@ class CustLoginController extends Controller {
      *  'transaction_status':'string'
      * }")
      */
-	public function testing($request, $response, $service, $app) {
-		$service->render('./docs/index.html');
+	public function postLogin($request, $response, $service, $app) {
+		// $lorem = json_encode($request->id(true));
+		try { // Za sada TODO smanjit kod
+        	$service->validate($request->email)->isLen(3,200);
+        	$email = $request->email;
+	    } catch (\Klein\Exceptions\ValidationException $e) {
+	        return "Invalid Email";
+	    }
+	    try {
+        	$service->validate($request->password)->notNull();
+        	$password = $request->password;
+	    } catch (\Klein\Exceptions\ValidationException $e) {
+	        return "Invalid Password";
+	    }
+
+		$customer = CustLogin::authenticate($email, $password);
+		if(!$customer){
+			return "Nema usera";
+		}
+		// return $customer;
+		$novi = $customer->getValueEncoded('Street');
+		$ll = json_encode($novi);
+		return $ll;
 	}
 
     public function postTesting($request, $response, $service, $app){
-    	try {
-        $service->validateParam('email')->isLen(3,200);
-	    } catch (\Klein\Exceptions\ValidationException $e) {
-	        echo 'Got ya!';
-	    }
+
     	header('Content-type: application/json');
 
 
