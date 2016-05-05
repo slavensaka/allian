@@ -1,0 +1,5 @@
+# Apache (.htaccess or httpd.conf)
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule . /testgauss/index.php [L]
+#RewriteRule ^/testgauss/(.*)$ testgauss/index.php [L,QSA]
