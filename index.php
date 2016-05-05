@@ -21,11 +21,11 @@ $klein->onHttpError(function ($code, $router) {
     }
 });
 $callIdentify = new CallIdentifyController();
-$klein->respond('GET', '/renderdocs', array($callIdentify, 'renderDocs')); // FOR TESTING
+$klein->respond('GET', '/allian/renderdocs', array($callIdentify, 'renderDocs')); // FOR TESTING
 
 $custLogin = new CustLoginController();
 // if(is_callable(array($custLogin, 'testing'))) echo "JE"; else echo "Nije";
-$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
+$klein->respond('POST', 'allian/login', array($custLogin, 'postLogin'));
 
 $klein->dispatch();
 
