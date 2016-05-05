@@ -7,8 +7,8 @@ use Allian\Models\CustLogin;
 class CustLoginController extends Controller {
 
 	/**
-     * @ApiDescription(section="User", description="Get information about user")
-     * @ApiMethod(type="get")
+     * @ApiDescription(section="Customer", description="Autenticate customer")
+     * @ApiMethod(type="post")
      * @ApiRoute(name="/user/get/{id}")
      * @ApiParams(name="id", type="integer", nullable=false, description="User id")
      * @ApiParams(name="data", type="object",sample="{'user_id':'int','user_name':'string','profile':{'email':'string','age':'integer'}}")

@@ -1,5 +1,5 @@
 <?php
-require 'vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 use Allian\Http\Controllers\CustLoginController;
 use Allian\Http\Controllers\CallIdentifyController;
@@ -11,21 +11,22 @@ $klein = new \Klein\Klein();
 $klein->onHttpError(function ($code, $router) {
     switch ($code) {
         case 404:
-            $router->response()->body('Y U so lost?! Page not Found, 404!');
+            $router->response()->body('Page not Found, ' . $code . '!');
             break;
         case 405:
-            $router->response()->body('You can\'t do that! Method not allowed!');
+            $router->response()->body('Method not allowed! ' . $code . '!');
             break;
         default:
-            $router->response()->body('Oh no, a bad error happened that caused a '. $code);
+            $router->response()->body('General error ' . $code);
     }
 });
+
 $callIdentify = new CallIdentifyController();
-$klein->respond('GET', '/allian/renderdocs', array($callIdentify, 'renderDocs')); // FOR TESTING
+$klein->respond('GET', '/testgauss/renderdocs', array($callIdentify, 'renderDocs')); // FOR TESTING
 
 $custLogin = new CustLoginController();
 // if(is_callable(array($custLogin, 'testing'))) echo "JE"; else echo "Nije";
-$klein->respond('POST', 'allian/login', array($custLogin, 'postLogin'));
+$klein->respond('POST', '/testgauss/login', array($custLogin, 'postLogin'));
 
 $klein->dispatch();
 
