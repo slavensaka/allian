@@ -6,12 +6,13 @@ use Allian\Http\Controllers\CallIdentifyController;
 
 $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
+
 $klein = new \Klein\Klein();
 
-$klein->onHttpError(function ($code, $router) {
+$klein->onHttpError(function ($code, $router,$service) {
     switch ($code) {
         case 404:
-            $router->response()->body('Page not Found, ' . $code . '!');
+            $router->response()->body('Page not found! ' . $code . '!');
             break;
         case 405:
             $router->response()->body('Method not allowed! ' . $code . '!');
@@ -21,12 +22,22 @@ $klein->onHttpError(function ($code, $router) {
     }
 });
 
-$callIdentify = new CallIdentifyController();
-$klein->respond('GET', '/testgauss/renderdocs', array($callIdentify, 'renderDocs')); // FOR TESTING
+$klein->onError(function ($klein, $message) {
+    echo $message;
+});
 
-$custLogin = new CustLoginController();
-// if(is_callable(array($custLogin, 'testing'))) echo "JE"; else echo "Nije";
-$klein->respond('POST', '/testgauss/login', array($custLogin, 'postLogin'));
+$klein->with('/testgauss', function() use ($klein){
+
+	$custLogin = new CustLoginController();
+	// // if(is_callable(array($custLogin, 'testing'))) echo "JE"; else echo "Nije";
+	// $klein->respond('GET', '/terms', array($custLogin, 'getRenderTerms'));
+	$klein->respond('GET', '/renderdocs', array($custLogin, 'renderDocs')); // FOR TESTING
+
+	$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
+	$klein->respond('POST', '/register', array($custLogin, 'postRegister'));
+	$klein->respond('POST', '/forgotpassword', array($custLogin, 'postForgotPassword'));
+
+});
 
 $klein->dispatch();
 
