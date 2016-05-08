@@ -1,12 +1,14 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
+require_once __DIR__ . '/basicAuth.php';
 use Allian\Http\Controllers\CustLoginController;
 use Allian\Http\Controllers\CallIdentifyController;
 
 $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
 
+//Routing
 $klein = new \Klein\Klein();
 
 $klein->onHttpError(function ($code, $router,$service) {
@@ -21,16 +23,23 @@ $klein->onHttpError(function ($code, $router,$service) {
             $router->response()->body('General error ' . $code);
     }
 });
+// $klein->onError(function ($klein, $message) {
+//     echo $message;
+// });
 
-$klein->onError(function ($klein, $message) {
-    echo $message;
+
+$klein->respond(function ($request, $response, $service, $app) use ($klein) {
+    // Handle exceptions => flash the message and redirect to the referrer
+    $klein->onError(function ($klein, $err_msg) {
+       return  $klein->response()->json($err_msg);
+    });
 });
 
 $klein->with('/testgauss', function() use ($klein){
 
 	$custLogin = new CustLoginController();
 	// // if(is_callable(array($custLogin, 'testing'))) echo "JE"; else echo "Nije";
-	// $klein->respond('GET', '/terms', array($custLogin, 'getRenderTerms'));
+	$klein->respond('GET', '/terms', array($custLogin, 'getTerms'));
 	$klein->respond('GET', '/renderdocs', array($custLogin, 'renderDocs')); // FOR TESTING
 
 	$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
