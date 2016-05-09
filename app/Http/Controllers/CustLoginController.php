@@ -55,7 +55,12 @@ class CustLoginController extends Controller {
      * }")
      */
 	public function postRegister($request, $response, $service, $app) {
-		return "TEsting";
+		//ENCODE IOS JSON,
+		// TODO POGLEDATI PHPEMAILER
+		$customer = CustLogin::register($request->data);
+
+		header('Content-type: application/json');
+		return $request->data;
 	}
 
 	/**

@@ -69,6 +69,11 @@ class CustLogin extends DataObject {
 	    }
   	}
 
+  	public static function registerCustomer(){
+  		$conn = parent::connect();
+
+  	}
+
   	public static function getMembers( $startRow, $numRows, $order ) {
 	    $conn = parent::connect();
 	    $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM " . getenv('TBL_CUSTLOGIN') . " ORDER BY $order LIMIT :startRow, :numRows";
