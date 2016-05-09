@@ -80,11 +80,7 @@ class CustLogin extends DataObject {
 		    	$new_phloginid = $int_phloginid + 1;
 		    }
 		} catch ( \PDOException $e ) {
-	      parent::disconnect( $conn );
-	      // $ra['status'] = 0;
-	      // $ra['developerMessage'] = $e->getMessage();
-	      // $ra['userMessage'] = "An error has occurred.";
-	      // return $ra;
+	      	parent::disconnect( $conn );
 	    }
 	    try{
 	    	$st = $conn->prepare( $sql_1 );
@@ -99,10 +95,6 @@ class CustLogin extends DataObject {
   			$success = $st->execute();
   			parent::disconnect( $conn );
   			return $success;
-  			// $ra['status'] = 1;
-  			// $ra['developerMessage'] = 'User successfully inserted into the database';
-  			// $ra['userMessage'] = 'Successful registration!';
-  			// return $ra;
 	    } catch ( \PDOException $e ) {
 	      parent::disconnect( $conn );
 	      // $ra = array();

@@ -76,9 +76,14 @@ class CustLoginController extends Controller {
 		$service->validate($data['phone_password'], 'Error: no phone password present')->isLen(3,200)->notNull()->isInt();
 		// $service->validate($data['services'], 'Invalid services')->;
 		// $service->validate($data['token'], 'No stripe token provided')->notNull();
-		$customerRegister = CustLogin::register($data);
-		// if(!$customerRegister)
 		header('Content-type: application/json');
+		$customerRegister = CustLogin::register($data);
+		if(!$customerRegister){
+			$errorJson = $this->errorJson("An error occured during registration");
+			$response->json($errorJson);
+			exit;
+		}
+		$successJson = $this->successJson("Succesfully registered");
 		$response->json($customerRegister);
 	}
 
