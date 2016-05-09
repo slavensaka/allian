@@ -77,11 +77,12 @@ class CustLoginController extends Controller {
 		// $service->validate($data['services'], 'Invalid services')->;
 		// $service->validate($data['token'], 'No stripe token provided')->notNull();
 		$customerRegister = CustLogin::register($data);
+		// if(!$customerRegister)
 		header('Content-type: application/json');
 		$response->json($customerRegister);
 	}
 
-	public function postForgotPassword($request, $response, $service, $app) {
+	public function postForgot($request, $response, $service, $app) {
 		//Get email, check if valid
 		// Search database for the email
 		// Send an email to the user emial lorem@net.hr

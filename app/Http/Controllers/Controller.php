@@ -45,9 +45,16 @@ class Controller {
 	 * Block comment
 	 *
 	 */
-	public function errorJson($userMessage){
+	public static function errorJson($userMessage){
 		$jsonArray = array();
 		$jsonArray['status'] = 0;
+		$jsonArray['userMessage'] = $userMessage;
+		return $jsonArray;
+	}
+
+	public static function successJson($userMessage){
+		$jsonArray = array();
+		$jsonArray['status'] = 1;
 		$jsonArray['userMessage'] = $userMessage;
 		return $jsonArray;
 	}

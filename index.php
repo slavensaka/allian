@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
-
+use Allian\Http\Controllers\Controller;
 use Allian\Http\Controllers\CustLoginController;
 use Allian\Http\Controllers\CallIdentifyController;
 
@@ -14,27 +14,20 @@ $klein = new \Klein\Klein();
 $klein->onHttpError(function ($code, $router,$service) {
     switch ($code) {
         case 404:
-            $router->response()->body('Page not found! ' . $code . '!');
+            $router->response()->json(Controller::errorJson('Page not found' . $code));
             break;
         case 405:
-            $router->response()->body('Method not allowed! ' . $code . '!');
+            $router->response()->json(Controller::errorJson('Method not allowed! ' . $code . '!'));
             break;
         default:
-            $router->response()->body('General error ' . $code);
+            $router->response()->json(Controller::errorJson('General error ' . $code));
     }
 });
-// $klein->onError(function ($klein, $message) {
-//     echo $message;
-// });
-
 
 $klein->respond(function ($request, $response, $service, $app) use ($klein) {
     // Handle exceptions => flash the message and redirect to the referrer
     $klein->onError(function ($klein, $err_msg) {
-    	$jsonArray = array();
-		$jsonArray['status'] = 0;
-		$jsonArray['userMessage'] = $err_msg;
-       	return  $klein->response()->json($jsonArray);
+       	return  $klein->response()->json(Controller::errorJson($err_msg));
     });
 });
 
@@ -47,7 +40,7 @@ $klein->with('/testgauss', function() use ($klein){
 
 	$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
 	$klein->respond('POST', '/register', array($custLogin, 'postRegister'));
-	$klein->respond('POST', '/forgotpassword', array($custLogin, 'postForgotPassword'));
+	$klein->respond('POST', '/forgot', array($custLogin, 'postForgot'));
 
 });
 

@@ -81,10 +81,10 @@ class CustLogin extends DataObject {
 		    }
 		} catch ( \PDOException $e ) {
 	      parent::disconnect( $conn );
-	      $ra['status'] = 0;
-	      $ra['developerMessage'] = $e->getMessage();
-	      $ra['userMessage'] = "An error has occurred.";
-	      return $ra;
+	      // $ra['status'] = 0;
+	      // $ra['developerMessage'] = $e->getMessage();
+	      // $ra['userMessage'] = "An error has occurred.";
+	      // return $ra;
 	    }
 	    try{
 	    	$st = $conn->prepare( $sql_1 );
@@ -96,19 +96,20 @@ class CustLogin extends DataObject {
   			$st->bindValue( ":PhPassword", $data['phone_password'], \PDO::PARAM_STR );
   			$st->bindValue( ":PhLoginId", $new_phloginid, \PDO::PARAM_INT );
   			// $st->bindValue( ":Services", $data['services'], \PDO::PARAM_STR );
-  			$st->execute();
+  			$success = $st->execute();
   			parent::disconnect( $conn );
-  			$ra['status'] = 1;
-  			$ra['developerMessage'] = 'User successfully inserted into the database';
-  			$ra['userMessage'] = 'Successful registration!';
-  			return $ra;
+  			return $success;
+  			// $ra['status'] = 1;
+  			// $ra['developerMessage'] = 'User successfully inserted into the database';
+  			// $ra['userMessage'] = 'Successful registration!';
+  			// return $ra;
 	    } catch ( \PDOException $e ) {
 	      parent::disconnect( $conn );
-	      $ra = array();
-	      $ra['status'] = 0;
-	      $ra['developerMessage'] = $e->getMessage();
-	      $ra['userMessage'] = "Error: Email already taken";
-	      return $ra;
+	      // $ra = array();
+	      // $ra['status'] = 0;
+	      // $ra['developerMessage'] = $e->getMessage();
+	      // $ra['userMessage'] = "Error: Email already taken";
+	      // return $ra;
 	    }
   	}
 
