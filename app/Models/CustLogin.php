@@ -3,7 +3,6 @@
 namespace Allian\Models;
 
 use Database\DataObject;
-// use Dotenv\Dotenv;
 
 class CustLogin extends DataObject {
 
@@ -51,7 +50,7 @@ class CustLogin extends DataObject {
 	    $sql = "SELECT * FROM " . getenv('TBL_CUSTLOGIN') . " WHERE Email = :Email";
 	    try {
 		    $st = $conn->prepare( $sql );
-		    $st->bindValue( ":Email", $Email, \PDO::PARAM_STR  );
+		    $st->bindValue( ":Email", $Email, \PDO::PARAM_STR );
 		    $st->execute();
 		    $row = $st->fetch();
 		    parent::disconnect( $conn );
@@ -59,19 +58,58 @@ class CustLogin extends DataObject {
 		    	if ($row['LoginPassword'] == $LoginPassword) {
 		    		return new CustLogin( $row );
 		    	}
-
 		      	// return $row;
 		    }
-		      	// return new CustLogin( $row );
 	    } catch ( \PDOException $e ) {
 		      parent::disconnect( $conn );
 		      die( "Query failed: " . $e->getMessage() );
 	    }
   	}
 
-  	public static function registerCustomer(){
+  	public static function register($data){
   		$conn = parent::connect();
-
+  		$sql = "SELECT PhLoginId FROM " . getenv('TBL_CUSTLOGIN') . " ORDER BY CustomerID DESC LIMIT 1";
+  		$sql_1 = "INSERT INTO " . getenv('TBL_CUSTLOGIN') . "(FName, LName, Email, Phone, LoginPassword, PhPassword, PhLoginId) VALUES (:FName, :LName, :Email, :Phone, :LoginPassword, :PhPassword, :PhLoginId)";
+  		try {
+  			$last = $conn->prepare( $sql );
+  			$last->execute();
+  			$last_phloginid = $last->fetch();
+  			parent::disconnect( $conn );
+		    if ( $last_phloginid ) {
+		    	$int_phloginid = (int)$last_phloginid['PhLoginId'];
+		    	$new_phloginid = $int_phloginid + 1;
+		    }
+		} catch ( \PDOException $e ) {
+	      parent::disconnect( $conn );
+	      $ra['status'] = 0;
+	      $ra['developerMessage'] = $e->getMessage();
+	      $ra['userMessage'] = "An error has occurred.";
+	      return $ra;
+	    }
+	    try{
+	    	$st = $conn->prepare( $sql_1 );
+  			$st->bindValue( ":FName", $data['fname'], \PDO::PARAM_STR );
+  			$st->bindValue( ":LName", $data['lname'], \PDO::PARAM_STR );
+  			$st->bindValue( ":Email", $data['email'], \PDO::PARAM_STR );
+  			$st->bindValue( ":Phone", $data['phone'], \PDO::PARAM_STR );
+  			$st->bindValue( ":LoginPassword", $data['password'], \PDO::PARAM_STR );
+  			$st->bindValue( ":PhPassword", $data['phone_password'], \PDO::PARAM_STR );
+  			$st->bindValue( ":PhLoginId", $new_phloginid, \PDO::PARAM_INT );
+  			// $st->bindValue( ":Services", $data['services'], \PDO::PARAM_STR );
+  			$st->execute();
+  			parent::disconnect( $conn );
+  			$ra['status'] = 1;
+  			$ra['developerMessage'] = 'User successfully inserted into the database';
+  			$ra['userMessage'] = 'Successful registration!';
+  			return $ra;
+	    } catch ( \PDOException $e ) {
+	      parent::disconnect( $conn );
+	      $ra = array();
+	      $ra['status'] = 0;
+	      $ra['developerMessage'] = $e->getMessage();
+	      $ra['userMessage'] = "Error: Email already taken";
+	      return $ra;
+	    }
   	}
 
   	public static function getMembers( $startRow, $numRows, $order ) {

@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
-require_once __DIR__ . '/basicAuth.php';
+
 use Allian\Http\Controllers\CustLoginController;
 use Allian\Http\Controllers\CallIdentifyController;
 
@@ -31,7 +31,10 @@ $klein->onHttpError(function ($code, $router,$service) {
 $klein->respond(function ($request, $response, $service, $app) use ($klein) {
     // Handle exceptions => flash the message and redirect to the referrer
     $klein->onError(function ($klein, $err_msg) {
-       return  $klein->response()->json($err_msg);
+    	$jsonArray = array();
+		$jsonArray['status'] = 0;
+		$jsonArray['userMessage'] = $err_msg;
+       	return  $klein->response()->json($jsonArray);
     });
 });
 
