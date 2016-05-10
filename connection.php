@@ -8,6 +8,8 @@
 // echo date('c',$timestamp);
 // echo strtotime('2013-10-16T10:54:23Z');
 
+// echo __DIR__; C:\xampp\htdocs\testgauss
+// echo dirname(__FILE__);   C:\xampp\htdocs\testgauss
 // define('ROOT_DIR', __DIR__);
 // define('ROOT_PATH', substr(ROOT_DIR, strlen($_SERVER['DOCUMENT_ROOT'])));
 // echo substr($_SERVER['REQUEST_URI']);

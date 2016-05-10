@@ -14,7 +14,7 @@ $klein = new \Klein\Klein();
 $klein->onHttpError(function ($code, $router,$service) {
     switch ($code) {
         case 404:
-            $router->response()->json(Controller::errorJson('Page not found' . $code));
+            $router->response()->json(Controller::errorJson('Page not found! ' . $code));
             break;
         case 405:
             $router->response()->json(Controller::errorJson('Method not allowed! ' . $code . '!'));
@@ -40,10 +40,13 @@ $klein->with('/testgauss', function() use ($klein){
 
 	$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
 	$klein->respond('POST', '/register', array($custLogin, 'postRegister'));
+
 	$klein->respond('POST', '/forgot', array($custLogin, 'postForgot'));
 
 });
 
 $klein->dispatch();
 
+
+// include('gmail.php');
 // include('connection.php'); // FOR TESTING

@@ -105,6 +105,60 @@ class CustLogin extends DataObject {
 	    }
   	}
 
+  	public static function checkEmail($Email){
+  		$conn = parent::connect();
+  		$sql = "SELECT CustomerID FROM " . getenv('TBL_CUSTLOGIN') . " WHERE Email=:Email LIMIT 1";
+  		 try {
+		    $st = $conn->prepare( $sql );
+		    $st->bindValue( ":Email", $Email, \PDO::PARAM_INT );
+		    $st->execute();
+		    $row = $st->fetch();
+		    parent::disconnect( $conn );
+		    if ( $row ) {
+		      	// return new CustLogin( $row );
+		      	return $row;
+		    }
+	    } catch ( \PDOException $e ) {
+		      parent::disconnect( $conn );
+		      die( "Query failed: " . $e->getMessage() );
+	    }
+  	}
+
+  	public static function getCustomer( $CustomerID ) {
+	    $conn = parent::connect();
+	    $sql = "SELECT * FROM " . getenv('TBL_CUSTLOGIN') . " WHERE CustomerID = :CustomerID";
+	    try {
+		    $st = $conn->prepare( $sql );
+		    $st->bindValue( ":CustomerID", $CustomerID, \PDO::PARAM_INT );
+		    $st->execute();
+		    $row = $st->fetch();
+		    parent::disconnect( $conn );
+		    if ( $row ) {
+		      	return new CustLogin( $row );
+		      	// return $row;
+		    }
+		      	// return new CustLogin( $row );
+	    } catch ( \PDOException $e ) {
+		      parent::disconnect( $conn );
+		      die( "Query failed: " . $e->getMessage() );
+	    }
+  	}
+
+  	public static function insertPass($LoginPassword, $CustomerID){
+  		$conn = parent::connect();
+  		$sql = "UPDATE " . getenv('TBL_CUSTLOGIN') . " SET LoginPassword=:LoginPassword WHERE CustomerID = :CustomerID";
+  		try{
+	    	$st = $conn->prepare( $sql );
+  			$st->bindValue( ":LoginPassword", $LoginPassword, \PDO::PARAM_STR );
+  			$st->bindValue( ":CustomerID", $CustomerID, \PDO::PARAM_INT );
+  			$success = $st->execute();
+  			parent::disconnect( $conn );
+  			return $success;
+	    } catch ( \PDOException $e ) {
+	      parent::disconnect( $conn );
+	    }
+  	}
+
   	public static function getMembers( $startRow, $numRows, $order ) {
 	    $conn = parent::connect();
 	    $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM " . getenv('TBL_CUSTLOGIN') . " ORDER BY $order LIMIT :startRow, :numRows";
@@ -122,26 +176,6 @@ class CustLogin extends DataObject {
 		      $row = $st->fetch();
 		      parent::disconnect( $conn );
 		      return array( $members, $row["totalRows"] );
-	    } catch ( \PDOException $e ) {
-		      parent::disconnect( $conn );
-		      die( "Query failed: " . $e->getMessage() );
-	    }
-  	}
-
-  	public static function getCustLogin( $CustomerID ) {
-	    $conn = parent::connect();
-	    $sql = "SELECT * FROM " . getenv('TBL_CUSTLOGIN') . " WHERE CustomerID = :CustomerID";
-	    try {
-		    $st = $conn->prepare( $sql );
-		    $st->bindValue( ":CustomerID", $CustomerID, \PDO::PARAM_INT );
-		    $st->execute();
-		    $row = $st->fetch();
-		    parent::disconnect( $conn );
-		    if ( $row ) {
-		      	// return new CustLogin( $row );
-		      	return $row;
-		    }
-		      	// return new CustLogin( $row );
 	    } catch ( \PDOException $e ) {
 		      parent::disconnect( $conn );
 		      die( "Query failed: " . $e->getMessage() );

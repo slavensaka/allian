@@ -2,6 +2,7 @@
 
 namespace Allian\Http\Controllers;
 
+use PHPMailer;
 use Allian\Models\CustLogin;
 
 class CustLoginController extends Controller {
@@ -83,16 +84,86 @@ class CustLoginController extends Controller {
 			$response->json($errorJson);
 			exit;
 		}
-		$successJson = $this->successJson("Succesfully registered");
+		$successJson = $this->successJson("Registration Succesfull");
 		$response->json($customerRegister);
 	}
 
+	/**
+     * @ApiDescription(section="Forgot", description="Check if valid email in database, then change password in database & email user the user the new password")
+     * @ApiMethod(type="post")
+     * @ApiRoute(name="/testgauss/forgot")
+     * @ApiBody(sample="{'email': 'lorem@net.hr'}")
+     *@ApiParams(name="data", type="object", nullable=false, description="Users email to evaluate password recovery.")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     * @ApiReturn(type="object", sample="{
+     *  'status': 1,
+     *  'userMessage': 'Email has been sent.'
+     * }")
+     */
 	public function postForgot($request, $response, $service, $app) {
-		//Get email, check if valid
-		// Search database for the email
-		// Send an email to the user emial lorem@net.hr
-		//Configure SMTP server for sending email
-		// Email contains a link for
+		$data = json_decode($request->data, true);
+		$service->validate($data['email'], 'Invalid email address.')->isLen(3,200)->isEmail();
+		$email = $data['email'];
+		header('Content-type: application/json');
+		$CustomerID = CustLogin::checkEmail($email);
+		if(!$CustomerID){
+			return $response->json("No user found with that email.");
+			exit;
+		}
+		$customer = CustLogin::getCustomer($CustomerID['CustomerID']);
+		if(!$customer){
+			return $response->json("No user found with that id");
+		}
+		//GENERATE NEW PASS
+		$pass = $this->generatePassword();
+		//SEND EMAIL WITH NEW PASS
+		$sentEmail = $this->newPassEmail($email, $customer->getValueEncoded('FName'), $pass);
+		if(!$sentEmail){
+			return $response->json("Error sending email");
+		}
+		// INSERT PASS IN CustomerID
+		$insertPass = CustLogin::insertPass($pass, $CustomerID['CustomerID']);
+		if(!$insertPass){
+			return $response->json("Couldn't update users password in database.");
+		}
+		$user = $this->emailValues($customer);
+		$response->json($user);
+	}
+
+	public function newPassEmail($email, $FName, $LoginPassword){
+		//SMTP needs accurate times, and the PHP time zone MUST be set
+		//This should be done in your php.ini, but this is how to do it if you don't have access to that
+		date_default_timezone_set('Etc/UTC');
+
+		$message = file_get_contents('resources/views/emails/newpassword.php');
+		$message = str_replace('%FName%', $FName, $message);
+		$message = str_replace('%LoginPassword%', $LoginPassword, $message);
+
+		$mail = new PHPMailer;
+		$mail->isSMTP();
+		// $mail->SMTPDebug = 2;
+		// $mail->Debugoutput = 'html';
+		$mail->CharSet='UTF-8';
+		$mail->Host = getenv('MAIL_HOST');
+		$mail->Port = getenv('MAIL_PORT');
+		$mail->SMTPSecure = getenv('MAIL_ENCRYPTION');
+		$mail->SMTPAuth = true;
+		$mail->Username = getenv('MAIL_USERNAME');
+		$mail->Password = getenv('MAIL_PASSWORD');
+		$mail->setFrom('cs@alliantranslate.com', 'Allian Translate');
+		$mail->addReplyTo('cs@alliantranslate.com', 'Allian Translate');
+		$mail->addAddress($email, $FName);
+		$mail->IsHTML(true);
+		$mail->Subject = 'Allian Translate new password.';
+
+		$mail->MsgHTML($message);
+		// return true;
+		$mail->send();
+		if (!$mail->send()) {
+		   return false;
+		} else {
+		    return true;
+		}
 	}
 
 	public function userValues($customer){
@@ -103,6 +174,13 @@ class CustLoginController extends Controller {
 		$jsonArray['fname'] = $fname;
 		$jsonArray['lname'] = $lname;
 		$jsonArray['userMessage'] = "Authentication was successful for $fname $lname";
+		return $jsonArray;
+	}
+
+	public function emailValues($customer){
+		$jsonArray = array();
+		$jsonArray['status'] = 1;
+		$jsonArray['userMessage'] = "Email has been sent.";
 		return $jsonArray;
 	}
 }
