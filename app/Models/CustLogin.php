@@ -69,8 +69,8 @@ class CustLogin extends DataObject {
   	public static function register($data){
   		$conn = parent::connect();
   		$sql = "SELECT PhLoginId FROM " . getenv('TBL_CUSTLOGIN') . " ORDER BY CustomerID DESC LIMIT 1";
-  		$sql_1 = "INSERT INTO " . getenv('TBL_CUSTLOGIN') . "(FName, LName, Email, Phone, LoginPassword, PhPassword, PhLoginId, Services, token) VALUES (:FName, :LName, :Email, :Phone, :LoginPassword, :PhPassword, :PhLoginId, :Services, :token)";
-  		$services = implode(":", $data->services);
+  		// $sql = "SELECT MAX(`PhLoginId`) FROM "	. getenv('TBL_CUSTLOGIN') . " LIMIT 1";
+		// SELECT `PhLoginId`, MAX(`CustomerID`) FROM CustLogin LIMIT 1;
   		try {
   			$last = $conn->prepare( $sql );
   			$last->execute();
@@ -82,8 +82,20 @@ class CustLogin extends DataObject {
 		    }
 		} catch ( \PDOException $e ) {
 	      	parent::disconnect( $conn );
+	      	return $e->getMessage();
 	      	exit;
 	    }
+
+	    if($last_phloginid){
+	    	$message = self::insertUser($data, $new_phloginid);
+	    	return $message;
+		}
+  	}
+
+  	public static function insertUser($data, $new_phloginid){
+  		$conn = parent::connect();
+  		$services = implode(":", $data->services);
+  		$sql_1 = "INSERT INTO " . getenv('TBL_CUSTLOGIN') . "(FName, LName, Email, Phone, LoginPassword, PhPassword, PhLoginId, Services, token) VALUES (:FName, :LName, :Email, :Phone, :LoginPassword, :PhPassword, :PhLoginId, :Services, :token)";
 	    try{
 	    	$st = $conn->prepare( $sql_1 );
   			$st->bindValue( ":FName", $data->fname, \PDO::PARAM_STR );
@@ -97,9 +109,15 @@ class CustLogin extends DataObject {
   			$st->bindValue( ":token", $data->stripe_token, \PDO::PARAM_INT );
   			$success = $st->execute();
   			parent::disconnect( $conn );
-  			return $success;
+  			if($success){
+  				return "Registration Succesfull";
+  			} else {
+  				return "Error while registration";
+  			}
 	    } catch ( \PDOException $e ) {
 	      parent::disconnect( $conn );
+	      return $e->getMessage();
+	      exit;
 	    }
   	}
 

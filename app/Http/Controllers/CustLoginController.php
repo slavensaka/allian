@@ -88,13 +88,9 @@ class CustLoginController extends Controller {
 		$service->validate($token->data->stripe_token, 'No stripe token provided.')->notNull();
 		$service->validate($data['services'], 'Error: no service present.')->notNull;
 
-		$customerRegister = CustLogin::register($token->data);
-		if(!$customerRegister){
-			$errorJson = $this->errorJson("Email already registered.");
-			$response->json($errorJson);
-			exit;
-		}
-		$genToken = $this->generateResponseToken($this->successJson("Registration Succesfull"));
+		$message = CustLogin::register($token->data);
+
+		$genToken = $this->generateResponseToken($this->successJson($message));
      	return $response->json($genToken);
 	}
 
@@ -191,6 +187,7 @@ class CustLoginController extends Controller {
 
 		$message = file_get_contents('resources/views/emails/newpassword.php');
 		$message = str_replace('%FName%', $FName, $message);
+		$message = str_replace('%logo%', getenv('LOGO'), $message);
 		$message = str_replace('%LoginPassword%', $LoginPassword, $message);
 
 		$mail = new PHPMailer;
@@ -229,7 +226,7 @@ class CustLoginController extends Controller {
 		$jsonArray['status'] = 1;
 		$jsonArray['fname'] = $fname;
 		$jsonArray['lname'] = $lname;
-		$jsonArray['userMessage'] = "Authentication was successfull for $fname $lname.";
+		$jsonArray['userMessage'] = "Authentication Successfull. Welcome $fname $lname.";
 		return $jsonArray;
 	}
 
