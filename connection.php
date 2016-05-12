@@ -41,10 +41,31 @@
 # $ php -f db-connect-test.php
 
 
-	$dbname = 'allian10_abs_linguist_portal';
-	$dbuser = 'allian10_alenb';
-	$dbpass = 'allian2016@';
-	$dbhost = 'vps9239.inmotionhosting.com';
+	// $dbname = 'allian10_abs_linguist_portal';
+	// $dbuser = 'allian10_alenb';
+	// $dbpass = 'allian2016@';
+	// $dbhost = 'vps9239.inmotionhosting.com';
+
+$dbname = 'alliantr_testgauss';
+$dbuser = 'alliantr_gauss';
+$dbpass = '124L3lSFlM5Ngyk9';
+$dbhost = 'vps9239.inmotionhosting.com';
+
+
+// $dsn = 'mysql:host=vps9239.inmotionhosting.com;dbname=alliantr_testgauss';
+// $username = 'alliantr_gauss';
+// $password = '124L3lSFlM5Ngyk9';
+// $options = array(
+//     PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+// );
+
+// $dbh = new PDO($dsn, $username, $password, $options);
+
+// echo $dbh;
+
+
+
+
 	$connect = mysql_connect($dbhost, $dbuser, $dbpass) or die("Unable to Connect to '$dbhost'");
 	mysql_select_db($dbname) or die("Could not open the db '$dbname'");
 	$test_query = "SHOW TABLES FROM $dbname";

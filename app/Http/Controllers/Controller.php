@@ -45,10 +45,13 @@ class Controller {
 	 * Error response json message
 	 *
 	 */
-	public static function errorJson($userMessage){
+	public static function errorJson($userMessage, $result = null){
 		$jsonArray = array();
 		$jsonArray['status'] = 0;
 		$jsonArray['userMessage'] = $userMessage;
+		if($result){
+			$jsonArray['result'] = $result;
+		}
 		return $jsonArray;
 	}
 

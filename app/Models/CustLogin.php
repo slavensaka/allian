@@ -69,7 +69,8 @@ class CustLogin extends DataObject {
   	public static function register($data){
   		$conn = parent::connect();
   		$sql = "SELECT PhLoginId FROM " . getenv('TBL_CUSTLOGIN') . " ORDER BY CustomerID DESC LIMIT 1";
-  		$sql_1 = "INSERT INTO " . getenv('TBL_CUSTLOGIN') . "(FName, LName, Email, Phone, LoginPassword, PhPassword, PhLoginId) VALUES (:FName, :LName, :Email, :Phone, :LoginPassword, :PhPassword, :PhLoginId)";
+  		$sql_1 = "INSERT INTO " . getenv('TBL_CUSTLOGIN') . "(FName, LName, Email, Phone, LoginPassword, PhPassword, PhLoginId, Services, token) VALUES (:FName, :LName, :Email, :Phone, :LoginPassword, :PhPassword, :PhLoginId, :Services, :token)";
+  		$services = implode(":", $data->services);
   		try {
   			$last = $conn->prepare( $sql );
   			$last->execute();
@@ -81,27 +82,24 @@ class CustLogin extends DataObject {
 		    }
 		} catch ( \PDOException $e ) {
 	      	parent::disconnect( $conn );
+	      	exit;
 	    }
 	    try{
 	    	$st = $conn->prepare( $sql_1 );
-  			$st->bindValue( ":FName", $data['fname'], \PDO::PARAM_STR );
-  			$st->bindValue( ":LName", $data['lname'], \PDO::PARAM_STR );
-  			$st->bindValue( ":Email", $data['email'], \PDO::PARAM_STR );
-  			$st->bindValue( ":Phone", $data['phone'], \PDO::PARAM_STR );
-  			$st->bindValue( ":LoginPassword", $data['password'], \PDO::PARAM_STR );
-  			$st->bindValue( ":PhPassword", $data['phone_password'], \PDO::PARAM_STR );
+  			$st->bindValue( ":FName", $data->fname, \PDO::PARAM_STR );
+  			$st->bindValue( ":LName", $data->lname, \PDO::PARAM_STR );
+  			$st->bindValue( ":Email", $data->email, \PDO::PARAM_STR );
+  			$st->bindValue( ":Phone", $data->phone, \PDO::PARAM_STR );
+  			$st->bindValue( ":LoginPassword", $data->password, \PDO::PARAM_STR );
+  			$st->bindValue( ":PhPassword", $data->phone_password, \PDO::PARAM_STR );
   			$st->bindValue( ":PhLoginId", $new_phloginid, \PDO::PARAM_INT );
-  			// $st->bindValue( ":Services", $data['services'], \PDO::PARAM_STR );
+  			$st->bindValue( ":Services", $services, \PDO::PARAM_INT );
+  			$st->bindValue( ":token", $data->stripe_token, \PDO::PARAM_INT );
   			$success = $st->execute();
   			parent::disconnect( $conn );
   			return $success;
 	    } catch ( \PDOException $e ) {
 	      parent::disconnect( $conn );
-	      // $ra = array();
-	      // $ra['status'] = 0;
-	      // $ra['developerMessage'] = $e->getMessage();
-	      // $ra['userMessage'] = "Error: Email already taken";
-	      // return $ra;
 	    }
   	}
 
@@ -159,7 +157,7 @@ class CustLogin extends DataObject {
 	    }
   	}
 
-  	public static function getMembers( $startRow, $numRows, $order ) {
+  	public static function getMembers( $startRow, $numRows, $order ) { //NON
 	    $conn = parent::connect();
 	    $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM " . getenv('TBL_CUSTLOGIN') . " ORDER BY $order LIMIT :startRow, :numRows";
 
@@ -182,11 +180,11 @@ class CustLogin extends DataObject {
 	    }
   	}
 
-  	public function getGenderString() {
+  	public function getGenderString() { //NON
     	return ( $this->data["gender"] == "f" ) ? "Female" : "Male";
   	}
 
-  	public function getFavoriteGenreString() {
+  	public function getFavoriteGenreString() { //NON
     	return ( $this->_genres[$this->data["favoriteGenre"]] );
   	}
 }

@@ -31,22 +31,22 @@ $klein->respond(function ($request, $response, $service, $app) use ($klein) {
     });
 });
 
-$klein->with('/testgauss', function() use ($klein){
+	$klein->with('/testgauss', function() use ($klein){
+		$custLogin = new CustLoginController();
+		// // if(is_callable(array($custLogin, 'testing'))) echo "JE"; else echo "Nije";
 
-	$custLogin = new CustLoginController();
-	// // if(is_callable(array($custLogin, 'testing'))) echo "JE"; else echo "Nije";
-	$klein->respond('GET', '/terms', array($custLogin, 'getTerms'));
-	$klein->respond('GET', '/renderdocs', array($custLogin, 'renderDocs')); // FOR TESTING
+		$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
+		$klein->respond('POST', '/register', array($custLogin, 'postRegister'));
 
-	$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
-	$klein->respond('POST', '/register', array($custLogin, 'postRegister'));
+		$klein->respond('POST', '/forgot', array($custLogin, 'postForgot'));
 
-	$klein->respond('POST', '/forgot', array($custLogin, 'postForgot'));
-
-});
+		$klein->respond('GET', '/terms', array($custLogin, 'getTerms'));
+		$klein->respond('GET', '/renderdocs', array($custLogin, 'renderDocs')); // FOR TESTING
+	});
 
 $klein->dispatch();
 
-
+// echo base64_encode("axqF3RBxut"); //YXhxRjNSQnh1dA==
 // include('gmail.php');
 // include('connection.php'); // FOR TESTING
+
