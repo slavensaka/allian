@@ -11,8 +11,8 @@ define('PATH', __DIR__);
 </head>
 <body>
 
-Hello , %FName% <br><br>
-Your password is: %LoginPassword% <br><br>
+Hello %FName%, <br><br>
+Your password is: <b>%LoginPassword%</b> <br><br>
 
 Please login by clicking on the following link below <br>
 <a href="https://alliantranslate.com/linguist/clientportal/loginform.php">https://alliantranslate.com/linguist/clientportal/loginform.php</a><br><br>

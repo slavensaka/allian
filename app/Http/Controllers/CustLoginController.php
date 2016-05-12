@@ -66,6 +66,7 @@ class CustLoginController extends Controller {
      * }")
      */
 	public function postRegister($request, $response, $service, $app) {
+		// TODO dodati Type polje [0,1,2] 0-?, 1-pay-as-you-go, mijenja se. 2-fixan, NULL polje.
 		if($request->token){
 			try{
 				$jwt = $request->token;
