@@ -95,7 +95,7 @@ class CustLogin extends DataObject {
   	public static function insertUser($data, $new_phloginid){
   		$conn = parent::connect();
   		$services = implode(":", $data->services);
-  		$sql_1 = "INSERT INTO " . getenv('TBL_CUSTLOGIN') . "(FName, LName, Email, Phone, LoginPassword, PhPassword, PhLoginId, Services, token) VALUES (:FName, :LName, :Email, :Phone, :LoginPassword, :PhPassword, :PhLoginId, :Services, :token)";
+  		$sql_1 = "INSERT INTO " . getenv('TBL_CUSTLOGIN') . "(FName, LName, Email, Phone, LoginPassword, PhPassword, PhLoginId, Services, token) VALUES (:FName, :LName, :Email, :Phone, :LoginPassword, :PhPassword, :PhLoginId, :Services, :token, :Type)";
 	    try{
 	    	$st = $conn->prepare( $sql_1 );
   			$st->bindValue( ":FName", $data->fname, \PDO::PARAM_STR );
@@ -107,6 +107,7 @@ class CustLogin extends DataObject {
   			$st->bindValue( ":PhLoginId", $new_phloginid, \PDO::PARAM_INT );
   			$st->bindValue( ":Services", $services, \PDO::PARAM_INT );
   			$st->bindValue( ":token", $data->stripe_token, \PDO::PARAM_INT );
+  			$st->bindValue( ":Type", 1, \PDO::PARAM_INT ); // Type=1, Pay as you go sa tokenom
   			$success = $st->execute();
   			parent::disconnect( $conn );
   			if($success){

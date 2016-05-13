@@ -129,8 +129,58 @@ function ArrayOfServicesDatabase(){
 	$q->execute($values);
 }
 
+function encrypt($action, $string) {
+    $output = false;
+    $encrypt_method = "AES-256-CBC";
+    $secret_key = 'This is my secret key';
+    $key = hash('sha256', $secret_key);
+    $output = openssl_encrypt($string, $encrypt_method, $key, 0);
+    $output = base64_encode($output);
+    return $output;
+}
+
+function decrypt($action, $string){
+	$output = false;
+	$encrypt_method = "AES-256-CBC";
+	 $secret_key = 'This is my secret key';
+	$key = hash('sha256', $secret_key);
+	$output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0);
+	return $output;
+}
+
+// $plain_txt = "This is my plain text";
+// echo "Plain Text = $plain_txt\n";
+// echo "<br>";
+// $encrypted_txt = encrypt('encrypt', $plain_txt);
+// echo "Encrypted Text = $encrypted_txt";
+// echo "<br>";
+// $decrypted_txt = decrypt('decrypt', $encrypted_txt);
+// echo "Decrypted Text = $decrypted_txt\n";
+// echo "<br>";
+// if( $plain_txt === $decrypted_txt ) echo "SUCCESS";
+// else echo "FAILED";
+// echo "<br>";
+
 // echo generateTokenForLogin();
 // echo generateTokenForRegister();
 // echo generateTokenForForgot();
 
-echo getcwd();
+// echo getcwd();
+// $date1 = strtotime('2015-02-02 14:00:00');
+// echo $date1;
+// echo "<br>";
+// $date2 = strtotime('2015-02-04 15:00:00');
+// echo $date2;
+// $diff=date_diff($date1,$date2);
+// echo $diff->format("%R%a days");
+
+$date1 = "2015-02-02 14:00:00";
+$date2 = "2015-02-04 15:00:00";
+
+$diff = abs(strtotime($date2) - strtotime($date1));
+
+$years = floor($diff / (365*60*60*24));
+$months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
+$days = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
+
+printf("%d years, %d months, %d days\n", $years, $months, $days);

@@ -120,10 +120,10 @@ class CustLoginController extends Controller {
 		   		return $response->json($this->errorJson($e->getMessage(), 'before_valid'));
 		   }
 		}
-		$service->validate($token->data->email, 'Invalid email address.')->isLen(3,200)->isEmail();
+		$service->validate($token->data->email, 'Please enter a valid email address to retrieve your password.')->isLen(3,200)->isEmail();
 		$CustomerID = CustLogin::checkEmail($token->data->email);
 		if(!$CustomerID){
-			$errorJson = $this->errorJson("No user found with supplied email.");
+			$errorJson = $this->errorJson("Email address does not exist. Please enter correct email address to retrieve your password.");
 			return $response->json($errorJson);
 		}
 		$customer = CustLogin::getCustomer($CustomerID['CustomerID']);
@@ -239,7 +239,7 @@ class CustLoginController extends Controller {
 	public function emailValues($customer){
 		$jsonArray = array();
 		$jsonArray['status'] = 1;
-		$jsonArray['userMessage'] = "New password has been sent to your email address.";
+		$jsonArray['userMessage'] = "New password has been sent to your e-mail address. Please check your e-mail to retrieve your password";
 		return $jsonArray;
 	}
 }
