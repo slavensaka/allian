@@ -51,17 +51,15 @@ $klein->respond(function ($request, $response, $service, $app) use ($klein) {
 
 		$klein->respond('/enc', function ($request) {
 		  	$password = getenv("CRYPTOR");
-			// $plaintext = "Here is my test vector. It's not too long, but more than a block and needs padding.";
 			$plaintext = '{"email": "slavensakacic@gmail.com","password": "12345"}';
 			$cryptor = new \RNCryptor\Encryptor();
 			$base64Encrypted = $cryptor->encrypt($plaintext, $password);
 			echo $base64Encrypted;
-			//Cryptor
 		});
 
 		$klein->respond('/dec', function ($request) {
 		  	$password = getenv("CRYPTOR");
-		$base64Encrypted = "AwFVSdma6FYQHZQhz/ERGoZZTbDlNPtk/kVSrZOP1zTrfDtKKA209erC/88P3/nSbMDieaxAFlpbNzQIYDVS9g1u7J1HDbbTd0yKTFK5yheXsA==";
+		$base64Encrypted = "AwHD7o2cMvWrOgSf+VvWf7TpFZqTY5KMaTSJ7bsIYcazp6riauHi2gr3Jy0odje/zi9xRvybozzjKKp/OJHk9WWPoMm91Ck1k9tfILibO8wXMw2iCobGgIdywEXPsj+2mQJn/QekGBknKopT0wGWs7tVfOLZe2V//pHsnXjRnUuxyQ==";
 		$cryptor = new \RNCryptor\Decryptor();
 		$plaintext = $cryptor->decrypt($base64Encrypted, $password);
 		echo "Base64 Encrypted:\n$base64Encrypted\n\n";

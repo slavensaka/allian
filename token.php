@@ -207,6 +207,65 @@ function decrypt($action, $string){
 	return $output;
 }
 
+function newencrypt($data, $key)
+{
+    $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+    $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+
+    $salt = '12345678';
+
+    $_key = $this->pbkdf2('SHA1', $key, $salt, 10000, 32, true);
+
+    $ciphertext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $_key, $data, MCRYPT_MODE_CBC, $iv);
+
+    $hmac = $this->pbkdf2('SHA1', $key, $salt, 10000, 32, true);
+
+    $data = mb_convert_encoding(chr(1).chr(0).$salt.$salt.$iv.$ciphertext.$hmac, "BASE64", "UTF-8");
+
+    return $data;
+}
+
+/*
+ * PHP mcrypt - Complete encryption and decryption of data
+ */
+// $input = "This is my important data I need to encrypt";
+
+// /* Open the cipher */
+// $td = mcrypt_module_open('rijndael-256', '', 'ofb', '');
+
+// /* Create the IV and determine the keysize length, use MCRYPT_RAND
+//  * on Windows instead */
+// $iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_DEV_RANDOM);
+// $ks = mcrypt_enc_get_key_size($td);
+
+// /* Create key */
+// $key = substr(md5('very secret key'), 0, $ks);
+
+// /* Intialize encryption */
+// mcrypt_generic_init($td, $key, $iv);
+
+//  Encrypt data
+// $encrypted = mcrypt_generic($td, $input);
+
+// /* Terminate encryption handler */
+// mcrypt_generic_deinit($td);
+
+// /* Initialize encryption module for decryption */
+// mcrypt_generic_init($td, $key, $iv);
+
+// /* Decrypt encrypted string */
+// $decrypted = mdecrypt_generic($td, $encrypted);
+
+// /* Terminate decryption handle and close module */
+// mcrypt_generic_deinit($td);
+// mcrypt_module_close($td);
+
+// /* Show string */
+// echo "Encrypted string : ".trim($encrypted) . "<br />\n";
+// echo "Decrypted string : ".trim($decrypted) . "<br />\n";
+
+
+// echo encrypt('My Data', 'mykey');
 // $plain_txt = "This is my plain text";
 // echo "Plain Text = $plain_txt\n";
 // echo "<br>";
@@ -223,7 +282,7 @@ function decrypt($action, $string){
 // echo generateTokenForLogin();
 // echo generateTokenForRegister();
 // echo generateTokenForForgot();
-echo generateTokenForTelAccess();
+// echo generateTokenForTelAccess();
 // echo getcwd();
 // $date1 = strtotime('2015-02-02 14:00:00');
 // echo $date1;
