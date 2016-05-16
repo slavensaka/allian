@@ -27,6 +27,7 @@ $klein->onHttpError(function ($code, $router,$service) {
 $klein->respond(function ($request, $response, $service, $app) use ($klein) {
     // Handle exceptions => flash the message and redirect to the referrer
     $klein->onError(function ($klein, $err_msg) {
+    	//TODO tokenize response
        	return  $klein->response()->json(Controller::errorJson($err_msg));
     });
 });
@@ -35,6 +36,7 @@ $klein->respond(function ($request, $response, $service, $app) use ($klein) {
 		$custLogin = new CustLoginController();
 		// // if(is_callable(array($custLogin, 'testing'))) echo "JE"; else echo "Nije";
 
+
 		$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
 		$klein->respond('POST', '/register', array($custLogin, 'postRegister'));
 
@@ -42,6 +44,30 @@ $klein->respond(function ($request, $response, $service, $app) use ($klein) {
 
 		$klein->respond('GET', '/terms', array($custLogin, 'getTerms'));
 		$klein->respond('GET', '/renderdocs', array($custLogin, 'renderDocs')); // FOR TESTING
+
+		$klein->respond('POST', '/telephonicAccess', array($custLogin, 'postTelephonicAccess'));
+
+		$klein->respond('POST', '/updateProfile', array($custLogin, 'updateProfile'));
+
+		$klein->respond('/enc', function ($request) {
+		  	$password = getenv("CRYPTOR");
+			// $plaintext = "Here is my test vector. It's not too long, but more than a block and needs padding.";
+			$plaintext = '{"email": "slavensakacic@gmail.com","password": "12345"}';
+			$cryptor = new \RNCryptor\Encryptor();
+			$base64Encrypted = $cryptor->encrypt($plaintext, $password);
+			echo $base64Encrypted;
+			//Cryptor
+		});
+
+		$klein->respond('/dec', function ($request) {
+		  	$password = getenv("CRYPTOR");
+		$base64Encrypted = "AwFVSdma6FYQHZQhz/ERGoZZTbDlNPtk/kVSrZOP1zTrfDtKKA209erC/88P3/nSbMDieaxAFlpbNzQIYDVS9g1u7J1HDbbTd0yKTFK5yheXsA==";
+		$cryptor = new \RNCryptor\Decryptor();
+		$plaintext = $cryptor->decrypt($base64Encrypted, $password);
+		echo "Base64 Encrypted:\n$base64Encrypted\n\n";
+		echo "Plaintext:\n$plaintext\n\n";
+		});
+
 	});
 
 $klein->dispatch();

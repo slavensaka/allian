@@ -9,6 +9,8 @@ use \Dotenv\Dotenv;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\DomainException;
 use Firebase\JWT\BeforeValidException;
+use RNCryptor\Encryptor;
+use RNCryptor\Decryptor;
 
 class CustLoginController extends Controller {
 	 /**
@@ -35,7 +37,12 @@ class CustLoginController extends Controller {
      * }")
      */
 	public function postLogin($request, $response, $service, $app) {
-		$data = json_decode($request->data, true);
+
+		$password = getenv("CRYPTOR");
+		$cryptor = new \RNCryptor\Decryptor();
+		$plaintext = $cryptor->decrypt($request->data, $password);
+
+		$data = json_decode($plaintext, true);
 		$service->validate($data['email'], 'Invalid email address')->isLen(3,200)->isEmail();
 		$service->validate($data['password'], 'Error: no password present')->notNull();
     	$email = $data['email'];
@@ -48,7 +55,11 @@ class CustLoginController extends Controller {
 			$response->json($errorJson);
 			exit;
 		}
-		$genToken = $this->generateResponseToken($this->userValues($customer));
+		$genToken = $this->generateResponseToken($this->loginValues($customer));
+		// $encryptor = new \RNCryptor\Encryptor();
+		// $new = json_encode($genToken);
+		// $base64Encrypted = $encryptor->encrypt($new, $password);
+
      	return $response->json($genToken);
 	}
 
@@ -59,10 +70,10 @@ class CustLoginController extends Controller {
      * @ApiBody(sample="{ 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjMwMzQ5NDMsImp0aSI6InFZeHRjWWtBZGZEcEtxOHBtNkdnXC9FK1pSVmVPTys2SHM2VGpTcmlyYVBZPSIsImlzcyI6Imh0dHA6XC9cL2xvY2FsaG9zdFwvIiwibmJmIjoxNDYzMDM0OTQzLCJleHAiOjE0NjQyNDQ1NDMsImRhdGEiOnsiZm5hbWUiOiJTbGF2ZW4iLCJsbmFtZSI6IlNha2FjaWMiLCJlbWFpbCI6InNsYXZlbnNha2FjaWNAZ21haWwuY29tIiwicGhvbmUiOiI3NzMtNzMyLTY1MzQiLCJwYXNzd29yZCI6IjEyMzQ1IiwicGhvbmVfcGFzc3dvcmQiOiI0NTQzNSIsInNlcnZpY2VzIjpbInRlbGVwaG9uaWNfaW50ZXJwcmV0aW5nIiwidHJhbnNsYXRpb25fc2VydmljZXMiLCJvbnNpdGVfaW50ZXJwcmV0aW5nIiwidHJhbnNjcmlwdGlvbl9zZXJ2aWNlcyJdLCJzdHJpcGVfdG9rZW4iOiJjdXNfNm5ORkRSVkdqZDF3VWUifX0.NSRnFGamaT9ruYap8D5s-SxMq0Qk5jE7M2dd0o2rGz7N7C9UNbdjEQEnkoWbJp0ijDWVAlRGB6LKVK8JnAiC1w'}")
      * @ApiParams(name="token", type="object", nullable=false, description="Json must contain fname, lname, email, phone, password, phone_password, services, stripe_token. Example in body in the token. Check the contents of this token at https://jwt.io website by putting token in the Encoded input field.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
-     * @ApiReturn(type="object", sample="{'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjI5OTk5MDUsImp0aSI6ImNOZ3NQRXg1R2t5djUrUHc1UnQzSXRVdEVYSzMzbk9zN1lTYnlGRGdjOU09IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDYyOTk5OTA1LCJleHAiOjE0NjQyMDk1MDUsImRhdGEiOnsic3RhdHVzIjoxLCJ1c2VyTWVzc2FnZSI6IlJlZ2lzdHJhdGlvbiBTdWNjZXNmdWxsIn19.h0UnxdBneDQdQHXJk3WXJYOsLw_QROoY4ZbuFhBFKt2XZ6eQosUadH2rOusDxkHQAaPaTXdla55K01MeQrMF0A' }")
+     * @ApiReturn(type="object", sample="{'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjMzODUzNjUsImp0aSI6IkozekY5MTc0R0lYQWlFV29xVkhEZ25IczUrM20wSEVJWnVjQTVDR242K1U9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDYzMzg1MzY1LCJleHAiOjE0NjQ1OTQ5NjUsImRhdGEiOnsic3RhdHVzIjoxLCJ1c2VyTWVzc2FnZSI6eyJzdGF0dXMiOjEsImN1c3RvbWVySUQiOiI3NTEiLCJ1c2VyTWVzc2FnZSI6IlJlZ2lzdHJhdGlvbiBTdWNjZXNmdWxsIn19fQ.JzU2nvQVMwBmFBLqHXTDu_bRGtYXysFpOYFJS21ks5EFBfxlRQcXKNa-74JkYuxB56qE89lJyJGUBDCYKFXA_g' }")
      *	@ApiReturn(type="object", sample="{
      *  'status': 0,
-     *  'userMessage': 'Email already registered.'
+     *  'userMessage': 'There was a problem while registration.'
      * }")
      */
 	public function postRegister($request, $response, $service, $app) {
@@ -89,10 +100,49 @@ class CustLoginController extends Controller {
 		$service->validate($token->data->stripe_token, 'No stripe token provided.')->notNull();
 		$service->validate($data['services'], 'Error: no service present.')->notNull;
 
-		$message = CustLogin::register($token->data);
-
-		$genToken = $this->generateResponseToken($this->successJson($message));
+		$customer = CustLogin::register($token->data);
+		if(!$customer){
+			$genToken = $this->generateResponseToken($this->errorJson("There was a problem while registration."));
+     		return $response->json($genToken);
+		}
+		$jsonArray = array();
+		$jsonArray['status'] = 1;
+		$jsonArray['customerID'] = $customer->getValueEncoded('CustomerID');
+		$jsonArray['userMessage'] = "Registration Succesfull";
+		// return $response->json($jsonArray);
+		$genToken = $this->generateResponseToken($this->successJson($jsonArray));
      	return $response->json($genToken);
+	}
+
+	 /**
+     * @ApiDescription(section="UpdateProfile", description="Update customers profile information.")
+     * @ApiMethod(type="post")
+     * @ApiRoute(name="/testgauss/updateProfile")
+     * @ApiBody(sample="{ 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjMwMzQ5NDMsImp0aSI6InFZeHRjWWtBZGZEcEtxOHBtNkdnXC9FK1pSVmVPTys2SHM2VGpTcmlyYVBZPSIsImlzcyI6Imh0dHA6XC9cL2xvY2FsaG9zdFwvIiwibmJmIjoxNDYzMDM0OTQzLCJleHAiOjE0NjQyNDQ1NDMsImRhdGEiOnsiZm5hbWUiOiJTbGF2ZW4iLCJsbmFtZSI6IlNha2FjaWMiLCJlbWFpbCI6InNsYXZlbnNha2FjaWNAZ21haWwuY29tIiwicGhvbmUiOiI3NzMtNzMyLTY1MzQiLCJwYXNzd29yZCI6IjEyMzQ1IiwicGhvbmVfcGFzc3dvcmQiOiI0NTQzNSIsInNlcnZpY2VzIjpbInRlbGVwaG9uaWNfaW50ZXJwcmV0aW5nIiwidHJhbnNsYXRpb25fc2VydmljZXMiLCJvbnNpdGVfaW50ZXJwcmV0aW5nIiwidHJhbnNjcmlwdGlvbl9zZXJ2aWNlcyJdLCJzdHJpcGVfdG9rZW4iOiJjdXNfNm5ORkRSVkdqZDF3VWUifX0.NSRnFGamaT9ruYap8D5s-SxMq0Qk5jE7M2dd0o2rGz7N7C9UNbdjEQEnkoWbJp0ijDWVAlRGB6LKVK8JnAiC1w'}")
+     * @ApiParams(name="token", type="object", nullable=false, description="Json must contain fname, lname, email, phone, password, phone_password, services, stripe_token. Example in body in the token. Check the contents of this token at https://jwt.io website by putting token in the Encoded input field.")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     * @ApiReturn(type="object", sample="{'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjMzODUzNjUsImp0aSI6IkozekY5MTc0R0lYQWlFV29xVkhEZ25IczUrM20wSEVJWnVjQTVDR242K1U9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDYzMzg1MzY1LCJleHAiOjE0NjQ1OTQ5NjUsImRhdGEiOnsic3RhdHVzIjoxLCJ1c2VyTWVzc2FnZSI6eyJzdGF0dXMiOjEsImN1c3RvbWVySUQiOiI3NTEiLCJ1c2VyTWVzc2FnZSI6IlJlZ2lzdHJhdGlvbiBTdWNjZXNmdWxsIn19fQ.JzU2nvQVMwBmFBLqHXTDu_bRGtYXysFpOYFJS21ks5EFBfxlRQcXKNa-74JkYuxB56qE89lJyJGUBDCYKFXA_g' }")
+     *	@ApiReturn(type="object", sample="{
+     *  'status': 0,
+     *  'userMessage': 'There was a problem while registration.'
+     * }")
+     */
+	public function updateProfile(){
+		if($request->token){
+			try{
+				$jwt = $request->token;
+				$secretKey = base64_decode(getenv('jwtKey'));
+    			$token = JWT::decode($jwt, $secretKey, array('HS512'));
+			} catch(ExpiredException $e) { // if result expired_token go to login page
+		   		return $response->json($this->errorJson($e->getMessage(), 'expired_token'));
+		    } catch(DomainException $e) {
+		   		return $response->json($this->errorJson($e->getMessage(), 'invalid_domain'));
+		    } catch(BeforeValidException $e){
+		   		return $response->json($this->errorJson($e->getMessage(), 'before_valid'));
+		    }
+		}
+		//editmain.php i editmainadd.php
+		return "OKO";
 	}
 
 	/**
@@ -146,6 +196,56 @@ class CustLoginController extends Controller {
      	return $response->json($genToken);
 	}
 
+
+
+	/**
+     * @ApiDescription(section="TelephonicAccess", description="Retrieve customers telephonicUserId & telephonicPassword for telephonic access. By giving the customerID. TODO encrypt customerIDs with secret key, so no one can just type an int and get someones access code.")
+     * @ApiMethod(type="post")
+     * @ApiRoute(name="/testgauss/telephonicAccess")
+     @ApiBody(sample="{'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjMzODc2MDYsImp0aSI6IjJtK3gyMEllNTdzRFFZOWFGc1kreDJJVFM2MGpXY1c2M1hJa2pDNWxlOUk9IiwiaXNzIjoiaHR0cDpcL1wvbG9jYWxob3N0XC8iLCJuYmYiOjE0NjMzODc2MDYsImV4cCI6MTQ2NDU5NzIwNiwiZGF0YSI6eyJjdXN0b21lcklEIjo3NTJ9fQ.78Anz9Q1gOnzDhxBNjiWjUgUpLJAU_-6QP65gBGndvmv8ZH0gqaeVCrSv0mDczh05bTpf0-EZ_HHQ6OMDEzhAw'}")
+     * @ApiParams(name="token", type="object", nullable=false, description="Customers id. Stored in mobile phone, as this is the identifier for the user using the app. TODO encrypt the customerID.")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     * @ApiReturn(type="object", sample="{
+     *  'token':'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjMzODg0MDIsImp0aSI6InlkS0V0YkVjRmdpYWFLMTBkS2xcL2pHT1g5MFVcLzZZOXZwRDlGMlllWVJzUT0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjMzODg0MDIsImV4cCI6MTQ2NDU5ODAwMiwiZGF0YSI6eyJzdGF0dXMiOjEsInRlbGVwaG9uaWNVc2VySWQiOiIxMTMxNjgiLCJ0ZWxlcGhvbmljUGFzc3dvcmQiOiI0NTQzNSJ9fQ.3dEvH_n89oYAf-fyMq5hEd7MyuCr9SM42FOd_qRRDudMeY-16MYiQpoSLb5f49jwAlXx-Ml-5-2cyn1H7gFH7w'
+     * }")
+     *	@ApiReturn(type="object", sample="{
+     *  'status': 0,
+     *  'userMessage': 'THIS WILL ALSO BE TOKEN. FOR NOW NO NEED TO ENCRYPT THIS. No user found.'
+     * }")
+     *
+     */
+	public function postTelephonicAccess($request, $response, $service, $app){
+		// ENcode and decode customerID with secret key while transfer for secutiry TODO
+				if($request->token){
+			try{
+				$jwt = $request->token;
+				$secretKey = base64_decode(getenv('jwtKey'));
+    			$token = JWT::decode($jwt, $secretKey, array('HS512'));
+			} catch(ExpiredException $e) { // if result expired_token go to login page
+		   		return $response->json($this->errorJson($e->getMessage(), 'expired_token'));
+		    } catch(DomainException $e) {
+		   		return $response->json($this->errorJson($e->getMessage(), 'invalid_domain'));
+		    } catch(BeforeValidException $e){
+		   		return $response->json($this->errorJson($e->getMessage(), 'before_valid'));
+		    }
+		}
+		$service->validate($token->data->customerID, 'Invalid id')->isInt();
+
+		$customer = CustLogin::getCustomer($token->data->customerID);
+		if(!$customer){
+			$errorJson = $this->errorJson("No user found.");
+			return $response->json($errorJson);
+		}
+		$jsonArray = array();
+		$jsonArray['status'] = 1;
+		$jsonArray['telephonicUserId'] = $customer->getValueEncoded('PhLoginId');
+		$jsonArray['telephonicPassword'] = $customer->getValueEncoded('PhPassword');
+		// $jsonArray['userMessage'] = "";
+		$genToken = $this->generateResponseToken($jsonArray);
+     	return $response->json($genToken);
+
+	}
+
 	/**
 	 *
 	 * Block comment
@@ -176,70 +276,5 @@ class CustLoginController extends Controller {
     	return $token;
 	}
 
-	/**
-	 *
-	 * Maybe create Mail Model?
-	 *
-	 */
-	public function newPassEmail($email, $FName, $LoginPassword){
-		//SMTP needs accurate times, and the PHP time zone MUST be set
-		//This should be done in your php.ini, but this is how to do it if you don't have access to that
-		date_default_timezone_set('Etc/UTC');
 
-		$message = file_get_contents('resources/views/emails/newpassword.php');
-		$message = str_replace('%FName%', $FName, $message);
-		$message = str_replace('%logo%', getenv('LOGO'), $message);
-		$message = str_replace('%LoginPassword%', $LoginPassword, $message);
-
-		$mail = new PHPMailer;
-		$mail->isSMTP();
-		$mail->CharSet='UTF-8';
-		$mail->SMTPAuth = true;
-
-		$mail->Host = getenv('MAIL_HOST');
-		$mail->Port = getenv('MAIL_PORT');
-		$mail->SMTPSecure = getenv('MAIL_ENCRYPTION');
-		$mail->Username = getenv('MAIL_USERNAME');
-		$mail->Password = getenv('MAIL_PASSWORD');
-		$mail->setFrom(getenv('MAIL_FROM'), 'Allian Translate');
-		$mail->addReplyTo(getenv('MAIL_REPLY_TO'), 'Allian Translate');
-
-		$mail->addAddress($email, $FName);
-		$mail->IsHTML(true);
-		$mail->Subject = 'Allian Translate new password.';
-		$mail->MsgHTML($message);
-		if (!$mail->send()) {
-		   return false;
-		} else {
-		    return true;
-		}
-	}
-
-	/**
-	 *
-	 * Block comment
-	 *
-	 */
-	public function userValues($customer){
-		$jsonArray = array();
-		$fname = $customer->getValueEncoded('FName');
-		$lname = $customer->getValueEncoded('LName');
-		$jsonArray['status'] = 1;
-		$jsonArray['fname'] = $fname;
-		$jsonArray['lname'] = $lname;
-		$jsonArray['userMessage'] = "Authentication Successfull. Welcome $fname $lname.";
-		return $jsonArray;
-	}
-
-	/**
-	 *
-	 * Block comment
-	 *
-	 */
-	public function emailValues($customer){
-		$jsonArray = array();
-		$jsonArray['status'] = 1;
-		$jsonArray['userMessage'] = "New password has been sent to your e-mail address. Please check your e-mail to retrieve your password";
-		return $jsonArray;
-	}
 }

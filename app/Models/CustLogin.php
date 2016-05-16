@@ -32,6 +32,7 @@ class CustLogin extends DataObject {
 	    "totalcharhed" => "",
 	    "totalbilled" => "",
 	    "Saved" => "",
+	    "Type" => ""
 	);
 
   	private $_genres = array(
@@ -62,15 +63,14 @@ class CustLogin extends DataObject {
 		    }
 	    } catch ( \PDOException $e ) {
 		      parent::disconnect( $conn );
-		      die( "Query failed: " . $e->getMessage() );
+		      return false;
+		      // die( "Query failed: " . $e->getMessage() );
 	    }
   	}
 
   	public static function register($data){
   		$conn = parent::connect();
   		$sql = "SELECT PhLoginId FROM " . getenv('TBL_CUSTLOGIN') . " ORDER BY CustomerID DESC LIMIT 1";
-  		// $sql = "SELECT MAX(`PhLoginId`) FROM "	. getenv('TBL_CUSTLOGIN') . " LIMIT 1";
-		// SELECT `PhLoginId`, MAX(`CustomerID`) FROM CustLogin LIMIT 1;
   		try {
   			$last = $conn->prepare( $sql );
   			$last->execute();
@@ -82,7 +82,7 @@ class CustLogin extends DataObject {
 		    }
 		} catch ( \PDOException $e ) {
 	      	parent::disconnect( $conn );
-	      	return $e->getMessage();
+	      	return false;
 	      	exit;
 	    }
 
@@ -95,7 +95,7 @@ class CustLogin extends DataObject {
   	public static function insertUser($data, $new_phloginid){
   		$conn = parent::connect();
   		$services = implode(":", $data->services);
-  		$sql_1 = "INSERT INTO " . getenv('TBL_CUSTLOGIN') . "(FName, LName, Email, Phone, LoginPassword, PhPassword, PhLoginId, Services, token) VALUES (:FName, :LName, :Email, :Phone, :LoginPassword, :PhPassword, :PhLoginId, :Services, :token, :Type)";
+  		$sql_1 = "INSERT INTO " . getenv('TBL_CUSTLOGIN') . "(FName, LName, Email, Phone, LoginPassword, PhPassword, PhLoginId, Services, token, Type) VALUES (:FName, :LName, :Email, :Phone, :LoginPassword, :PhPassword, :PhLoginId, :Services, :token, :Type)";
 	    try{
 	    	$st = $conn->prepare( $sql_1 );
   			$st->bindValue( ":FName", $data->fname, \PDO::PARAM_STR );
@@ -111,13 +111,14 @@ class CustLogin extends DataObject {
   			$success = $st->execute();
   			parent::disconnect( $conn );
   			if($success){
-  				return "Registration Succesfull";
+  				$authCustomer = self::authenticate($data->email, $data->password);
+  				return $authCustomer;
   			} else {
-  				return "Error while registration";
+  				return false;
   			}
 	    } catch ( \PDOException $e ) {
 	      parent::disconnect( $conn );
-	      return $e->getMessage();
+	      return false;
 	      exit;
 	    }
   	}

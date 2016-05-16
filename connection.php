@@ -46,11 +46,15 @@
 	// $dbpass = 'allian2016@';
 	// $dbhost = 'vps9239.inmotionhosting.com';
 
-$dbname = 'alliantr_testgauss';
-$dbuser = 'alliantr_gauss';
-$dbpass = '124L3lSFlM5Ngyk9';
-$dbhost = 'vps9239.inmotionhosting.com';
+// $dbname = 'alliantr_testgauss';
+// $dbuser = 'alliantr_gauss';
+// $dbpass = '124L3lSFlM5Ngyk9';
+// $dbhost = 'vps9239.inmotionhosting.com';
 
+$dbname="allian10_abs_linguist_portal";
+$dbuser="root";
+$dbpass="";
+$dbhost="localhost";
 
 // $dsn = 'mysql:host=vps9239.inmotionhosting.com;dbname=alliantr_testgauss';
 // $username = 'alliantr_gauss';
@@ -61,28 +65,41 @@ $dbhost = 'vps9239.inmotionhosting.com';
 
 // $dbh = new PDO($dsn, $username, $password, $options);
 
-// echo $dbh;
 
+$con = mysqli_connect("localhost", "root", "", "allian10_abs_linguist_portal");
+$card_detail_query = "SELECT * from CustLogin WHERE CustomerID= '$CustomerID' and LoginPassword= '$Password' ";
 
+$card_detail=mysqli_query($con, $card_detail_query);
 
+$card=mysqli_fetch_assoc($card_detail);
 
-	$connect = mysql_connect($dbhost, $dbuser, $dbpass) or die("Unable to Connect to '$dbhost'");
-	mysql_select_db($dbname) or die("Could not open the db '$dbname'");
-	$test_query = "SHOW TABLES FROM $dbname";
+echo $card['PhPassword'];
+	// $connect = mysql_connect($dbhost, $dbuser, $dbpass) or die("Unable to Connect to '$dbhost'");
+	// mysql_select_db($dbname) or die("Could not open the db '$dbname'");
+	// $test_query = "SHOW TABLES FROM $dbname";
 	// $test_query = "SELECT card_number FROM payment_details";
 	// $test_query = "SELECT LoginPassword FROM CustLogin";
-	$result = mysql_query($test_query);
+
+
+// 	$card_detail_query = "SELECT * from CustLogin WHERE CustomerID= '$CustomerID' and LoginPassword= '$Password' ";
+
+// $card_detail=mysql_query($card_detail_query);
+// 	$card=mysqli_fetch_assoc($card_detail);
+// print_r($card);
+
+
+	// $result = mysql_query($test_query);
 // while($table = mysql_fetch_array($result)) { // go through each row that was returned in $result
 //     echo($table[0] . "<BR>");    // print the table that was returned on that row.
 // }
-	$tblCnt = 0;
-	while($tbl = mysql_fetch_array($result)) {
-	  	$tblCnt++;
-  		echo $tbl[0]."<br />\n";
-	}
-	if (!$tblCnt) {
-	  echo "There are no tables<br />\n";
-	} else {
-	  echo "There are $tblCnt tables<br />\n";
-	  echo "Success";
-	}
+	// $tblCnt = 0;
+	// while($tbl = mysql_fetch_array($result)) {
+	//   	$tblCnt++;
+ //  		echo $tbl[0]."<br />\n";
+	// }
+	// if (!$tblCnt) {
+	//   echo "There are no tables<br />\n";
+	// } else {
+	//   echo "There are $tblCnt tables<br />\n";
+	//   echo "Success";
+	// }
