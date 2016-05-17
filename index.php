@@ -59,7 +59,8 @@ $klein->respond(function ($request, $response, $service, $app) use ($klein) {
 
 		$klein->respond('/dec', function ($request) {
 		  	$password = getenv("CRYPTOR");
-		$base64Encrypted = "AwHD7o2cMvWrOgSf+VvWf7TpFZqTY5KMaTSJ7bsIYcazp6riauHi2gr3Jy0odje/zi9xRvybozzjKKp/OJHk9WWPoMm91Ck1k9tfILibO8wXMw2iCobGgIdywEXPsj+2mQJn/QekGBknKopT0wGWs7tVfOLZe2V//pHsnXjRnUuxyQ==";
+		$base64Encrypted = "AwEOlU/3vEDHV55cDLQ+heq9YX/CRUFVs/yjJ064vKbL0pHKK8yUXSTuAaMh7TJbmk0lmFKr0F5QASAwUFyvOXahZr8d6OM3IsQhrCz+MACpNY7T4j61D1mXU21EBiNCVxCl5ExRw4w6KY09fFl/t2aFIRoFZrmPMadowogSCIoR4w2LuwchLylVNFYqDCWRt0Ekmob8OwvxEnAR0RUEGhi3B8YL51uzedk7jGcFWJG0C0xSxTuaUNUItbt7OI6K5dA=";
+
 		$cryptor = new \RNCryptor\Decryptor();
 		$plaintext = $cryptor->decrypt($base64Encrypted, $password);
 		echo "Base64 Encrypted:\n$base64Encrypted\n\n";
