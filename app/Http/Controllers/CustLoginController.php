@@ -67,8 +67,8 @@ class CustLoginController extends Controller {
      * @ApiDescription(section="Register", description="Register a new user in the database")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/register")
-     * @ApiBody(sample="{ 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjMwMzQ5NDMsImp0aSI6InFZeHRjWWtBZGZEcEtxOHBtNkdnXC9FK1pSVmVPTys2SHM2VGpTcmlyYVBZPSIsImlzcyI6Imh0dHA6XC9cL2xvY2FsaG9zdFwvIiwibmJmIjoxNDYzMDM0OTQzLCJleHAiOjE0NjQyNDQ1NDMsImRhdGEiOnsiZm5hbWUiOiJTbGF2ZW4iLCJsbmFtZSI6IlNha2FjaWMiLCJlbWFpbCI6InNsYXZlbnNha2FjaWNAZ21haWwuY29tIiwicGhvbmUiOiI3NzMtNzMyLTY1MzQiLCJwYXNzd29yZCI6IjEyMzQ1IiwicGhvbmVfcGFzc3dvcmQiOiI0NTQzNSIsInNlcnZpY2VzIjpbInRlbGVwaG9uaWNfaW50ZXJwcmV0aW5nIiwidHJhbnNsYXRpb25fc2VydmljZXMiLCJvbnNpdGVfaW50ZXJwcmV0aW5nIiwidHJhbnNjcmlwdGlvbl9zZXJ2aWNlcyJdLCJzdHJpcGVfdG9rZW4iOiJjdXNfNm5ORkRSVkdqZDF3VWUifX0.NSRnFGamaT9ruYap8D5s-SxMq0Qk5jE7M2dd0o2rGz7N7C9UNbdjEQEnkoWbJp0ijDWVAlRGB6LKVK8JnAiC1w'}")
-     * @ApiParams(name="token", type="object", nullable=false, description="Json must contain fname, lname, email, phone, password, phone_password, services, stripe_token. Example in body in the token. Check the contents of this token at https://jwt.io website by putting token in the Encoded input field.")
+     * @ApiBody(sample="{ 'data': ''}")
+     * @ApiParams(name="data", type="object", nullable=false, description="Json must contain fname, lname, email, phone, password, phone_password, services, stripe_token. Example in body in the token. Check the contents of this token at https://jwt.io website by putting token in the Encoded input field.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="object", sample="{'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjMzODUzNjUsImp0aSI6IkozekY5MTc0R0lYQWlFV29xVkhEZ25IczUrM20wSEVJWnVjQTVDR242K1U9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDYzMzg1MzY1LCJleHAiOjE0NjQ1OTQ5NjUsImRhdGEiOnsic3RhdHVzIjoxLCJ1c2VyTWVzc2FnZSI6eyJzdGF0dXMiOjEsImN1c3RvbWVySUQiOiI3NTEiLCJ1c2VyTWVzc2FnZSI6IlJlZ2lzdHJhdGlvbiBTdWNjZXNmdWxsIn19fQ.JzU2nvQVMwBmFBLqHXTDu_bRGtYXysFpOYFJS21ks5EFBfxlRQcXKNa-74JkYuxB56qE89lJyJGUBDCYKFXA_g' }")
      *	@ApiReturn(type="object", sample="{
@@ -77,6 +77,10 @@ class CustLoginController extends Controller {
      * }")
      */
 	public function postRegister($request, $response, $service, $app) {
+
+		$password = getenv("CRYPTOR");
+		$cryptor = new \RNCryptor\Decryptor();
+		$plaintext = $cryptor->decrypt($request->data, $password);
 		// TODO dodati Type polje [0,1,2] 0-?, 1-pay-as-you-go, mijenja se. 2-fixan, NULL polje.
 		if($request->token){
 			try{
