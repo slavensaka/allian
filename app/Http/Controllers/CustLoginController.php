@@ -67,13 +67,22 @@ class CustLoginController extends Controller {
      * @ApiDescription(section="Register", description="Register a new user in the database")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/register")
+<<<<<<< HEAD
      * @ApiBody(sample="{ 'data': 'AwEPyQdyrx7LhlEdm9GylvlDftbe1MF6zt/gN04II3VldkFcTSoG72PLs87SRTU/m91E+MeXdthJzYB4/AwZ4KrAluli10YBk/3LlB7sAa0dzu+0wudujy68uAio+3VgSTnqKKIeWo77nivalHTXhrhUpay3DbLNOLeU9Svx91vTH2BlI5cIuwLlmnUvExV0OSo/1CSBL9YB7Ep/b9hvCOU969HuepCA28ekGrI8y4NyyHazXcdubgxttrHz2veyPk83m5iywDWK56i6JEibml1ZNwwuNw6WuOJPrySBPrMJs5oR/wog3MKJc+reGhCWSpTOeJ9i2N2mGWtZYbzGMOUgH7q3NnmLS2KbReNGdk/C4zOLzliB0dzENIO43Jkrb+WUmq3Lv49HwUF/51lumd67WBJrmJQIdZT0J0XmBRvCSZJ9xWLUICSRnyC+uDo59CwXj0/6s03wr02n604CbF8jWRwe29NLTwuweHEPyFwbO/S6v3V2B1xvfqWIXp3bHJjrhICuqp/2oTziolQURQpcoXI9VFUBRyRiaF4RzYbM/46Tfx29QKtVp8MvYe8R3xVpGkoyb1AfkReMc3IsjqnH'}")
      * @ApiParams(name="data", type="object", nullable=false, description="Json must contain fname, lname, email, phone, password, phone_password, services, stripe_token.")
+=======
+     * @ApiBody(sample="{ 'data': ''}")
+     * @ApiParams(name="data", type="object", nullable=false, description="Json must contain fname, lname, email, phone, password, phone_password, services, stripe_token. Example in body in the token. Check the contents of this token at https://jwt.io website by putting token in the Encoded input field.")
+>>>>>>> 1e069349af4e228193042d7aed40c7d92bebb0ba
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="object", sample="{'data': 'AwHLdqaPYWUqunsX7Q7xnJ9ac0UzPgFo95bWo7kxZctQHXT6aqrgp1DuoEc7+MmpW/zFoj7BICGqcoBU+s49icpz2dTOQz14klgx/x+JQlU1Sp7fJOts1LEz7+takbBmHxmhuK3ulnxrf4BlpPXluNgg2y91HQ4AmqPfGKilkKWIilMRUFFzNoFVuQEideWzE8Q=' }")
      * @ApiReturn(type="object", sample="{'data': 'AwFoZ4u4exWaV9YdN6S90zKdMKITd8Zq/mjlW4OLLQ7uiHCFGOrRwUe2QlByqsYtyTNJ/TzAiB67Zm20S9H7mFhZApmxsyB6VZdw39B/RlxLjYpuOUZSDf+ebGrGSF6+0QnJytAEKdxHcufbziBpm+epD/fVWgwCTUhXEDonYwwhQAIKfZ/YBjllD5MniOfMusg=' }")
      */
 	public function postRegister($request, $response, $service, $app) {
+
+		$password = getenv("CRYPTOR");
+		$cryptor = new \RNCryptor\Decryptor();
+		$plaintext = $cryptor->decrypt($request->data, $password);
 		// TODO dodati Type polje [0,1,2] 0-?, 1-pay-as-you-go, mijenja se. 2-fixan, NULL polje.
 		// if($request->token){
 		// 	try{

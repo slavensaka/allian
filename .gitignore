@@ -3,4 +3,3 @@
 .env
 .DS_STORE
 composer.lock
-/docs
