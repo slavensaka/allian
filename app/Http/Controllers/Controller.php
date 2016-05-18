@@ -2,6 +2,8 @@
 
 namespace Allian\Http\Controllers;
 
+use PHPMailer;
+
 class Controller {
 	/**
 	 *
@@ -93,6 +95,28 @@ class Controller {
 		$jsonArray['lname'] = $lname;
 		$jsonArray['userMessage'] = "Authentication Successfull. Welcome $fname $lname.";
 		return $jsonArray;
+	}
+
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	public function encryptValues($data){
+		$password = getenv("CRYPTOR");
+		$encryptor = new \RNCryptor\Encryptor();
+		$base64Encrypted = $encryptor->encrypt($data, $password);
+		return $base64Encrypted;
+	}
+
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	public function makeLoginResponse($base64Encrypted, $genToken = null){
+		$response = array('token' => $genToken, 'data' => $base64Encrypted);
+		return $response;
 	}
 
 	/**

@@ -64,7 +64,7 @@ class CustLogin extends DataObject {
 	    } catch ( \PDOException $e ) {
 		      parent::disconnect( $conn );
 		      return false;
-		      // die( "Query failed: " . $e->getMessage() );
+		      die( "Query failed: " . $e->getMessage() );
 	    }
   	}
 
@@ -94,30 +94,61 @@ class CustLogin extends DataObject {
 
   	public static function insertUser($data, $new_phloginid){
   		$conn = parent::connect();
-  		$services = implode(":", $data->services);
+  		$services = implode(":", $data['services']);
   		$sql_1 = "INSERT INTO " . getenv('TBL_CUSTLOGIN') . "(FName, LName, Email, Phone, LoginPassword, PhPassword, PhLoginId, Services, token, Type) VALUES (:FName, :LName, :Email, :Phone, :LoginPassword, :PhPassword, :PhLoginId, :Services, :token, :Type)";
 	    try{
 	    	$st = $conn->prepare( $sql_1 );
-  			$st->bindValue( ":FName", $data->fname, \PDO::PARAM_STR );
-  			$st->bindValue( ":LName", $data->lname, \PDO::PARAM_STR );
-  			$st->bindValue( ":Email", $data->email, \PDO::PARAM_STR );
-  			$st->bindValue( ":Phone", $data->phone, \PDO::PARAM_STR );
-  			$st->bindValue( ":LoginPassword", $data->password, \PDO::PARAM_STR );
-  			$st->bindValue( ":PhPassword", $data->phone_password, \PDO::PARAM_STR );
+  			$st->bindValue( ":FName", $data['fname'], \PDO::PARAM_STR );
+  			$st->bindValue( ":LName", $data['lname'], \PDO::PARAM_STR );
+  			$st->bindValue( ":Email", $data['email'], \PDO::PARAM_STR );
+  			$st->bindValue( ":Phone", $data['phone'], \PDO::PARAM_STR );
+  			$st->bindValue( ":LoginPassword", $data['password'], \PDO::PARAM_STR );
+  			$st->bindValue( ":PhPassword", $data['phone_password'], \PDO::PARAM_STR );
   			$st->bindValue( ":PhLoginId", $new_phloginid, \PDO::PARAM_INT );
-  			$st->bindValue( ":Services", $services, \PDO::PARAM_INT );
-  			$st->bindValue( ":token", $data->stripe_token, \PDO::PARAM_INT );
-  			$st->bindValue( ":Type", 1, \PDO::PARAM_INT ); // Type=1, Pay as you go sa tokenom
+  			$st->bindValue( ":Services", $services, \PDO::PARAM_STR );
+  			$st->bindValue( ":token", $data['stripe_token'], \PDO::PARAM_INT );
+  			$st->bindValue( ":Type", $data['type'], \PDO::PARAM_INT ); // Type=1, Pay as you go sa tokenom
   			$success = $st->execute();
   			parent::disconnect( $conn );
   			if($success){
-  				$authCustomer = self::authenticate($data->email, $data->password);
+  				$authCustomer = self::authenticate($data['email'], $data['password']);
   				return $authCustomer;
   			} else {
   				return false;
   			}
 	    } catch ( \PDOException $e ) {
 	      parent::disconnect( $conn );
+	      return false;
+	      exit;
+	    }
+  	}
+
+  	public static function update($data){
+  		$conn = parent::connect();
+  		$services = implode(":", $data['services']);
+		$sql = "UPDATE " . getenv('TBL_CUSTLOGIN') . " SET FName = :FName, LName = :LName, Email = :Email, Phone = :Phone , LoginPassword = :LoginPassword, PhPassword = :PhPassword, Services = :Services WHERE CustomerID= :CustomerID";
+		try {
+	    	$st = $conn->prepare( $sql );
+  			$st->bindValue( ":FName", $data['fname'], \PDO::PARAM_STR );
+  			$st->bindValue( ":LName", $data['lname'], \PDO::PARAM_STR );
+  			$st->bindValue( ":Email", $data['email'], \PDO::PARAM_STR );
+  			$st->bindValue( ":Phone", $data['phone'], \PDO::PARAM_STR );
+  			$st->bindValue( ":LoginPassword", $data['password'], \PDO::PARAM_STR );
+  			$st->bindValue( ":PhPassword", $data['phone_password'], \PDO::PARAM_STR );
+  			$st->bindValue( ":CustomerID", $data['CustomerID'], \PDO::PARAM_INT );
+  			$st->bindValue( ":Services", $services, \PDO::PARAM_STR );
+  			$success = $st->execute();
+  			parent::disconnect( $conn );
+  			if($success){
+  				return true;
+  				// $authCustomer = self::authenticate($data['email'], $data['password']);
+  				// return $authCustomer;
+  			} else {
+  				return false;
+  			}
+	    } catch ( \PDOException $e ) {
+	      parent::disconnect( $conn );
+	      // return $e->getMessage();
 	      return false;
 	      exit;
 	    }

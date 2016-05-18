@@ -103,3 +103,9 @@ echo $card['PhPassword'];
 	//   echo "There are $tblCnt tables<br />\n";
 	//   echo "Success";
 	// }
+
+//Works
+// \Stripe\Stripe::setApiKey('sk_test_AM1QoITYp8ZBFgSkRY4Fruby');
+// $myCard = array('number' => '4242424242424242', 'exp_month' => 8, 'exp_year' => 2018);
+// $charge = \Stripe\Charge::create(array('card' => $myCard, 'amount' => 2000, 'currency' => 'usd'));
+// echo $charge;

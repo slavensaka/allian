@@ -225,6 +225,67 @@ function newencrypt($data, $key)
     return $data;
 }
 
+function encryptForRegister(){
+	$password = "McdUgy2z9UR4vppZUg";
+	$cryptor = new \RNCryptor\Encryptor();
+	$data = '{
+				"fname": "Slaven",
+				"lname": "Sakacic",
+				"email": "slavensakacic@gmail.com",
+				"phone": "773-732-6534",
+				"password": "12345",
+				"phone_password": "45435",
+				"services": [
+				"telephonic_interpreting",
+				"translation_services",
+				"onsite_interpreting",
+				"transcription_services"
+				],
+				"stripe_token": "cus_6nNFDRVGjd1wUe",
+				"type": "1"
+			}';
+	return $base64Encrypted = $cryptor->encrypt($data, $password);
+}
+
+function encryptForForgot(){
+	$password = "McdUgy2z9UR4vppZUg";
+	$cryptor = new \RNCryptor\Encryptor();
+	$data = '{ "email": "slavensakacic@gmail.com" }';
+	return $base64Encrypted = $cryptor->encrypt($data, $password);
+}
+
+function encryptForUpdate(){
+	$password = "McdUgy2z9UR4vppZUg";
+	$cryptor = new \RNCryptor\Encryptor();
+	$CustomerID = 760;
+	$data = '{
+				"CustomerID": 760,
+				"fname": "Novi",
+				"lname": "Novinko",
+				"email": "slaven@example.com",
+				"phone": "111-111-1111",
+				"password": "54321",
+				"phone_password": "11111",
+				"services": [
+				"telephonic_interpreting",
+				"translation_services",
+				"onsite_interpreting"
+				]
+			}';
+	return $base64Encrypted = $cryptor->encrypt($data, $password);
+}
+
+function decryptRN(){
+	$base64Encrypted = "AwEEKRLMcyhO09cWaLbnmh176cPujZwy9as6Ch23C7Nq2HJjcqqAmBJp6jHWXTnPrG93mrUxfwbPlop1XMjwwR1IjS5ovH+mRurjStZLAvV7ru36qDGOlI3EEQ9oWh9J3r+Er5FjOgRLKivGIeulIJc0TgdDPXWBwqo0C3ul5ZBKzw==";
+
+	$password = "McdUgy2z9UR4vppZUg";
+	$cryptor = new \RNCryptor\Decryptor();
+	$plaintext = $cryptor->decrypt($base64Encrypted, $password);
+	echo "Base64 Encrypted:\n$base64Encrypted\n\n";
+	echo "Plaintext:\n$plaintext\n\n";
+}
+// echo encryptForUpdate();
+echo decryptRN();
 /*
  * PHP mcrypt - Complete encryption and decryption of data
  */

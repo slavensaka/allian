@@ -36,7 +36,6 @@ $klein->respond(function ($request, $response, $service, $app) use ($klein) {
 		$custLogin = new CustLoginController();
 		// // if(is_callable(array($custLogin, 'testing'))) echo "JE"; else echo "Nije";
 
-
 		$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
 		$klein->respond('POST', '/register', array($custLogin, 'postRegister'));
 
@@ -49,34 +48,10 @@ $klein->respond(function ($request, $response, $service, $app) use ($klein) {
 
 		$klein->respond('POST', '/updateProfile', array($custLogin, 'updateProfile'));
 
-		$klein->respond('/enc', function ($request) {
-		  	$password = getenv("CRYPTOR");
-			$plaintext = '{"email": "slavensakacic@gmail.com","password": "12345"}';
-			$cryptor = new \RNCryptor\Encryptor();
-			$base64Encrypted = $cryptor->encrypt($plaintext, $password);
-			echo $base64Encrypted;
-		});
-
-		$klein->respond('/dec', function ($request) {
-		  	$password = getenv("CRYPTOR");
-		$base64Encrypted = "AwEOlU/3vEDHV55cDLQ+heq9YX/CRUFVs/yjJ064vKbL0pHKK8yUXSTuAaMh7TJbmk0lmFKr0F5QASAwUFyvOXahZr8d6OM3IsQhrCz+MACpNY7T4j61D1mXU21EBiNCVxCl5ExRw4w6KY09fFl/t2aFIRoFZrmPMadowogSCIoR4w2LuwchLylVNFYqDCWRt0Ekmob8OwvxEnAR0RUEGhi3B8YL51uzedk7jGcFWJG0C0xSxTuaUNUItbt7OI6K5dA=";
-
-		$cryptor = new \RNCryptor\Decryptor();
-		$plaintext = $cryptor->decrypt($base64Encrypted, $password);
-		echo "Base64 Encrypted:\n$base64Encrypted\n\n";
-		echo "Plaintext:\n$plaintext\n\n";
-		});
-
 	});
 
 $klein->dispatch();
 
-// echo base64_encode("axqF3RBxut"); //YXhxRjNSQnh1dA==
 // include('gmail.php');
 // include('connection.php'); // FOR TESTING
 
-//Works
-// \Stripe\Stripe::setApiKey('sk_test_AM1QoITYp8ZBFgSkRY4Fruby');
-// $myCard = array('number' => '4242424242424242', 'exp_month' => 8, 'exp_year' => 2018);
-// $charge = \Stripe\Charge::create(array('card' => $myCard, 'amount' => 2000, 'currency' => 'usd'));
-// echo $charge;
