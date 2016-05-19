@@ -2,6 +2,8 @@
 
 namespace Allian\Models;
 
+use Database\DataObject;
+
 class LangList extends DataObject {
 
 	protected $data = array(
@@ -11,4 +13,5 @@ class LangList extends DataObject {
 	    "TierType" => "",
 	    "TierType_Interpret" => "",
 	);
+
 }

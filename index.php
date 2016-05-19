@@ -4,6 +4,7 @@ require __DIR__ . '/vendor/autoload.php';
 use Allian\Http\Controllers\Controller;
 use Allian\Http\Controllers\CustLoginController;
 use Allian\Http\Controllers\CallIdentifyController;
+use Allian\Http\Controllers\LangPairController;
 
 $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
@@ -34,6 +35,7 @@ $klein->respond(function ($request, $response, $service, $app) use ($klein) {
 
 	$klein->with('/testgauss', function() use ($klein){
 		$custLogin = new CustLoginController();
+
 		// // if(is_callable(array($custLogin, 'testing'))) echo "JE"; else echo "Nije";
 
 		$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
@@ -47,6 +49,10 @@ $klein->respond(function ($request, $response, $service, $app) use ($klein) {
 		$klein->respond('POST', '/telephonicAccess', array($custLogin, 'postTelephonicAccess'));
 
 		$klein->respond('POST', '/updateProfile', array($custLogin, 'updateProfile'));
+
+
+		$langPair = new LangPairController();
+		$klein->respond('GET', '/langPairTrans', array($langPair, 'langPairTrans'));
 
 	});
 

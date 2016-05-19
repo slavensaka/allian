@@ -13,6 +13,9 @@ use RNCryptor\Encryptor;
 use RNCryptor\Decryptor;
 
 class CustLoginController extends Controller {
+
+
+
 	 /**
      * @ApiDescription(section="Login", description="Authenticate a user and return a jwt token with information, and data encrypted values. Store the token in the app, this is the auth token needed througt the app(other routes require this correct token)")
      * @ApiMethod(type="post")
@@ -67,13 +70,8 @@ class CustLoginController extends Controller {
      * @ApiDescription(section="Register", description="Register a new user in the database")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/register")
-<<<<<<< HEAD
      * @ApiBody(sample="{ 'data': 'AwEPyQdyrx7LhlEdm9GylvlDftbe1MF6zt/gN04II3VldkFcTSoG72PLs87SRTU/m91E+MeXdthJzYB4/AwZ4KrAluli10YBk/3LlB7sAa0dzu+0wudujy68uAio+3VgSTnqKKIeWo77nivalHTXhrhUpay3DbLNOLeU9Svx91vTH2BlI5cIuwLlmnUvExV0OSo/1CSBL9YB7Ep/b9hvCOU969HuepCA28ekGrI8y4NyyHazXcdubgxttrHz2veyPk83m5iywDWK56i6JEibml1ZNwwuNw6WuOJPrySBPrMJs5oR/wog3MKJc+reGhCWSpTOeJ9i2N2mGWtZYbzGMOUgH7q3NnmLS2KbReNGdk/C4zOLzliB0dzENIO43Jkrb+WUmq3Lv49HwUF/51lumd67WBJrmJQIdZT0J0XmBRvCSZJ9xWLUICSRnyC+uDo59CwXj0/6s03wr02n604CbF8jWRwe29NLTwuweHEPyFwbO/S6v3V2B1xvfqWIXp3bHJjrhICuqp/2oTziolQURQpcoXI9VFUBRyRiaF4RzYbM/46Tfx29QKtVp8MvYe8R3xVpGkoyb1AfkReMc3IsjqnH'}")
      * @ApiParams(name="data", type="object", nullable=false, description="Json must contain fname, lname, email, phone, password, phone_password, services, stripe_token.")
-=======
-     * @ApiBody(sample="{ 'data': ''}")
-     * @ApiParams(name="data", type="object", nullable=false, description="Json must contain fname, lname, email, phone, password, phone_password, services, stripe_token. Example in body in the token. Check the contents of this token at https://jwt.io website by putting token in the Encoded input field.")
->>>>>>> 1e069349af4e228193042d7aed40c7d92bebb0ba
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="object", sample="{'data': 'AwHLdqaPYWUqunsX7Q7xnJ9ac0UzPgFo95bWo7kxZctQHXT6aqrgp1DuoEc7+MmpW/zFoj7BICGqcoBU+s49icpz2dTOQz14klgx/x+JQlU1Sp7fJOts1LEz7+takbBmHxmhuK3ulnxrf4BlpPXluNgg2y91HQ4AmqPfGKilkKWIilMRUFFzNoFVuQEideWzE8Q=' }")
      * @ApiReturn(type="object", sample="{'data': 'AwFoZ4u4exWaV9YdN6S90zKdMKITd8Zq/mjlW4OLLQ7uiHCFGOrRwUe2QlByqsYtyTNJ/TzAiB67Zm20S9H7mFhZApmxsyB6VZdw39B/RlxLjYpuOUZSDf+ebGrGSF6+0QnJytAEKdxHcufbziBpm+epD/fVWgwCTUhXEDonYwwhQAIKfZ/YBjllD5MniOfMusg=' }")
@@ -140,13 +138,19 @@ class CustLoginController extends Controller {
 
 
 	 /**
-     * @ApiDescription(section="UpdateProfile", description="Update customers profile information by giving the CustomerID and new info.")
+     * @ApiDescription(section="updateProfile", description="Update customers profile information by giving the CustomerID and new info.")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/updateProfile")
-     * @ApiBody(sample="{ 'data': 'AwF23aZYlcGvGpC3ZmL3aFDovAzPxxY23LdnhjTxOKMg3Vi65v16U2IQSp+aHI+txNPGnkdfOkc1IyPNDIWrbre3Po9b5rA6+fLpDXsQQ99vvFyc/dFhGEbNX2qIktqDFR21qj+TtGOGRbEGhOdj/lfzZwBU+PS7viTEYT6jdWw6JEPIpyUVFzS5lijj9M5LbhwjS2DzWN41LJmnh3syIVQU01VnV6Mj5RX4x/DpGBvO8RMnMhF37n1Z6btOXBI6AEGCqwKVywfViX8fw0jpKPk6Tjh69sHxq6HKL/MV8qjIAkX78vA2aVL5kENP5cJJVBctfof+E7YblvaUPZtNnKBoGyQybtqnwHzv2Vq3P8OimlAZqIEwChxGIajH0jH3HJPGgc1xIhhiRXmvWZB/ebQXWGBrHzctdK3mtKZ2DFJseBqYklhcSfyKKOjjXKeCwYfantSvNbgAw3XmashuIClQ7pL/QgICbi3/WqRYJisdIQ=='}")
+     * @ApiBody(sample="{ 'data': 'AwEPyQdyrx7LhlEdm9GylvlDftbe1MF6zt/gN04II3VldkFcTSoG72PLs87SRTU/m91E+MeXdthJzYB4/AwZ4KrAluli10YBk/3LlB7sAa0dzu+0wudujy68uAio+3VgSTnqKKIeWo77nivalHTXhrhUpay3DbLNOLeU9Svx91vTH2BlI5cIuwLlmnUvExV0OSo/1CSBL9YB7Ep/b9hvCOU969HuepCA28ekGrI8y4NyyHazXcdubgxttrHz2veyPk83m5iywDWK56i6JEibml1ZNwwuNw6WuOJPrySBPrMJs5oR/wog3MKJc+reGhCWSpTOeJ9i2N2mGWtZYbzGMOUgH7q3NnmLS2KbReNGdk/C4zOLzliB0dzENIO43Jkrb+WUmq3Lv49HwUF/51lumd67WBJrmJQIdZT0J0XmBRvCSZJ9xWLUICSRnyC+uDo59CwXj0/6s03wr02n604CbF8jWRwe29NLTwuweHEPyFwbO/S6v3V2B1xvfqWIXp3bHJjrhICuqp/2oTziolQURQpcoXI9VFUBRyRiaF4RzYbM/46Tfx29QKtVp8MvYe8R3xVpGkoyb1AfkReMc3IsjqnH'}")
      * @ApiParams(name="data", type="object", nullable=false, description="Json must contain CustomerID, fname, lname, email, phone, password, phone_password, services. Example in body in the data.")
+     @ApiParams(name="token", type="object", nullable=false, description="Autentication token for users autentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
-     * @ApiReturn(type="object", sample="{'data': 'AwEEKRLMcyhO09cWaLbnmh176cPujZwy9as6Ch23C7Nq2HJjcqqAmBJp6jHWXTnPrG93mrUxfwbPlop1XMjwwR1IjS5ovH+mRurjStZLAvV7ru36qDGOlI3EEQ9oWh9J3r+Er5FjOgRLKivGIeulIJc0TgdDPXWBwqo0C3ul5ZBKzw==' }")
+     * @ApiReturn(type="object", sample="{
+		'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjM1NTk4MjYsImp0aSI6IkRzWXFVOUlhWThmZmxQTmpjUEE2Q054eEZ0Qks2THRTUGl1cmtjalZ6a2s9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDYzNTU5ODI2LCJleHAiOjE0NjQ3Njk0MjYsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.e8gHW54nu_NNLlfy2g9CM53I24gxBeZoj1_-A8Gv5rNawNrNg-rBPl-6jFGFbY2JgvevIPp7Dz7s4DjWeSdaWA',
+		'data': 'AwFxTI/ybexQc7vI6zv4DsWY+NG+DhhBKwVTCmZZ8ZR5NEMjV+YDecggZmZ6ZVk6TgfLiuP5Gvt/XhN7PgmNipT10qZr58QwXK/zh1AI4Vwm2GwxNo++oeufZtSHPXU9FPyl9RMWjjzTCHM9qxW4nyipd7xK4hSKngfa+kdBypiKnapkpSpgW7wgRw4n7zH4w8iINo681xrBTZF92VQbEgI52Hg6jIGzvUG7tMY4CNLggJdlurWjvDmZhCYw3e9ybO6mymIQ8gGqEOVy4/0z7W+g'
+		}")
+		@ApiReturn(type="object", sample="{'token': null,'data': 'AwGFt1HkBpJ/8ZM6vTANUv3xikBid1ayJIIA0dggksZKNyYnvSYtRo80feStp08eZTjVEM3ruql7rmnFqyjgZR6U+kucKkn7BoxxB9/JNzl+yBuxVxem06vyROD6S7mKp/l2yN69V8SbGvOxAOzH1jgr201yxGkh2QbrrS+LVfazb7SaXkzKJEe1e3Kmo+Zq5f4='
+		}")
      */
 	public function updateProfile($request, $response, $service, $app){
 		if($request->token){ //editmain.php i editmainadd.php
@@ -161,40 +165,41 @@ class CustLoginController extends Controller {
 		    } catch(BeforeValidException $e){
 		   		return $response->json($this->errorJson($e->getMessage(), 'before_valid'));
 		    }
-		}
 
-		// Decrypt input data
-		$cr_password = getenv("CRYPTOR");
-		$cryptor = new \RNCryptor\Decryptor();
-		$plaintext = $cryptor->decrypt($request->data, $cr_password);
-		$data = json_decode($plaintext, true);
 
-		// Validate input data
-		$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
-		$service->validate($data['fname'], 'Error: no first name is present.')->isLen(3,200);
-		$service->validate($data['lname'], 'Error: no last name is present.')->isLen(3,200);
-		$service->validate($data['email'], 'Invalid email address.')->isLen(3,200)->isEmail();
-		$service->validate($data['phone'], 'Invalid phone number.')->isLen(3,200);
-		$service->validate($data['password'], 'Error: no password present.')->isLen(3,200);
-		$service->validate($data['phone_password'], 'Error: no phone password present.')->isLen(3,200)->isInt();
+			// Decrypt input data
+			$cr_password = getenv("CRYPTOR");
+			$cryptor = new \RNCryptor\Decryptor();
+			$plaintext = $cryptor->decrypt($request->data, $cr_password);
+			$data = json_decode($plaintext, true);
 
-		// Try to update customer with inputed data
-		$updated = CustLogin::update($data);
-		if(!$updated){
-			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Profile not edited. Try Again. Please contact Admin if problem persists")));
-     		return $response->json(array('data' => $base64Encrypted));
-		}
+			// Validate input data
+			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+			$service->validate($data['fname'], 'Error: no first name is present.')->isLen(3,200);
+			$service->validate($data['lname'], 'Error: no last name is present.')->isLen(3,200);
+			$service->validate($data['email'], 'Invalid email address.')->isLen(3,200)->isEmail();
+			$service->validate($data['phone'], 'Invalid phone number.')->isLen(3,200);
+			$service->validate($data['password'], 'Error: no password present.')->isLen(3,200);
+			$service->validate($data['phone_password'], 'Error: no phone password present.')->isLen(3,200)->isInt();
 
-		// Format response
-		$jsonArray = array();
-		$jsonArray['status'] = 1;
-		$jsonArray['userMessage'] = "Profile edited successfully";
+			// Try to update customer with inputed data
+			$updated = CustLogin::update($data);
+			if(!$updated){
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Profile not edited. Try Again. Please contact Admin if problem persists")));
+	     		return $response->json(array('data' => $base64Encrypted));
+			}
 
-		// Format data for encryption
-		$base64Encrypted = $this->encryptValues(json_encode($jsonArray));
+			// Format response
+			$jsonArray = array();
+			$jsonArray['status'] = 1;
+			$jsonArray['userMessage'] = "Profile edited successfully";
 
-		// Return as json token and encrypted data
-     	return $response->json(array('data' => $base64Encrypted));
+			// Format data for encryption
+			$base64Encrypted = $this->encryptValues(json_encode($jsonArray));
+
+			// Return as json token and encrypted data
+	     	return $response->json(array('data' => $base64Encrypted));
+     	}
 	}
 
 	/**
@@ -222,61 +227,61 @@ class CustLoginController extends Controller {
 		   } catch(BeforeValidException $e){
 		   		return $response->json($this->errorJson($e->getMessage(), 'before_valid'));
 		   }
-		} // PUT AT END TODO
 
-		//Decrypt input data
-		$password = getenv("CRYPTOR");
-		$cryptor = new \RNCryptor\Decryptor();
-		$plaintext = $cryptor->decrypt($request->data, $password);
-		$data = json_decode($plaintext, true);
+			//Decrypt input data
+			$password = getenv("CRYPTOR");
+			$cryptor = new \RNCryptor\Decryptor();
+			$plaintext = $cryptor->decrypt($request->data, $password);
+			$data = json_decode($plaintext, true);
 
-		// Validate input data
-		$service->validate($data['email'], 'Please enter a valid email address to retrieve your password.')->isLen(3,200)->isEmail();
+			// Validate input data
+			$service->validate($data['email'], 'Please enter a valid email address to retrieve your password.')->isLen(3,200)->isEmail();
 
-		// Check if email is found in the database
-		$CustomerID = CustLogin::checkEmail($data['email']);
+			// Check if email is found in the database
+			$CustomerID = CustLogin::checkEmail($data['email']);
 
-		// Error if no email was found in the database
-		if(!$CustomerID){
-			$errorJson = $this->errorJson("Email address does not exist. Please enter correct email address to retrieve your password.");
-			return $response->json($errorJson);
-		}
+			// Error if no email was found in the database
+			if(!$CustomerID){
+				$errorJson = $this->errorJson("Email address does not exist. Please enter correct email address to retrieve your password.");
+				return $response->json($errorJson);
+			}
 
-		// Retrieve the customer
-		$customer = CustLogin::getCustomer($CustomerID['CustomerID']);
+			// Retrieve the customer
+			$customer = CustLogin::getCustomer($CustomerID['CustomerID']);
 
-		// Error if customer with CustomerID was not found in the database
-		if(!$customer){
-			$errorJson = $this->errorJson("No user found with supplied email.");
-			return $response->json($errorJson);
-		}
+			// Error if customer with CustomerID was not found in the database
+			if(!$customer){
+				$errorJson = $this->errorJson("No user found with supplied email.");
+				return $response->json($errorJson);
+			}
 
-		// Generate a radnom password for the customer to email and store in the database
-		$pass = $this->generatePassword(); // Generate new pass
+			// Generate a radnom password for the customer to email and store in the database
+			$pass = $this->generatePassword(); // Generate new pass
 
-		// Send an email with the new pass to the user
-		$sentEmail = $this->newPassEmail($data['email'], $customer->getValueEncoded('FName'), $pass);
+			// Send an email with the new pass to the user
+			$sentEmail = $this->newPassEmail($data['email'], $customer->getValueEncoded('FName'), $pass);
 
-		// Error if sending of email failed
-		if(!$sentEmail){
-			$errorJson = $this->errorJson("Error: Problem sending email to customer.");
-			return $response->json($errorJson);
-		}
+			// Error if sending of email failed
+			if(!$sentEmail){
+				$errorJson = $this->errorJson("Error: Problem sending email to customer.");
+				return $response->json($errorJson);
+			}
 
-		// Insert the random generated password into the database for customer with CustomerID
-		$insertPass = CustLogin::insertPass($pass, $CustomerID['CustomerID']);
+			// Insert the random generated password into the database for customer with CustomerID
+			$insertPass = CustLogin::insertPass($pass, $CustomerID['CustomerID']);
 
-		// Error while inserting pass into database
-		if(!$insertPass){
-			$errorJson = $this->errorJson("Couldn't update users password in database.");
-			return $response->json($errorJson);
-		}
+			// Error while inserting pass into database
+			if(!$insertPass){
+				$errorJson = $this->errorJson("Couldn't update users password in database.");
+				return $response->json($errorJson);
+			}
 
-		// Format data for encryption
-		$base64Encrypted = $this->encryptValues(json_encode($this->emailValues($customer)));
+			// Format data for encryption
+			$base64Encrypted = $this->encryptValues(json_encode($this->emailValues($customer)));
 
-		// Return as json token and encrypted data
-     	return $response->json(array('data' => $base64Encrypted));
+			// Return as json token and encrypted data
+	     	return $response->json(array('data' => $base64Encrypted));
+	     }
 	}
 
 
@@ -299,7 +304,7 @@ class CustLoginController extends Controller {
      */
 	public function postTelephonicAccess($request, $response, $service, $app){
 		// ENcode and decode customerID with secret key while transfer for secutiry TODO
-				if($request->token){
+		if($request->token){
 			try{
 				$jwt = $request->token;
 				$secretKey = base64_decode(getenv('jwtKey'));

@@ -64,16 +64,27 @@ $dbhost="localhost";
 // );
 
 // $dbh = new PDO($dsn, $username, $password, $options);
-
-
+$name = 'Spanish';
 $con = mysqli_connect("localhost", "root", "", "allian10_abs_linguist_portal");
-$card_detail_query = "SELECT * from CustLogin WHERE CustomerID= '$CustomerID' and LoginPassword= '$Password' ";
+// $query = "SELECT LangId FROM langlist WHERE LangName='$name'";
 
-$card_detail=mysqli_query($con, $card_detail_query);
 
-$card=mysqli_fetch_assoc($card_detail);
+$langID = 1;
+$query ="SELECT DISTINCT langpair_trans.Lang2 AS lang2, langlist.LangName AS langName FROM langpair_trans LEFT JOIN langlist ON langpair_trans.Lang2 = langlist.LangId WHERE langpair_trans.Lang1 = '$langID' AND Approved = 1 AND Lang2 IS NOT NULL AND Lang2 <> 'N/A' ORDER BY langlist.LangName";
 
-echo $card['PhPassword'];
+
+
+
+	while($row = mysqli_fetch_array($con,$query))
+
+			{
+
+				var_dump($result["langName"]);
+
+			}
+
+
+
 	// $connect = mysql_connect($dbhost, $dbuser, $dbpass) or die("Unable to Connect to '$dbhost'");
 	// mysql_select_db($dbname) or die("Could not open the db '$dbname'");
 	// $test_query = "SHOW TABLES FROM $dbname";

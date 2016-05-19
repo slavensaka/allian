@@ -257,9 +257,9 @@ function encryptForForgot(){
 function encryptForUpdate(){
 	$password = "McdUgy2z9UR4vppZUg";
 	$cryptor = new \RNCryptor\Encryptor();
-	$CustomerID = 760;
+	$CustomerID = 721;
 	$data = '{
-				"CustomerID": 760,
+				"CustomerID": 721,
 				"fname": "Novi",
 				"lname": "Novinko",
 				"email": "slaven@example.com",
@@ -275,17 +275,44 @@ function encryptForUpdate(){
 	return $base64Encrypted = $cryptor->encrypt($data, $password);
 }
 
+function encryptForLangPairTrans(){
+	$password = "McdUgy2z9UR4vppZUg";
+	$cryptor = new \RNCryptor\Encryptor();
+	$CustomerID = 721;
+	$data = '{
+				"lang": 721,
+				"fname": "Novi",
+				"lname": "Novinko",
+				"email": "slaven@example.com",
+				"phone": "111-111-1111",
+				"password": "54321",
+				"phone_password": "11111",
+				"services": [
+				"telephonic_interpreting",
+				"translation_services",
+				"onsite_interpreting"
+				]
+			}';
+	return $base64Encrypted = $cryptor->encrypt($data, $password);
+}
+
+
 function decryptRN(){
-	$base64Encrypted = "AwEEKRLMcyhO09cWaLbnmh176cPujZwy9as6Ch23C7Nq2HJjcqqAmBJp6jHWXTnPrG93mrUxfwbPlop1XMjwwR1IjS5ovH+mRurjStZLAvV7ru36qDGOlI3EEQ9oWh9J3r+Er5FjOgRLKivGIeulIJc0TgdDPXWBwqo0C3ul5ZBKzw==";
+	$base64Encrypted = "AwEpDBFkKUA2WKqf5QRs+KNVWdiohvtc+HF6+Nd6HRdPyH7kv2auKWtA+Z6vemyeROI7PqKDxBwt2yNdRW8xAQaU5O7aAhNtRTgzjEJX4SQ9bIjdvqxCJQB70/SKZ+MjbhE1ZK8OWm9amkRg8S7UdFtg";
 
 	$password = "McdUgy2z9UR4vppZUg";
 	$cryptor = new \RNCryptor\Decryptor();
 	$plaintext = $cryptor->decrypt($base64Encrypted, $password);
-	echo "Base64 Encrypted:\n$base64Encrypted\n\n";
-	echo "Plaintext:\n$plaintext\n\n";
+	echo $plaintext;
 }
-// echo encryptForUpdate();
+echo encryptForLangPairTrans();
 echo decryptRN();
+
+//AUTH TOKEN LOGIN
+// eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjM1NzMxNjcsImp0aSI6IiszekxzcDJzYW5DZk9LYzFSVDRJck1OSlZIR1RjU2E5Nm5ZaUZWZGttYnc9IiwiaXNzIjoiYWxsaWFudHJhbnNsYXRlLmNvbSIsIm5iZiI6MTQ2MzU3MzE2NywiZXhwIjoxNDY0NzgyNzY3LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.Hyfga2R0F5O5trEHZncac_yRJNgY4g5RzkPV2eXjGFck-5Q14ziUQaE010MlF5Ce1QNTF1uJh2YZVloAZR--zw
+
+
+
 /*
  * PHP mcrypt - Complete encryption and decryption of data
  */
