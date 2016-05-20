@@ -14,10 +14,8 @@ use RNCryptor\Decryptor;
 
 class CustLoginController extends Controller {
 
-
-
 	 /**
-     * @ApiDescription(section="Login", description="Authenticate a user and return a jwt token with information, and data encrypted values. Store the token in the app, this is the auth token needed througt the app(other routes require this correct token)")
+     * @ApiDescription(section="Login", description="Authenticate a user and return a jwt token with information, and data encrypted values. Store the token in the app, this is the auth token needed througth the app(other routes require this correct token)")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/login")
      * @ApiBody(sample="{ 'data': 'AwEPyQdyrx7LhlEdm9GylvlDftbe1MF6zt/gN04II3VldkFcTSoG72PLs87SRTU/m91E+MeXdthJzYB4/AwZ4KrAluli10YBk/3LlB7sAa0dzu+0wudujy68uAio+3VgSTnqKKIeWo77nivalHTXhrhUpay3DbLNOLeU9Svx91vTH2BlI5cIuwLlmnUvExV0OSo/1CSBL9YB7Ep/b9hvCOU969HuepCA28ekGrI8y4NyyHazXcdubgxttrHz2veyPk83m5iywDWK56i6JEibml1ZNwwuNw6WuOJPrySBPrMJs5oR/wog3MKJc+reGhCWSpTOeJ9i2N2mGWtZYbzGMOUgH7q3NnmLS2KbReNGdk/C4zOLzliB0dzENIO43Jkrb+WUmq3Lv49HwUF/51lumd67WBJrmJQIdZT0J0XmBRvCSZJ9xWLUICSRnyC+uDo59CwXj0/6s03wr02n604CbF8jWRwe29NLTwuweHEPyFwbO/S6v3V2B1xvfqWIXp3bHJjrhICuqp/2oTziolQURQpcoXI9VFUBRyRiaF4RzYbM/46Tfx29QKtVp8MvYe8R3xVpGkoyb1AfkReMc3IsjqnH'}")

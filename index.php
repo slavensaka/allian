@@ -5,6 +5,7 @@ use Allian\Http\Controllers\Controller;
 use Allian\Http\Controllers\CustLoginController;
 use Allian\Http\Controllers\CallIdentifyController;
 use Allian\Http\Controllers\LangPairController;
+use Allian\Http\Controllers\StripeController;
 
 $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
@@ -54,6 +55,8 @@ $klein->respond(function ($request, $response, $service, $app) use ($klein) {
 		$langPair = new LangPairController();
 		$klein->respond('GET', '/langPairTrans', array($langPair, 'langPairTrans'));
 
+		$stripe = new StripeController();
+		$klein->respond('POST', '/updateStripe', array($stripe, 'updateStripe'));
 	});
 
 $klein->dispatch();
