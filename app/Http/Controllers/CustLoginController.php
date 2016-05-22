@@ -15,29 +15,22 @@ use RNCryptor\Decryptor;
 class CustLoginController extends Controller {
 
 	 /**
-     * @ApiDescription(section="Login", description="Authenticate a user and return a jwt token with information, and data encrypted values. Store the token in the app, this is the auth token needed througth the app(other routes require this correct token)")
+     * @ApiDescription(section="Login", description="Authenticate the customer with his email and password and return a jwt token with expiration date for server side validation of autenticity of customer, also returns a data key thats encrypted with RNCryptor with the data values . <br><b>Store the token in the app, this is the auth token needed througth the app</b>(other routes require this correct token).")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/login")
-     * @ApiBody(sample="{ 'data': 'AwEPyQdyrx7LhlEdm9GylvlDftbe1MF6zt/gN04II3VldkFcTSoG72PLs87SRTU/m91E+MeXdthJzYB4/AwZ4KrAluli10YBk/3LlB7sAa0dzu+0wudujy68uAio+3VgSTnqKKIeWo77nivalHTXhrhUpay3DbLNOLeU9Svx91vTH2BlI5cIuwLlmnUvExV0OSo/1CSBL9YB7Ep/b9hvCOU969HuepCA28ekGrI8y4NyyHazXcdubgxttrHz2veyPk83m5iywDWK56i6JEibml1ZNwwuNw6WuOJPrySBPrMJs5oR/wog3MKJc+reGhCWSpTOeJ9i2N2mGWtZYbzGMOUgH7q3NnmLS2KbReNGdk/C4zOLzliB0dzENIO43Jkrb+WUmq3Lv49HwUF/51lumd67WBJrmJQIdZT0J0XmBRvCSZJ9xWLUICSRnyC+uDo59CwXj0/6s03wr02n604CbF8jWRwe29NLTwuweHEPyFwbO/S6v3V2B1xvfqWIXp3bHJjrhICuqp/2oTziolQURQpcoXI9VFUBRyRiaF4RzYbM/46Tfx29QKtVp8MvYe8R3xVpGkoyb1AfkReMc3IsjqnH'}")
-     * @ApiParams(name="data", type="object", nullable=false, description="Users email & password json object to authenticate")
+     * @ApiBody(sample="{ 'data': 'AwGTfsuNPRIe9flrvJ4VlNhTUraZY67pp5FPPmym+ptwSCHO/jQkN97t5GB364Ac0zfd2dYsWJiXvawzmmCKSQm4OamHp5cMfjtsNirigo6AFJX4izmUgEcRmxx93W79B0DYpCNrtigYQcAPTF7uZKpiROIhXKBQyotWhyVxFXL9jPYXHtYUNa+uhrZ7r4CzIuI='}")
+     * @ApiParams(name="data", type="object", nullable=false, description="Users email & password json object used for authentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
-     * @ApiReturn(type="object", sample="{
-		'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjM1NTk4MjYsImp0aSI6IkRzWXFVOUlhWThmZmxQTmpjUEE2Q054eEZ0Qks2THRTUGl1cmtjalZ6a2s9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDYzNTU5ODI2LCJleHAiOjE0NjQ3Njk0MjYsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.e8gHW54nu_NNLlfy2g9CM53I24gxBeZoj1_-A8Gv5rNawNrNg-rBPl-6jFGFbY2JgvevIPp7Dz7s4DjWeSdaWA',
-		'data': 'AwFxTI/ybexQc7vI6zv4DsWY+NG+DhhBKwVTCmZZ8ZR5NEMjV+YDecggZmZ6ZVk6TgfLiuP5Gvt/XhN7PgmNipT10qZr58QwXK/zh1AI4Vwm2GwxNo++oeufZtSHPXU9FPyl9RMWjjzTCHM9qxW4nyipd7xK4hSKngfa+kdBypiKnapkpSpgW7wgRw4n7zH4w8iINo681xrBTZF92VQbEgI52Hg6jIGzvUG7tMY4CNLggJdlurWjvDmZhCYw3e9ybO6mymIQ8gGqEOVy4/0z7W+g'
-		}")
-		@ApiReturn(type="object", sample="{'token': null,'data': 'AwGFt1HkBpJ/8ZM6vTANUv3xikBid1ayJIIA0dggksZKNyYnvSYtRo80feStp08eZTjVEM3ruql7rmnFqyjgZR6U+kucKkn7BoxxB9/JNzl+yBuxVxem06vyROD6S7mKp/l2yN69V8SbGvOxAOzH1jgr201yxGkh2QbrrS+LVfazb7SaXkzKJEe1e3Kmo+Zq5f4='
+     * @ApiReturn(type="object", sample="{'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjM3ODQ3OTgsImp0aSI6InlMcG1ORWhcL0JDQ1l0MkhBeUtqT0NWVWMwSDF6ck5vdFE0UEJiMWVicHNjPSIsImlzcyI6ImxvY2FsaG9zdCIsIm5iZiI6MTQ2Mzc4NDc5OCwiZXhwIjoxNDY0OTk0Mzk4LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.W7j7_NnUcTjsnvTU_pKMMTgJlQeP6pWvn9q7hwNZXStzc4MOm3Vgr7_7dvr-Boj5W-HWfqRelcFf8Rrao2Mz8A', 'data': 'AwGTanQjtgGJWgWHL1plL/j664tWA6W1atWNUo8QyiuuOdnwLE+NP/9bHQqhkyNttLTN5LGoCtuc59yaWDsn/k1IJJLkezVO/FZdQADjhbqYW5bUCXCntjWN3CkrI8JswcSbgFjpYhfrSmy4elc4KNSB0FD7NpH4KDIWQDxNQbXStReUodOeQXmuAHOwKejkf1Lf7qlUCwJsnvmh07UwKGwdN625xrCLB3dZxe60IYNcJcpvblVgI7NIsR4NsGndrkZU4XqVUt2DhlQhJjuPEr3U1Fp9ih10aWj4lUqq9t43jw=='
 		}")
      */
 	public function postLogin($request, $response, $service, $app) {
 		//Decrypt input data
-		$cr_password = getenv("CRYPTOR");
-		$cryptor = new \RNCryptor\Decryptor();
-		$plaintext = $cryptor->decrypt($request->data, $cr_password);
-		$data = json_decode($plaintext, true);
+		$data = $this->decryptValues($request->data);
 
 		// Validate input data
-		$service->validate($data['email'], 'Invalid email address')->isLen(3,200)->isEmail();
-		$service->validate($data['password'], 'Error: no password present')->notNull();
+		$service->validate($data['email'], 'Invalid email address given.')->isLen(3,200)->isEmail();
+		$service->validate($data['password'], 'No password is present.')->notNull();
     	$email = $data['email'];
     	$password = $data['password'];
 
@@ -76,9 +69,9 @@ class CustLoginController extends Controller {
      */
 	public function postRegister($request, $response, $service, $app) {
 
-		$password = getenv("CRYPTOR");
-		$cryptor = new \RNCryptor\Decryptor();
-		$plaintext = $cryptor->decrypt($request->data, $password);
+		// $password = getenv("CRYPTOR");
+		// $cryptor = new \RNCryptor\Decryptor();
+		// $plaintext = $cryptor->decrypt($request->data, $password);
 		// TODO dodati Type polje [0,1,2] 0-?, 1-pay-as-you-go, mijenja se. 2-fixan, NULL polje.
 		// if($request->token){
 		// 	try{
@@ -95,10 +88,7 @@ class CustLoginController extends Controller {
 		// }
 
 		//Decrypt input data
-		$password = getenv("CRYPTOR");
-		$cryptor = new \RNCryptor\Decryptor();
-		$plaintext = $cryptor->decrypt($request->data, $password);
-		$data = json_decode($plaintext, true);
+		$data = $this->decryptValues($request->data);
 
 		// Validate input data
 		$service->validate($data['fname'], 'Error: no first name is present.')->isLen(3,200)->notNull();
@@ -136,40 +126,28 @@ class CustLoginController extends Controller {
 
 
 	 /**
-     * @ApiDescription(section="updateProfile", description="Update customers profile information by giving the CustomerID and new info.")
+     * @ApiDescription(section="UpdateProfile", description="Update customers profile information by giving the CustomerID to recognize him in the database and new info.")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/updateProfile")
-     * @ApiBody(sample="{ 'data': 'AwEPyQdyrx7LhlEdm9GylvlDftbe1MF6zt/gN04II3VldkFcTSoG72PLs87SRTU/m91E+MeXdthJzYB4/AwZ4KrAluli10YBk/3LlB7sAa0dzu+0wudujy68uAio+3VgSTnqKKIeWo77nivalHTXhrhUpay3DbLNOLeU9Svx91vTH2BlI5cIuwLlmnUvExV0OSo/1CSBL9YB7Ep/b9hvCOU969HuepCA28ekGrI8y4NyyHazXcdubgxttrHz2veyPk83m5iywDWK56i6JEibml1ZNwwuNw6WuOJPrySBPrMJs5oR/wog3MKJc+reGhCWSpTOeJ9i2N2mGWtZYbzGMOUgH7q3NnmLS2KbReNGdk/C4zOLzliB0dzENIO43Jkrb+WUmq3Lv49HwUF/51lumd67WBJrmJQIdZT0J0XmBRvCSZJ9xWLUICSRnyC+uDo59CwXj0/6s03wr02n604CbF8jWRwe29NLTwuweHEPyFwbO/S6v3V2B1xvfqWIXp3bHJjrhICuqp/2oTziolQURQpcoXI9VFUBRyRiaF4RzYbM/46Tfx29QKtVp8MvYe8R3xVpGkoyb1AfkReMc3IsjqnH'}")
+     * @ApiBody(sample="{ 'data': 'AwH+LYr35RjCYynhPQfMXqpbfxZUYH0UDOZpRZWUanLY8VAAOMlbKB5Gh6TWtqo/pYdHnbcpaGwKz8237jdKFlwZxPpUdiGqUfY1OXAN01AF1HRaEwogw5i0cWnpmV5k1LhWf0e7YoVI6ZBZsG/41JI3DATxeW21XqFyAOcngd84glPdL1tTJiRcjUZLq1eANkQE+0zrKWprddq3NH/Oy0Tzg5/rTT0n3P20gCfzSzbBeluW3fl3cLV57f6jX4nAR1BMFFcLE6f04FZD6XH8uMQpqOIZa/IHUd3NPkaC3QSUUFQ7BhnAkkAaQ136Mewl8A6trhtcTFx6klBVtnQNF0hS5DitIK3MkR+ptP8pQZan/iW9f7htLV6sHwTiInP/NBpL3QesF7ahX3RDQXmfxZYNhN6GEC/NMmwul5kiczR18AXKqNBznjbBgvXl+HgoOg+ssrDlyNpKD3zztLMPOUDgtvE+SCq3zlCEHl2+0FKpYg=='}")
      * @ApiParams(name="data", type="object", nullable=false, description="Json must contain CustomerID, fname, lname, email, phone, password, phone_password, services. Example in body in the data.")
      @ApiParams(name="token", type="object", nullable=false, description="Autentication token for users autentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="object", sample="{
-		'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjM1NTk4MjYsImp0aSI6IkRzWXFVOUlhWThmZmxQTmpjUEE2Q054eEZ0Qks2THRTUGl1cmtjalZ6a2s9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDYzNTU5ODI2LCJleHAiOjE0NjQ3Njk0MjYsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.e8gHW54nu_NNLlfy2g9CM53I24gxBeZoj1_-A8Gv5rNawNrNg-rBPl-6jFGFbY2JgvevIPp7Dz7s4DjWeSdaWA',
 		'data': 'AwFxTI/ybexQc7vI6zv4DsWY+NG+DhhBKwVTCmZZ8ZR5NEMjV+YDecggZmZ6ZVk6TgfLiuP5Gvt/XhN7PgmNipT10qZr58QwXK/zh1AI4Vwm2GwxNo++oeufZtSHPXU9FPyl9RMWjjzTCHM9qxW4nyipd7xK4hSKngfa+kdBypiKnapkpSpgW7wgRw4n7zH4w8iINo681xrBTZF92VQbEgI52Hg6jIGzvUG7tMY4CNLggJdlurWjvDmZhCYw3e9ybO6mymIQ8gGqEOVy4/0z7W+g'
 		}")
-		@ApiReturn(type="object", sample="{'token': null,'data': 'AwGFt1HkBpJ/8ZM6vTANUv3xikBid1ayJIIA0dggksZKNyYnvSYtRo80feStp08eZTjVEM3ruql7rmnFqyjgZR6U+kucKkn7BoxxB9/JNzl+yBuxVxem06vyROD6S7mKp/l2yN69V8SbGvOxAOzH1jgr201yxGkh2QbrrS+LVfazb7SaXkzKJEe1e3Kmo+Zq5f4='
+		@ApiReturn(type="object", sample="{'data': 'AwGFt1HkBpJ/8ZM6vTANUv3xikBid1ayJIIA0dggksZKNyYnvSYtRo80feStp08eZTjVEM3ruql7rmnFqyjgZR6U+kucKkn7BoxxB9/JNzl+yBuxVxem06vyROD6S7mKp/l2yN69V8SbGvOxAOzH1jgr201yxGkh2QbrrS+LVfazb7SaXkzKJEe1e3Kmo+Zq5f4='
 		}")
      */
 	public function updateProfile($request, $response, $service, $app){
-		if($request->token){ //editmain.php i editmainadd.php
-			try{
-				$jwt = $request->token;
-				$secretKey = base64_decode(getenv('jwtKey'));
-    			$token = JWT::decode($jwt, $secretKey, array('HS512'));
-			} catch(ExpiredException $e) { // if result expired_token go to login page
-		   		return $response->json($this->errorJson($e->getMessage(), 'expired_token'));
-		    } catch(DomainException $e) {
-		   		return $response->json($this->errorJson($e->getMessage(), 'invalid_domain'));
-		    } catch(BeforeValidException $e){
-		   		return $response->json($this->errorJson($e->getMessage(), 'before_valid'));
-		    }
 
+		if($request->token){ //editmain.php i editmainadd.php
+
+			// Validate token if not expired, or tampered with
+			$this->validateToken($request->token);
 
 			// Decrypt input data
-			$cr_password = getenv("CRYPTOR");
-			$cryptor = new \RNCryptor\Decryptor();
-			$plaintext = $cryptor->decrypt($request->data, $cr_password);
-			$data = json_decode($plaintext, true);
+			$data = $this->decryptValues($request->data);
 
 			// Validate input data
 			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
@@ -197,6 +175,54 @@ class CustLoginController extends Controller {
 
 			// Return as json token and encrypted data
 	     	return $response->json(array('data' => $base64Encrypted));
+     	} else {
+     		return "No token in request TODO. ";
+     	}
+	}
+
+	/**
+     * @ApiDescription(section="ViewProfile", description="Retrieve customers information(only fname, lname, phone, phone_password, email, services) stored in the database, based on the request CustomerID of user, a token for autentication.")
+     * @ApiMethod(type="post")
+     * @ApiRoute(name="/testgauss/viewProfile")
+     * @ApiBody(sample="{'data': 'AwF4kbZkGDOPqdLCfBmjud1rkhaBpSaWVfGbWX9EvUWKRKzNMXK8Blk/0YkIstz+W7YXE5pH1ScQrk0kfgRujEUWURB+yUqp0a3d2L1ZvgpcJpOpXfLWEGyMklXzOIw0ZL4='}")
+     *@ApiParams(name="data", type="object", nullable=false, description="Json must contain CustomerID.")
+     @ApiParams(name="token", type="object", nullable=false, description="Autentication token for users autentication.")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     * @ApiReturn(type="object", sample="{
+     *  'data': 'AwF3uEH8m278NgsBfgrfjEPQOoRzRtGZqgcMr/mNsa/ngF+YRl+jLtsV1pP0akBhK2kaqLNy6iHTbE3xqyhYfyBgb0pvVkIZTU4osNlIM5jXQnRFuwJCKG19akehIj30mz0B2lDnswiW7o9l7DbOQIFHHxe3KpKI46rin05Izy/Z+eXl8qDA/h2rvjIDl6e90c3zolAPz8pAjpmnN0Bt47KQKb5jRxeOZvt+GTsPxQh/q+m6Ki/XeTPlv6e0GHcGwGQVnnfufbaPthzM1ENlAgFmR7dfspPuYp7qhmZXTWLT/0y3IIVPMiv44ZDYaUcMgri42nfMMiSlsvdQElnglkCi4RNJvMGMeMdWBdNS5k5WxA=='
+     * }")
+     */
+	public function viewProfile($request, $response, $service, $app){
+		if($request->token){
+
+			// Validate token if not expired, or tampered with
+			$this->validateToken($request->token);
+
+			// Decrypt input data
+			$data = $this->decryptValues($request->data);
+
+			// Validate input data
+			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+
+			// Retrieve the customer
+			$customer = CustLogin::getCustomer($data['CustomerID']);
+
+			// Format the json response
+			$values = array();
+			$values['fname'] = $customer->getValueEncoded('FName');
+			$values['lname'] = $customer->getValueEncoded('LName');
+			$values['phone_number'] = $customer->getValueEncoded('Phone');
+			$values['phone_password'] = $customer->getValueEncoded('PhPassword');
+			$values['email'] = $customer->getValueEncoded('Email');
+			$values['services'] = $customer->getValueEncoded('Services'); // TODO format
+
+			// Format data for encryption
+			$base64Encrypted = $this->encryptValues(json_encode($values));
+
+			// Return response json
+			return $response->json(array('data' => $base64Encrypted));
+     	} else {
+     		return "No token in request TODO. ";
      	}
 	}
 
@@ -206,31 +232,20 @@ class CustLoginController extends Controller {
      * @ApiRoute(name="/testgauss/forgot")
      * @ApiBody(sample="{'data': 'AwEpDBFkKUA2WKqf5QRs+KNVWdiohvtc+HF6+Nd6HRdPyH7kv2auKWtA+Z6vemyeROI7PqKDxBwt2yNdRW8xAQaU5O7aAhNtRTgzjEJX4SQ9bIjdvqxCJQB70/SKZ+MjbhE1ZK8OWm9amkRg8S7UdFtg'}")
      *@ApiParams(name="data", type="object", nullable=false, description="Json must contain email.Be carefull not to enter some real users email. Gmail server and stuff is live, it's on a staging server where no real users data is important when changed, but still, the gmail smtp server will send an email saying there pass was changed. Use YOUR OWN EMAIL in the data.")
+     @ApiParams(name="token", type="object", nullable=false, description="Autentication token for users autentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="object", sample="{
-     *  'data': 'AwFck5aTROqKMsBR/M1JLWkq8Z6jRB1kYvmyFcAe+xbG1tzBHSxA071R0EJrg6FFMlYbGo7/U4Z2ga9iM+OQjI9TTPCsBeuNhb0E/1ewEfRqmy1MoSJ5Kc5eNfYtoy0lkMeUO81HxjVakxLGygg15+QSYdXfT7j8wjihtIcjUqAZKE+iAjkEC+lIb9sBQsq4yLDgMf5Y+WtSY5HYEy+zwpXvm0dbYZnM0yOpjmgDky6vuDVAk0ljRlZgptN1w7aTBMKmVJB/MTuJV7sNr9FdVkJA'
+     *  'data': 'AwEuAgSwBgKF6UacdLb6zUt4uNxHOwjPqG40pUv5ZigXZBuxOaoKoorjUY8Rx0U11D4p/lL/CXHpwoiQix17N2C+oAgEhpPg8BYZF0oxablhikGDHnSlQTPT2zVGsfp1Jxc6nChPdNCsohw5/5v8/aIUQSJcNH9eNTSviWnfjyLaBcDA5aYr2HZJCVYLnXKm3n/aqKIlDAdeXd70vCP7aXDzfnGznVOtua8YMhqvOiETN8l7aTPeda4Zck1WnUURIxVVWcF1TGZsAE7+Xoi2/x4p'
      * }")
      */
 	public function postForgot($request, $response, $service, $app) {
 		// Take care of token expiration, validity
 		if($request->token){
-			try{
-				$jwt = $request->token;
-				$secretKey = base64_decode(getenv('jwtKey'));
-    			$token = JWT::decode($jwt, $secretKey, array('HS512'));
-			} catch(ExpiredException $e) {
-		   		return $response->json($this->errorJson($e->getMessage(), 'expired_token'));
-		   } catch(DomainException $e) {
-		   		return $response->json($this->errorJson($e->getMessage(), 'invalid_domain'));
-		   } catch(BeforeValidException $e){
-		   		return $response->json($this->errorJson($e->getMessage(), 'before_valid'));
-		   }
+			// Validate token if not expired, or tampered with
+			$this->validateToken($request->token);
 
 			//Decrypt input data
-			$password = getenv("CRYPTOR");
-			$cryptor = new \RNCryptor\Decryptor();
-			$plaintext = $cryptor->decrypt($request->data, $password);
-			$data = json_decode($plaintext, true);
+			$data = $this->decryptValues($request->data);
 
 			// Validate input data
 			$service->validate($data['email'], 'Please enter a valid email address to retrieve your password.')->isLen(3,200)->isEmail();
@@ -279,88 +294,68 @@ class CustLoginController extends Controller {
 
 			// Return as json token and encrypted data
 	     	return $response->json(array('data' => $base64Encrypted));
+	     } else {
+	     	return $response->json("No token given");
 	     }
 	}
 
 
 
-	/**
+	/** TUUUUTUTUTU
      * @ApiDescription(section="TelephonicAccess", description="Retrieve customers telephonicUserId & telephonicPassword for telephonic access. By giving the customerID. TODO encrypt customerIDs with secret key, so no one can just type an int and get someones access code.")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/telephonicAccess")
-     @ApiBody(sample="{'data': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjMzODc2MDYsImp0aSI6IjJtK3gyMEllNTdzRFFZOWFGc1kreDJJVFM2MGpXY1c2M1hJa2pDNWxlOUk9IiwiaXNzIjoiaHR0cDpcL1wvbG9jYWxob3N0XC8iLCJuYmYiOjE0NjMzODc2MDYsImV4cCI6MTQ2NDU5NzIwNiwiZGF0YSI6eyJjdXN0b21lcklEIjo3NTJ9fQ.78Anz9Q1gOnzDhxBNjiWjUgUpLJAU_-6QP65gBGndvmv8ZH0gqaeVCrSv0mDczh05bTpf0-EZ_HHQ6OMDEzhAw'}")
-     * @ApiParams(name="data", type="object", nullable=false, description="Customers id. Stored in mobile phone, as this is the identifier for the user using the app. TODO encrypt the customerID.")
+     @ApiBody(sample="{'data': 'AwF4kbZkGDOPqdLCfBmjud1rkhaBpSaWVfGbWX9EvUWKRKzNMXK8Blk/0YkIstz+W7YXE5pH1ScQrk0kfgRujEUWURB+yUqp0a3d2L1ZvgpcJpOpXfLWEGyMklXzOIw0ZL4='}")
+     * @ApiParams(name="data", type="object", nullable=false, description="Customers id. Stored in mobile phone, as this is the identifier for the user using the app.")
+      @ApiParams(name="token", type="object", nullable=false, description="Autentication token for users autentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="object", sample="{
-     *  'data':'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjMzODg0MDIsImp0aSI6InlkS0V0YkVjRmdpYWFLMTBkS2xcL2pHT1g5MFVcLzZZOXZwRDlGMlllWVJzUT0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjMzODg0MDIsImV4cCI6MTQ2NDU5ODAwMiwiZGF0YSI6eyJzdGF0dXMiOjEsInRlbGVwaG9uaWNVc2VySWQiOiIxMTMxNjgiLCJ0ZWxlcGhvbmljUGFzc3dvcmQiOiI0NTQzNSJ9fQ.3dEvH_n89oYAf-fyMq5hEd7MyuCr9SM42FOd_qRRDudMeY-16MYiQpoSLb5f49jwAlXx-Ml-5-2cyn1H7gFH7w'
-     * }")
-     *	@ApiReturn(type="object", sample="{
-     *  'status': 0,
-     *  'userMessage': 'THIS WILL ALSO BE TOKEN. FOR NOW NO NEED TO ENCRYPT THIS. No user found.'
+     *  'data':'AwElQ4j7Wa2tomUyQ75rEpKSMUF0pznqdbTURvy4yzuUWVULrM0MctckP1/qSHI74VU0hkYAxKT5HR2yQZnZWzjlkjJZRthP3Hs2n17nOA1eeHwOaNuG5DKl5xtSyaiSIfK0hIuA/ND3+EIBlbOfbwpltlAZXg0mlTpya7rTJQsNYDoINP/havTIMpABtMzjzu0='
      * }")
      *
      */
 	public function postTelephonicAccess($request, $response, $service, $app){
-		// ENcode and decode customerID with secret key while transfer for secutiry TODO
+		// Encode and decode customerID with secret key while transfer for secutiry TODO
 		if($request->token){
-			try{
-				$jwt = $request->token;
-				$secretKey = base64_decode(getenv('jwtKey'));
-    			$token = JWT::decode($jwt, $secretKey, array('HS512'));
-			} catch(ExpiredException $e) { // if result expired_token go to login page
-		   		return $response->json($this->errorJson($e->getMessage(), 'expired_token'));
-		    } catch(DomainException $e) {
-		   		return $response->json($this->errorJson($e->getMessage(), 'invalid_domain'));
-		    } catch(BeforeValidException $e){
-		   		return $response->json($this->errorJson($e->getMessage(), 'before_valid'));
-		    }
-		}
-		$service->validate($token->data->customerID, 'Invalid id')->isInt();
+			// Validate token if not expired, or tampered with
+			$this->validateToken($request->token);
 
-		$customer = CustLogin::getCustomer($token->data->customerID);
-		if(!$customer){
-			$errorJson = $this->errorJson("No user found.");
-			return $response->json($errorJson);
-		}
-		$jsonArray = array();
-		$jsonArray['status'] = 1;
-		$jsonArray['telephonicUserId'] = $customer->getValueEncoded('PhLoginId');
-		$jsonArray['telephonicPassword'] = $customer->getValueEncoded('PhPassword');
-		// $jsonArray['userMessage'] = "";
-		$genToken = $this->generateResponseToken($jsonArray);
-     	return $response->json($genToken);
+			//Decrypt input data
+			$data = $this->decryptValues($request->data);
 
+			// Validate input data
+			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+
+			// Retrieve the customer
+			$customer = CustLogin::getCustomer($data['CustomerID']);
+
+			if(!$customer){
+				$errorJson = $this->errorJson("No user found.");
+				return $response->json($errorJson);
+			}
+
+			$jsonArray = array();
+			$jsonArray['status'] = 1;
+			$jsonArray['telephonicUserId'] = $customer->getValueEncoded('PhLoginId');
+			$jsonArray['telephonicPassword'] = $customer->getValueEncoded('PhPassword');
+
+			// Encrypt fomrat json response
+			$base64Encrypted = $this->encryptValues(json_encode($jsonArray));
+	     	return $response->json(array('data' => $base64Encrypted));
+     	} else {
+     		return $response->json("No token given");
+     	}
 	}
 
 	/**
-	 *
-	 * Block comment
-	 *
-	 */
-	public function generateResponseToken($dataArray){
-		$secretKey = base64_decode(getenv('jwtKey'));
+     * @ApiDescription(section="Terms", description="Render view for terms & conditions")
+     * @ApiMethod(type="get")
+     * @ApiRoute(name="/testgauss/terms")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     */
+	public function getTerms($request, $response, $service, $app){
+		$service->render('./resources/views/terms.html');
 
-		$tokenId    = base64_encode(mcrypt_create_iv(32));
-	    $issuedAt   = time();
-	    $notBefore  = $issuedAt;
-	    $expire     = $notBefore + 1209600;
-	    $serverName = $_SERVER['SERVER_NAME'];
-
-	    $data = array(
-	        'iat'  => $issuedAt,         // Issued at: time when the token was generated
-	        'jti'  => $tokenId,          // Json Token Id: an unique identifier for the token
-	        'iss'  => $serverName,       // Issuer
-	        'nbf'  => $notBefore,        // Not before
-	        'exp'  => $expire,           // Expire
-	        'data' => $dataArray
-	    );
-
-	    // Encode the new json payload data
-	    $jwt = JWT::encode($data, $secretKey, 'HS512');
-	    header('Content-type: application/json');
-
-    	return $jwt;
 	}
-
 
 }

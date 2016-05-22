@@ -97,7 +97,7 @@
 
                 <div class="tab-pane active" id="info0">
                     <div class="well">
-                    Authenticate a user and return a jwt token with information, and data encrypted values. Store the token in the app, this is the auth token needed througt the app(other routes require this correct token)
+                    Authenticate the customer with his email and password and return a jwt token with expiration date for server side validation of autenticity of customer, also returns a data key thats encrypted with RNCryptor with the data values . <br><b>Store the token in the app, this is the auth token needed througth the app</b>(other routes require this correct token).
                     </div>
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Headers</strong></div>
@@ -124,7 +124,7 @@
     <td>data</td>
     <td>object</td>
     <td>Yes</td>
-    <td>Users email & password json object to authenticate</td>
+    <td>Users email & password json object used for authentication.</td>
 </tr>
     </tbody>
 </table>
@@ -133,7 +133,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body0">{ 'data': 'AwEPyQdyrx7LhlEdm9GylvlDftbe1MF6zt/gN04II3VldkFcTSoG72PLs87SRTU/m91E+MeXdthJzYB4/AwZ4KrAluli10YBk/3LlB7sAa0dzu+0wudujy68uAio+3VgSTnqKKIeWo77nivalHTXhrhUpay3DbLNOLeU9Svx91vTH2BlI5cIuwLlmnUvExV0OSo/1CSBL9YB7Ep/b9hvCOU969HuepCA28ekGrI8y4NyyHazXcdubgxttrHz2veyPk83m5iywDWK56i6JEibml1ZNwwuNw6WuOJPrySBPrMJs5oR/wog3MKJc+reGhCWSpTOeJ9i2N2mGWtZYbzGMOUgH7q3NnmLS2KbReNGdk/C4zOLzliB0dzENIO43Jkrb+WUmq3Lv49HwUF/51lumd67WBJrmJQIdZT0J0XmBRvCSZJ9xWLUICSRnyC+uDo59CwXj0/6s03wr02n604CbF8jWRwe29NLTwuweHEPyFwbO/S6v3V2B1xvfqWIXp3bHJjrhICuqp/2oTziolQURQpcoXI9VFUBRyRiaF4RzYbM/46Tfx29QKtVp8MvYe8R3xVpGkoyb1AfkReMc3IsjqnH'}</pre>
+                        <pre id="sample_post_body0">{ 'data': 'AwGTfsuNPRIe9flrvJ4VlNhTUraZY67pp5FPPmym+ptwSCHO/jQkN97t5GB364Ac0zfd2dYsWJiXvawzmmCKSQm4OamHp5cMfjtsNirigo6AFJX4izmUgEcRmxx93W79B0DYpCNrtigYQcAPTF7uZKpiROIhXKBQyotWhyVxFXL9jPYXHtYUNa+uhrZ7r4CzIuI='}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
@@ -180,14 +180,7 @@
                             
 
 <hr>
-<pre id="sample_response0">{
-		'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjM1NTk4MjYsImp0aSI6IkRzWXFVOUlhWThmZmxQTmpjUEE2Q054eEZ0Qks2THRTUGl1cmtjalZ6a2s9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDYzNTU5ODI2LCJleHAiOjE0NjQ3Njk0MjYsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.e8gHW54nu_NNLlfy2g9CM53I24gxBeZoj1_-A8Gv5rNawNrNg-rBPl-6jFGFbY2JgvevIPp7Dz7s4DjWeSdaWA',
-		'data': 'AwFxTI/ybexQc7vI6zv4DsWY+NG+DhhBKwVTCmZZ8ZR5NEMjV+YDecggZmZ6ZVk6TgfLiuP5Gvt/XhN7PgmNipT10qZr58QwXK/zh1AI4Vwm2GwxNo++oeufZtSHPXU9FPyl9RMWjjzTCHM9qxW4nyipd7xK4hSKngfa+kdBypiKnapkpSpgW7wgRw4n7zH4w8iINo681xrBTZF92VQbEgI52Hg6jIGzvUG7tMY4CNLggJdlurWjvDmZhCYw3e9ybO6mymIQ8gGqEOVy4/0z7W+g'
-		}</pre>
-
-
-<hr>
-<pre id="sample_response0">{'token': null,'data': 'AwGFt1HkBpJ/8ZM6vTANUv3xikBid1ayJIIA0dggksZKNyYnvSYtRo80feStp08eZTjVEM3ruql7rmnFqyjgZR6U+kucKkn7BoxxB9/JNzl+yBuxVxem06vyROD6S7mKp/l2yN69V8SbGvOxAOzH1jgr201yxGkh2QbrrS+LVfazb7SaXkzKJEe1e3Kmo+Zq5f4='
+<pre id="sample_response0">{'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjM3ODQ3OTgsImp0aSI6InlMcG1ORWhcL0JDQ1l0MkhBeUtqT0NWVWMwSDF6ck5vdFE0UEJiMWVicHNjPSIsImlzcyI6ImxvY2FsaG9zdCIsIm5iZiI6MTQ2Mzc4NDc5OCwiZXhwIjoxNDY0OTk0Mzk4LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.W7j7_NnUcTjsnvTU_pKMMTgJlQeP6pWvn9q7hwNZXStzc4MOm3Vgr7_7dvr-Boj5W-HWfqRelcFf8Rrao2Mz8A', 'data': 'AwGTanQjtgGJWgWHL1plL/j664tWA6W1atWNUo8QyiuuOdnwLE+NP/9bHQqhkyNttLTN5LGoCtuc59yaWDsn/k1IJJLkezVO/FZdQADjhbqYW5bUCXCntjWN3CkrI8JswcSbgFjpYhfrSmy4elc4KNSB0FD7NpH4KDIWQDxNQbXStReUodOeQXmuAHOwKejkf1Lf7qlUCwJsnvmh07UwKGwdN625xrCLB3dZxe60IYNcJcpvblVgI7NIsR4NsGndrkZU4XqVUt2DhlQhJjuPEr3U1Fp9ih10aWj4lUqq9t43jw=='
 		}</pre>
                         </div>
                     </div>
@@ -314,7 +307,7 @@
             </div><!-- .tab-content -->
         </div>
     </div>
-</div><h2>updateProfile</h2>
+</div><h2>UpdateProfile</h2>
 
 <div class="panel panel-default">
     <div class="panel-heading">
@@ -337,7 +330,7 @@
 
                 <div class="tab-pane active" id="info2">
                     <div class="well">
-                    Update customers profile information by giving the CustomerID and new info.
+                    Update customers profile information by giving the CustomerID to recognize him in the database and new info.
                     </div>
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Headers</strong></div>
@@ -380,7 +373,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body2">{ 'data': 'AwEPyQdyrx7LhlEdm9GylvlDftbe1MF6zt/gN04II3VldkFcTSoG72PLs87SRTU/m91E+MeXdthJzYB4/AwZ4KrAluli10YBk/3LlB7sAa0dzu+0wudujy68uAio+3VgSTnqKKIeWo77nivalHTXhrhUpay3DbLNOLeU9Svx91vTH2BlI5cIuwLlmnUvExV0OSo/1CSBL9YB7Ep/b9hvCOU969HuepCA28ekGrI8y4NyyHazXcdubgxttrHz2veyPk83m5iywDWK56i6JEibml1ZNwwuNw6WuOJPrySBPrMJs5oR/wog3MKJc+reGhCWSpTOeJ9i2N2mGWtZYbzGMOUgH7q3NnmLS2KbReNGdk/C4zOLzliB0dzENIO43Jkrb+WUmq3Lv49HwUF/51lumd67WBJrmJQIdZT0J0XmBRvCSZJ9xWLUICSRnyC+uDo59CwXj0/6s03wr02n604CbF8jWRwe29NLTwuweHEPyFwbO/S6v3V2B1xvfqWIXp3bHJjrhICuqp/2oTziolQURQpcoXI9VFUBRyRiaF4RzYbM/46Tfx29QKtVp8MvYe8R3xVpGkoyb1AfkReMc3IsjqnH'}</pre>
+                        <pre id="sample_post_body2">{ 'data': 'AwH+LYr35RjCYynhPQfMXqpbfxZUYH0UDOZpRZWUanLY8VAAOMlbKB5Gh6TWtqo/pYdHnbcpaGwKz8237jdKFlwZxPpUdiGqUfY1OXAN01AF1HRaEwogw5i0cWnpmV5k1LhWf0e7YoVI6ZBZsG/41JI3DATxeW21XqFyAOcngd84glPdL1tTJiRcjUZLq1eANkQE+0zrKWprddq3NH/Oy0Tzg5/rTT0n3P20gCfzSzbBeluW3fl3cLV57f6jX4nAR1BMFFcLE6f04FZD6XH8uMQpqOIZa/IHUd3NPkaC3QSUUFQ7BhnAkkAaQ136Mewl8A6trhtcTFx6klBVtnQNF0hS5DitIK3MkR+ptP8pQZan/iW9f7htLV6sHwTiInP/NBpL3QesF7ahX3RDQXmfxZYNhN6GEC/NMmwul5kiczR18AXKqNBznjbBgvXl+HgoOg+ssrDlyNpKD3zztLMPOUDgtvE+SCq3zlCEHl2+0FKpYg=='}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
@@ -432,13 +425,12 @@
 
 <hr>
 <pre id="sample_response2">{
-		'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjM1NTk4MjYsImp0aSI6IkRzWXFVOUlhWThmZmxQTmpjUEE2Q054eEZ0Qks2THRTUGl1cmtjalZ6a2s9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDYzNTU5ODI2LCJleHAiOjE0NjQ3Njk0MjYsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.e8gHW54nu_NNLlfy2g9CM53I24gxBeZoj1_-A8Gv5rNawNrNg-rBPl-6jFGFbY2JgvevIPp7Dz7s4DjWeSdaWA',
 		'data': 'AwFxTI/ybexQc7vI6zv4DsWY+NG+DhhBKwVTCmZZ8ZR5NEMjV+YDecggZmZ6ZVk6TgfLiuP5Gvt/XhN7PgmNipT10qZr58QwXK/zh1AI4Vwm2GwxNo++oeufZtSHPXU9FPyl9RMWjjzTCHM9qxW4nyipd7xK4hSKngfa+kdBypiKnapkpSpgW7wgRw4n7zH4w8iINo681xrBTZF92VQbEgI52Hg6jIGzvUG7tMY4CNLggJdlurWjvDmZhCYw3e9ybO6mymIQ8gGqEOVy4/0z7W+g'
 		}</pre>
 
 
 <hr>
-<pre id="sample_response2">{'token': null,'data': 'AwGFt1HkBpJ/8ZM6vTANUv3xikBid1ayJIIA0dggksZKNyYnvSYtRo80feStp08eZTjVEM3ruql7rmnFqyjgZR6U+kucKkn7BoxxB9/JNzl+yBuxVxem06vyROD6S7mKp/l2yN69V8SbGvOxAOzH1jgr201yxGkh2QbrrS+LVfazb7SaXkzKJEe1e3Kmo+Zq5f4='
+<pre id="sample_response2">{'data': 'AwGFt1HkBpJ/8ZM6vTANUv3xikBid1ayJIIA0dggksZKNyYnvSYtRo80feStp08eZTjVEM3ruql7rmnFqyjgZR6U+kucKkn7BoxxB9/JNzl+yBuxVxem06vyROD6S7mKp/l2yN69V8SbGvOxAOzH1jgr201yxGkh2QbrrS+LVfazb7SaXkzKJEe1e3Kmo+Zq5f4='
 		}</pre>
                         </div>
                     </div>
@@ -447,12 +439,12 @@
             </div><!-- .tab-content -->
         </div>
     </div>
-</div><h2>Forgot</h2>
+</div><h2>ViewProfile</h2>
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion3" href="#collapseOne3"> /testgauss/forgot</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion3" href="#collapseOne3"> /testgauss/viewProfile</a>
         </h4>
     </div>
     <div id="collapseOne3" class="panel-collapse collapse">
@@ -469,6 +461,133 @@
             <div class="tab-content">
 
                 <div class="tab-pane active" id="info3">
+                    <div class="well">
+                    Retrieve customers information(only fname, lname, phone, phone_password, email, services) stored in the database, based on the request CustomerID of user, a token for autentication.
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+<tr>
+    <td>data</td>
+    <td>object</td>
+    <td>Yes</td>
+    <td>Json must contain CustomerID.</td>
+</tr>
+
+<tr>
+    <td>token</td>
+    <td>object</td>
+    <td>Yes</td>
+    <td>Autentication token for users autentication.</td>
+</tr>
+    </tbody>
+</table>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body3">{'data': 'AwF4kbZkGDOPqdLCfBmjud1rkhaBpSaWVfGbWX9EvUWKRKzNMXK8Blk/0YkIstz+W7YXE5pH1ScQrk0kfgRujEUWURB+yUqp0a3d2L1ZvgpcJpOpXfLWEGyMklXzOIw0ZL4='}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox3">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/viewProfile" method="post" name="form3" id="form3">
+    
+    Parameters
+    <hr/>
+    
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
+</div>
+
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
+</div>
+    <button type="submit" class="btn btn-success send" rel="3">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers3"></pre>
+                                <pre id="response3"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample3">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header3">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response3">{
+  'data': 'AwF3uEH8m278NgsBfgrfjEPQOoRzRtGZqgcMr/mNsa/ngF+YRl+jLtsV1pP0akBhK2kaqLNy6iHTbE3xqyhYfyBgb0pvVkIZTU4osNlIM5jXQnRFuwJCKG19akehIj30mz0B2lDnswiW7o9l7DbOQIFHHxe3KpKI46rin05Izy/Z+eXl8qDA/h2rvjIDl6e90c3zolAPz8pAjpmnN0Bt47KQKb5jRxeOZvt+GTsPxQh/q+m6Ki/XeTPlv6e0GHcGwGQVnnfufbaPthzM1ENlAgFmR7dfspPuYp7qhmZXTWLT/0y3IIVPMiv44ZDYaUcMgri42nfMMiSlsvdQElnglkCi4RNJvMGMeMdWBdNS5k5WxA=='
+ }</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
+</div><h2>Forgot</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion4" href="#collapseOne4"> /testgauss/forgot</a>
+        </h4>
+    </div>
+    <div id="collapseOne4" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab4">
+                <li class="active"><a href="#info4" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox4" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample4" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info4">
                     <div class="well">
                     First check if email is found in the database, then generate a new password, then email the user the new password, and only then change database password to the new password.
                     </div>
@@ -499,6 +618,13 @@
     <td>Yes</td>
     <td>Json must contain email.Be carefull not to enter some real users email. Gmail server and stuff is live, it's on a staging server where no real users data is important when changed, but still, the gmail smtp server will send an email saying there pass was changed. Use YOUR OWN EMAIL in the data.</td>
 </tr>
+
+<tr>
+    <td>token</td>
+    <td>object</td>
+    <td>Yes</td>
+    <td>Autentication token for users autentication.</td>
+</tr>
     </tbody>
 </table>
                       </div>
@@ -506,12 +632,12 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body3">{'data': 'AwEpDBFkKUA2WKqf5QRs+KNVWdiohvtc+HF6+Nd6HRdPyH7kv2auKWtA+Z6vemyeROI7PqKDxBwt2yNdRW8xAQaU5O7aAhNtRTgzjEJX4SQ9bIjdvqxCJQB70/SKZ+MjbhE1ZK8OWm9amkRg8S7UdFtg'}</pre>
+                        <pre id="sample_post_body4">{'data': 'AwEpDBFkKUA2WKqf5QRs+KNVWdiohvtc+HF6+Nd6HRdPyH7kv2auKWtA+Z6vemyeROI7PqKDxBwt2yNdRW8xAQaU5O7aAhNtRTgzjEJX4SQ9bIjdvqxCJQB70/SKZ+MjbhE1ZK8OWm9amkRg8S7UdFtg'}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox3">
+                <div class="tab-pane" id="sandbox4">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -523,7 +649,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/forgot" method="post" name="form3" id="form3">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/forgot" method="post" name="form4" id="form4">
     
     Parameters
     <hr/>
@@ -531,30 +657,34 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
 </div>
-    <button type="submit" class="btn btn-success send" rel="3">Send</button>
+
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
+</div>
+    <button type="submit" class="btn btn-success send" rel="4">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers3"></pre>
-                                <pre id="response3"></pre>
+                                <pre id="response_headers4"></pre>
+                                <pre id="response4"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample3">
+                <div class="tab-pane" id="sample4">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header3">HTTP 200 OK</pre>
+<pre id="sample_resp_header4">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response3">{
-  'data': 'AwFck5aTROqKMsBR/M1JLWkq8Z6jRB1kYvmyFcAe+xbG1tzBHSxA071R0EJrg6FFMlYbGo7/U4Z2ga9iM+OQjI9TTPCsBeuNhb0E/1ewEfRqmy1MoSJ5Kc5eNfYtoy0lkMeUO81HxjVakxLGygg15+QSYdXfT7j8wjihtIcjUqAZKE+iAjkEC+lIb9sBQsq4yLDgMf5Y+WtSY5HYEy+zwpXvm0dbYZnM0yOpjmgDky6vuDVAk0ljRlZgptN1w7aTBMKmVJB/MTuJV7sNr9FdVkJA'
+<pre id="sample_response4">{
+  'data': 'AwEuAgSwBgKF6UacdLb6zUt4uNxHOwjPqG40pUv5ZigXZBuxOaoKoorjUY8Rx0U11D4p/lL/CXHpwoiQix17N2C+oAgEhpPg8BYZF0oxablhikGDHnSlQTPT2zVGsfp1Jxc6nChPdNCsohw5/5v8/aIUQSJcNH9eNTSviWnfjyLaBcDA5aYr2HZJCVYLnXKm3n/aqKIlDAdeXd70vCP7aXDzfnGznVOtua8YMhqvOiETN8l7aTPeda4Zck1WnUURIxVVWcF1TGZsAE7+Xoi2/x4p'
  }</pre>
                         </div>
                     </div>
@@ -568,23 +698,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion4" href="#collapseOne4"> /testgauss/telephonicAccess</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion5" href="#collapseOne5"> /testgauss/telephonicAccess</a>
         </h4>
     </div>
-    <div id="collapseOne4" class="panel-collapse collapse">
+    <div id="collapseOne5" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab4">
-                <li class="active"><a href="#info4" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox4" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample4" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab5">
+                <li class="active"><a href="#info5" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox5" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample5" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info4">
+                <div class="tab-pane active" id="info5">
                     <div class="well">
                     Retrieve customers telephonicUserId & telephonicPassword for telephonic access. By giving the customerID. TODO encrypt customerIDs with secret key, so no one can just type an int and get someones access code.
                     </div>
@@ -613,7 +743,14 @@
     <td>data</td>
     <td>object</td>
     <td>Yes</td>
-    <td>Customers id. Stored in mobile phone, as this is the identifier for the user using the app. TODO encrypt the customerID.</td>
+    <td>Customers id. Stored in mobile phone, as this is the identifier for the user using the app.</td>
+</tr>
+
+<tr>
+    <td>token</td>
+    <td>object</td>
+    <td>Yes</td>
+    <td>Autentication token for users autentication.</td>
 </tr>
     </tbody>
 </table>
@@ -622,111 +759,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body4">{'data': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjMzODc2MDYsImp0aSI6IjJtK3gyMEllNTdzRFFZOWFGc1kreDJJVFM2MGpXY1c2M1hJa2pDNWxlOUk9IiwiaXNzIjoiaHR0cDpcL1wvbG9jYWxob3N0XC8iLCJuYmYiOjE0NjMzODc2MDYsImV4cCI6MTQ2NDU5NzIwNiwiZGF0YSI6eyJjdXN0b21lcklEIjo3NTJ9fQ.78Anz9Q1gOnzDhxBNjiWjUgUpLJAU_-6QP65gBGndvmv8ZH0gqaeVCrSv0mDczh05bTpf0-EZ_HHQ6OMDEzhAw'}</pre>
-                      </div>
-                    </div>
-                </div><!-- #info -->
-
-                <div class="tab-pane" id="sandbox4">
-                    <div class="row">
-                        <div class="col-md-12">
-                        
-        <div class="col-md-6">
-    Headers
-    <hr/>
-    <div class="headers">
-    
-    </div>
-    </div>
-    <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/telephonicAccess" method="post" name="form4" id="form4">
-    
-    Parameters
-    <hr/>
-    
-<div class="form-group">
-    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
-</div>
-    <button type="submit" class="btn btn-success send" rel="4">Send</button>
-</form></div>
-                        </div>
-                        <div class="col-md-12">
-                            Response
-                            <hr>
-                            <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers4"></pre>
-                                <pre id="response4"></pre>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- #sandbox -->
-
-                <div class="tab-pane" id="sample4">
-                    <div class="row">
-                        <div class="col-md-12">
-                            
-<pre id="sample_resp_header4">HTTP 200 OK</pre>
-                            
-
-<hr>
-<pre id="sample_response4">{
-  'data':'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjMzODg0MDIsImp0aSI6InlkS0V0YkVjRmdpYWFLMTBkS2xcL2pHT1g5MFVcLzZZOXZwRDlGMlllWVJzUT0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjMzODg0MDIsImV4cCI6MTQ2NDU5ODAwMiwiZGF0YSI6eyJzdGF0dXMiOjEsInRlbGVwaG9uaWNVc2VySWQiOiIxMTMxNjgiLCJ0ZWxlcGhvbmljUGFzc3dvcmQiOiI0NTQzNSJ9fQ.3dEvH_n89oYAf-fyMq5hEd7MyuCr9SM42FOd_qRRDudMeY-16MYiQpoSLb5f49jwAlXx-Ml-5-2cyn1H7gFH7w'
- }</pre>
-
-
-<hr>
-<pre id="sample_response4">{
-  'status': 0,
-  'userMessage': 'THIS WILL ALSO BE TOKEN. FOR NOW NO NEED TO ENCRYPT THIS. No user found.'
- }</pre>
-                        </div>
-                    </div>
-                </div><!-- #sample -->
-
-            </div><!-- .tab-content -->
-        </div>
-    </div>
-</div><h2>Terms</h2>
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion5" href="#collapseOne5"> /testgauss/terms</a>
-        </h4>
-    </div>
-    <div id="collapseOne5" class="panel-collapse collapse">
-        <div class="panel-body">
-
-            <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab5">
-                <li class="active"><a href="#info5" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox5" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample5" data-toggle="tab">Sample output</a></li>
-            </ul>
-
-            <!-- Tab panes -->
-            <div class="tab-content">
-
-                <div class="tab-pane active" id="info5">
-                    <div class="well">
-                    Render view for terms & conditions
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Headers</strong></div>
-                      <div class="panel-body">
-                        
-                      </div>
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Parameters</strong></div>
-                      <div class="panel-body">
-                        
-                      </div>
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Body</strong></div>
-                      <div class="panel-body">
-                        
+                        <pre id="sample_post_body5">{'data': 'AwF4kbZkGDOPqdLCfBmjud1rkhaBpSaWVfGbWX9EvUWKRKzNMXK8Blk/0YkIstz+W7YXE5pH1ScQrk0kfgRujEUWURB+yUqp0a3d2L1ZvgpcJpOpXfLWEGyMklXzOIw0ZL4='}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
@@ -743,11 +776,18 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/terms" method="get" name="form5" id="form5">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/telephonicAccess" method="post" name="form5" id="form5">
     
     Parameters
     <hr/>
     
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
+</div>
+
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
+</div>
     <button type="submit" class="btn btn-success send" rel="5">Send</button>
 </form></div>
                         </div>
@@ -768,6 +808,11 @@
                             
 <pre id="sample_resp_header5">HTTP 200 OK</pre>
                             
+
+<hr>
+<pre id="sample_response5">{
+  'data':'AwElQ4j7Wa2tomUyQ75rEpKSMUF0pznqdbTURvy4yzuUWVULrM0MctckP1/qSHI74VU0hkYAxKT5HR2yQZnZWzjlkjJZRthP3Hs2n17nOA1eeHwOaNuG5DKl5xtSyaiSIfK0hIuA/ND3+EIBlbOfbwpltlAZXg0mlTpya7rTJQsNYDoINP/havTIMpABtMzjzu0='
+ }</pre>
                         </div>
                     </div>
                 </div><!-- #sample -->
@@ -775,7 +820,7 @@
             </div><!-- .tab-content -->
         </div>
     </div>
-</div>
+</div><h2>Terms</h2>
 
 <div class="panel panel-default">
     <div class="panel-heading">
@@ -864,13 +909,333 @@
             </div><!-- .tab-content -->
         </div>
     </div>
+</div><h2>DevEncryptJson</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion7" href="#collapseOne7"> /testgauss/devEncryptJson</a>
+        </h4>
+    </div>
+    <div id="collapseOne7" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab7">
+                <li class="active"><a href="#info7" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox7" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample7" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info7">
+                    <div class="well">
+                    Developer used route for easy encrypting json request data. Input json value into field in sandbox are retrieve a encrypted API used data string for development purposes.Example {'CustomerID': 720}
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+<tr>
+    <td>data</td>
+    <td>object</td>
+    <td>Yes</td>
+    <td></td>
+</tr>
+    </tbody>
+</table>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body7">{ 'data': 'Some json string'}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox7">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devEncryptJson" method="get" name="form7" id="form7">
+    
+    Parameters
+    <hr/>
+    
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
+</div>
+    <button type="submit" class="btn btn-success send" rel="7">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers7"></pre>
+                                <pre id="response7"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample7">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header7">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response7">{'json': '', 'data': '' }</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
+</div><h2>DevDecryptJson</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion8" href="#collapseOne8"> /testgauss/devDecryptJson</a>
+        </h4>
+    </div>
+    <div id="collapseOne8" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab8">
+                <li class="active"><a href="#info8" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox8" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample8" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info8">
+                    <div class="well">
+                    Decrypt the encrypted data into plaintext. So if json was encrypted, retrieve the json in the encrypted data. Used for development purposes.
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+<tr>
+    <td>data</td>
+    <td>object</td>
+    <td>Yes</td>
+    <td></td>
+</tr>
+    </tbody>
+</table>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body8">{ 'data': ''}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox8">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devDecryptJson" method="get" name="form8" id="form8">
+    
+    Parameters
+    <hr/>
+    
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
+</div>
+    <button type="submit" class="btn btn-success send" rel="8">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers8"></pre>
+                                <pre id="response8"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample8">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header8">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response8">{'token': '', 'data': '' }</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
+</div><h2>DevGenerateAuthToken</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion9" href="#collapseOne9"> /testgauss/devGenerateAuthToken</a>
+        </h4>
+    </div>
+    <div id="collapseOne9" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab9">
+                <li class="active"><a href="#info9" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox9" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample9" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info9">
+                    <div class="well">
+                    Generate a jwt token, that can be used for any user as his, used for development purposes for now. Put into any sandbox with data and call succefully the route.
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body9">{ 'data': ''}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox9">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devGenerateAuthToken" method="get" name="form9" id="form9">
+    
+    Parameters
+    <hr/>
+    
+    <button type="submit" class="btn btn-success send" rel="9">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers9"></pre>
+                                <pre id="response9"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample9">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header9">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response9">{'token': '', 'data': '' }</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
 </div>
         </div>
         <hr>
 
         <div class="row mt0 footer">
             <div class="col-md-6" align="left">
-                Generated on 2016-05-20, 16:15:03
+                Generated on 2016-05-22, 14:46:28
             </div>
             <div class="col-md-6" align="right">
                 <a href="https://github.com/calinrada/php-apidoc" target="_blank">php-apidoc v 1.3.4</a>

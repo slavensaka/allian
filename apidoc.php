@@ -8,6 +8,7 @@ use Crada\Apidoc\Exception;
 $classes = array(
     'Allian\Http\Controllers\CustLoginController',
     'Allian\Http\Controllers\LangPairController',
+    'Allian\Http\Controllers\DeveloperController',
     // 'Some\Namespace\OtherClass',
 );
 

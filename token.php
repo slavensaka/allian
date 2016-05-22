@@ -148,13 +148,42 @@ function generateTokenForUpdateProfile(){
 	$tokenId = base64_encode(mcrypt_create_iv(32));
     $issuedAt   = time();
     $notBefore  = $issuedAt;
-    $expire     = $notBefore + 1209600;
+    $expire     = $notBefore - 1209600;
     $serverName = "http://localhost/";
     $email = "slavensakacic@gmail.com";
     $password ="12345";
 
 	$data = array(
-        'iat'  => $issuedAt,         // Issued at: time when the token was generated
+        'iat'  => $issuedAt ,         // Issued at: time when the token was generated
+        'jti'  => $tokenId,          // Json Token Id: an unique identifier for the token
+        'iss'  => $serverName,       // Issuer
+        'nbf'  => $notBefore,        // Not before
+        'exp'  => $expire,           // Expire
+        'data' => array(                  // Data related to the signer user
+            'email'   => $email, // userid from the users table
+            'password' => $password, // User name
+        )
+    );
+
+	$jwt = JWT::encode(
+	        $data,      //Data to be encoded in the JWT
+	        "axqF3RBxut", // The signing key
+	        'HS512'     // Algorithm used to sign the token, see https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40#section-3
+	        );
+	return $jwt;
+}
+
+function generateTokenForProfile(){
+	$tokenId = base64_encode(mcrypt_create_iv(32));
+    $issuedAt   = time();
+    $notBefore  = $issuedAt;
+    $expire     = $notBefore - 1209600;
+    $serverName = "http://localhost/";
+    $email = "slavensakacic@gmail.com";
+    $password ="12345";
+
+	$data = array(
+        'iat'  => $issuedAt ,         // Issued at: time when the token was generated
         'jti'  => $tokenId,          // Json Token Id: an unique identifier for the token
         'iss'  => $serverName,       // Issuer
         'nbf'  => $notBefore,        // Not before
@@ -225,6 +254,16 @@ function newencrypt($data, $key)
     return $data;
 }
 
+function encryptForLogin(){
+	$password = "McdUgy2z9UR4vppZUg";
+	$cryptor = new \RNCryptor\Encryptor();
+	$data = '{
+				"email": "slavensakacic@gmail.com",
+				"password": "12345"
+			}';
+	return $base64Encrypted = $cryptor->encrypt($data, $password);
+}
+
 function encryptForRegister(){
 	$password = "McdUgy2z9UR4vppZUg";
 	$cryptor = new \RNCryptor\Encryptor();
@@ -259,7 +298,7 @@ function encryptForUpdate(){
 	$cryptor = new \RNCryptor\Encryptor();
 	$CustomerID = 721;
 	$data = '{
-				"CustomerID": 721,
+				"CustomerID": 720,
 				"fname": "Novi",
 				"lname": "Novinko",
 				"email": "slaven@example.com",
@@ -296,18 +335,27 @@ function encryptForLangPairTrans(){
 	return $base64Encrypted = $cryptor->encrypt($data, $password);
 }
 
+function encryptForViewProfile(){
+	$password = "McdUgy2z9UR4vppZUg";
+	$cryptor = new \RNCryptor\Encryptor();
+	$data = '{
+				"CustomerID": 718
+			}';
+	return $base64Encrypted = $cryptor->encrypt($data, $password);
+}
+
 
 function decryptRN(){
-	$base64Encrypted = "AwEpDBFkKUA2WKqf5QRs+KNVWdiohvtc+HF6+Nd6HRdPyH7kv2auKWtA+Z6vemyeROI7PqKDxBwt2yNdRW8xAQaU5O7aAhNtRTgzjEJX4SQ9bIjdvqxCJQB70/SKZ+MjbhE1ZK8OWm9amkRg8S7UdFtg";
+	$base64Encrypted = "AwFRLF20iFlT/sHjP09GcnnSRj5U3UXt+DMpqabHmrnFo0UTs8FTHV0Llz+cFloNLYr1Pj5XWDFzac6oFFDu9WJld3kK2FGSf3oRiMbeN1Y6ScgwnQ5/848yysp+XwWImV9tiXYeZQQISp+nrFbujSL3ttarEGHGdVwB+BJ6CNEIOK7IsAb3uBzprUfvxGKgCUI=";
 
 	$password = "McdUgy2z9UR4vppZUg";
 	$cryptor = new \RNCryptor\Decryptor();
 	$plaintext = $cryptor->decrypt($base64Encrypted, $password);
 	echo $plaintext;
 }
-echo encryptForLangPairTrans();
+// echo encryptForLogin();
 echo decryptRN();
-
+// echo generateTokenForUpdateProfile();
 //AUTH TOKEN LOGIN
 // eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjM1NzMxNjcsImp0aSI6IiszekxzcDJzYW5DZk9LYzFSVDRJck1OSlZIR1RjU2E5Nm5ZaUZWZGttYnc9IiwiaXNzIjoiYWxsaWFudHJhbnNsYXRlLmNvbSIsIm5iZiI6MTQ2MzU3MzE2NywiZXhwIjoxNDY0NzgyNzY3LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.Hyfga2R0F5O5trEHZncac_yRJNgY4g5RzkPV2eXjGFck-5Q14ziUQaE010MlF5Ce1QNTF1uJh2YZVloAZR--zw
 
