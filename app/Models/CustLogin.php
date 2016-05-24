@@ -32,7 +32,6 @@ class CustLogin extends DataObject {
 	    "totalcharhed" => "",
 	    "totalbilled" => "",
 	    "Saved" => "",
-	    "Type" => ""
 	);
 
   	private $_genres = array(
@@ -68,6 +67,16 @@ class CustLogin extends DataObject {
 	    }
   	}
 
+  	/**
+		$time=time();
+		$result=mysqli_query($con,"INSERT INTO CustLogin (PhPassword,PhLoginId,FName,LName,BName,Street,Line2,City,State,Postal,Country,Services,InvName,InvEmail,InvPhone,InvNeed,Email,LoginPassword,Type,Phone) VALUES ('$PhPassword','$time','$FName','$LName','$BName','$Street','$Line2','$City','$State','$Postal','$Country','$Services','$InvName','$InvEmail','$InvPhone','$InvNeed','$Email','$LoginPassword','$Type','$Phone') ");
+		echo ($result)?"<p class='alert green closeable'> Signed Up Successfully <br><br> <em>Please wait for confirmation email</em></p>":"";
+		$id=mysqli_fetch_assoc(mysqli_query($con,"SELECT CustomerID from CustLogin WHERE Email = '$Email' "));
+		$cid=$id['CustomerID'];
+		$const=112450;
+		$login=$const+$cid;
+  	 *
+  	 */
   	public static function register($data){
   		$conn = parent::connect();
   		$sql = "SELECT PhLoginId FROM " . getenv('TBL_CUSTLOGIN') . " ORDER BY CustomerID DESC LIMIT 1";
@@ -93,6 +102,7 @@ class CustLogin extends DataObject {
   	}
 
   	public static function insertUser($data, $new_phloginid){
+
   		$conn = parent::connect();
   		$services = implode(":", $data['services']);
   		$sql_1 = "INSERT INTO " . getenv('TBL_CUSTLOGIN') . "(FName, LName, Email, Phone, LoginPassword, PhPassword, PhLoginId, Services, token, Type) VALUES (:FName, :LName, :Email, :Phone, :LoginPassword, :PhPassword, :PhLoginId, :Services, :token, :Type)";
@@ -107,7 +117,8 @@ class CustLogin extends DataObject {
   			$st->bindValue( ":PhLoginId", $new_phloginid, \PDO::PARAM_INT );
   			$st->bindValue( ":Services", $services, \PDO::PARAM_STR );
   			$st->bindValue( ":token", $data['stripe_token'], \PDO::PARAM_INT );
-  			$st->bindValue( ":Type", $data['type'], \PDO::PARAM_INT ); // Type=1, Pay as you go sa tokenom
+  			if (is_null($data['type'])) { $value = 1; } else { $value =  $data['type']; }
+             $st->bindValue(":Type", $value, \PDO::PARAM_INT);
   			$success = $st->execute();
   			parent::disconnect( $conn );
   			if($success){

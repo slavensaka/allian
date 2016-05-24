@@ -9,6 +9,8 @@ $classes = array(
     'Allian\Http\Controllers\CustLoginController',
     'Allian\Http\Controllers\LangPairController',
     'Allian\Http\Controllers\DeveloperController',
+    'Allian\Http\Controllers\LangPairController',
+    'Allian\Http\Controllers\ConferenceScheduleController',
     // 'Some\Namespace\OtherClass',
 );
 

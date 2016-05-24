@@ -69,24 +69,6 @@ class CustLoginController extends Controller {
      */
 	public function postRegister($request, $response, $service, $app) {
 
-		// $password = getenv("CRYPTOR");
-		// $cryptor = new \RNCryptor\Decryptor();
-		// $plaintext = $cryptor->decrypt($request->data, $password);
-		// TODO dodati Type polje [0,1,2] 0-?, 1-pay-as-you-go, mijenja se. 2-fixan, NULL polje.
-		// if($request->token){
-		// 	try{
-		// 		$jwt = $request->token;
-		// 		$secretKey = base64_decode(getenv('jwtKey'));
-  //   			$token = JWT::decode($jwt, $secretKey, array('HS512'));
-		// 	} catch(ExpiredException $e) { // if result expired_token go to login page
-		//    		return $response->json($this->errorJson($e->getMessage(), 'expired_token'));
-		//     } catch(DomainException $e) {
-		//    		return $response->json($this->errorJson($e->getMessage(), 'invalid_domain'));
-		//     } catch(BeforeValidException $e){
-		//    		return $response->json($this->errorJson($e->getMessage(), 'before_valid'));
-		//     }
-		// }
-
 		//Decrypt input data
 		$data = $this->decryptValues($request->data);
 
@@ -176,7 +158,7 @@ class CustLoginController extends Controller {
 			// Return as json token and encrypted data
 	     	return $response->json(array('data' => $base64Encrypted));
      	} else {
-     		return "No token in request TODO. ";
+     		return $response->json("No token in request TODO. ");
      	}
 	}
 
@@ -222,7 +204,7 @@ class CustLoginController extends Controller {
 			// Return response json
 			return $response->json(array('data' => $base64Encrypted));
      	} else {
-     		return "No token in request TODO. ";
+     		return $response->json("No token in request TODO. ");
      	}
 	}
 
@@ -356,6 +338,37 @@ class CustLoginController extends Controller {
 	public function getTerms($request, $response, $service, $app){
 		$service->render('./resources/views/terms.html');
 
+	}
+
+	public function logout($request, $response, $service, $app){
+
+		if($request->token){ //editmain.php i editmainadd.php
+
+			// Validate token if not expired, or tampered with
+			$this->validateToken($request->token);
+
+			//Decrypt input data
+			$data = $this->decryptValues($request->data);
+
+			// Validate input data
+			$service->validate($data['loggedIn'], 'Error: something went wrong.')->isInt()->notNull();
+
+			if($data['loggedIn']){
+				// token infinite, store int database token
+				// vrati token_infinite i spremi u app mob umjesto dosad napravljenog.
+				// loggedIn = 1
+				// status = 1
+			} else {
+				// token - expired, store into database token,
+				//status = 1
+				// loggedIn = 0
+				// vrati token_invalidated i
+				// spremi u app mob umjesto dosad napravljenog NIJE OBVEZNO
+			}
+
+		} else {
+			return $response->json("No token provided");
+		}
 	}
 
 }

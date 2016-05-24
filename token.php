@@ -13,7 +13,7 @@ function generateTokenForLogin(){
 	$tokenId = base64_encode(mcrypt_create_iv(32));
     $issuedAt   = time();
     $notBefore  = $issuedAt;
-    $expire     = $notBefore + 1209600;
+    $expire     = $notBefore + 1209600; // 2 weeks
     $serverName = "http://localhost/";
     $email = "slavensakacic@gmail.com";
     $password ="12345";
@@ -267,6 +267,20 @@ function encryptForLogin(){
 function encryptForRegister(){
 	$password = "McdUgy2z9UR4vppZUg";
 	$cryptor = new \RNCryptor\Encryptor();
+{
+"fname": "Slaven",
+"lname": "Sakacic",
+"email": "slavensakacic@gmail.com",
+"phone": "773-732-6534",
+"password": "12345",
+"phone_password": "45435",
+"services": ["Telephonic Interpreting", "Translation Services", "On-Site Interpreting", "Transcription Services"],
+"sname": "Pero Perić",
+"number" => '4242424242424242',
+"exp_month" => 5,
+"exp_year" => 2017,
+"cvc" => 314
+}
 	$data = '{
 				"fname": "Slaven",
 				"lname": "Sakacic",
@@ -274,14 +288,8 @@ function encryptForRegister(){
 				"phone": "773-732-6534",
 				"password": "12345",
 				"phone_password": "45435",
-				"services": [
-				"telephonic_interpreting",
-				"translation_services",
-				"onsite_interpreting",
-				"transcription_services"
-				],
-				"stripe_token": "cus_6nNFDRVGjd1wUe",
-				"type": "1"
+				"services": ["Telephonic Interpreting", "Translation Services", "On-Site Interpreting", "Transcription Services"],
+				"stripe_token": "cus_6nNFDRVGjd1wUe"
 			}';
 	return $base64Encrypted = $cryptor->encrypt($data, $password);
 }
@@ -305,11 +313,7 @@ function encryptForUpdate(){
 				"phone": "111-111-1111",
 				"password": "54321",
 				"phone_password": "11111",
-				"services": [
-				"telephonic_interpreting",
-				"translation_services",
-				"onsite_interpreting"
-				]
+				"services": ["Telephonic Interpreting", "Translation Services", "On-Site Interpreting", "Transcription Services"]
 			}';
 	return $base64Encrypted = $cryptor->encrypt($data, $password);
 }
@@ -326,11 +330,7 @@ function encryptForLangPairTrans(){
 				"phone": "111-111-1111",
 				"password": "54321",
 				"phone_password": "11111",
-				"services": [
-				"telephonic_interpreting",
-				"translation_services",
-				"onsite_interpreting"
-				]
+				"services": ["Telephonic Interpreting", "Translation Services", "On-Site Interpreting", "Transcription Services"]
 			}';
 	return $base64Encrypted = $cryptor->encrypt($data, $password);
 }

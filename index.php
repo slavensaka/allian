@@ -6,6 +6,8 @@ use Allian\Http\Controllers\CustLoginController;
 use Allian\Http\Controllers\LangPairController;
 use Allian\Http\Controllers\StripeController;
 use Allian\Http\Controllers\DeveloperController;
+use Allian\Http\Controllers\ConferenceScheduleController;
+use Allian\Http\Controllers\TwilioController;
 
 $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
@@ -46,6 +48,7 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('POST', '/register', array($custLogin, 'postRegister'));
 	$klein->respond('POST', '/forgot', array($custLogin, 'postForgot'));
 	$klein->respond('GET', '/terms', array($custLogin, 'getTerms'));
+	$klein->respond('GET', '/logout', array($custLogin, 'logout'));
 
 	$klein->respond('POST', '/telephonicAccess', array($custLogin, 'postTelephonicAccess'));
 	$klein->respond('POST', '/updateProfile', array($custLogin, 'updateProfile'));
@@ -56,6 +59,8 @@ $klein->with('/testgauss', function() use ($klein){
 
 	$stripe = new StripeController();
 	$klein->respond('POST', '/updateStripe', array($stripe, 'updateStripe'));
+	$klein->respond('POST', '/createToken', array($stripe, 'createToken'));
+// ALTER TABLE CustLogin ADD COLUMN jwt_token VARCHAR(50) NULL AFTER token;
 	// TODO MORAM SPREMIT TOKEN_ID IZ JWT U BAZU i UVIJEK PROVJERIT
 	$developer = new DeveloperController();
 	$klein->respond('GET', '/renderdocs', array($developer, 'renderDocs')); // FOR TESTING
@@ -63,6 +68,13 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('GET', '/devDecryptJson', array($developer, 'devDecryptJson'));
 	$klein->respond('GET', '/devGenerateAuthToken', array($developer, 'devGenerateAuthToken'));
 	$klein->respond('POST', '/tester', array($developer, 'tester'));
+
+	$conferenceSchedule = new ConferenceScheduleController();
+	$klein->respond('GET', '/getTimezones', array($conferenceSchedule, 'getTimezones'));
+
+	$twilio = new TwilioController();
+	$klein->respond('GET', '/twilio', array($twilio, 'twilio'));
+
 });
 
 $klein->dispatch();

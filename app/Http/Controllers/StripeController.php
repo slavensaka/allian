@@ -2,7 +2,8 @@
 
 namespace Allian\Http\Controllers;
 
-use Allian\Models\CustLogin;
+// require getcwd() .  '/vendor/autoload.php';
+
 use Firebase\JWT\JWT;
 use \Dotenv\Dotenv;
 use Firebase\JWT\ExpiredException;
@@ -11,9 +12,17 @@ use Firebase\JWT\BeforeValidException;
 use RNCryptor\Encryptor;
 use RNCryptor\Decryptor;
 use Stripe\Stripe;
-
+use Stripe\Token;
+use Stripe\Customer;
 
 class StripeController extends Controller {
+
+	public function createToken($request, $response, $service, $app){
+		Stripe::setApiKey(getenv('STRIPE_API_KEY_TEST'));
+		$result = Token::create( array( "card" => array("name" => 'Slaven',"number" => '4242424242424242',"exp_month" => 5, "exp_year" => 2017,"cvc" => 314)));
+		$customer = Customer::create(array("description" => "Customer for test@example.com","source" => $result['id']));
+  		return $customer['id'];
+	}
 
 	public function updateStripe($request, $response, $service, $app) {
 		Stripe::setApiKey(getenv('STRIPE_API_KEY_TEST'));

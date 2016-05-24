@@ -13,4 +13,6 @@ class ConferenceSchedule extends DataObject {
 	    "start_datetime" => "",
 	    "end_datetime" => "",
 	);
+
+
 }
