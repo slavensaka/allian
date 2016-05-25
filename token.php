@@ -25,8 +25,8 @@ function generateTokenForLogin(){
         'nbf'  => $notBefore,        // Not before
         'exp'  => $expire,           // Expire
         'data' => array(                  // Data related to the signer user
-            'email'   => $email, // userid from the users table
-            'password' => $password, // User name
+            'email'   => $email,
+            'password' => $password,
         )
     );
 
@@ -236,21 +236,14 @@ function decrypt($action, $string){
 	return $output;
 }
 
-function newencrypt($data, $key)
-{
+function newencrypt($data, $key){
     $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
     $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-
     $salt = '12345678';
-
     $_key = $this->pbkdf2('SHA1', $key, $salt, 10000, 32, true);
-
     $ciphertext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $_key, $data, MCRYPT_MODE_CBC, $iv);
-
     $hmac = $this->pbkdf2('SHA1', $key, $salt, 10000, 32, true);
-
     $data = mb_convert_encoding(chr(1).chr(0).$salt.$salt.$iv.$ciphertext.$hmac, "BASE64", "UTF-8");
-
     return $data;
 }
 
@@ -267,20 +260,6 @@ function encryptForLogin(){
 function encryptForRegister(){
 	$password = "McdUgy2z9UR4vppZUg";
 	$cryptor = new \RNCryptor\Encryptor();
-{
-"fname": "Slaven",
-"lname": "Sakacic",
-"email": "slavensakacic@gmail.com",
-"phone": "773-732-6534",
-"password": "12345",
-"phone_password": "45435",
-"services": ["Telephonic Interpreting", "Translation Services", "On-Site Interpreting", "Transcription Services"],
-"sname": "Pero Perić",
-"number" => '4242424242424242',
-"exp_month" => 5,
-"exp_year" => 2017,
-"cvc" => 314
-}
 	$data = '{
 				"fname": "Slaven",
 				"lname": "Sakacic",
@@ -289,7 +268,11 @@ function encryptForRegister(){
 				"password": "12345",
 				"phone_password": "45435",
 				"services": ["Telephonic Interpreting", "Translation Services", "On-Site Interpreting", "Transcription Services"],
-				"stripe_token": "cus_6nNFDRVGjd1wUe"
+				"sname": "Pero Perić",
+				"number": 4242424242424242,
+				"exp_month": 5,
+				"exp_year": 2017,
+				"cvc":"314"
 			}';
 	return $base64Encrypted = $cryptor->encrypt($data, $password);
 }
@@ -344,7 +327,6 @@ function encryptForViewProfile(){
 	return $base64Encrypted = $cryptor->encrypt($data, $password);
 }
 
-
 function decryptRN(){
 	$base64Encrypted = "AwFRLF20iFlT/sHjP09GcnnSRj5U3UXt+DMpqabHmrnFo0UTs8FTHV0Llz+cFloNLYr1Pj5XWDFzac6oFFDu9WJld3kK2FGSf3oRiMbeN1Y6ScgwnQ5/848yysp+XwWImV9tiXYeZQQISp+nrFbujSL3ttarEGHGdVwB+BJ6CNEIOK7IsAb3uBzprUfvxGKgCUI=";
 
@@ -353,90 +335,5 @@ function decryptRN(){
 	$plaintext = $cryptor->decrypt($base64Encrypted, $password);
 	echo $plaintext;
 }
-// echo encryptForLogin();
+
 echo decryptRN();
-// echo generateTokenForUpdateProfile();
-//AUTH TOKEN LOGIN
-// eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjM1NzMxNjcsImp0aSI6IiszekxzcDJzYW5DZk9LYzFSVDRJck1OSlZIR1RjU2E5Nm5ZaUZWZGttYnc9IiwiaXNzIjoiYWxsaWFudHJhbnNsYXRlLmNvbSIsIm5iZiI6MTQ2MzU3MzE2NywiZXhwIjoxNDY0NzgyNzY3LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.Hyfga2R0F5O5trEHZncac_yRJNgY4g5RzkPV2eXjGFck-5Q14ziUQaE010MlF5Ce1QNTF1uJh2YZVloAZR--zw
-
-
-
-/*
- * PHP mcrypt - Complete encryption and decryption of data
- */
-// $input = "This is my important data I need to encrypt";
-
-// /* Open the cipher */
-// $td = mcrypt_module_open('rijndael-256', '', 'ofb', '');
-
-// /* Create the IV and determine the keysize length, use MCRYPT_RAND
-//  * on Windows instead */
-// $iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($td), MCRYPT_DEV_RANDOM);
-// $ks = mcrypt_enc_get_key_size($td);
-
-// /* Create key */
-// $key = substr(md5('very secret key'), 0, $ks);
-
-// /* Intialize encryption */
-// mcrypt_generic_init($td, $key, $iv);
-
-//  Encrypt data
-// $encrypted = mcrypt_generic($td, $input);
-
-// /* Terminate encryption handler */
-// mcrypt_generic_deinit($td);
-
-// /* Initialize encryption module for decryption */
-// mcrypt_generic_init($td, $key, $iv);
-
-// /* Decrypt encrypted string */
-// $decrypted = mdecrypt_generic($td, $encrypted);
-
-// /* Terminate decryption handle and close module */
-// mcrypt_generic_deinit($td);
-// mcrypt_module_close($td);
-
-// /* Show string */
-// echo "Encrypted string : ".trim($encrypted) . "<br />\n";
-// echo "Decrypted string : ".trim($decrypted) . "<br />\n";
-
-
-// echo encrypt('My Data', 'mykey');
-// $plain_txt = "This is my plain text";
-// echo "Plain Text = $plain_txt\n";
-// echo "<br>";
-// $encrypted_txt = encrypt('encrypt', $plain_txt);
-// echo "Encrypted Text = $encrypted_txt";
-// echo "<br>";
-// $decrypted_txt = decrypt('decrypt', $encrypted_txt);
-// echo "Decrypted Text = $decrypted_txt\n";
-// echo "<br>";
-// if( $plain_txt === $decrypted_txt ) echo "SUCCESS";
-// else echo "FAILED";
-// echo "<br>";
-
-// echo generateTokenForLogin();
-// echo generateTokenForRegister();
-// echo generateTokenForForgot();
-// echo generateTokenForTelAccess();
-// echo getcwd();
-// $date1 = strtotime('2015-02-02 14:00:00');
-// echo $date1;
-// echo "<br>";
-// $date2 = strtotime('2015-02-04 15:00:00');
-// echo $date2;
-// $diff=date_diff($date1,$date2);
-// echo $diff->format("%R%a days");
-
-
-
-// $date1 = "2015-02-02 14:00:00";
-// $date2 = "2015-02-04 15:00:00";
-
-// $diff = abs(strtotime($date2) - strtotime($date1));
-
-// $years = floor($diff / (365*60*60*24));
-// $months = floor(($diff - $years * 365*60*60*24) / (30*60*60*24));
-// $days = floor(($diff - $years * 365*60*60*24 - $months*30*60*60*24)/ (60*60*24));
-
-// printf("%d years, %d months, %d days\n", $years, $months, $days);

@@ -1,6 +1,7 @@
 <?php
 
 /**
+ To be used latter, maybe
  * Calculate differences between two dates with precise semantics. Based on PHPs DateTime::diff()
  * implementation by Derick Rethans. Ported to PHP by Emil H, 2011-05-02. No rights reserved.
  *

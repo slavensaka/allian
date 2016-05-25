@@ -19,7 +19,7 @@ abstract class DataObject {
    		echo $novi;
 	}
 
-	public function getValue( $field ) {
+	public function getValue($field) {
 		if(array_key_exists($field, $this->data)) {
 			return $this->data[$field];
 		} else {
@@ -27,8 +27,8 @@ abstract class DataObject {
 		}
 	}
 
-	public function getValueEncoded( $field ) {
-		return htmlspecialchars( $this->getValue($field));
+	public function getValueEncoded($field) {
+		return htmlspecialchars($this->getValue($field));
 	}
 
 	protected function connect() {
@@ -36,12 +36,12 @@ abstract class DataObject {
 			$conn = new \PDO( getenv('DB_DSN'), getenv('DB_USERNAME'), getenv('DB_PASSWORD') );
 			$conn->setAttribute( \PDO::ATTR_PERSISTENT, true );
 			$conn->setAttribute( \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION );
-		} catch ( \PDOException $e ) {
+		} catch (\PDOException $e) {
 			die( "Connection failed: " . $e->getMessage());
 		}
 		return $conn;
 	}
-	protected function disconnect( $conn ) {
+	protected function disconnect($conn) {
 		$conn = "";
 	}
 }

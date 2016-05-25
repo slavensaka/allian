@@ -10,7 +10,7 @@ class Controller {
 	/**
 	 *
 	 * Block comment
-	 *
+	 * TODO MORAM SPREMIT TOKEN_ID IZ JWT U BAZU i UVIJEK PROVJERIT
 	 */
 	public function generateResponseToken($dataArray){
 		$secretKey = base64_decode(getenv('jwtKey'));

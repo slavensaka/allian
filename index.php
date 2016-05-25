@@ -1,4 +1,4 @@
-<?php
+<?php // ALTER TABLE CustLogin ADD COLUMN jwt_token VARCHAR(250) NULL AFTER token;
 require __DIR__ . '/vendor/autoload.php';
 
 use Allian\Http\Controllers\Controller;
@@ -8,36 +8,32 @@ use Allian\Http\Controllers\StripeController;
 use Allian\Http\Controllers\DeveloperController;
 use Allian\Http\Controllers\ConferenceScheduleController;
 use Allian\Http\Controllers\TwilioController;
+use Allian\Http\Controllers\LangListController;
 
 $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
 
-//Routing
 $klein = new \Klein\Klein();
-
-// TODO Return HTTP Status code error rendered views.
-//The likes of 404 Not found
-$klein->onHttpError(function ($code, $router,$service) {
+// ==========================================================================
+// TODO Style render views 404, 405, error
+// ==========================================================================
+$klein->onHttpError(function ($code, $klein, $matched, $methods, $exception) {
     switch ($code) {
         case 404:
-            $router->response()->json(Controller::errorJson('Page not found! ' . $code));
+        	$klein->service()->render("/resources/views/errors/404.php");
             break;
         case 405:
-            $router->response()->json(Controller::errorJson('Method not allowed! ' . $code . '!'));
+        	$klein->service()->render("/resources/views/errors/405.php");
             break;
         default:
-            $router->response()->json(Controller::errorJson('General error ' . $code));
+        	$klein->service()->render("/resources/views/errors/error.php");
     }
 });
 
 $klein->respond(function ($request, $response, $service, $app) use ($klein) {
-    // Handle exceptions => flash the message and redirect to the referrer
-    // If validation and expcetion errors are present on any route, catch them
-    // end return a encrypted value, with status=0, and userMessage depending on
-    // err_msg given with klein routing package
     $klein->onError(function ($klein, $err_msg) {
     	$base64Encrypted = Controller::encryptValues(json_encode(Controller::errorJson($err_msg)));
-       	return  $klein->response()->json(array('data' => $base64Encrypted));
+       	return $klein->response()->json(array('data' => $base64Encrypted));
     });
 });
 
@@ -46,10 +42,10 @@ $klein->with('/testgauss', function() use ($klein){
 	$custLogin = new CustLoginController();
 	$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
 	$klein->respond('POST', '/register', array($custLogin, 'postRegister'));
+	$klein->respond('GET', '/logout', array($custLogin, 'logout'));
+	$klein->respond('GET', '/keepLoggedIn', array($custLogin, 'keepLoggedIn'));
 	$klein->respond('POST', '/forgot', array($custLogin, 'postForgot'));
 	$klein->respond('GET', '/terms', array($custLogin, 'getTerms'));
-	$klein->respond('GET', '/logout', array($custLogin, 'logout'));
-
 	$klein->respond('POST', '/telephonicAccess', array($custLogin, 'postTelephonicAccess'));
 	$klein->respond('POST', '/updateProfile', array($custLogin, 'updateProfile'));
 	$klein->respond('POST', '/viewProfile', array($custLogin, 'viewProfile'));
@@ -60,8 +56,7 @@ $klein->with('/testgauss', function() use ($klein){
 	$stripe = new StripeController();
 	$klein->respond('POST', '/updateStripe', array($stripe, 'updateStripe'));
 	$klein->respond('POST', '/createToken', array($stripe, 'createToken'));
-// ALTER TABLE CustLogin ADD COLUMN jwt_token VARCHAR(50) NULL AFTER token;
-	// TODO MORAM SPREMIT TOKEN_ID IZ JWT U BAZU i UVIJEK PROVJERIT
+
 	$developer = new DeveloperController();
 	$klein->respond('GET', '/renderdocs', array($developer, 'renderDocs')); // FOR TESTING
 	$klein->respond('GET', '/devEncryptJson', array($developer, 'devEncryptJson'));
@@ -75,10 +70,8 @@ $klein->with('/testgauss', function() use ($klein){
 	$twilio = new TwilioController();
 	$klein->respond('GET', '/twilio', array($twilio, 'twilio'));
 
+	$langList = new LangListController();
+	$klein->respond('GET', '/langNames', array($langList, 'langNames'));
 });
 
 $klein->dispatch();
-
-// include('gmail.php');
-// include('connection.php'); // FOR TESTING
-

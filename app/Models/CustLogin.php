@@ -77,7 +77,7 @@ class CustLogin extends DataObject {
 		$login=$const+$cid;
   	 *
   	 */
-  	public static function register($data){
+  	public static function register($data, $stripe_token){
   		$conn = parent::connect();
   		$sql = "SELECT PhLoginId FROM " . getenv('TBL_CUSTLOGIN') . " ORDER BY CustomerID DESC LIMIT 1";
   		try {
@@ -96,12 +96,12 @@ class CustLogin extends DataObject {
 	    }
 
 	    if($last_phloginid){
-	    	$message = self::insertUser($data, $new_phloginid);
+	    	$message = self::insertUser($data, $new_phloginid, $stripe_token);
 	    	return $message;
 		}
   	}
 
-  	public static function insertUser($data, $new_phloginid){
+  	public static function insertUser($data, $new_phloginid, $stripe_token){
 
   		$conn = parent::connect();
   		$services = implode(":", $data['services']);
@@ -116,7 +116,7 @@ class CustLogin extends DataObject {
   			$st->bindValue( ":PhPassword", $data['phone_password'], \PDO::PARAM_STR );
   			$st->bindValue( ":PhLoginId", $new_phloginid, \PDO::PARAM_INT );
   			$st->bindValue( ":Services", $services, \PDO::PARAM_STR );
-  			$st->bindValue( ":token", $data['stripe_token'], \PDO::PARAM_INT );
+  			$st->bindValue( ":token", $stripe_token, \PDO::PARAM_INT );
   			if (is_null($data['type'])) { $value = 1; } else { $value =  $data['type']; }
              $st->bindValue(":Type", $value, \PDO::PARAM_INT);
   			$success = $st->execute();

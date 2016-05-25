@@ -3,6 +3,7 @@
 namespace Allian\Http\Controllers;
 
 use PHPMailer;
+use Allian\Http\Controllers\StripeController;
 use Allian\Models\CustLogin;
 use Firebase\JWT\JWT;
 use \Dotenv\Dotenv;
@@ -76,14 +77,23 @@ class CustLoginController extends Controller {
 		$service->validate($data['fname'], 'Error: no first name is present.')->isLen(3,200)->notNull();
 		$service->validate($data['lname'], 'Error: no last name is present.')->isLen(3,200)->notNull();
 		$service->validate($data['email'], 'Invalid email address.')->notNull()->isLen(3,200)->isEmail();
-		$service->validate($data['phone'], 'Invalid phone number.')->isLen(3,200)->notNull();
+		$service->validate($data['phone'], 'Invalid phone number.')->notNull();
 		$service->validate($data['password'], 'Error: no password present.')->isLen(3,200)->notNull();
 		$service->validate($data['phone_password'], 'Error: no phone password present.')->isLen(3,200)->notNull()->isInt();
-		$service->validate($data['stripe_token'], 'No stripe token provided.')->notNull();
-		// $service->validate($data['services'], 'Error: no service present.')->notNull;
+		$service->validate($data['services'], 'Error: no service present.')->notNull();
+		$service->validate($data['sname'], 'Error: no stripe name present.')->notNull()->isLen(3,200);
+		$service->validate($data['number'], 'Error: no credit card number present.')->notNull();
+		$service->validate($data['exp_month'], 'Error: Expiration month not present.')->notNull();
+		$service->validate($data['exp_year'], 'Error: Expiration year not present.')->notNull();
+		$service->validate($data['cvc'], 'Error: Cvc not present.')->notNull();
+		// TODO generate jwt token, store in database, response token
+		// Stripe token then customer create
+		$stripe = new StripeController();
+		$tokenResult = $stripe->createToken($data);
+		$stripeCustomer = $stripe->createCustomer($data['email'], $tokenResult);
 
 		// Try to register customer with inputed data
-		$customer = CustLogin::register($data);
+		$customer = CustLogin::register($data, $stripeCustomer);
 
 		// On error, return message
 		if(!$customer){
@@ -103,9 +113,6 @@ class CustLoginController extends Controller {
 		// Return as json token and encrypted data
      	return $response->json(array('data' => $base64Encrypted));
 	}
-
-
-
 
 	 /**
      * @ApiDescription(section="UpdateProfile", description="Update customers profile information by giving the CustomerID to recognize him in the database and new info.")
@@ -337,6 +344,10 @@ class CustLoginController extends Controller {
      */
 	public function getTerms($request, $response, $service, $app){
 		$service->render('./resources/views/terms.html');
+
+	}
+
+	public function keepLoggedIn($request, $response, $service, $app){
 
 	}
 
