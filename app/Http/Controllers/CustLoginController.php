@@ -3,6 +3,7 @@
 namespace Allian\Http\Controllers;
 
 use PHPMailer;
+
 use Allian\Http\Controllers\StripeController;
 use Allian\Models\CustLogin;
 use Firebase\JWT\JWT;
@@ -30,7 +31,7 @@ class CustLoginController extends Controller {
 		$data = $this->decryptValues($request->data);
 
 		// Validate input data
-		$service->validate($data['email'], 'Invalid email address given.')->isLen(3,200)->isEmail();
+		$service->validate($data['email'], 'Invalid email address given.')->notNull()->isLen(3,200)->isEmail();
 		$service->validate($data['password'], 'No password is present.')->notNull();
     	$email = $data['email'];
     	$password = $data['password'];
@@ -48,17 +49,27 @@ class CustLoginController extends Controller {
 		// Generate token
 		$genToken = $this->generateResponseToken(array("Success" => "Success"));
 
+		// Store the newly created token
+		$storeToken = $this->storeToken($genToken, $customer->getValueEncoded('CustomerID'));
+
+		// If internal error, return encrypted message
+		if(!$storeToken){
+			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Internal error. Contact support")));
+			$resp = $this->makeLoginResponse($base64Encrypted);
+     		return $response->json($resp);
+		}
+
 		// Format data for encryption
 		$base64Encrypted = $this->encryptValues(json_encode($this->loginValues($customer)));
 
 		// Make the response json
-		$resp = $this->makeLoginResponse($base64Encrypted, $genToken);
+		$resp = array('token' => $genToken, 'data' => $base64Encrypted);
 
 		// Return as json token and encrypted data
      	return $response->json($resp);
 	}
 
-	  /**
+	/**
      * @ApiDescription(section="Register", description="Register a new user in the database")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/register")
@@ -86,7 +97,7 @@ class CustLoginController extends Controller {
 		$service->validate($data['exp_month'], 'Error: Expiration month not present.')->notNull();
 		$service->validate($data['exp_year'], 'Error: Expiration year not present.')->notNull();
 		$service->validate($data['cvc'], 'Error: Cvc not present.')->notNull();
-		// TODO generate jwt token, store in database, response token
+
 		// Stripe token then customer create
 		$stripe = new StripeController();
 		$tokenResult = $stripe->createToken($data);
@@ -101,6 +112,19 @@ class CustLoginController extends Controller {
      		return $response->json(array('data' => $base64Encrypted));
 		}
 
+		// Generate token
+		$genToken = $this->generateResponseToken(array("Success" => "Success"));
+
+		// Store the newly created token
+		$storeToken = $this->storeToken($genToken, $customer->getValueEncoded('CustomerID'));
+
+		// If internal error, return encrypted message
+		if(!$storeToken){
+			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Internal error. Contact support")));
+			$resp = $this->makeLoginResponse($base64Encrypted);
+     		return $response->json($resp);
+		}
+
 		// Format response
 		$jsonArray = array();
 		$jsonArray['status'] = 1;
@@ -110,8 +134,11 @@ class CustLoginController extends Controller {
 		// Format data for encryption
 		$base64Encrypted = $this->encryptValues(json_encode($jsonArray));
 
+		// Make the response json
+		$resp = array('token' => $genToken, 'data' => $base64Encrypted);
+
 		// Return as json token and encrypted data
-     	return $response->json(array('data' => $base64Encrypted));
+     	return $response->json($resp);
 	}
 
 	 /**
@@ -147,6 +174,15 @@ class CustLoginController extends Controller {
 			$service->validate($data['password'], 'Error: no password present.')->isLen(3,200);
 			$service->validate($data['phone_password'], 'Error: no phone password present.')->isLen(3,200)->isInt();
 
+			// Validate token in database for customer stored
+			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
+
+			// If error validating token in database
+			if(!$validated){
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
+	     		return $response->json(array('data' => $base64Encrypted));
+			}
+
 			// Try to update customer with inputed data
 			$updated = CustLogin::update($data);
 			if(!$updated){
@@ -165,7 +201,8 @@ class CustLoginController extends Controller {
 			// Return as json token and encrypted data
 	     	return $response->json(array('data' => $base64Encrypted));
      	} else {
-     		return $response->json("No token in request TODO. ");
+     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+     		return $response->json(array('data' => $base64Encrypted));
      	}
 	}
 
@@ -313,7 +350,12 @@ class CustLoginController extends Controller {
 			$data = $this->decryptValues($request->data);
 
 			// Validate input data
-			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+			// $service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+
+			//TODO
+			$t = include getcwd() . "/resources/assets/telephonicAccess.php";
+			return $response->json( $telephones);
+
 
 			// Retrieve the customer
 			$customer = CustLogin::getCustomer($data['CustomerID']);
@@ -347,13 +389,67 @@ class CustLoginController extends Controller {
 
 	}
 
+	// data = keepLoggedIn = 1, CustomerID = 761
+	// Ako je mob request $keepLoggedIn = 0 onda se postavi na forever i vrati $keepLoggedIn = 1
+	// Ako je mob request $keepLoggedIn = 1 onda se postavi na 2 tjedna i vrati $keepLoggedIn = 0
 	public function keepLoggedIn($request, $response, $service, $app){
+		if($request->token){
+			// Validate token if not expired, or tampered with
+			$this->validateToken($request->token);
 
+			//Decrypt input data
+			$data = $this->decryptValues($request->data);
+
+			// Validate input data
+			$service->validate($data['keepLoggedIn'], 'Error: No keepLoggedIn flag present.')->notNull()->isInt();
+			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+
+			// If flag 0, user wants to be logged in forever
+			if(!$keepLoggedIn){
+
+				// Generate 4 years token(i.e. forever), logged in
+				$genToken = $this->generateInfiniteToken(array("Success" => "Success"));
+
+				// Store the token in the database
+				$storeToken = $this->storeToken($genToken, $data['CustomerID']);
+
+				// If internal error, return encrypted message
+				if(!$storeToken){
+					$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Internal error. Contact support")));
+					$resp = $this->makeLoginResponse($base64Encrypted);
+		     		return $response->json($resp);
+				}
+
+				// Return that the user is keept logged in
+				return $response->json(array('data' => array('keepLoggedIn' => 1)));
+
+				// If flag 1, user wants to have an expiration time of token
+			} else {
+
+				// Generate ordinary 2 week token
+				$genToken = $this->generateResponseToken(array("Success" => "Success"));
+
+				// Store the token in the database
+				$storeToken = $this->storeToken($genToken, $data['CustomerID']);
+
+				// If internal error, return encrypted message
+				if(!$storeToken){
+					$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Internal error. Contact support")));
+					$resp = $this->makeLoginResponse($base64Encrypted);
+		     		return $response->json($resp);
+				}
+
+				// Return that the user is NOT kept logged in
+				return $response->json(array('data' => array('keepLoggedIn' => 0)));
+			}
+		} else {
+			return $response->json('No token provided TODO');
+		}
 	}
 
 	public function logout($request, $response, $service, $app){
 
-		if($request->token){ //editmain.php i editmainadd.php
+		if($request->token){
 
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -362,20 +458,21 @@ class CustLoginController extends Controller {
 			$data = $this->decryptValues($request->data);
 
 			// Validate input data
-			$service->validate($data['loggedIn'], 'Error: something went wrong.')->isInt()->notNull();
+			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+			// $service->validate($data['loggedIn'], 'Error: something went wrong.')->isInt()->notNull();
 
-			if($data['loggedIn']){
-				// token infinite, store int database token
-				// vrati token_infinite i spremi u app mob umjesto dosad napravljenog.
-				// loggedIn = 1
-				// status = 1
-			} else {
-				// token - expired, store into database token,
-				//status = 1
-				// loggedIn = 0
-				// vrati token_invalidated i
-				// spremi u app mob umjesto dosad napravljenog NIJE OBVEZNO
-			}
+			$genToken = $this->generateExpiredToken(array("Success" => "Success"));
+
+			// Store the token in the database
+			$storeToken = $this->storeToken($genToken, $data['CustomerID']);
+
+			$jsonArray = array();
+			$jsonArray['status'] = 1;
+			$jsonArray['userMessage'] = "You have successfully logged out!";
+
+			// Encrypt format json response
+			$base64Encrypted = $this->encryptValues(json_encode($jsonArray));
+	     	return $response->json(array('data' => $base64Encrypted));
 
 		} else {
 			return $response->json("No token provided");

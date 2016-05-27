@@ -97,7 +97,13 @@
 
                 <div class="tab-pane active" id="info0">
                     <div class="well">
-                    Authenticate the customer with his email and password and return a jwt token with expiration date for server side validation of autenticity of customer, also returns a data key thats encrypted with RNCryptor with the data values . <br><b>Store the token in the app, this is the auth token needed througth the app</b>(other routes require this correct token).
+                    Authenticate the customer with his email and password and return a jwt token with expiration date for server side validation of autenticity of customer, also returns a data key thats encrypted with RNCryptor with the data values . <br><b>Store the token in the app, this is the auth token needed througth the app</b>(other routes require this correct token).<br>
+     Example json: <br>
+     				{<br>
+    				'email': 'slavensakacic@gmail.com',<br>
+    				'password': '12345'<br>
+  					}
+  	
                     </div>
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Headers</strong></div>
@@ -1023,12 +1029,12 @@
             </div><!-- .tab-content -->
         </div>
     </div>
-</div><h2>DevEncryptJson</h2>
+</div><h2>GetTimezones</h2>
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion8" href="#collapseOne8"> /testgauss/devEncryptJson</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion8" href="#collapseOne8"> /testgauss/getTimezones</a>
         </h4>
     </div>
     <div id="collapseOne8" class="panel-collapse collapse">
@@ -1045,326 +1051,6 @@
             <div class="tab-content">
 
                 <div class="tab-pane active" id="info8">
-                    <div class="well">
-                    Developer used route for easy encrypting json request data. Input json value into field in sandbox are retrieve a encrypted API used data string for development purposes.Example {'CustomerID': 720}
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Headers</strong></div>
-                      <div class="panel-body">
-                        
-                      </div>
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Parameters</strong></div>
-                      <div class="panel-body">
-                        
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Required</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        
-<tr>
-    <td>data</td>
-    <td>object</td>
-    <td>Yes</td>
-    <td></td>
-</tr>
-    </tbody>
-</table>
-                      </div>
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Body</strong></div>
-                      <div class="panel-body">
-                        <pre id="sample_post_body8">{ 'data': 'Some json string'}</pre>
-                      </div>
-                    </div>
-                </div><!-- #info -->
-
-                <div class="tab-pane" id="sandbox8">
-                    <div class="row">
-                        <div class="col-md-12">
-                        
-        <div class="col-md-6">
-    Headers
-    <hr/>
-    <div class="headers">
-    
-    </div>
-    </div>
-    <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devEncryptJson" method="get" name="form8" id="form8">
-    
-    Parameters
-    <hr/>
-    
-<div class="form-group">
-    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
-</div>
-    <button type="submit" class="btn btn-success send" rel="8">Send</button>
-</form></div>
-                        </div>
-                        <div class="col-md-12">
-                            Response
-                            <hr>
-                            <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers8"></pre>
-                                <pre id="response8"></pre>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- #sandbox -->
-
-                <div class="tab-pane" id="sample8">
-                    <div class="row">
-                        <div class="col-md-12">
-                            
-<pre id="sample_resp_header8">HTTP 200 OK</pre>
-                            
-
-<hr>
-<pre id="sample_response8">{'json': '', 'encrypted': '' }</pre>
-                        </div>
-                    </div>
-                </div><!-- #sample -->
-
-            </div><!-- .tab-content -->
-        </div>
-    </div>
-</div><h2>DevDecryptJson</h2>
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion9" href="#collapseOne9"> /testgauss/devDecryptJson</a>
-        </h4>
-    </div>
-    <div id="collapseOne9" class="panel-collapse collapse">
-        <div class="panel-body">
-
-            <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab9">
-                <li class="active"><a href="#info9" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox9" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample9" data-toggle="tab">Sample output</a></li>
-            </ul>
-
-            <!-- Tab panes -->
-            <div class="tab-content">
-
-                <div class="tab-pane active" id="info9">
-                    <div class="well">
-                    Decrypt the encrypted data into plaintext. So if json was encrypted, retrieve the json in the encrypted data. Used for development purposes.
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Headers</strong></div>
-                      <div class="panel-body">
-                        
-                      </div>
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Parameters</strong></div>
-                      <div class="panel-body">
-                        
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Required</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        
-<tr>
-    <td>data</td>
-    <td>object</td>
-    <td>Yes</td>
-    <td></td>
-</tr>
-    </tbody>
-</table>
-                      </div>
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Body</strong></div>
-                      <div class="panel-body">
-                        <pre id="sample_post_body9">{ 'data': ''}</pre>
-                      </div>
-                    </div>
-                </div><!-- #info -->
-
-                <div class="tab-pane" id="sandbox9">
-                    <div class="row">
-                        <div class="col-md-12">
-                        
-        <div class="col-md-6">
-    Headers
-    <hr/>
-    <div class="headers">
-    
-    </div>
-    </div>
-    <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devDecryptJson" method="get" name="form9" id="form9">
-    
-    Parameters
-    <hr/>
-    
-<div class="form-group">
-    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
-</div>
-    <button type="submit" class="btn btn-success send" rel="9">Send</button>
-</form></div>
-                        </div>
-                        <div class="col-md-12">
-                            Response
-                            <hr>
-                            <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers9"></pre>
-                                <pre id="response9"></pre>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- #sandbox -->
-
-                <div class="tab-pane" id="sample9">
-                    <div class="row">
-                        <div class="col-md-12">
-                            
-<pre id="sample_resp_header9">HTTP 200 OK</pre>
-                            
-
-<hr>
-<pre id="sample_response9">{'data': '', 'decrypted': '' }</pre>
-                        </div>
-                    </div>
-                </div><!-- #sample -->
-
-            </div><!-- .tab-content -->
-        </div>
-    </div>
-</div><h2>DevGenerateAuthToken</h2>
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion10" href="#collapseOne10"> /testgauss/devGenerateAuthToken</a>
-        </h4>
-    </div>
-    <div id="collapseOne10" class="panel-collapse collapse">
-        <div class="panel-body">
-
-            <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab10">
-                <li class="active"><a href="#info10" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox10" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample10" data-toggle="tab">Sample output</a></li>
-            </ul>
-
-            <!-- Tab panes -->
-            <div class="tab-content">
-
-                <div class="tab-pane active" id="info10">
-                    <div class="well">
-                    Generate a jwt token, that can be used for any user as his, used for development purposes for now. Put into any sandbox with data and call succefully the route.
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Headers</strong></div>
-                      <div class="panel-body">
-                        
-                      </div>
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Parameters</strong></div>
-                      <div class="panel-body">
-                        
-                      </div>
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Body</strong></div>
-                      <div class="panel-body">
-                        <pre id="sample_post_body10">{ 'data': ''}</pre>
-                      </div>
-                    </div>
-                </div><!-- #info -->
-
-                <div class="tab-pane" id="sandbox10">
-                    <div class="row">
-                        <div class="col-md-12">
-                        
-        <div class="col-md-6">
-    Headers
-    <hr/>
-    <div class="headers">
-    
-    </div>
-    </div>
-    <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devGenerateAuthToken" method="get" name="form10" id="form10">
-    
-    Parameters
-    <hr/>
-    
-    <button type="submit" class="btn btn-success send" rel="10">Send</button>
-</form></div>
-                        </div>
-                        <div class="col-md-12">
-                            Response
-                            <hr>
-                            <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers10"></pre>
-                                <pre id="response10"></pre>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- #sandbox -->
-
-                <div class="tab-pane" id="sample10">
-                    <div class="row">
-                        <div class="col-md-12">
-                            
-<pre id="sample_resp_header10">HTTP 200 OK</pre>
-                            
-
-<hr>
-<pre id="sample_response10">{'jwtToken': '', 'tokenContent': '' }</pre>
-                        </div>
-                    </div>
-                </div><!-- #sample -->
-
-            </div><!-- .tab-content -->
-        </div>
-    </div>
-</div><h2>GetTimezones</h2>
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion11" href="#collapseOne11"> /testgauss/getTimezones</a>
-        </h4>
-    </div>
-    <div id="collapseOne11" class="panel-collapse collapse">
-        <div class="panel-body">
-
-            <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab11">
-                <li class="active"><a href="#info11" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox11" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample11" data-toggle="tab">Sample output</a></li>
-            </ul>
-
-            <!-- Tab panes -->
-            <div class="tab-content">
-
-                <div class="tab-pane active" id="info11">
                     <div class="well">
                     
                     </div>
@@ -1402,12 +1088,12 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body11">{ 'data': ''}</pre>
+                        <pre id="sample_post_body8">{ 'data': ''}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox11">
+                <div class="tab-pane" id="sandbox8">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -1419,7 +1105,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/getTimezones" method="post" name="form11" id="form11">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/getTimezones" method="post" name="form8" id="form8">
     
     Parameters
     <hr/>
@@ -1427,29 +1113,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
 </div>
-    <button type="submit" class="btn btn-success send" rel="11">Send</button>
+    <button type="submit" class="btn btn-success send" rel="8">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers11"></pre>
-                                <pre id="response11"></pre>
+                                <pre id="response_headers8"></pre>
+                                <pre id="response8"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample11">
+                <div class="tab-pane" id="sample8">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header11">HTTP 200 OK</pre>
+<pre id="sample_resp_header8">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response11">{'data': ''}</pre>
+<pre id="sample_response8">{'data': ''}</pre>
                         </div>
                     </div>
                 </div><!-- #sample -->
@@ -1462,23 +1148,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion12" href="#collapseOne12"> /testgauss/langNames</a>
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion9" href="#collapseOne9"> /testgauss/langNames</a>
         </h4>
     </div>
-    <div id="collapseOne12" class="panel-collapse collapse">
+    <div id="collapseOne9" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab12">
-                <li class="active"><a href="#info12" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox12" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample12" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab9">
+                <li class="active"><a href="#info9" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox9" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample9" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info12">
+                <div class="tab-pane active" id="info9">
                     <div class="well">
                     Retrieve json of list of langauges to translate.
                     </div>
@@ -1516,7 +1202,331 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body12">{ 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQxODA5NjgsImp0aSI6Imt2bTFQUGNZV0pXanJFNldKVnJlWkZDXC9DT0NIXC9ScXZzRXczS1daRHVFaz0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQxODA5NjgsImV4cCI6MTQ2NTM5MDU2OH0.zUOaBjGImiccVvwPtQlxYhpi2kOD5a1hLEU7ySvDt3gUwRY-t2pC5UwHkRXrvsjmpx866p2ZQOzY5M2GCRoHkw'}</pre>
+                        <pre id="sample_post_body9">{ 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQxODA5NjgsImp0aSI6Imt2bTFQUGNZV0pXanJFNldKVnJlWkZDXC9DT0NIXC9ScXZzRXczS1daRHVFaz0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQxODA5NjgsImV4cCI6MTQ2NTM5MDU2OH0.zUOaBjGImiccVvwPtQlxYhpi2kOD5a1hLEU7ySvDt3gUwRY-t2pC5UwHkRXrvsjmpx866p2ZQOzY5M2GCRoHkw'}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox9">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/langNames" method="get" name="form9" id="form9">
+    
+    Parameters
+    <hr/>
+    
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
+</div>
+    <button type="submit" class="btn btn-success send" rel="9">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers9"></pre>
+                                <pre id="response9"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample9">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header9">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response9">{'data': ''
+		}</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
+</div><h2>DevEncryptJson</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion10" href="#collapseOne10"> /testgauss/devEncryptJson</a>
+        </h4>
+    </div>
+    <div id="collapseOne10" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab10">
+                <li class="active"><a href="#info10" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox10" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample10" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info10">
+                    <div class="well">
+                    Developer used route for easy encrypting json request data. Input json value into field in sandbox are retrieve a encrypted API used data string for development purposes.Example {'CustomerID': 720}
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+<tr>
+    <td>data</td>
+    <td>object</td>
+    <td>Yes</td>
+    <td></td>
+</tr>
+    </tbody>
+</table>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body10">{ 'data': 'Some json string'}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox10">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devEncryptJson" method="get" name="form10" id="form10">
+    
+    Parameters
+    <hr/>
+    
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
+</div>
+    <button type="submit" class="btn btn-success send" rel="10">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers10"></pre>
+                                <pre id="response10"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample10">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header10">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response10">{'json': '', 'encrypted': '' }</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
+</div><h2>DevDecryptJson</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion11" href="#collapseOne11"> /testgauss/devDecryptJson</a>
+        </h4>
+    </div>
+    <div id="collapseOne11" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab11">
+                <li class="active"><a href="#info11" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox11" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample11" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info11">
+                    <div class="well">
+                    Decrypt the encrypted data into plaintext. So if json was encrypted, retrieve the json in the encrypted data. Used for development purposes.
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+<tr>
+    <td>data</td>
+    <td>object</td>
+    <td>Yes</td>
+    <td></td>
+</tr>
+    </tbody>
+</table>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body11">{ 'data': ''}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox11">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devDecryptJson" method="get" name="form11" id="form11">
+    
+    Parameters
+    <hr/>
+    
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
+</div>
+    <button type="submit" class="btn btn-success send" rel="11">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers11"></pre>
+                                <pre id="response11"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample11">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header11">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response11">{'data': '', 'decrypted': '' }</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
+</div><h2>DevGenerateAuthToken</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion12" href="#collapseOne12"> /testgauss/devGenerateAuthToken</a>
+        </h4>
+    </div>
+    <div id="collapseOne12" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab12">
+                <li class="active"><a href="#info12" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox12" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample12" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info12">
+                    <div class="well">
+                    Generate a jwt token, that can be used for any user as his, used for development purposes for now. Put into any sandbox with data and call succefully the route.
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body12">{ 'data': ''}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
@@ -1533,14 +1543,11 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/langNames" method="get" name="form12" id="form12">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devGenerateAuthToken" method="get" name="form12" id="form12">
     
     Parameters
     <hr/>
     
-<div class="form-group">
-    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
-</div>
     <button type="submit" class="btn btn-success send" rel="12">Send</button>
 </form></div>
                         </div>
@@ -1563,8 +1570,7 @@
                             
 
 <hr>
-<pre id="sample_response12">{'data': ''
-		}</pre>
+<pre id="sample_response12">{'jwtToken': '', 'tokenContent': '' }</pre>
                         </div>
                     </div>
                 </div><!-- #sample -->
@@ -1578,7 +1584,7 @@
 
         <div class="row mt0 footer">
             <div class="col-md-6" align="left">
-                Generated on 2016-05-25, 15:07:45
+                Generated on 2016-05-27, 13:14:40
             </div>
             <div class="col-md-6" align="right">
                 <a href="https://github.com/calinrada/php-apidoc" target="_blank">php-apidoc v 1.3.4</a>

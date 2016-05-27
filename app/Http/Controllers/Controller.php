@@ -4,6 +4,7 @@ namespace Allian\Http\Controllers;
 
 use PHPMailer;
 use Firebase\JWT\JWT;
+use Allian\Models\CustLogin;
 
 class Controller {
 
@@ -18,7 +19,57 @@ class Controller {
 		$tokenId    = base64_encode(mcrypt_create_iv(32));
 	    $issuedAt   = time();
 	    $notBefore  = $issuedAt;
-	    $expire     = $notBefore + 1209600;
+	    $expire     = $notBefore + 1209600; // 2 weeks working token
+	    $serverName = $_SERVER['SERVER_NAME'];
+
+	    $data = array(
+	        'iat'  => $issuedAt,         // Issued at: time when the token was generated
+	        'jti'  => $tokenId,          // Json Token Id: an unique identifier for the token
+	        'iss'  => $serverName,       // Issuer
+	        'nbf'  => $notBefore,        // Not before
+	        'exp'  => $expire,           // Expire
+	        'data' => $dataArray
+	    );
+
+	    // Encode the new json payload data
+	    $jwt = JWT::encode($data, $secretKey, 'HS512');
+	    header('Content-type: application/json');
+
+    	return $jwt;
+	}
+
+	public function generateExpiredToken($dataArray){
+		$secretKey = base64_decode(getenv('jwtKey'));
+
+		$tokenId    = base64_encode(mcrypt_create_iv(32));
+	    $issuedAt   = time();
+	    $notBefore  = $issuedAt;
+	    $expire     = $notBefore - 1209600; // 4 years working token
+	    $serverName = $_SERVER['SERVER_NAME'];
+
+	    $data = array(
+	        'iat'  => $issuedAt,         // Issued at: time when the token was generated
+	        'jti'  => $tokenId,          // Json Token Id: an unique identifier for the token
+	        'iss'  => $serverName,       // Issuer
+	        'nbf'  => $notBefore,        // Not before
+	        'exp'  => $expire,           // Expire
+	        'data' => $dataArray
+	    );
+
+	    // Encode the new json payload data
+	    $jwt = JWT::encode($data, $secretKey, 'HS512');
+	    header('Content-type: application/json');
+
+    	return $jwt;
+	}
+
+	public function generateInfiniteToken($dataArray){
+		$secretKey = base64_decode(getenv('jwtKey'));
+
+		$tokenId    = base64_encode(mcrypt_create_iv(32));
+	    $issuedAt   = time();
+	    $notBefore  = $issuedAt;
+	    $expire     = $notBefore + 126144000; // 4 years working token
 	    $serverName = $_SERVER['SERVER_NAME'];
 
 	    $data = array(
@@ -84,6 +135,21 @@ class Controller {
 
 	/**
 	 *
+	 * Block comment
+	 *
+	 */
+	public function storeToken($jwt, $CustomerID){
+		$secretKey = base64_decode(getenv('jwtKey'));
+		$token = JWT::decode($jwt, $secretKey, array('HS512'));
+		$stored = CustLogin::updateToken($token->jti, $CustomerID);
+		if(!$stored){
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 *
 	 * Generate json for response for login route
 	 *
 	 */
@@ -99,6 +165,11 @@ class Controller {
 		return $jsonArray;
 	}
 
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
 	public function validateToken($jwt){
 		try{
 			$secretKey = base64_decode(getenv('jwtKey'));
@@ -111,6 +182,23 @@ class Controller {
 	   		return $response->json($this->errorJson($e->getMessage(), 'before_valid'));
 	    }
 	}
+
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	public function validateTokenInDatabase($jwt, $CustomerID){
+		$secretKey = base64_decode(getenv('jwtKey'));
+		$token = JWT::decode($jwt, $secretKey, array('HS512'));
+		$stored = CustLogin::retrieveTokenInDatabase($CustomerID);
+		if($token->jti == $stored['jwt_token']){
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	/**
 	 *
 	 * Decrypt values from request data input field with RNCryptor
@@ -133,16 +221,6 @@ class Controller {
 		$encryptor = new \RNCryptor\Encryptor();
 		$base64Encrypted = $encryptor->encrypt($data, $password);
 		return $base64Encrypted;
-	}
-
-	/**
-	 *
-	 * Format json for response for login route
-	 *
-	 */
-	public static function makeLoginResponse($base64Encrypted, $genToken = null){
-		$response = array('token' => $genToken, 'data' => $base64Encrypted);
-		return $response;
 	}
 
 	/**

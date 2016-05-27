@@ -9,10 +9,10 @@ $classes = array(
     'Allian\Http\Controllers\CustLoginController',
     'Allian\Http\Controllers\LangPairController',
     'Allian\Http\Controllers\StripeController',
-    'Allian\Http\Controllers\DeveloperController',
     'Allian\Http\Controllers\ConferenceScheduleController',
     'Allian\Http\Controllers\TwilioController',
     'Allian\Http\Controllers\LangListController',
+    'Allian\Http\Controllers\DeveloperController',
     // 'Some\Namespace\OtherClass',
 );
 

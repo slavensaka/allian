@@ -30,15 +30,22 @@
 // $dbhost = 'vps9239.inmotionhosting.com';
 
 // DEVELOPMENT SERVER
-$dbname="allian10_abs_linguist_portal";
-$dbuser="root";
-$dbpass="";
-$dbhost="localhost";
+// $dbname="allian10_abs_linguist_portal";
+// $dbuser="root";
+// $dbpass="";
+// $dbhost="localhost";
 
-// CONNECTION
-$con = mysqli_connect("localhost", "root", "", "allian10_abs_linguist_portal");
-$langID = 1;
-$query ="SELECT DISTINCT langpair_trans.Lang2 AS lang2, langlist.LangName AS langName FROM langpair_trans LEFT JOIN langlist ON langpair_trans.Lang2 = langlist.LangId WHERE langpair_trans.Lang1 = '$langID' AND Approved = 1 AND Lang2 IS NOT NULL AND Lang2 <> 'N/A' ORDER BY langlist.LangName";
-while($row = mysqli_fetch_array($con,$query)){
-	var_dump($result["langName"]);
-}
+// // CONNECTION
+// $con = mysqli_connect("localhost", "root", "", "allian10_abs_linguist_portal");
+// $langID = 1;
+// $query ="SELECT DISTINCT langpair_trans.Lang2 AS lang2, langlist.LangName AS langName FROM langpair_trans LEFT JOIN langlist ON langpair_trans.Lang2 = langlist.LangId WHERE langpair_trans.Lang1 = '$langID' AND Approved = 1 AND Lang2 IS NOT NULL AND Lang2 <> 'N/A' ORDER BY langlist.LangName";
+// while($row = mysqli_fetch_array($con,$query)){
+// 	var_dump($result["langName"]);
+// }
+
+
+// if (CRYPT_BLOWFISH == 1) {
+//     echo "Yes";
+// } else {
+//     echo "No";
+// }

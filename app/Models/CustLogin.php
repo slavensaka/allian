@@ -3,6 +3,7 @@
 namespace Allian\Models;
 
 use Database\DataObject;
+use Allian\Helpers\PassHash;
 
 class CustLogin extends DataObject {
 
@@ -32,6 +33,7 @@ class CustLogin extends DataObject {
 	    "totalcharhed" => "",
 	    "totalbilled" => "",
 	    "Saved" => "",
+	    "jwt_token",
 	);
 
   	private $_genres = array(
@@ -44,24 +46,31 @@ class CustLogin extends DataObject {
 	    "nonFiction" => "Non-Fiction"
   	);
 
-
-  	public static function authenticate( $Email, $LoginPassword ) {
+  	/**
+  	 *
+  	 * Block comment
+  	 *
+  	 */
+  	public static function authenticate($Email, $LoginPassword) {
 	    $conn = parent::connect();
 	    $sql = "SELECT * FROM " . getenv('TBL_CUSTLOGIN') . " WHERE Email = :Email";
 	    try {
-		    $st = $conn->prepare( $sql );
-		    $st->bindValue( ":Email", $Email, \PDO::PARAM_STR );
+		    $st = $conn->prepare($sql);
+		    $st->bindValue(":Email", $Email, \PDO::PARAM_STR);
 		    $st->execute();
 		    $row = $st->fetch();
-		    parent::disconnect( $conn );
-		    if ( $row ) {
-		    	if ($row['LoginPassword'] == $LoginPassword) {
-		    		return new CustLogin( $row );
-		    	}
-		      	// return $row;
-		    }
-	    } catch ( \PDOException $e ) {
-		      parent::disconnect( $conn );
+		    parent::disconnect($conn);
+		    if ($row) {
+			    if(PassHash::checkPass($row['LoginPassword'], $LoginPassword)) {
+				    return new CustLogin($row);
+				} elseif($row['LoginPassword'] == $LoginPassword) {
+		    		return new CustLogin($row);
+		    	} else {
+				    return false;
+				}
+			}
+	    } catch (\PDOException $e) {
+		      parent::disconnect($conn);
 		      return false;
 		      die( "Query failed: " . $e->getMessage() );
 	    }
@@ -101,8 +110,12 @@ class CustLogin extends DataObject {
 		}
   	}
 
+  	/**
+  	 *
+  	 * Block comment
+  	 *
+  	 */
   	public static function insertUser($data, $new_phloginid, $stripe_token){
-
   		$conn = parent::connect();
   		$services = implode(":", $data['services']);
   		$sql_1 = "INSERT INTO " . getenv('TBL_CUSTLOGIN') . "(FName, LName, Email, Phone, LoginPassword, PhPassword, PhLoginId, Services, token, Type) VALUES (:FName, :LName, :Email, :Phone, :LoginPassword, :PhPassword, :PhLoginId, :Services, :token, :Type)";
@@ -112,7 +125,7 @@ class CustLogin extends DataObject {
   			$st->bindValue( ":LName", $data['lname'], \PDO::PARAM_STR );
   			$st->bindValue( ":Email", $data['email'], \PDO::PARAM_STR );
   			$st->bindValue( ":Phone", $data['phone'], \PDO::PARAM_STR );
-  			$st->bindValue( ":LoginPassword", $data['password'], \PDO::PARAM_STR );
+  			$st->bindValue( ":LoginPassword", PassHash::hash($data['password']), \PDO::PARAM_STR );
   			$st->bindValue( ":PhPassword", $data['phone_password'], \PDO::PARAM_STR );
   			$st->bindValue( ":PhLoginId", $new_phloginid, \PDO::PARAM_INT );
   			$st->bindValue( ":Services", $services, \PDO::PARAM_STR );
@@ -121,7 +134,7 @@ class CustLogin extends DataObject {
              $st->bindValue(":Type", $value, \PDO::PARAM_INT);
   			$success = $st->execute();
   			parent::disconnect( $conn );
-  			if($success){
+  			if($success){//OVO TODO
   				$authCustomer = self::authenticate($data['email'], $data['password']);
   				return $authCustomer;
   			} else {
@@ -134,6 +147,65 @@ class CustLogin extends DataObject {
 	    }
   	}
 
+  	/**
+  	 *
+  	 * Block comment
+  	 *
+  	 */
+  	public static function updateToken($jwt_token, $CustomerID){
+  		$conn = parent::connect();
+		$sql = "UPDATE " . getenv('TBL_CUSTLOGIN') . " SET jwt_token = :jwt_token WHERE CustomerID= :CustomerID";
+		try {
+	    	$st = $conn->prepare( $sql );
+  			$st->bindValue(":jwt_token", $jwt_token, \PDO::PARAM_STR);
+  			$st->bindValue(":CustomerID", $CustomerID, \PDO::PARAM_STR);
+  			$success = $st->execute();
+  			parent::disconnect($conn);
+  			if($success){
+  				return true;
+  			} else {
+  				return false;
+  			}
+	    } catch ( \PDOException $e ) {
+	      parent::disconnect( $conn );
+	      // return $e->getMessage();
+	      return false;
+	      exit;
+	    }
+  	}
+
+  	/**
+  	 *
+  	 * Block comment
+  	 *
+  	 */
+  	public static function retrieveTokenInDatabase($CustomerID){
+  		$conn = parent::connect();
+		$sql = "SELECT jwt_token FROM " . getenv('TBL_CUSTLOGIN') . " WHERE CustomerID= :CustomerID";
+		try {
+	    	$st = $conn->prepare( $sql );
+  			$st->bindValue(":CustomerID", $CustomerID, \PDO::PARAM_STR);
+  			$st->execute();
+  			$success = $st->fetch();
+  			parent::disconnect($conn);
+  			if($success){
+  				return $success;
+  			} else {
+  				return false;
+  			}
+	    } catch ( \PDOException $e ) {
+	      parent::disconnect( $conn );
+	      // return $e->getMessage();
+	      return false;
+	      exit;
+	    }
+  	}
+
+  	/**
+  	 *
+  	 * Block comment
+  	 *
+  	 */
   	public static function update($data){
   		$conn = parent::connect();
   		$services = implode(":", $data['services']);
@@ -144,7 +216,7 @@ class CustLogin extends DataObject {
   			$st->bindValue( ":LName", $data['lname'], \PDO::PARAM_STR );
   			$st->bindValue( ":Email", $data['email'], \PDO::PARAM_STR );
   			$st->bindValue( ":Phone", $data['phone'], \PDO::PARAM_STR );
-  			$st->bindValue( ":LoginPassword", $data['password'], \PDO::PARAM_STR );
+  			$st->bindValue( ":LoginPassword", PassHash::hash($data['password']), \PDO::PARAM_STR );
   			$st->bindValue( ":PhPassword", $data['phone_password'], \PDO::PARAM_STR );
   			$st->bindValue( ":CustomerID", $data['CustomerID'], \PDO::PARAM_INT );
   			$st->bindValue( ":Services", $services, \PDO::PARAM_STR );
@@ -165,6 +237,11 @@ class CustLogin extends DataObject {
 	    }
   	}
 
+  	/**
+  	 *
+  	 * Block comment
+  	 *
+  	 */
   	public static function checkEmail($Email){
   		$conn = parent::connect();
   		$sql = "SELECT CustomerID FROM " . getenv('TBL_CUSTLOGIN') . " WHERE Email=:Email LIMIT 1";
@@ -184,6 +261,11 @@ class CustLogin extends DataObject {
 	    }
   	}
 
+  	/**
+  	 *
+  	 * Block comment
+  	 *
+  	 */
   	public static function getCustomer( $CustomerID ) {
 	    $conn = parent::connect();
 	    $sql = "SELECT * FROM " . getenv('TBL_CUSTLOGIN') . " WHERE CustomerID = :CustomerID";
@@ -204,12 +286,17 @@ class CustLogin extends DataObject {
 	    }
   	}
 
+  	/**
+  	 *
+  	 * Block comment
+  	 *
+  	 */
   	public static function insertPass($LoginPassword, $CustomerID){
   		$conn = parent::connect();
   		$sql = "UPDATE " . getenv('TBL_CUSTLOGIN') . " SET LoginPassword=:LoginPassword WHERE CustomerID = :CustomerID";
   		try{
 	    	$st = $conn->prepare( $sql );
-  			$st->bindValue( ":LoginPassword", $LoginPassword, \PDO::PARAM_STR );
+  			$st->bindValue( ":LoginPassword", PassHash::hash($LoginPassword), \PDO::PARAM_STR );
   			$st->bindValue( ":CustomerID", $CustomerID, \PDO::PARAM_INT );
   			$success = $st->execute();
   			parent::disconnect( $conn );
@@ -219,6 +306,11 @@ class CustLogin extends DataObject {
 	    }
   	}
 
+  	/**
+  	 *
+  	 * Block comment
+  	 *
+  	 */
   	public static function getMembers( $startRow, $numRows, $order ) { //NON
 	    $conn = parent::connect();
 	    $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM " . getenv('TBL_CUSTLOGIN') . " ORDER BY $order LIMIT :startRow, :numRows";
@@ -242,10 +334,20 @@ class CustLogin extends DataObject {
 	    }
   	}
 
+  	/**
+  	 *
+  	 * Block comment
+  	 *
+  	 */
   	public function getGenderString() { //NON
     	return ( $this->data["gender"] == "f" ) ? "Female" : "Male";
   	}
 
+  	/**
+  	 *
+  	 * Block comment
+  	 *
+  	 */
   	public function getFavoriteGenreString() { //NON
     	return ( $this->_genres[$this->data["favoriteGenre"]] );
   	}

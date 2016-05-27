@@ -148,14 +148,14 @@ function generateTokenForUpdateProfile(){
 	$tokenId = base64_encode(mcrypt_create_iv(32));
     $issuedAt   = time();
     $notBefore  = $issuedAt;
-    $expire     = $notBefore - 1209600;
+    $expire     = $notBefore + 1209600;
     $serverName = "http://localhost/";
     $email = "slavensakacic@gmail.com";
     $password ="12345";
 
 	$data = array(
         'iat'  => $issuedAt ,         // Issued at: time when the token was generated
-        'jti'  => $tokenId,          // Json Token Id: an unique identifier for the token
+        'jti'  => "j/3VoEQ9X51fOMlC9mElUD0L6BkDDZQ5hEEpFSlvg2I=",          // Json Token Id: an unique identifier for the token
         'iss'  => $serverName,       // Issuer
         'nbf'  => $notBefore,        // Not before
         'exp'  => $expire,           // Expire
@@ -269,7 +269,7 @@ function encryptForRegister(){
 				"phone_password": "45435",
 				"services": ["Telephonic Interpreting", "Translation Services", "On-Site Interpreting", "Transcription Services"],
 				"sname": "Pero Perić",
-				"number": 4242424242424242,
+				"number": "4242424242424242",
 				"exp_month": 5,
 				"exp_year": 2017,
 				"cvc":"314"
@@ -336,4 +336,5 @@ function decryptRN(){
 	echo $plaintext;
 }
 
-echo decryptRN();
+// echo decryptRN();
+echo generateTokenForUpdateProfile();
