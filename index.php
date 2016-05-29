@@ -1,4 +1,7 @@
 <?php // ALTER TABLE CustLogin ADD COLUMN jwt_token VARCHAR(250) NULL AFTER token;
+//Stavi env na server
+// PhPassword also hash and old passwords
+// Potrebno je storat u app jwt_token i CustomerID.
 require __DIR__ . '/vendor/autoload.php';
 
 use Allian\Http\Controllers\Controller;
@@ -42,7 +45,7 @@ $klein->with('/testgauss', function() use ($klein){
 	$custLogin = new CustLoginController();
 	$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
 	$klein->respond('POST', '/register', array($custLogin, 'postRegister'));
-	$klein->respond('GET', '/logout', array($custLogin, 'logout'));
+	$klein->respond('POST', '/logout', array($custLogin, 'logout'));
 	$klein->respond('GET', '/keepLoggedIn', array($custLogin, 'keepLoggedIn'));
 	$klein->respond('POST', '/forgot', array($custLogin, 'postForgot'));
 	$klein->respond('GET', '/terms', array($custLogin, 'getTerms'));

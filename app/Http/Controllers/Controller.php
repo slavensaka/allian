@@ -44,7 +44,7 @@ class Controller {
 		$tokenId    = base64_encode(mcrypt_create_iv(32));
 	    $issuedAt   = time();
 	    $notBefore  = $issuedAt;
-	    $expire     = $notBefore - 1209600; // 4 years working token
+	    $expire     = $notBefore - 1209600; // Expire token
 	    $serverName = $_SERVER['SERVER_NAME'];
 
 	    $data = array(
@@ -133,6 +133,16 @@ class Controller {
 	    return implode($pass); //turn the array into a string
 	}
 
+	public function nullToken($CustomerID){
+		// $secretKey = base64_decode(getenv('jwtKey'));
+		// $token = JWT::decode($jwt, $secretKey, array('HS512'));
+		$stored = CustLogin::nullToken($CustomerID);
+		if(!$stored){
+			return false;
+		}
+		return true;
+	}
+
 	/**
 	 *
 	 * Block comment
@@ -157,11 +167,11 @@ class Controller {
 		$jsonArray = array();
 		$fname = $customer->getValueEncoded('FName');
 		$lname = $customer->getValueEncoded('LName');
-		$jsonArray['customerId'] = $customer->getValueEncoded('CustomerID');
+		$jsonArray['CustomerID'] = $customer->getValueEncoded('CustomerID');
 		$jsonArray['status'] = 1;
 		$jsonArray['fname'] = $fname;
 		$jsonArray['lname'] = $lname;
-		$jsonArray['userMessage'] = "Authentication was Successfull. Welcome $fname $lname.";
+		$jsonArray['userMessage'] = "Welcome $fname $lname.";
 		return $jsonArray;
 	}
 

@@ -2,37 +2,57 @@
 
 namespace Allian\Http\Controllers;
 
-// require getcwd() .  '/vendor/autoload.php';
-
-use Firebase\JWT\JWT;
-use \Dotenv\Dotenv;
-use Firebase\JWT\ExpiredException;
-use Firebase\JWT\DomainException;
-use Firebase\JWT\BeforeValidException;
-use RNCryptor\Encryptor;
-use RNCryptor\Decryptor;
 use Stripe\Stripe;
 use Stripe\Token;
+use \Dotenv\Dotenv;
 use Stripe\Customer;
 
 class StripeController extends Controller {
 
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
 	public function createToken($data){
-		Stripe::setApiKey(getenv('STRIPE_API_KEY_TEST'));
+		Stripe::setApiKey(getenv('STRIPE_KEY'));
+
 		// Create a token for customer credit card details
-		$result = Token::create( array( "card" => array(
-			"name" => $data['sname'], "number" => $data['number'], "exp_month" => $data['exp_month'],
-			"exp_year" => $data['exp_year'], "cvc" => $data['cvc'])));
+		$result = Token::create( array("card" => array(
+			"name" => $data['sname'],
+			"number" => $data['number'],
+			"exp_month" => $data['exp_month'],
+			"exp_year" => $data['exp_year'],
+			"cvc" => $data['cvc']
+			)));
+
+		// Return one time created stripe token
 		return $result['id'];
 	}
 
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
 	public function createCustomer($email, $token){
-		$customer = Customer::create(array("description" => "Gauss, Customer for $email email", "source" => $token));
+		// Create a stripe customer based on the token generate
+		$customer = Customer::create(array(
+			"description" => "Gauss:app, CustLogin with $email email",
+			"source" => $token
+			));
+
+		//Return tthe customer cus_6odw... token
   		return $customer['id'];
 	}
 
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
 	public function updateStripe($request, $response, $service, $app) {
-		Stripe::setApiKey(getenv('STRIPE_API_KEY_TEST'));
+		Stripe::setApiKey(getenv('STRIPE_KEY'));
 		// $cu = \Stripe\Customer::retrieve($customer_id);
 		// $cu->source = $_POST['stripeToken']; // obtained with Checkout
   //   	$cu->save();
@@ -42,8 +62,13 @@ class StripeController extends Controller {
 		return $createTestToken;
 	}
 
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
 	public function chargeCustomer($request, $response, $service, $app){
-		Stripe::setApiKey(getenv('STRIPE_API_KEY_TEST'));
+		Stripe::setApiKey(getenv('STRIPE_KEY'));
 		// $myCard = array('number' => '4242424242424242', 'exp_month' => 8, 'exp_year' => 2018);
 		// $charge = \Stripe\Charge::create(array('card' => $myCard, 'amount' => 2000, 'currency' => 'usd'));
 		// return $charge;
