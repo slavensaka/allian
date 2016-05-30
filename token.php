@@ -337,4 +337,4 @@ function decryptRN(){
 }
 
 // echo decryptRN();
-echo generateTokenForUpdateProfile();
+ echo  __DIR__.'/';
