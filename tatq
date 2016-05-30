@@ -1,0 +1,205 @@
+[33mcommit 13ae07221d6ce82a26b8030b865e9d8e38ae98bb[m
+Author: Slaven Sakacic <slavensakacic@gmail.com>
+Date:   Sun May 29 21:35:57 2016 +0200
+
+    Working
+
+[33mcommit e359e3af256ef8713140a26f44749032c4ea681c[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Fri May 27 19:45:59 2016 +0200
+
+    Login, token database
+
+[33mcommit ed0e3eb43d505537c5c907edacaf9d5753458011[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Wed May 25 16:03:08 2016 +0200
+
+    Langauges and fixings
+
+[33mcommit 2035cd605cd4ff74ebba3804d0719eaf3676363e[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Tue May 24 16:06:56 2016 +0200
+
+    Conferenceschedule, stripe, twillio
+
+[33mcommit 8e915d475186dfb6aff244dde286c4b750483139[m
+Author: Slaven Sakacic <slavensakacic@gmail.com>
+Date:   Sun May 22 17:49:56 2016 +0200
+
+    Refactoring
+
+[33mcommit 08935963e688870a586abafcdc519f3670384160[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Fri May 20 21:44:58 2016 +0200
+
+    Comment & stripe ruta
+
+[33mcommit d0e6ad60b781aaf8282d2f3dc4e7ac76297a6214[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Thu May 19 20:46:27 2016 +0200
+
+    LangList
+
+[33mcommit 2b840b9929bf204384e580da1fb86eacf835382e[m
+Merge: d1a4b79 1e06934
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Wed May 18 13:56:36 2016 +0200
+
+    Merge
+
+[33mcommit d1a4b79ec3fd1dbd69e645e50610059414dc12f2[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Wed May 18 13:52:37 2016 +0200
+
+    Enkripcija sa novim rutama i popravci
+
+[33mcommit 1e069349af4e228193042d7aed40c7d92bebb0ba[m
+Author: Slaven Sakacic <slavensakacic@gmail.com>
+Date:   Tue May 17 20:46:13 2016 +0200
+
+    i
+
+[33mcommit 6eaee3579136158bf9566fca321a6dddfd21c156[m
+Author: Slaven Sakacic <slavensakacic@gmail.com>
+Date:   Tue May 17 20:37:15 2016 +0200
+
+    DOing!
+
+[33mcommit 49c0f3041c56bfb408933a742ac79a78538a51f9[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Tue May 17 20:33:51 2016 +0200
+
+    M
+
+[33mcommit 2b2c577d7eb2d3273561148f398da58476e73265[m
+Author: Slaven Sakacic <slavensakacic@gmail.com>
+Date:   Mon May 16 22:33:10 2016 +0200
+
+    WOk
+
+[33mcommit 3621705438197cb34e6f4106949ec94651d5badc[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Mon May 16 20:52:25 2016 +0200
+
+    Encryption & updateProfile route
+
+[33mcommit ce131bf757e13b588ace548c6a1626acc6cadacc[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Sat May 14 00:20:50 2016 +0200
+
+    Minor
+
+[33mcommit a94adf62a90abe568e5322c0ee854729d6d8c3ee[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Thu May 12 16:06:48 2016 +0200
+
+    little changes
+
+[33mcommit 269f7b00a1ec784ff3a0156e22b65fc3ed3da8ee[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Thu May 12 11:12:21 2016 +0200
+
+    Configuring
+
+[33mcommit 97b6ed917db8417fbc0d5f5f35d4478e30c77ad3[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Thu May 12 09:35:40 2016 +0200
+
+    Token based auth,reg,forgot and GET terms
+
+[33mcommit 914c37e4c734cc751a756ab7ab5f4b2f5aa78ace[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Tue May 10 16:02:25 2016 +0200
+
+    Forgot
+
+[33mcommit aeede1f1dc2efc87988cbb561dd99da1a458229f[m
+Author: Slaven Sakacic <slavensakacic@gmail.com>
+Date:   Tue May 10 00:34:00 2016 +0200
+
+    Work
+
+[33mcommit f88945d1c8a8f1a2338a91f26b0ad924f6242648[m
+Author: Slaven Sakacic <slavensakacic@gmail.com>
+Date:   Mon May 9 22:48:57 2016 +0200
+
+    Work
+
+[33mcommit e9246cefb7153557de202c78a48e6e50eb22eb29[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Mon May 9 16:05:58 2016 +0200
+
+    Login & Registration
+
+[33mcommit e21f7469984f05c0e2d4d9b364d87eb08f66963f[m
+Merge: 0cb2136 e4ddd3a
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Mon May 9 08:09:50 2016 +0200
+
+    Conflict
+
+[33mcommit 0cb21368bb8a39d861fd3d45b49baa41fd1cd45e[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Mon May 9 08:08:06 2016 +0200
+
+    Work
+
+[33mcommit e4ddd3a8807c32a442101f3385a68fd7ae2f0124[m
+Author: Slaven Sakacic <slavensakacic@gmail.com>
+Date:   Sun May 8 23:29:14 2016 +0200
+
+    auth, fix
+
+[33mcommit 0b0816d8b2e7db4922495e8db0b0ed36a5b97c40[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Fri May 6 14:43:08 2016 +0200
+
+    Configuring
+
+[33mcommit 0a25ec807ad0efd3070b6c229724717acc83555d[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Thu May 5 16:11:22 2016 +0200
+
+    Fix
+
+[33mcommit 9da09aaf469ba9aadb61ade05d5a7ad974acb05c[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Thu May 5 16:08:45 2016 +0200
+
+    Fixes
+
+[33mcommit d2fb7274eae51a87ebd0c46aaff2f8a756dcce4a[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Thu May 5 13:35:09 2016 +0200
+
+    Popravak git cache
+
+[33mcommit 16120774cd642fb88915245d4f0ce08366363d11[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Wed May 4 15:56:50 2016 +0200
+
+    Authentication
+
+[33mcommit bd45a5d3a04791c23197a7a75adc2a5c0d1619cd[m
+Author: Slaven Sakacic <slavensakacic@gmail.com>
+Date:   Wed May 4 00:07:55 2016 +0200
+
+    Litlle bit of twiks
+
+[33mcommit 5290547404c74e6de240779d7b2b363d741b0cc0[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Tue May 3 16:04:12 2016 +0200
+
+    Routes, Rute-Model-Controller, Docs Gen, HtAccess
+
+[33mcommit 830173a2cd174235e8d93f3e9cc2287860ffc6fe[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Tue May 3 11:09:44 2016 +0200
+
+    gitignore fix
+
+[33mcommit 60fd5ca2c614ad66be70f8252bb353499bbbc2f5[m
+Author: Slaven <slavensakacic@gmail.com>
+Date:   Mon May 2 16:05:41 2016 +0200
+
+    Init

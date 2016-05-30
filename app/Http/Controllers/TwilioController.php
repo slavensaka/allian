@@ -13,7 +13,12 @@ use Twillio;
 
 class TwilioController extends Controller {
 
+	/**
+	 *
+	 * TODO
+	 *
+	 */
 	public function twilio(){
-		return "Lorem";
+		return "TODO";
 	}
 }
