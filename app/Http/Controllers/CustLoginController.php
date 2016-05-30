@@ -84,7 +84,7 @@ class CustLoginController extends Controller {
 		$service->validate($data['exp_year'], 'Error: Expiration year not present.')->notNull();
 		$service->validate($data['cvc'], 'Error: Cvc not present.')->notNull();
 		// Try to register customer with inputed data
-		$customer = CustLogin::register($data, $stripeCustomer);
+		$customer = CustLogin::register($data);
 		// On error, return message
 		if(!$customer){
 			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("There was a problem during registration.")));
@@ -95,6 +95,13 @@ class CustLoginController extends Controller {
 		$tokenResult = $stripe->createToken($data);
 		// Create a stripe customer
 		$stripeCustomer = $stripe->createCustomer($data['email'], $tokenResult);
+		// Update user in database, store customer stripe token
+		$updatedStripe = CustLogin::updateStripe($stripeCustomer, $customer->getValueEncoded('CustomerID'));
+		// If error while updateding stripe token in database
+		if(!$updatedStripe){
+			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("There was a problem during registration.")));
+     		return $response->json(array('data' => $base64Encrypted));
+		}
 		// Generate jwt token
 		$genToken = $this->generateResponseToken(array("Success" => "Success"));
 		// Store the newly created token
@@ -313,7 +320,7 @@ class CustLoginController extends Controller {
      * }")
      *
      */
-	public function postTelephonicAccess($request, $response, $service, $app){
+	public function telephonicAccess($request, $response, $service, $app){
 		// Encode and decode customerID with secret key while transfer for secutiry TODO
 		if($request->token){
 			// Validate token if not expired, or tampered with
@@ -365,16 +372,27 @@ class CustLoginController extends Controller {
 	}
 
 	/**
+     * @ApiDescription(section="Suport", description="Retrieve telephone and email for support")
+     * @ApiMethod(type="get")
+     * @ApiRoute(name="/testgauss/support")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     */
+	public function support($request, $response, $service, $app){
+		$r = array('tel' => "1 (877) 512 1195", "email" => "support@alliantransalte.com");
+		return $response->json(array("data" => $r));
+	}
+
+	/**
      * @ApiDescription(section="Logout", description="Log out the customer. ")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/logout")
-     @ApiBody(sample="{'data': 'AwGzeHMznmut3LsRZ5qLXL60XdsS8dY6g08KR7HuXgzFm7sMqm/eJRSkxUExI56Crtoi9DXPCgAIjKcw37WYLcF1iaJbXopvUgLC0KkWaFRaBXz0368T53jczZQHzHVKtpc=',
-     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ0ODc0ODUsImp0aSI6IndPSTlFRm9kY0RQVDdwc1d6RlphTUQ2dzlUMWhiSjUzV1BiSGxJSXFMZHc9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY0NDg3NDg1LCJleHAiOjE0NjU2OTcwODUsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.z03x_B2G6I3DdxaOsND3QMR0Rz8zCanxu6sf-4oH8x99x5nyvkhI0qClDMOzwXAC5ZU54D4OHgiJiiGoYU_4nQ'}")
+     @ApiBody(sample="{'data': 'AwEC/hx9UTeuTIk+Gv1B46wx0Z4/jrz9NWyOM+XDz+WZ+wDVOSiWvdhHbNbvLo8qxFsUJieK0Hx7KMJTMplGVo4J4fYdmlK8pDjbn3H/0rnkKWrEfgVEBQP1HUcWkzlQYP8=',
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTIzNTEsImp0aSI6IlZQTG9MT2hUN3ZoeVROTWxhd1FsZWxKY0x3YnFlS3hWZ2NZSVpCb1dPUkU9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY0NTkyMzUxLCJleHAiOjE1OTA3MzYzNTEsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.Z7QGqAP2P-aqLcwTrzyyKX0d0VNuLA6nK3Fycg8u_0xrOD5-4c94u9bejsWyAfB8wHCC1_CPKcLzZCk3gVbtZQ'}")
      * @ApiParams(name="data", type="object", nullable=false, description="Customers id. Stored in mobile phone, as this is the identifier for the user using the app.")
       @ApiParams(name="token", type="object", nullable=false, description="Autentication token for users autentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="object", sample="{
-     *  'data':''
+     *  'data':'AwETP+chxus+QxPWnTivcHRAS+Yz+Ro7bKqQJCGVNkqZIozIbZ8jligQWwSGlABFaFD1DqhLkg3fVO5Or3IH6gR2qmgoduVmqggk+mJGFyLwAgSXlIjfBokcVzN/ACmypbYhhlXssvNSCP1drNXREd9JSLXzVvGYWNLHd2jIVk3SOw==', 'token': 'null'
      * }")
      *
      */
@@ -402,7 +420,7 @@ class CustLoginController extends Controller {
 			$jsonArray['userMessage'] = "You have successfully logged out!";
 			// Encrypt format json response
 			$base64Encrypted = $this->encryptValues(json_encode($jsonArray));
-	     	return $response->json(array('data' => $base64Encrypted));
+	     	return $response->json(array('data' => $base64Encrypted, 'token' => null));
 		} else {
 			return $response->json("No token provided");
 		}
@@ -411,53 +429,75 @@ class CustLoginController extends Controller {
 	// data = keepLoggedIn = 1, CustomerID = 761
 	// Ako je mob request $keepLoggedIn = 0 onda se postavi na forever i vrati $keepLoggedIn = 1
 	// Ako je mob request $keepLoggedIn = 1 onda se postavi na 2 tjedna i vrati $keepLoggedIn = 0
+	/**
+     * @ApiDescription(section="KeepLoggedIn", description="Make the user be keept logged in. Or keep him default login of 2 weeks.")
+     * @ApiMethod(type="post")
+     * @ApiRoute(name="/testgauss/keepLoggedIn")
+     @ApiBody(sample="{'data': 'AwEMfPjVMFk/pyyzzo04fZVEpASkjuKHze/IoHKL3vfaxzhaBtIFc2/bldxOOajQChYzFg3cz+l39p920D2Hdw2xvEWlqppodf56m/cqbknx5YgLPj/NslqXatMC9Re99TLNIARfbqQVFqSmDuhIUso6',
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTIyNTcsImp0aSI6IkFUWm1QMG9lamJteXhWRDVRV0Vmbm9NQjJcL0RSMmtlNHdPY3JxZVRLT2NBPSIsImlzcyI6ImxvY2FsaG9zdCIsIm5iZiI6MTQ2NDU5MjI1NywiZXhwIjoxNDY1ODAxODU3LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.RWyj8hd7D6Ti-zB-N11u6VS6fE6H5zJKwn_OBfICjuvTfY778GNBE_WdZZQLNMArtNJweff2dlX3DGrTg2e5-Q'}")
+     * @ApiParams(name="data", type="object", nullable=false, description="Customers id. Stored in mobile phone, as this is the identifier for the user using the app.")
+      @ApiParams(name="token", type="object", nullable=false, description="Autentication token for users autentication.")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     * @ApiReturn(type="object", sample="{
+     *  'token':'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTIzNTEsImp0aSI6IlZQTG9MT2hUN3ZoeVROTWxhd1FsZWxKY0x3YnFlS3hWZ2NZSVpCb1dPUkU9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY0NTkyMzUxLCJleHAiOjE1OTA3MzYzNTEsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.Z7QGqAP2P-aqLcwTrzyyKX0d0VNuLA6nK3Fycg8u_0xrOD5-4c94u9bejsWyAfB8wHCC1_CPKcLzZCk3gVbtZQ',
+     'data':'AwF+nSRYBu0vfhUssqcG6b0zfi332aCkZQ8rcQ4+pDw6zZcu54h+pqWAwYnB8IfimaqZ/VrEBdKgvS7JUAYuCVH2CCaGUmR9vUMqdFhzcedNrxpHuudHog6A6xkqw07IWlTI6+WTDg/qYMjBEwosS7oGSp+Sk/9RNFyE3CLfiSVHTmv4VZZyOMW1hp5+tYAp2CQ='
+     * }")
+     *
+     */
 	public function keepLoggedIn($request, $response, $service, $app){
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
-
 			//Decrypt input data
 			$data = $this->decryptValues($request->data);
-
 			// Validate input data
 			$service->validate($data['keepLoggedIn'], 'Error: No keepLoggedIn flag present.')->notNull()->isInt();
 			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
-
-			// If flag 0, user wants to be logged in forever
-			if(!$keepLoggedIn){
-
+			// Validate token in database for customer stored
+			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
+			// Error if validation of jwt token
+			if(!$validated){
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
+	     		return $response->json(array('data' => $base64Encrypted));
+			}
+			// If flag 1, user wants to be logged in forever
+			if($data['keepLoggedIn']){
 				// Generate 4 years token(i.e. forever), logged in
 				$genToken = $this->generateInfiniteToken(array("Success" => "Success"));
-
 				// Store the token in the database
 				$storeToken = $this->storeToken($genToken, $data['CustomerID']);
-
 				// If internal error, return encrypted message
 				if(!$storeToken){
-					$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Internal error. Contact support")));
+					$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Internal error. Contact support.")));
 		     		return $response->json($base64Encrypted);
 				}
-
+				// Format the response
+				$jsonArray = array();
+				$jsonArray['status'] = 1;
+				$jsonArray['keepLoggedIn'] = 1;
+				$jsonArray['userMessage'] = "Success! Your kept logged in!";
 				// Return that the user is keept logged in
-				return $response->json(array('data' => array('keepLoggedIn' => 1)));
-
+				$base64Encrypted = $this->encryptValues(json_encode($jsonArray));
+				return $response->json(array('token' => $genToken, 'data' => $base64Encrypted));
 				// If flag 1, user wants to have an expiration time of token
 			} else {
-
 				// Generate ordinary 2 week token
 				$genToken = $this->generateResponseToken(array("Success" => "Success"));
-
 				// Store the token in the database
 				$storeToken = $this->storeToken($genToken, $data['CustomerID']);
-
 				// If internal error, return encrypted message
 				if(!$storeToken){
 					$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Internal error. Contact support")));
 		     		return $response->json($base64Encrypted);
 				}
-
-				// Return that the user is NOT kept logged in
-				return $response->json(array('data' => array('keepLoggedIn' => 0)));
+				// Format the response
+				$jsonArray = array();
+				$jsonArray['status'] = 1;
+				$jsonArray['keepLoggedIn'] = 0;
+				$jsonArray['userMessage'] = "Success! Your Not kept logged in anymore!";
+				// Return that the user is NOT keept logged in
+				$base64Encrypted = $this->encryptValues(json_encode($jsonArray));
+				return $response->json(array('token' => $genToken, 'data' => $base64Encrypted));
 			}
 		} else {
 			return $response->json('No token provided TODO');

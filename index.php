@@ -45,20 +45,29 @@ $klein->with('/testgauss', function() use ($klein){
 	$custLogin = new CustLoginController();
 	$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
 	$klein->respond('POST', '/register', array($custLogin, 'postRegister'));
-	$klein->respond('POST', '/logout', array($custLogin, 'logout'));
-	$klein->respond('GET', '/keepLoggedIn', array($custLogin, 'keepLoggedIn'));
 	$klein->respond('POST', '/forgot', array($custLogin, 'postForgot'));
-	$klein->respond('GET', '/terms', array($custLogin, 'getTerms'));
-	$klein->respond('POST', '/telephonicAccess', array($custLogin, 'postTelephonicAccess'));
-	$klein->respond('POST', '/updateProfile', array($custLogin, 'updateProfile'));
 	$klein->respond('POST', '/viewProfile', array($custLogin, 'viewProfile'));
+	$klein->respond('POST', '/updateProfile', array($custLogin, 'updateProfile'));
+	$klein->respond('POST', '/telephonicAccess', array($custLogin, 'telephonicAccess'));
+	$klein->respond('GET', '/terms', array($custLogin, 'getTerms'));
+	$klein->respond('POST', '/logout', array($custLogin, 'logout'));
+	$klein->respond('POST', '/keepLoggedIn', array($custLogin, 'keepLoggedIn'));
+	$klein->respond('GET', '/support', array($custLogin, 'support'));
 
 	$langPair = new LangPairController();
 	$klein->respond('GET', '/langPairTrans', array($langPair, 'langPairTrans'));
 
+	$conferenceSchedule = new ConferenceScheduleController();
+	$klein->respond('POST', '/getTimezones', array($conferenceSchedule, 'getTimezones'));
+
 	$stripe = new StripeController();
 	$klein->respond('POST', '/updateStripe', array($stripe, 'updateStripe'));
-	$klein->respond('POST', '/createToken', array($stripe, 'createToken'));
+
+	$langList = new LangListController();
+	$klein->respond('GET', '/langNames', array($langList, 'langNames'));
+
+	$twilio = new TwilioController();
+	$klein->respond('GET', '/twilio', array($twilio, 'twilio'));
 
 	$developer = new DeveloperController();
 	$klein->respond('GET', '/renderdocs', array($developer, 'renderDocs')); // FOR TESTING
@@ -66,15 +75,6 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('GET', '/devDecryptJson', array($developer, 'devDecryptJson'));
 	$klein->respond('GET', '/devGenerateAuthToken', array($developer, 'devGenerateAuthToken'));
 	$klein->respond('POST', '/tester', array($developer, 'tester'));
-
-	$conferenceSchedule = new ConferenceScheduleController();
-	$klein->respond('GET', '/getTimezones', array($conferenceSchedule, 'getTimezones'));
-
-	$twilio = new TwilioController();
-	$klein->respond('GET', '/twilio', array($twilio, 'twilio'));
-
-	$langList = new LangListController();
-	$klein->respond('GET', '/langNames', array($langList, 'langNames'));
 });
 
 $klein->dispatch();

@@ -97,13 +97,7 @@
 
                 <div class="tab-pane active" id="info0">
                     <div class="well">
-                    Authenticate the customer with his email and password and return a jwt token with expiration date for server side validation of autenticity of customer, also returns a data key thats encrypted with RNCryptor with the data values . <br><b>Store the token in the app, this is the auth token needed througth the app</b>(other routes require this correct token).<br>
-     Example json: <br>
-     				{<br>
-    				'email': 'slavensakacic@gmail.com',<br>
-    				'password': '12345'<br>
-  					}
-  	
+                    Authenticate customer with email & password, response is a jwt token with expiration date and secret key encoding for server side validation of autenticity of customer, and a data key that's encrypted with RNCryptor (status, userMessage, fname, lname, customerID). <br><b>Storing this token in the app is esential, this is the auth token needed througt the app.</b>(other routes require this token).
                     </div>
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Headers</strong></div>
@@ -130,7 +124,7 @@
     <td>data</td>
     <td>object</td>
     <td>Yes</td>
-    <td>Users email & password json object used for authentication.</td>
+    <td>Encrypted customers email & password as json used for authentication.</td>
 </tr>
     </tbody>
 </table>
@@ -245,7 +239,7 @@
     <td>data</td>
     <td>object</td>
     <td>Yes</td>
-    <td>Json must contain fname, lname, email, phone, password, phone_password, services, stripe_token.</td>
+    <td>Json must contain fname, lname, email, phone, password, phone_password, services, sname, number, exp_month, exp_year, cvc.</td>
 </tr>
     </tbody>
 </table>
@@ -254,7 +248,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body1">{ 'data': 'AwEPyQdyrx7LhlEdm9GylvlDftbe1MF6zt/gN04II3VldkFcTSoG72PLs87SRTU/m91E+MeXdthJzYB4/AwZ4KrAluli10YBk/3LlB7sAa0dzu+0wudujy68uAio+3VgSTnqKKIeWo77nivalHTXhrhUpay3DbLNOLeU9Svx91vTH2BlI5cIuwLlmnUvExV0OSo/1CSBL9YB7Ep/b9hvCOU969HuepCA28ekGrI8y4NyyHazXcdubgxttrHz2veyPk83m5iywDWK56i6JEibml1ZNwwuNw6WuOJPrySBPrMJs5oR/wog3MKJc+reGhCWSpTOeJ9i2N2mGWtZYbzGMOUgH7q3NnmLS2KbReNGdk/C4zOLzliB0dzENIO43Jkrb+WUmq3Lv49HwUF/51lumd67WBJrmJQIdZT0J0XmBRvCSZJ9xWLUICSRnyC+uDo59CwXj0/6s03wr02n604CbF8jWRwe29NLTwuweHEPyFwbO/S6v3V2B1xvfqWIXp3bHJjrhICuqp/2oTziolQURQpcoXI9VFUBRyRiaF4RzYbM/46Tfx29QKtVp8MvYe8R3xVpGkoyb1AfkReMc3IsjqnH'}</pre>
+                        <pre id="sample_post_body1">{ 'data': 'AwG+6gDzzTFls96HrkjGagUduYGWZLN+L0OdeUuDfpmzDVsmC0YZ0UWELR/sw/Z/JRhhI3ccsOFExuTIrr1Xf7m3+SJfshq0MNo3adghlpMPFPh0FcSmE8/IbrAvF07xahwfbcKA7v7TVrvXACWexoyIrS3BbXQY31efha9nsSbP80dm2ee+Qg8Qj0r9S9ALeD1+qVxt8iIighmZAsN5AGnesNaYR4OXCMi827tHAYP7bGot25o2jB1JoyPKlO90u8xA5BbVbk4H55iYZNmymN1gfu6SYplVObpq3iT/CvAQwbICPfOIG21TsGf91fmvGql7ub+OJfzWPHIILR0pb0gzvsiD87BK643ojxOkx6jfZwaa7XLdKMVzuFedINEcOg0y1vajGgqfJLAwaEKXvjhlnl7TCkc9mJdaiqwfUQUPt8YpQuxEC/WTF3dbwiQubjX101CB68qtq1RQibWWG9Uuo742RcoeUrEa2l42HSOd4vD4Iy3ULXDVMBukPNrt2Le6DlqAtSPvbUOlCDMKKeUq1uByuUDfetc7AahpDRsgyS7tFGVDEjeCw7JhBcWL3+qZHith4YGitsJfcRnv04h4ipN4Swyxfd3J9W9QJ8pbtowsnXKIPupLT24VL/uoWT8='}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
@@ -301,11 +295,8 @@
                             
 
 <hr>
-<pre id="sample_response1">{'data': 'AwHLdqaPYWUqunsX7Q7xnJ9ac0UzPgFo95bWo7kxZctQHXT6aqrgp1DuoEc7+MmpW/zFoj7BICGqcoBU+s49icpz2dTOQz14klgx/x+JQlU1Sp7fJOts1LEz7+takbBmHxmhuK3ulnxrf4BlpPXluNgg2y91HQ4AmqPfGKilkKWIilMRUFFzNoFVuQEideWzE8Q=' }</pre>
-
-
-<hr>
-<pre id="sample_response1">{'data': 'AwFoZ4u4exWaV9YdN6S90zKdMKITd8Zq/mjlW4OLLQ7uiHCFGOrRwUe2QlByqsYtyTNJ/TzAiB67Zm20S9H7mFhZApmxsyB6VZdw39B/RlxLjYpuOUZSDf+ebGrGSF6+0QnJytAEKdxHcufbziBpm+epD/fVWgwCTUhXEDonYwwhQAIKfZ/YBjllD5MniOfMusg=' }</pre>
+<pre id="sample_response1">{'data': 'AwHLdqaPYWUqunsX7Q7xnJ9ac0UzPgFo95bWo7kxZctQHXT6aqrgp1DuoEc7+MmpW/zFoj7BICGqcoBU+s49icpz2dTOQz14klgx/x+JQlU1Sp7fJOts1LEz7+takbBmHxmhuK3ulnxrf4BlpPXluNgg2y91HQ4AmqPfGKilkKWIilMRUFFzNoFVuQEideWzE8Q=',
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ0ODcxODMsImp0aSI6IitFWmtsOGt4bUh1S29vd0JXVHJER1pLbGloVlRYWmM2TTlpZWRlK1lBbEk9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY0NDg3MTgzLCJleHAiOjE0NjU2OTY3ODMsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.IkCI0SUiNZpOOFR1gXMEW8xqDsd4KqPjGXTWNfutosjU0R_Z_qvuUJ3Z6257agQMp8jbCH8sLVhb7NNPaqY4Dw' }</pre>
                         </div>
                     </div>
                 </div><!-- #sample -->
@@ -313,12 +304,12 @@
             </div><!-- .tab-content -->
         </div>
     </div>
-</div><h2>UpdateProfile</h2>
+</div><h2>Forgot</h2>
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion2" href="#collapseOne2"> /testgauss/updateProfile</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion2" href="#collapseOne2"> /testgauss/forgot</a>
         </h4>
     </div>
     <div id="collapseOne2" class="panel-collapse collapse">
@@ -336,7 +327,7 @@
 
                 <div class="tab-pane active" id="info2">
                     <div class="well">
-                    Update customers profile information by giving the CustomerID to recognize him in the database and new info.
+                    First check if email is found in the database, then generate a new password, then email the user the new password, and only then change database password to the new password.
                     </div>
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Headers</strong></div>
@@ -363,7 +354,7 @@
     <td>data</td>
     <td>object</td>
     <td>Yes</td>
-    <td>Json must contain CustomerID, fname, lname, email, phone, password, phone_password, services. Example in body in the data.</td>
+    <td>Json must contain email and CustomerID. Be carefull not to enter some real users email. Gmail server and stuff is live, it's on a staging server where no real users data is important when changed, but still, the gmail smtp server will send an email saying there pass was changed. Use YOUR OWN EMAIL in the data.</td>
 </tr>
 
 <tr>
@@ -379,7 +370,8 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body2">{ 'data': 'AwH+LYr35RjCYynhPQfMXqpbfxZUYH0UDOZpRZWUanLY8VAAOMlbKB5Gh6TWtqo/pYdHnbcpaGwKz8237jdKFlwZxPpUdiGqUfY1OXAN01AF1HRaEwogw5i0cWnpmV5k1LhWf0e7YoVI6ZBZsG/41JI3DATxeW21XqFyAOcngd84glPdL1tTJiRcjUZLq1eANkQE+0zrKWprddq3NH/Oy0Tzg5/rTT0n3P20gCfzSzbBeluW3fl3cLV57f6jX4nAR1BMFFcLE6f04FZD6XH8uMQpqOIZa/IHUd3NPkaC3QSUUFQ7BhnAkkAaQ136Mewl8A6trhtcTFx6klBVtnQNF0hS5DitIK3MkR+ptP8pQZan/iW9f7htLV6sHwTiInP/NBpL3QesF7ahX3RDQXmfxZYNhN6GEC/NMmwul5kiczR18AXKqNBznjbBgvXl+HgoOg+ssrDlyNpKD3zztLMPOUDgtvE+SCq3zlCEHl2+0FKpYg=='}</pre>
+                        <pre id="sample_post_body2">{'data': 'AwGkOu8KPYWUOJaJF5Bkvag/LmJHxUbIk9YvVvPj0pQTNFDj8Lku/ErqTvh/LLNzaL3XqA71uwhG9MPwF2CrweM+fLGaFNQSdu7lSHRb0DP4Ltaht+Fe3N56Szy5yHxZSM4wvlc+uqkwZLNEY66MI5NRGs5NRdmnjZnxDnUkERKV2g==',
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ0ODc0ODUsImp0aSI6IndPSTlFRm9kY0RQVDdwc1d6RlphTUQ2dzlUMWhiSjUzV1BiSGxJSXFMZHc9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY0NDg3NDg1LCJleHAiOjE0NjU2OTcwODUsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.z03x_B2G6I3DdxaOsND3QMR0Rz8zCanxu6sf-4oH8x99x5nyvkhI0qClDMOzwXAC5ZU54D4OHgiJiiGoYU_4nQ'}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
@@ -396,7 +388,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/updateProfile" method="post" name="form2" id="form2">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/forgot" method="post" name="form2" id="form2">
     
     Parameters
     <hr/>
@@ -431,13 +423,8 @@
 
 <hr>
 <pre id="sample_response2">{
-		'data': 'AwFxTI/ybexQc7vI6zv4DsWY+NG+DhhBKwVTCmZZ8ZR5NEMjV+YDecggZmZ6ZVk6TgfLiuP5Gvt/XhN7PgmNipT10qZr58QwXK/zh1AI4Vwm2GwxNo++oeufZtSHPXU9FPyl9RMWjjzTCHM9qxW4nyipd7xK4hSKngfa+kdBypiKnapkpSpgW7wgRw4n7zH4w8iINo681xrBTZF92VQbEgI52Hg6jIGzvUG7tMY4CNLggJdlurWjvDmZhCYw3e9ybO6mymIQ8gGqEOVy4/0z7W+g'
-		}</pre>
-
-
-<hr>
-<pre id="sample_response2">{'data': 'AwGFt1HkBpJ/8ZM6vTANUv3xikBid1ayJIIA0dggksZKNyYnvSYtRo80feStp08eZTjVEM3ruql7rmnFqyjgZR6U+kucKkn7BoxxB9/JNzl+yBuxVxem06vyROD6S7mKp/l2yN69V8SbGvOxAOzH1jgr201yxGkh2QbrrS+LVfazb7SaXkzKJEe1e3Kmo+Zq5f4='
-		}</pre>
+  'data': 'AwF+61zGl0vFQTcyzyKhhuFJ8vFwOl8QNZsen0Gy+IgcKO6E6uoWa/XNxuXrcXbbHcJz7ZkfgJZcQKYm7OzXCkx2XgkpO18cBSxvXDfhxV9qLydXmjvxMpsFO0DV9H7zwylMTofFFJyTW00To1V3KVv9pbePNOhZeSTGmWSDpMHrOrYmH7qqGHPTz51NcoTqr3eFKPTFQAnyBizTM/yxRJiU/QYULs3TEAlH3xh9NCNJYEYZIcFQToJQFCqFWROv+zX9+KQt5TtFprHOazk7AUgH'
+ }</pre>
                         </div>
                     </div>
                 </div><!-- #sample -->
@@ -468,7 +455,7 @@
 
                 <div class="tab-pane active" id="info3">
                     <div class="well">
-                    Retrieve customers information(only fname, lname, phone, phone_password, email, services) stored in the database, based on the request CustomerID of user, a token for autentication.
+                    Retrieve customers information(only fname, lname, phone, phone_password, email, services, telephoniUserID, telephonicPassword, type) stored in the database, based on the request CustomerID of user, a token for autentication.
                     </div>
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Headers</strong></div>
@@ -511,7 +498,8 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body3">{'data': 'AwF4kbZkGDOPqdLCfBmjud1rkhaBpSaWVfGbWX9EvUWKRKzNMXK8Blk/0YkIstz+W7YXE5pH1ScQrk0kfgRujEUWURB+yUqp0a3d2L1ZvgpcJpOpXfLWEGyMklXzOIw0ZL4='}</pre>
+                        <pre id="sample_post_body3">{'data': 'AwE9pWLBHNSOeTEz2Eyx536/giGgYqW/lzCyxq3r86DrvXA0rSegs70FRlcoHyzlhZSBK2OwBrIXSWogDr74mm3yw0WEtjI2u+YzK6Q2EenuCq/5uM5HUmmVThx/URapFX4=',
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ0ODc0ODUsImp0aSI6IndPSTlFRm9kY0RQVDdwc1d6RlphTUQ2dzlUMWhiSjUzV1BiSGxJSXFMZHc9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY0NDg3NDg1LCJleHAiOjE0NjU2OTcwODUsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.z03x_B2G6I3DdxaOsND3QMR0Rz8zCanxu6sf-4oH8x99x5nyvkhI0qClDMOzwXAC5ZU54D4OHgiJiiGoYU_4nQ'}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
@@ -563,7 +551,7 @@
 
 <hr>
 <pre id="sample_response3">{
-  'data': 'AwF3uEH8m278NgsBfgrfjEPQOoRzRtGZqgcMr/mNsa/ngF+YRl+jLtsV1pP0akBhK2kaqLNy6iHTbE3xqyhYfyBgb0pvVkIZTU4osNlIM5jXQnRFuwJCKG19akehIj30mz0B2lDnswiW7o9l7DbOQIFHHxe3KpKI46rin05Izy/Z+eXl8qDA/h2rvjIDl6e90c3zolAPz8pAjpmnN0Bt47KQKb5jRxeOZvt+GTsPxQh/q+m6Ki/XeTPlv6e0GHcGwGQVnnfufbaPthzM1ENlAgFmR7dfspPuYp7qhmZXTWLT/0y3IIVPMiv44ZDYaUcMgri42nfMMiSlsvdQElnglkCi4RNJvMGMeMdWBdNS5k5WxA=='
+  'data': 'AwE9f9gpmJoh6/j011t1FRhb2rGuwfi8QRxDcDSjATaNgFJXNQXmbnjv732Qn4d6ORpTHBnSoVgqj1ix50wmUhh6IMlaVteR2nosOuplAIN45Mj984KlapZtRRFV1RoN6/1rVaV2gYnjFSqhwjjNm4byIaRCC7ASJiq6itEtYq8mh1Fk5ZE2FmA1IhyDamvTTdssikdnFtVgMuqPYUtI8LgDpr1ChIdWmitvbTiNhD6O03h8I0h9DXqgTIKeWwtDcXYcRu9wkjnGXAwEbqbUsrvn49BtmdENAx9J1ZlZbAEESbhp85EvymUOHsw4N3l9YsOja0V7IlzEttXYalw/DMvunFVYMvaDjbX3JLOkqxlAEMVOR7rhrSIeADAuTOrYVluwBaGp5LcqeWCa23EpaVxBxKM2CON3NUM1cd2naxBgLVHsEuMtGnJnsuQZ7/VYxvYE+4PrCsuCY745hxtSkUJEE7wxx+ilCdRY9vcLErMIYg=='
  }</pre>
                         </div>
                     </div>
@@ -572,12 +560,12 @@
             </div><!-- .tab-content -->
         </div>
     </div>
-</div><h2>Forgot</h2>
+</div><h2>UpdateProfile</h2>
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion4" href="#collapseOne4"> /testgauss/forgot</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion4" href="#collapseOne4"> /testgauss/updateProfile</a>
         </h4>
     </div>
     <div id="collapseOne4" class="panel-collapse collapse">
@@ -595,7 +583,7 @@
 
                 <div class="tab-pane active" id="info4">
                     <div class="well">
-                    First check if email is found in the database, then generate a new password, then email the user the new password, and only then change database password to the new password.
+                    Update customers profile information by giving the CustomerID to recognize him in the database and new info.
                     </div>
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Headers</strong></div>
@@ -622,7 +610,7 @@
     <td>data</td>
     <td>object</td>
     <td>Yes</td>
-    <td>Json must contain email.Be carefull not to enter some real users email. Gmail server and stuff is live, it's on a staging server where no real users data is important when changed, but still, the gmail smtp server will send an email saying there pass was changed. Use YOUR OWN EMAIL in the data.</td>
+    <td>Json must contain CustomerID, fname, lname, email, phone, password, phone_password, services. Example in body in the data.</td>
 </tr>
 
 <tr>
@@ -638,7 +626,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body4">{'data': 'AwEpDBFkKUA2WKqf5QRs+KNVWdiohvtc+HF6+Nd6HRdPyH7kv2auKWtA+Z6vemyeROI7PqKDxBwt2yNdRW8xAQaU5O7aAhNtRTgzjEJX4SQ9bIjdvqxCJQB70/SKZ+MjbhE1ZK8OWm9amkRg8S7UdFtg'}</pre>
+                        <pre id="sample_post_body4">{ 'data': 'AwFI1Szn84FEu2Qsivkw25sKBqkhIXRDhIoOh0ciG9xxEB3B7Qo7E7eDSyBdNOme++45Hz4hxySPWWRE0TRefQ6cq+T7oAAubWvC7G4XRMgDWPFPdJ2uv0Zlq7JTInDG8xG7w053p2NW0sJmfNPlbQzbNww3JmiW57tAFqhOfVKz6Ucbr2bpaOdL10PsPWkwUoHvjfslgOITIZArwMO2sY23XC5uxU2iZAOAAYqUUYY5KMiiMjl+RAYSgfTRrVR/wM7MOm4aADK+zGdOaMBULPCMOC/XQOcVekMqkYjk+jggXD2imqGVIV7g2edU5zl7n4qKI2MVjqQ2qUGgJS1kv+fyEekj+TIWdIO1hjW3HiAJTotesk+C0UZgI4qe1yHvicERvz8mcR5CCv5FxfL3YiTIllNbt9sJwcDvXANfeCBwhA==', 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ0ODc0ODUsImp0aSI6IndPSTlFRm9kY0RQVDdwc1d6RlphTUQ2dzlUMWhiSjUzV1BiSGxJSXFMZHc9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY0NDg3NDg1LCJleHAiOjE0NjU2OTcwODUsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.z03x_B2G6I3DdxaOsND3QMR0Rz8zCanxu6sf-4oH8x99x5nyvkhI0qClDMOzwXAC5ZU54D4OHgiJiiGoYU_4nQ'}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
@@ -655,7 +643,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/forgot" method="post" name="form4" id="form4">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/updateProfile" method="post" name="form4" id="form4">
     
     Parameters
     <hr/>
@@ -690,8 +678,8 @@
 
 <hr>
 <pre id="sample_response4">{
-  'data': 'AwEuAgSwBgKF6UacdLb6zUt4uNxHOwjPqG40pUv5ZigXZBuxOaoKoorjUY8Rx0U11D4p/lL/CXHpwoiQix17N2C+oAgEhpPg8BYZF0oxablhikGDHnSlQTPT2zVGsfp1Jxc6nChPdNCsohw5/5v8/aIUQSJcNH9eNTSviWnfjyLaBcDA5aYr2HZJCVYLnXKm3n/aqKIlDAdeXd70vCP7aXDzfnGznVOtua8YMhqvOiETN8l7aTPeda4Zck1WnUURIxVVWcF1TGZsAE7+Xoi2/x4p'
- }</pre>
+		'data': 'AwEMUdm0+s+VPN8+MJ5wQ2Xi8eu2dSTZPhRCMuSfk1uyQC+qlU2p6pu3tkdgD7WvQD5UthC8t2kwZqqTf5sDTCfvWL+MFzO7J3/4vAcoT97A+R5/Cnqj9n5tHrL5HIvNnBV2bWV8AGfgmvdOWO4XyrbwbpkM6okXczDYDCSlWsADJQ=='
+		}</pre>
                         </div>
                     </div>
                 </div><!-- #sample -->
@@ -722,7 +710,7 @@
 
                 <div class="tab-pane active" id="info5">
                     <div class="well">
-                    Retrieve customers telephonicUserId & telephonicPassword for telephonic access. By giving the customerID. TODO encrypt customerIDs with secret key, so no one can just type an int and get someones access code.
+                    Retrieve customers telephonicUserId registeredUserHostline & telephonicPassword for telephonic access. By giving the customerID.
                     </div>
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Headers</strong></div>
@@ -765,7 +753,8 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body5">{'data': 'AwF4kbZkGDOPqdLCfBmjud1rkhaBpSaWVfGbWX9EvUWKRKzNMXK8Blk/0YkIstz+W7YXE5pH1ScQrk0kfgRujEUWURB+yUqp0a3d2L1ZvgpcJpOpXfLWEGyMklXzOIw0ZL4='}</pre>
+                        <pre id="sample_post_body5">{'data': 'AwGzeHMznmut3LsRZ5qLXL60XdsS8dY6g08KR7HuXgzFm7sMqm/eJRSkxUExI56Crtoi9DXPCgAIjKcw37WYLcF1iaJbXopvUgLC0KkWaFRaBXz0368T53jczZQHzHVKtpc=',
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ0ODc0ODUsImp0aSI6IndPSTlFRm9kY0RQVDdwc1d6RlphTUQ2dzlUMWhiSjUzV1BiSGxJSXFMZHc9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY0NDg3NDg1LCJleHAiOjE0NjU2OTcwODUsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.z03x_B2G6I3DdxaOsND3QMR0Rz8zCanxu6sf-4oH8x99x5nyvkhI0qClDMOzwXAC5ZU54D4OHgiJiiGoYU_4nQ'}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
@@ -817,7 +806,7 @@
 
 <hr>
 <pre id="sample_response5">{
-  'data':'AwElQ4j7Wa2tomUyQ75rEpKSMUF0pznqdbTURvy4yzuUWVULrM0MctckP1/qSHI74VU0hkYAxKT5HR2yQZnZWzjlkjJZRthP3Hs2n17nOA1eeHwOaNuG5DKl5xtSyaiSIfK0hIuA/ND3+EIBlbOfbwpltlAZXg0mlTpya7rTJQsNYDoINP/havTIMpABtMzjzu0='
+  'data':'AwEcWRJiA7jnmOvZjnE3EgGYHXRIGRO+1YIC+GBuUikQpt2V7PB5i+5xRtTxQTnBgfGQX23PjuRrI2b32/WjhYnuMJRce440j8KAWd5cEAdgp2/9Gr3bSVOLrrgusJj0+Afs1+DLLCV0dDooFjGMqXfBQFpBtm1G2Iz1p/MefoH+ZETcpzZURo9hNQ1ERe4mr2YpqoPwQmP6yy6B7y9lMinwk6ns+vyo0MunPMDlYFH4JqeLohUxNIZ3QctjP0YjXL8i9FkoOFb7K/nvDrfsoBVkHEQSwx+e3cbxVIzjAJXzBhKXdpIaQ3R6uFtPkao4+csuyW15NAU/5oYBJfpKW5tevs560Z5y1DsVXgfDHC0CnKzdD/l/BsDUmBz4oeOnDDHLECbebYUwbNfWtdd9F5ky/HHFU7o7bl/4WzcJivlZ4EMDwFb0Y75SJnr56t0b6v41WS5tH5RAuYwAFvJZf/ivLkfYGIxMpPwrWzYcf90qZTYf7YYCo+0Vh2fG0AuhEv5Ha0sfZKZ00QzoAIw9ejDgLpiySoY4egoivuTJUpL7lTAcB3lZvvQx4C0X07TdqOhqJx84ZbxlSKcRwqSIcozBwYQE+6brEhMWUAKuNbtF4PhTMLykNxSLfAvAj2w6j/PHx9v5T5CaSKgLtaIH3XzgFKlJfd/XUnLaphbOCt0VGfAHeGFQDZ8C6hbWHQVATED16RgVFiO61FLy3ARnhMsPT7X/IbcU6CwxWAtGKJX3MhuIb1cV60M8rQEDavhMo/Rg5xSeDpuhGFOeBEgHAkqjRPfe1qGrAFZeyDI+iQl24tjbsSwM3XgFK2m4COnVy2uygKLO2L4xWPgqnx1a+HQLSGhZSOGYClL+Cgy+KfW/QvX74c6YRAXqfpf52jcN3h3NN3X9/gtr1FNx9dARmQMaQuLPq3DycG9fnhUlnJXy/9qWBateUJG2o1A3zfVjRCd+h8qOy2a+pDwl4BH5hJbMVHqkqnALM1EG7v38F01o7mnCPYA4ja4d1dmFTWsN7dJIqkpSrAwXBugenLeBumeTah0UGb8aqA05WQE/QUWMvmt4E63aY1ia/Gc7yNbj+iXclcVLbqI/TU+nmYSZqmMOH6Se1JeTSXPHCyvtovQwA235a5L4sr4desUy6ZjjHDGtZJxt7ZlUu+qCEC9nw7iE8/grXkj2RBUPlUi4kt0J4WvWJ1yS2dK3csgn6jUoPoIk+fNs0HfmACSbnva4rxw+qAqQXnqAMWpxulAO3DczF4GG9ICKphYyqv0+1Nq0Xo+bxqL1KFkwmKZ4HNaKwwWDXvJK4XGv1iRqPYe+/jB/6A=='
  }</pre>
                         </div>
                     </div>
@@ -915,12 +904,12 @@
             </div><!-- .tab-content -->
         </div>
     </div>
-</div><h2>LangPairTrans</h2>
+</div><h2>Logout</h2>
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion7" href="#collapseOne7"> /testgauss/langPairTrans</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion7" href="#collapseOne7"> /testgauss/logout</a>
         </h4>
     </div>
     <div id="collapseOne7" class="panel-collapse collapse">
@@ -938,7 +927,7 @@
 
                 <div class="tab-pane active" id="info7">
                     <div class="well">
-                    .
+                    Log out the customer. 
                     </div>
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Headers</strong></div>
@@ -962,6 +951,13 @@
     <tbody>
         
 <tr>
+    <td>data</td>
+    <td>object</td>
+    <td>Yes</td>
+    <td>Customers id. Stored in mobile phone, as this is the identifier for the user using the app.</td>
+</tr>
+
+<tr>
     <td>token</td>
     <td>object</td>
     <td>Yes</td>
@@ -974,7 +970,8 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body7">{'data': ''}</pre>
+                        <pre id="sample_post_body7">{'data': 'AwEC/hx9UTeuTIk+Gv1B46wx0Z4/jrz9NWyOM+XDz+WZ+wDVOSiWvdhHbNbvLo8qxFsUJieK0Hx7KMJTMplGVo4J4fYdmlK8pDjbn3H/0rnkKWrEfgVEBQP1HUcWkzlQYP8=',
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTIzNTEsImp0aSI6IlZQTG9MT2hUN3ZoeVROTWxhd1FsZWxKY0x3YnFlS3hWZ2NZSVpCb1dPUkU9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY0NTkyMzUxLCJleHAiOjE1OTA3MzYzNTEsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.Z7QGqAP2P-aqLcwTrzyyKX0d0VNuLA6nK3Fycg8u_0xrOD5-4c94u9bejsWyAfB8wHCC1_CPKcLzZCk3gVbtZQ'}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
@@ -991,11 +988,15 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/langPairTrans" method="get" name="form7" id="form7">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/logout" method="post" name="form7" id="form7">
     
     Parameters
     <hr/>
     
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
+</div>
+
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
 </div>
@@ -1021,7 +1022,9 @@
                             
 
 <hr>
-<pre id="sample_response7">{ 'data': '' }</pre>
+<pre id="sample_response7">{
+  'data':'AwETP+chxus+QxPWnTivcHRAS+Yz+Ro7bKqQJCGVNkqZIozIbZ8jligQWwSGlABFaFD1DqhLkg3fVO5Or3IH6gR2qmgoduVmqggk+mJGFyLwAgSXlIjfBokcVzN/ACmypbYhhlXssvNSCP1drNXREd9JSLXzVvGYWNLHd2jIVk3SOw==', 'token': 'null'
+ }</pre>
                         </div>
                     </div>
                 </div><!-- #sample -->
@@ -1029,12 +1032,12 @@
             </div><!-- .tab-content -->
         </div>
     </div>
-</div><h2>GetTimezones</h2>
+</div><h2>KeepLoggedIn</h2>
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion8" href="#collapseOne8"> /testgauss/getTimezones</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion8" href="#collapseOne8"> /testgauss/keepLoggedIn</a>
         </h4>
     </div>
     <div id="collapseOne8" class="panel-collapse collapse">
@@ -1052,7 +1055,136 @@
 
                 <div class="tab-pane active" id="info8">
                     <div class="well">
-                    
+                    Make the user be keept logged in. Or keep him default login of 2 weeks.
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+<tr>
+    <td>data</td>
+    <td>object</td>
+    <td>Yes</td>
+    <td>Customers id. Stored in mobile phone, as this is the identifier for the user using the app.</td>
+</tr>
+
+<tr>
+    <td>token</td>
+    <td>object</td>
+    <td>Yes</td>
+    <td>Autentication token for users autentication.</td>
+</tr>
+    </tbody>
+</table>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body8">{'data': 'AwEMfPjVMFk/pyyzzo04fZVEpASkjuKHze/IoHKL3vfaxzhaBtIFc2/bldxOOajQChYzFg3cz+l39p920D2Hdw2xvEWlqppodf56m/cqbknx5YgLPj/NslqXatMC9Re99TLNIARfbqQVFqSmDuhIUso6',
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTIyNTcsImp0aSI6IkFUWm1QMG9lamJteXhWRDVRV0Vmbm9NQjJcL0RSMmtlNHdPY3JxZVRLT2NBPSIsImlzcyI6ImxvY2FsaG9zdCIsIm5iZiI6MTQ2NDU5MjI1NywiZXhwIjoxNDY1ODAxODU3LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.RWyj8hd7D6Ti-zB-N11u6VS6fE6H5zJKwn_OBfICjuvTfY778GNBE_WdZZQLNMArtNJweff2dlX3DGrTg2e5-Q'}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox8">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/keepLoggedIn" method="post" name="form8" id="form8">
+    
+    Parameters
+    <hr/>
+    
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
+</div>
+
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
+</div>
+    <button type="submit" class="btn btn-success send" rel="8">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers8"></pre>
+                                <pre id="response8"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample8">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header8">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response8">{
+  'token':'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTIzNTEsImp0aSI6IlZQTG9MT2hUN3ZoeVROTWxhd1FsZWxKY0x3YnFlS3hWZ2NZSVpCb1dPUkU9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY0NTkyMzUxLCJleHAiOjE1OTA3MzYzNTEsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.Z7QGqAP2P-aqLcwTrzyyKX0d0VNuLA6nK3Fycg8u_0xrOD5-4c94u9bejsWyAfB8wHCC1_CPKcLzZCk3gVbtZQ',
+     'data':'AwF+nSRYBu0vfhUssqcG6b0zfi332aCkZQ8rcQ4+pDw6zZcu54h+pqWAwYnB8IfimaqZ/VrEBdKgvS7JUAYuCVH2CCaGUmR9vUMqdFhzcedNrxpHuudHog6A6xkqw07IWlTI6+WTDg/qYMjBEwosS7oGSp+Sk/9RNFyE3CLfiSVHTmv4VZZyOMW1hp5+tYAp2CQ='
+ }</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
+</div><h2>LangPairTrans</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion9" href="#collapseOne9"> /testgauss/langPairTrans</a>
+        </h4>
+    </div>
+    <div id="collapseOne9" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab9">
+                <li class="active"><a href="#info9" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox9" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample9" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info9">
+                    <div class="well">
+                    Retrieve the language pair translations possible depending on linguists that can handle the language pair and are approved.
                     </div>
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Headers</strong></div>
@@ -1081,6 +1213,13 @@
     <td>Yes</td>
     <td>Autentication token for users autentication.</td>
 </tr>
+
+<tr>
+    <td>data</td>
+    <td>object</td>
+    <td>Yes</td>
+    <td>Customer ID.</td>
+</tr>
     </tbody>
 </table>
                       </div>
@@ -1088,12 +1227,12 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body8">{ 'data': ''}</pre>
+                        <pre id="sample_post_body9">{'data': 'AwGIQopJaEotZ+/gaCg4Vgyr+AFOenMxVKfVNhVOprjY1vTeqNY3GnhjC1ANCZ+yDnpOUHVt9Xieo/Z4jSqhEYSjvYH0baLYVJuQ3j4TTTUFTKa+PTfbCr4Sk7d2TKK4v04=', 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTMzNjcsImp0aSI6IlJoOGpiMVhUZHFvUDVDVUVSQ29VY3pWR0dnSVFsQWJ1bFwvRFp1U2pcL050OD0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQ1OTMzNjcsImV4cCI6MTQ2NTgwMjk2NywiZGF0YSI6eyJTdWNjZXNzIjoiU3VjY2VzcyJ9fQ.JDwNdycstmqNC0dyrNgNuik_zXCYbx3PwbIkdTX7is3oDrQr6CKQ6mREUt-9tbOys361mcH1kyXaahn9Y2tTRg'}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox8">
+                <div class="tab-pane" id="sandbox9">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -1105,7 +1244,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/getTimezones" method="post" name="form8" id="form8">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/langPairTrans" method="get" name="form9" id="form9">
     
     Parameters
     <hr/>
@@ -1113,29 +1252,287 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
 </div>
-    <button type="submit" class="btn btn-success send" rel="8">Send</button>
+
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
+</div>
+    <button type="submit" class="btn btn-success send" rel="9">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers8"></pre>
-                                <pre id="response8"></pre>
+                                <pre id="response_headers9"></pre>
+                                <pre id="response9"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample8">
+                <div class="tab-pane" id="sample9">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header8">HTTP 200 OK</pre>
+<pre id="sample_resp_header9">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response8">{'data': ''}</pre>
+<pre id="sample_response9">{ 'data': 'json of lang-translationTo' }</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
+</div><h2>UpdateStripe</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion10" href="#collapseOne10"> /testgauss/updateStripe</a>
+        </h4>
+    </div>
+    <div id="collapseOne10" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab10">
+                <li class="active"><a href="#info10" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox10" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample10" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info10">
+                    <div class="well">
+                    Update customer information for card.
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+<tr>
+    <td>data</td>
+    <td>object</td>
+    <td>Yes</td>
+    <td>Data</td>
+</tr>
+
+<tr>
+    <td>token</td>
+    <td>object</td>
+    <td>Yes</td>
+    <td>Autentication token for users autentication.</td>
+</tr>
+    </tbody>
+</table>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body10">{'data': 'AwEwDnY6e21y+dIb4OFbipILGf5oavrwZMWK1fAH73b3uLUPWeY6AafUyqV6pumPB99p0wXnOdnx3HOPqWH3WILPS7r7g6T1HSE2T+HINsGE1KsVfw4XGV5DGuHWn3MzR4QwCqBPz1MaALs8894RNRkCGQsewNvWGkC6sgMr0wmUPgPJsEoroLufv1ZMKngM+ExNs86NjuLknAu6jGlEpbRigIEn40fTDvEOWho4snn7p/h+/lnHq3ZVqOqGpIkAxIUkFbzV22qK+TzO4lkogT+p',
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ2MDE1MTUsImp0aSI6InAwaFpucWxqaUpqWStDdmdrb3c0MjJITTQ1TkYweFVobCtHU2lWZFwvUlN3PSIsImlzcyI6ImxvY2FsaG9zdCIsIm5iZiI6MTQ2NDYwMTUxNSwiZXhwIjoxNDY1ODExMTE1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.wwxlnjSCmInwNYinJ-LIyHMOys3oYTeoQem2MJTfgNREFZ8rcDB9uZ61Hw6vHIVMh_8BKzJUKS-_0nwhfrJVxQ'}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox10">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/updateStripe" method="post" name="form10" id="form10">
+    
+    Parameters
+    <hr/>
+    
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
+</div>
+
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
+</div>
+    <button type="submit" class="btn btn-success send" rel="10">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers10"></pre>
+                                <pre id="response10"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample10">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header10">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response10">{
+  'data': 'AwE9VgXMPLiV77eah+tzjk33re4/ZMNkTqNHja+JYTJLnijcYLQJ0Tm3WyafkBLdW47Cn+3tMP74Kmw5+Ym6BOxfYd8rYL8wzaAiWbfC+yEDetjJdhF37UaL/7qOFfJbIJHPduBVUTuWcWoGybX9eiZTBtxY+tAU5A/Tv+tg1rsx1g=='
+ }</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
+</div><h2>GetTimezones</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion11" href="#collapseOne11"> /testgauss/getTimezones</a>
+        </h4>
+    </div>
+    <div id="collapseOne11" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab11">
+                <li class="active"><a href="#info11" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox11" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample11" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info11">
+                    <div class="well">
+                    Retrieve json of top timezones and other timezones
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+<tr>
+    <td>data</td>
+    <td>object</td>
+    <td>Yes</td>
+    <td>CustomerId.</td>
+</tr>
+
+<tr>
+    <td>token</td>
+    <td>object</td>
+    <td>Yes</td>
+    <td>Autentication token for users autentication.</td>
+</tr>
+    </tbody>
+</table>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body11">{ 'data': 'AwGsq1rYpTw4g6yAX/P7mkrAoKWLlnkxcAQUlNqeV1dyqztE1M4OiLEsM62DaKYeSBCyHilqoynA8MPx2St6jk+fioyzDMm6JZJ9DvECc4MIQpB7NYzK201LUoKl0Rhp7QY=',
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTMzNjcsImp0aSI6IlJoOGpiMVhUZHFvUDVDVUVSQ29VY3pWR0dnSVFsQWJ1bFwvRFp1U2pcL050OD0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQ1OTMzNjcsImV4cCI6MTQ2NTgwMjk2NywiZGF0YSI6eyJTdWNjZXNzIjoiU3VjY2VzcyJ9fQ.JDwNdycstmqNC0dyrNgNuik_zXCYbx3PwbIkdTX7is3oDrQr6CKQ6mREUt-9tbOys361mcH1kyXaahn9Y2tTRg'}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox11">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/getTimezones" method="post" name="form11" id="form11">
+    
+    Parameters
+    <hr/>
+    
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
+</div>
+
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
+</div>
+    <button type="submit" class="btn btn-success send" rel="11">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers11"></pre>
+                                <pre id="response11"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample11">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header11">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response11">{'data': ''}</pre>
                         </div>
                     </div>
                 </div><!-- #sample -->
@@ -1148,23 +1545,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion9" href="#collapseOne9"> /testgauss/langNames</a>
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion12" href="#collapseOne12"> /testgauss/langNames</a>
         </h4>
     </div>
-    <div id="collapseOne9" class="panel-collapse collapse">
+    <div id="collapseOne12" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab9">
-                <li class="active"><a href="#info9" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox9" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample9" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab12">
+                <li class="active"><a href="#info12" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox12" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample12" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info9">
+                <div class="tab-pane active" id="info12">
                     <div class="well">
                     Retrieve json of list of langauges to translate.
                     </div>
@@ -1202,12 +1599,12 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body9">{ 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQxODA5NjgsImp0aSI6Imt2bTFQUGNZV0pXanJFNldKVnJlWkZDXC9DT0NIXC9ScXZzRXczS1daRHVFaz0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQxODA5NjgsImV4cCI6MTQ2NTM5MDU2OH0.zUOaBjGImiccVvwPtQlxYhpi2kOD5a1hLEU7ySvDt3gUwRY-t2pC5UwHkRXrvsjmpx866p2ZQOzY5M2GCRoHkw'}</pre>
+                        <pre id="sample_post_body12">{ 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQxODA5NjgsImp0aSI6Imt2bTFQUGNZV0pXanJFNldKVnJlWkZDXC9DT0NIXC9ScXZzRXczS1daRHVFaz0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQxODA5NjgsImV4cCI6MTQ2NTM5MDU2OH0.zUOaBjGImiccVvwPtQlxYhpi2kOD5a1hLEU7ySvDt3gUwRY-t2pC5UwHkRXrvsjmpx866p2ZQOzY5M2GCRoHkw'}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox9">
+                <div class="tab-pane" id="sandbox12">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -1219,7 +1616,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/langNames" method="get" name="form9" id="form9">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/langNames" method="get" name="form12" id="form12">
     
     Parameters
     <hr/>
@@ -1227,29 +1624,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
 </div>
-    <button type="submit" class="btn btn-success send" rel="9">Send</button>
+    <button type="submit" class="btn btn-success send" rel="12">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers9"></pre>
-                                <pre id="response9"></pre>
+                                <pre id="response_headers12"></pre>
+                                <pre id="response12"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample9">
+                <div class="tab-pane" id="sample12">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header9">HTTP 200 OK</pre>
+<pre id="sample_resp_header12">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response9">{'data': ''
+<pre id="sample_response12">{'data': ''
 		}</pre>
                         </div>
                     </div>
@@ -1263,23 +1660,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion10" href="#collapseOne10"> /testgauss/devEncryptJson</a>
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion13" href="#collapseOne13"> /testgauss/devEncryptJson</a>
         </h4>
     </div>
-    <div id="collapseOne10" class="panel-collapse collapse">
+    <div id="collapseOne13" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab10">
-                <li class="active"><a href="#info10" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox10" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample10" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab13">
+                <li class="active"><a href="#info13" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox13" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample13" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info10">
+                <div class="tab-pane active" id="info13">
                     <div class="well">
                     Developer used route for easy encrypting json request data. Input json value into field in sandbox are retrieve a encrypted API used data string for development purposes.Example {'CustomerID': 720}
                     </div>
@@ -1317,12 +1714,12 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body10">{ 'data': 'Some json string'}</pre>
+                        <pre id="sample_post_body13">{ 'data': 'Some json string'}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox10">
+                <div class="tab-pane" id="sandbox13">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -1334,7 +1731,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devEncryptJson" method="get" name="form10" id="form10">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devEncryptJson" method="get" name="form13" id="form13">
     
     Parameters
     <hr/>
@@ -1342,29 +1739,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
 </div>
-    <button type="submit" class="btn btn-success send" rel="10">Send</button>
+    <button type="submit" class="btn btn-success send" rel="13">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers10"></pre>
-                                <pre id="response10"></pre>
+                                <pre id="response_headers13"></pre>
+                                <pre id="response13"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample10">
+                <div class="tab-pane" id="sample13">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header10">HTTP 200 OK</pre>
+<pre id="sample_resp_header13">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response10">{'json': '', 'encrypted': '' }</pre>
+<pre id="sample_response13">{'json': '', 'encrypted': '' }</pre>
                         </div>
                     </div>
                 </div><!-- #sample -->
@@ -1377,23 +1774,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion11" href="#collapseOne11"> /testgauss/devDecryptJson</a>
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion14" href="#collapseOne14"> /testgauss/devDecryptJson</a>
         </h4>
     </div>
-    <div id="collapseOne11" class="panel-collapse collapse">
+    <div id="collapseOne14" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab11">
-                <li class="active"><a href="#info11" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox11" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample11" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab14">
+                <li class="active"><a href="#info14" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox14" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample14" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info11">
+                <div class="tab-pane active" id="info14">
                     <div class="well">
                     Decrypt the encrypted data into plaintext. So if json was encrypted, retrieve the json in the encrypted data. Used for development purposes.
                     </div>
@@ -1431,12 +1828,12 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body11">{ 'data': ''}</pre>
+                        <pre id="sample_post_body14">{ 'data': ''}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox11">
+                <div class="tab-pane" id="sandbox14">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -1448,7 +1845,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devDecryptJson" method="get" name="form11" id="form11">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devDecryptJson" method="get" name="form14" id="form14">
     
     Parameters
     <hr/>
@@ -1456,29 +1853,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
 </div>
-    <button type="submit" class="btn btn-success send" rel="11">Send</button>
+    <button type="submit" class="btn btn-success send" rel="14">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers11"></pre>
-                                <pre id="response11"></pre>
+                                <pre id="response_headers14"></pre>
+                                <pre id="response14"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample11">
+                <div class="tab-pane" id="sample14">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header11">HTTP 200 OK</pre>
+<pre id="sample_resp_header14">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response11">{'data': '', 'decrypted': '' }</pre>
+<pre id="sample_response14">{'data': '', 'decrypted': '' }</pre>
                         </div>
                     </div>
                 </div><!-- #sample -->
@@ -1491,23 +1888,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion12" href="#collapseOne12"> /testgauss/devGenerateAuthToken</a>
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion15" href="#collapseOne15"> /testgauss/devGenerateAuthToken</a>
         </h4>
     </div>
-    <div id="collapseOne12" class="panel-collapse collapse">
+    <div id="collapseOne15" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab12">
-                <li class="active"><a href="#info12" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox12" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample12" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab15">
+                <li class="active"><a href="#info15" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox15" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample15" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info12">
+                <div class="tab-pane active" id="info15">
                     <div class="well">
                     Generate a jwt token, that can be used for any user as his, used for development purposes for now. Put into any sandbox with data and call succefully the route.
                     </div>
@@ -1526,12 +1923,12 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body12">{ 'data': ''}</pre>
+                        <pre id="sample_post_body15">{ 'data': ''}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox12">
+                <div class="tab-pane" id="sandbox15">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -1543,34 +1940,34 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devGenerateAuthToken" method="get" name="form12" id="form12">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devGenerateAuthToken" method="get" name="form15" id="form15">
     
     Parameters
     <hr/>
     
-    <button type="submit" class="btn btn-success send" rel="12">Send</button>
+    <button type="submit" class="btn btn-success send" rel="15">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers12"></pre>
-                                <pre id="response12"></pre>
+                                <pre id="response_headers15"></pre>
+                                <pre id="response15"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample12">
+                <div class="tab-pane" id="sample15">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header12">HTTP 200 OK</pre>
+<pre id="sample_resp_header15">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response12">{'jwtToken': '', 'tokenContent': '' }</pre>
+<pre id="sample_response15">{'jwtToken': '', 'tokenContent': '' }</pre>
                         </div>
                     </div>
                 </div><!-- #sample -->
@@ -1584,7 +1981,7 @@
 
         <div class="row mt0 footer">
             <div class="col-md-6" align="left">
-                Generated on 2016-05-27, 13:14:40
+                Generated on 2016-05-30, 11:55:16
             </div>
             <div class="col-md-6" align="right">
                 <a href="https://github.com/calinrada/php-apidoc" target="_blank">php-apidoc v 1.3.4</a>
