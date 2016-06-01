@@ -61,7 +61,7 @@ class CustLoginController extends Controller {
      * @ApiDescription(section="Register", description="Register a new user in the database")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/register")
-     * @ApiBody(sample="{ 'data': 'AwG+6gDzzTFls96HrkjGagUduYGWZLN+L0OdeUuDfpmzDVsmC0YZ0UWELR/sw/Z/JRhhI3ccsOFExuTIrr1Xf7m3+SJfshq0MNo3adghlpMPFPh0FcSmE8/IbrAvF07xahwfbcKA7v7TVrvXACWexoyIrS3BbXQY31efha9nsSbP80dm2ee+Qg8Qj0r9S9ALeD1+qVxt8iIighmZAsN5AGnesNaYR4OXCMi827tHAYP7bGot25o2jB1JoyPKlO90u8xA5BbVbk4H55iYZNmymN1gfu6SYplVObpq3iT/CvAQwbICPfOIG21TsGf91fmvGql7ub+OJfzWPHIILR0pb0gzvsiD87BK643ojxOkx6jfZwaa7XLdKMVzuFedINEcOg0y1vajGgqfJLAwaEKXvjhlnl7TCkc9mJdaiqwfUQUPt8YpQuxEC/WTF3dbwiQubjX101CB68qtq1RQibWWG9Uuo742RcoeUrEa2l42HSOd4vD4Iy3ULXDVMBukPNrt2Le6DlqAtSPvbUOlCDMKKeUq1uByuUDfetc7AahpDRsgyS7tFGVDEjeCw7JhBcWL3+qZHith4YGitsJfcRnv04h4ipN4Swyxfd3J9W9QJ8pbtowsnXKIPupLT24VL/uoWT8='}")
+     * @ApiBody(sample="{ 'data': 'AwFzz+kLR6+kmfgeq7fR9qNY1pQy25i/hP2EyoMTArxZ47P+/K9ZgG5sZtGTuZCtoWwzzzWKsFwWu+1Tfy/7iJExIikIn1ZUEezlSS6vjtR+w81pxEngwFd6kplrVqi+uNqRZEOSasR6imanWoU59ADmCkzjP1cw24QT/Njkxq9MJmFDyAh0b4zrv7HY4FdwcbbBWa0tO2R/thyp30HOc6Ptl4r9eqtxaYJJnWWS8nZ5eiBDgDFo1BeS6LaRjpwLUtWoVqSnTiPgqEIqVWSkA7yYoCpOUDGZlmf1qFiPo8Fw9vD0xDJSfCA08G2wqj52WKE02civhufAnvzO7JmtizQ7OSs9aY+NdLxjbaoYKuFcKHszvV7meboPkdRumzWPocouL+GsLn6azZQx0dj2SVpCTWLnMKkuI8JwyneV4lsDevYv1/cEX4cgyMEAlnkjrquZadukfK4s5/miY6hED9g/anRV/sC3fCfEbkrvOouyLLmkSPlrrIWGs0zH9KlemI6J2JfjwY5e7byd0Hm5K7iGogukYEV3PqaGA/HkEk9YjX8DBixKD1Pvi+XbUSVwffiG7ogxTokJijZf8zK+OzxMwEt2UuzoxU0xjQmcf3FJx3YXAGxOmqb4FtPbiJvRy8+1OpfztkpBMX0tSS7ikSfy'}")
      * @ApiParams(name="data", type="object", nullable=false, description="Json must contain fname, lname, email, phone, password, phone_password, services, sname, number, exp_month, exp_year, cvc.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="object", sample="{'data': 'AwHLdqaPYWUqunsX7Q7xnJ9ac0UzPgFo95bWo7kxZctQHXT6aqrgp1DuoEc7+MmpW/zFoj7BICGqcoBU+s49icpz2dTOQz14klgx/x+JQlU1Sp7fJOts1LEz7+takbBmHxmhuK3ulnxrf4BlpPXluNgg2y91HQ4AmqPfGKilkKWIilMRUFFzNoFVuQEideWzE8Q=',
@@ -80,9 +80,10 @@ class CustLoginController extends Controller {
 		$service->validate($data['services'], 'Error: no service present.')->notNull();
 		$service->validate($data['sname'], 'Error: no stripe name present.')->notNull()->isLen(3,200);
 		$service->validate($data['number'], 'Error: no credit card number present.')->notNull();
-		$service->validate($data['exp_month'], 'Error: Expiration month not present.')->notNull();
-		$service->validate($data['exp_year'], 'Error: Expiration year not present.')->notNull();
+		$service->validate($data['exp'], 'Error: Expiration month not present.')->notNull();
+		// $service->validate($data['exp_year'], 'Error: Expiration year not present.')->notNull();
 		$service->validate($data['cvc'], 'Error: Cvc not present.')->notNull();
+
 		// Try to register customer with inputed data
 		$customer = CustLogin::register($data);
 		// On error, return message
@@ -92,7 +93,14 @@ class CustLoginController extends Controller {
 		}
 		// Stripe token then customer create
 		$stripe = new StripeController();
-		$tokenResult = $stripe->createToken($data);
+
+		// Format exp_month and exp_year
+		$exp = explode("/", $data['exp']);
+		$exp_month = ltrim($exp[0], '0');
+		$exp_year = "20".$exp[1];
+
+		// Create a token of customer
+		$tokenResult = $stripe->createTokenNew($data, $exp_month, $exp_year);
 		// Create a stripe customer
 		$stripeCustomer = $stripe->createCustomer($data['email'], $tokenResult);
 		// Update user in database, store customer stripe token
@@ -109,7 +117,7 @@ class CustLoginController extends Controller {
 		// If internal error, return encrypted message
 		if(!$storeToken){
 			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Internal error. Contact support")));
-     		return $response->json($base64Encrypted);
+     		return $response->json(array('data' => $base64Encrypted));
 		}
 		// Format response
 		$jsonArray = array();

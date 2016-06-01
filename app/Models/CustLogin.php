@@ -85,7 +85,7 @@ class CustLogin extends DataObject {
 		$cid=$id['CustomerID'];
 		$const=112450;
 		$login=$const+$cid;
-  	 *
+  	 * TODO See linguist/register.php
   	 */
   	public static function register($data){
   		$conn = parent::connect();
@@ -116,19 +116,20 @@ class CustLogin extends DataObject {
   	public static function insertUser($data, $new_phloginid){
   		$conn = parent::connect();
   		$services = implode(":", $data['services']);
-  		$sql_1 = "INSERT INTO " . getenv('TBL_CUSTLOGIN') . "(FName, LName, Email, Phone, LoginPassword, PhPassword, PhLoginId, Services, Type) VALUES (:FName, :LName, :Email, :Phone, :LoginPassword, :PhPassword, :PhLoginId, :Services, :Type)";
+  		$sql_1 = "INSERT INTO " . getenv('TBL_CUSTLOGIN') . "(FName, LName, Email, Phone, LoginPassword, PhPassword, PhLoginId, Services, Type, Saved) VALUES (:FName, :LName, :Email, :Phone, :LoginPassword, :PhPassword, :PhLoginId, :Services, :Type, :Saved)";
 	    try{
 	    	$st = $conn->prepare( $sql_1 );
-  			$st->bindValue( ":FName", $data['fname'], \PDO::PARAM_STR );
-  			$st->bindValue( ":LName", $data['lname'], \PDO::PARAM_STR );
-  			$st->bindValue( ":Email", $data['email'], \PDO::PARAM_STR );
-  			$st->bindValue( ":Phone", $data['phone'], \PDO::PARAM_STR );
-  			$st->bindValue( ":LoginPassword", PassHash::hash($data['password']), \PDO::PARAM_STR );
-  			$st->bindValue( ":PhPassword", $data['phone_password'], \PDO::PARAM_STR );
-  			$st->bindValue( ":PhLoginId", $new_phloginid, \PDO::PARAM_INT );
-  			$st->bindValue( ":Services", $services, \PDO::PARAM_STR );
+  			$st->bindValue(":FName", $data['fname'], \PDO::PARAM_STR);
+  			$st->bindValue(":LName", $data['lname'], \PDO::PARAM_STR);
+  			$st->bindValue(":Email", $data['email'], \PDO::PARAM_STR);
+  			$st->bindValue(":Phone", $data['phone'], \PDO::PARAM_STR);
+  			$st->bindValue(":LoginPassword", PassHash::hash($data['password']), \PDO::PARAM_STR);
+  			$st->bindValue(":PhPassword", $data['phone_password'], \PDO::PARAM_STR);
+  			$st->bindValue(":PhLoginId", $new_phloginid, \PDO::PARAM_INT);
+  			$st->bindValue(":Services", $services, \PDO::PARAM_STR);
   			if (is_null($data['type'])) { $value = 1; } else { $value =  $data['type']; }
             $st->bindValue(":Type", $value, \PDO::PARAM_INT);
+            $st->bindValue(":Saved", 1, \PDO::PARAM_INT);
   			$success = $st->execute();
   			parent::disconnect($conn);
   			if($success){

@@ -18,12 +18,32 @@ class StripeController extends Controller {
 	 */
 	public function createToken($data){
 		Stripe::setApiKey(getenv('STRIPE_KEY'));
+
+		// $data['exp']
+
 		// Create a token for customer credit card details
 		$result = Token::create( array("card" => array(
 			"name" => $data['sname'],
 			"number" => $data['number'],
 			"exp_month" => $data['exp_month'],
 			"exp_year" => $data['exp_year'],
+			"cvc" => $data['cvc']
+		)));
+		// Return one time created stripe token
+		return $result['id'];
+	}
+
+	public function createTokenNew($data, $exp_month, $exp_year){
+		Stripe::setApiKey(getenv('STRIPE_KEY'));
+
+		// $data['exp']
+ // TODO IF stripe failed remove customerIF
+		// Create a token for customer credit card details
+		$result = Token::create( array("card" => array(
+			"name" => $data['sname'],
+			"number" => $data['number'],
+			"exp_month" => (int)$exp_month,
+			"exp_year" => (int)$exp_year,
 			"cvc" => $data['cvc']
 		)));
 		// Return one time created stripe token
@@ -113,6 +133,7 @@ class StripeController extends Controller {
 		// $myCard = array('number' => '4242424242424242', 'exp_month' => 8, 'exp_year' => 2018);
 		// $charge = \Stripe\Charge::create(array('card' => $myCard, 'amount' => 2000, 'currency' => 'usd'));
 		// return $charge;
+		// Check out linguist/register.php
 	}
 }
 
