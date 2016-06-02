@@ -344,6 +344,4 @@ function load_https(){
 	    exit();
 	}
 }
-
-
-echo decryptRN();
+echo md5(time()."Neki tekst");

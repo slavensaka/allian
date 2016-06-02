@@ -165,13 +165,13 @@ class Controller {
 	 */
 	public function loginValues($customer){
 		$jsonArray = array();
-		$fname = $customer->getValueEncoded('FName');
-		$lname = $customer->getValueEncoded('LName');
-		$jsonArray['CustomerID'] = $customer->getValueEncoded('CustomerID');
+		$email = $customer->getValueEncoded('Email');
+		$phonePassword  = $customer->getValueEncoded('PhPassword');
+		$jsonArray['customerID'] = $customer->getValueEncoded('CustomerID');
 		$jsonArray['status'] = 1;
-		$jsonArray['fname'] = $fname;
-		$jsonArray['lname'] = $lname;
-		$jsonArray['userMessage'] = "Welcome $fname $lname.";
+		$jsonArray['email'] = $email;
+		$jsonArray['phonePassword '] = $phonePassword;
+		$jsonArray['userMessage'] = "Welcome.";
 		return $jsonArray;
 	}
 

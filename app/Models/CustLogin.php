@@ -151,6 +151,30 @@ class CustLogin extends DataObject {
   	 * Block comment
   	 *
   	 */
+  	public static function deleteCustomer($CustomerID){
+  		$conn = parent::connect();
+		$sql = "DELETE FROM " . getenv('TBL_CUSTLOGIN') . " WHERE CustomerID= :CustomerID";
+		try {
+	    	$st = $conn->prepare($sql);
+  			$st->bindValue(":CustomerID", $CustomerID, \PDO::PARAM_STR);
+  			$success = $st->execute();
+  			parent::disconnect($conn);
+  			if($success){
+  				return true;
+  			} else {
+  				return false;
+  			}
+	    } catch (\PDOException $e) {
+	      parent::disconnect($conn);
+	      return false;
+	    }
+  	}
+
+  	/**
+  	 *
+  	 * Block comment
+  	 *
+  	 */
   	public static function updateToken($jwt_token, $CustomerID){
   		$conn = parent::connect();
 		$sql = "UPDATE " . getenv('TBL_CUSTLOGIN') . " SET jwt_token = :jwt_token WHERE CustomerID= :CustomerID";
@@ -241,6 +265,8 @@ class CustLogin extends DataObject {
 	      return false;
 	    }
   	}
+
+
 
   	/**
   	 *

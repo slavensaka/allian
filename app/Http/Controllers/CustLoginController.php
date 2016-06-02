@@ -107,7 +107,10 @@ class CustLoginController extends Controller {
 		$updatedStripe = CustLogin::updateStripe($stripeCustomer, $customer->getValueEncoded('CustomerID'));
 		// If error while updateding stripe token in database
 		if(!$updatedStripe){
-			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("There was a problem during registration.")));
+			// Remove customer from database
+			$deleteCustomer = CustLogin::deleteCustomer($customer->getValueEncoded('CustomerID'));
+			//Format json resonse
+			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("There was a problem during stripe card registration.")));
      		return $response->json(array('data' => $base64Encrypted));
 		}
 		// Generate jwt token
@@ -122,7 +125,7 @@ class CustLoginController extends Controller {
 		// Format response
 		$jsonArray = array();
 		$jsonArray['status'] = 1;
-		$jsonArray['CustomerID'] = $customer->getValueEncoded('CustomerID');
+		$jsonArray['customerID'] = $customer->getValueEncoded('CustomerID');
 		$fname = $customer->getValueEncoded('FName');
 		$lname = $customer->getValueEncoded('LName');
 		$jsonArray['userMessage'] = "Welcome $fname $lname.";

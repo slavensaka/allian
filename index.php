@@ -36,6 +36,7 @@ $klein->onHttpError(function ($code, $klein, $matched, $methods, $exception) {
 $klein->respond(function ($request, $response, $service, $app) use ($klein) {
     $klein->onError(function ($klein, $err_msg) {
     	$base64Encrypted = Controller::encryptValues(json_encode(Controller::errorJson($err_msg)));
+    	// return  $klein->response()->json($klein->request()->params());
        	return $klein->response()->json(array('data' => $base64Encrypted));
     });
 });
