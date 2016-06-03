@@ -13,6 +13,8 @@ use Allian\Http\Controllers\ConferenceScheduleController;
 use Allian\Http\Controllers\TwilioController;
 use Allian\Http\Controllers\LangListController;
 
+use Allian\Models\CustLogin;
+
 $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
 
@@ -36,13 +38,24 @@ $klein->onHttpError(function ($code, $klein, $matched, $methods, $exception) {
 $klein->respond(function ($request, $response, $service, $app) use ($klein) {
     $klein->onError(function ($klein, $err_msg) {
     	$base64Encrypted = Controller::encryptValues(json_encode(Controller::errorJson($err_msg)));
-    	// return  $klein->response()->json($klein->request()->params());
+    	if($klein->request()->uri() == '/testgauss/register'){
+    		$encrypted = $klein->request()->param('data');
+    		$password = getenv("CRYPTOR");
+			$decryptor = new \RNCryptor\Decryptor();
+			$plaintext = $decryptor->decrypt($encrypted, $password);
+			$data = json_decode($plaintext, true);
+			$customer = CustLogin::authenticate($data['email'], $data['password']);
+			if($customer){
+				$deleteCustomer = CustLogin::deleteCustomerByEmail($data['email'], $customer->getValueEncoded('LoginPassword'));
+			}
+    	}
+
        	return $klein->response()->json(array('data' => $base64Encrypted));
     });
 });
 
 $klein->with('/testgauss', function() use ($klein){
-	// // if(is_callable(array($custLogin, 'testing'))) echo "JE"; else echo "Nije";
+	// if(is_callable(array($custLogin, 'testing'))) echo "JE"; else echo "Nije";
 	$custLogin = new CustLoginController();
 	$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
 	$klein->respond('POST', '/register', array($custLogin, 'postRegister'));

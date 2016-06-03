@@ -124,7 +124,7 @@ class CustLogin extends DataObject {
   			$st->bindValue(":Email", $data['email'], \PDO::PARAM_STR);
   			$st->bindValue(":Phone", $data['phone'], \PDO::PARAM_STR);
   			$st->bindValue(":LoginPassword", PassHash::hash($data['password']), \PDO::PARAM_STR);
-  			$st->bindValue(":PhPassword", $data['phone_password'], \PDO::PARAM_STR);
+  			$st->bindValue(":PhPassword", $data['phonePassword'], \PDO::PARAM_STR);
   			$st->bindValue(":PhLoginId", $new_phloginid, \PDO::PARAM_INT);
   			$st->bindValue(":Services", $services, \PDO::PARAM_STR);
   			if (is_null($data['type'])) { $value = 1; } else { $value =  $data['type']; }
@@ -160,6 +160,31 @@ class CustLogin extends DataObject {
   			$success = $st->execute();
   			parent::disconnect($conn);
   			if($success){
+  				return true;
+  			} else {
+  				return false;
+  			}
+	    } catch (\PDOException $e) {
+	      parent::disconnect($conn);
+	      return false;
+	    }
+  	}
+
+  	/**
+  	 *
+  	 * Block comment
+  	 *
+  	 */
+  	public static function deleteCustomerByEmail($Email, $LoginPassword){
+  		$conn = parent::connect();
+		$sql = "DELETE FROM " . getenv('TBL_CUSTLOGIN') . " WHERE Email= :Email AND LoginPassword= :LoginPassword AND token IS NULL";
+		try {
+	    	$st = $conn->prepare($sql);
+  			$st->bindValue(":Email", $Email, \PDO::PARAM_STR);
+  			$st->bindValue(":LoginPassword", $LoginPassword, \PDO::PARAM_STR);
+  			$success = $st->execute();
+  			parent::disconnect($conn);
+  			if($success){ // TODO find if token is null, and password
   				return true;
   			} else {
   				return false;
@@ -284,7 +309,7 @@ class CustLogin extends DataObject {
   			$st->bindValue(":Email", $data['email'], \PDO::PARAM_STR);
   			$st->bindValue(":Phone", $data['phone'], \PDO::PARAM_STR);
   			$st->bindValue(":LoginPassword", PassHash::hash($data['password']), \PDO::PARAM_STR);
-  			$st->bindValue(":PhPassword", $data['phone_password'], \PDO::PARAM_STR);
+  			$st->bindValue(":PhPassword", $data['phonePassword'], \PDO::PARAM_STR);
   			$st->bindValue(":CustomerID", $data['CustomerID'], \PDO::PARAM_INT);
   			$st->bindValue(":Services", $services, \PDO::PARAM_STR);
   			$success = $st->execute();
@@ -306,13 +331,13 @@ class CustLogin extends DataObject {
   	 * Block comment
   	 *
   	 */
-  	public static function checkEmail($CustomerID, $Email){
+  	public static function checkEmail($Email){
   		$conn = parent::connect();
-  		$sql = "SELECT Email FROM " . getenv('TBL_CUSTLOGIN') . " WHERE CustomerID=:CustomerID";
-  		// $sql = "SELECT CustomerID FROM " . getenv('TBL_CUSTLOGIN') . " WHERE Email=:Email LIMIT 1";
+  		$sql = "SELECT Email FROM " . getenv('TBL_CUSTLOGIN') . " WHERE Email=:Email";
+  		// $sql = "SELECT Email FROM " . getenv('TBL_CUSTLOGIN') . " WHERE Email=:Email LIMIT 1";
   		 try {
 		    $st = $conn->prepare($sql);
-		    $st->bindValue(":CustomerID", $CustomerID, \PDO::PARAM_INT);
+		    $st->bindValue(":Email", $Email, \PDO::PARAM_INT);
 		    $st->execute();
 		    $row = $st->fetch();
 		    parent::disconnect($conn);
@@ -337,6 +362,29 @@ class CustLogin extends DataObject {
 	    try {
 		    $st = $conn->prepare($sql );
 		    $st->bindValue(":CustomerID", $CustomerID, \PDO::PARAM_INT);
+		    $st->execute();
+		    $row = $st->fetch();
+		    parent::disconnect($conn);
+		    if ($row) {
+		      	return new CustLogin( $row );
+		    } else return false;
+	    } catch (\PDOException $e) {
+		      parent::disconnect($conn);
+		      return false;
+	    }
+  	}
+
+  	/**
+  	 *
+  	 * Block comment
+  	 *
+  	 */
+  	public static function getCustomer1($Email) {
+	    $conn = parent::connect();
+	    $sql = "SELECT * FROM " . getenv('TBL_CUSTLOGIN') . " WHERE Email = :Email";
+	    try {
+		    $st = $conn->prepare($sql );
+		    $st->bindValue(":Email", $Email, \PDO::PARAM_INT);
 		    $st->execute();
 		    $row = $st->fetch();
 		    parent::disconnect($conn);

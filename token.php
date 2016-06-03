@@ -54,7 +54,7 @@ function generateTokenForRegister(){
     $email = "slavensakacic@gmail.com";
     $phone = "773-732-6534";
     $password ="12345";
-    $phone_password = "45435";
+    $phonePassword = "45435";
     $services = array("telephonic_interpreting", "translation_services", "onsite_interpreting", "transcription_services");
     $stripe_token = "cus_6nNFDRVGjd1wUe";
 
@@ -70,7 +70,7 @@ function generateTokenForRegister(){
             'email'   => $email,
             'phone'   => $phone,
             'password'   => $password,
-            'phone_password'   => $phone_password,
+            'phonePassword'   => $phonePassword,
             'services'   => $services,
             'stripe_token'   => $stripe_token
         )
@@ -266,7 +266,7 @@ function encryptForRegister(){
 				"email": "slavensakacic@gmail.com",
 				"phone": "773-732-6534",
 				"password": "12345",
-				"phone_password": "45435",
+				"phonePassword": "45435",
 				"services": ["Telephonic Interpreting", "Translation Services", "On-Site Interpreting", "Transcription Services"],
 				"sname": "Pero Perić",
 				"number": "4242424242424242",
@@ -295,7 +295,7 @@ function encryptForUpdate(){
 				"email": "slaven@example.com",
 				"phone": "111-111-1111",
 				"password": "54321",
-				"phone_password": "11111",
+				"phonePassword": "11111",
 				"services": ["Telephonic Interpreting", "Translation Services", "On-Site Interpreting", "Transcription Services"]
 			}';
 	return $base64Encrypted = $cryptor->encrypt($data, $password);
@@ -312,7 +312,7 @@ function encryptForLangPairTrans(){
 				"email": "slaven@example.com",
 				"phone": "111-111-1111",
 				"password": "54321",
-				"phone_password": "11111",
+				"phonePassword": "11111",
 				"services": ["Telephonic Interpreting", "Translation Services", "On-Site Interpreting", "Transcription Services"]
 			}';
 	return $base64Encrypted = $cryptor->encrypt($data, $password);

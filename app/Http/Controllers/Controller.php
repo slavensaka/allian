@@ -170,7 +170,7 @@ class Controller {
 		$jsonArray['customerID'] = $customer->getValueEncoded('CustomerID');
 		$jsonArray['status'] = 1;
 		$jsonArray['email'] = $email;
-		$jsonArray['phonePassword '] = $phonePassword;
+		$jsonArray['phonePassword'] = $phonePassword;
 		$jsonArray['userMessage'] = "Welcome.";
 		return $jsonArray;
 	}

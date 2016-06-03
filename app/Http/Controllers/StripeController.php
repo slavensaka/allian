@@ -134,6 +134,24 @@ class StripeController extends Controller {
 		// $charge = \Stripe\Charge::create(array('card' => $myCard, 'amount' => 2000, 'currency' => 'usd'));
 		// return $charge;
 		// Check out linguist/register.php
+
+
+	// 		$token = $_REQUEST['stripeToken'];
+	// try{ 	// Create a Customer
+	// 	$customer = Stripe_Customer::create(array("card" => $token,"description" => $desc));
+	// }catch(Stripe_InvalidRequestError $e) { // The card has been declined
+	// 	echo "Invalid request The card has been declined Try Again";
+	// }catch(Stripe_CardError $e) {// The card has been declined
+	// 	echo "Credit Card not Accepted The card has been declined Try Again";
+	// }
+	// if(is_null($e)){// no errors
+	// 	$token = $customer->id;
+	// 	$query = "update CustLogin set token='$token' where CustomerID='$cust_id'";
+	// 	$result = mysqli_query($con,$query);
+	// 	if($result and mysqli_affected_rows($con)>0){
+	// 		...
+	// 	}
+	// }
 	}
 }
 

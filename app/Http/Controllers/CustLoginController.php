@@ -62,7 +62,7 @@ class CustLoginController extends Controller {
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/register")
      * @ApiBody(sample="{ 'data': 'AwFzz+kLR6+kmfgeq7fR9qNY1pQy25i/hP2EyoMTArxZ47P+/K9ZgG5sZtGTuZCtoWwzzzWKsFwWu+1Tfy/7iJExIikIn1ZUEezlSS6vjtR+w81pxEngwFd6kplrVqi+uNqRZEOSasR6imanWoU59ADmCkzjP1cw24QT/Njkxq9MJmFDyAh0b4zrv7HY4FdwcbbBWa0tO2R/thyp30HOc6Ptl4r9eqtxaYJJnWWS8nZ5eiBDgDFo1BeS6LaRjpwLUtWoVqSnTiPgqEIqVWSkA7yYoCpOUDGZlmf1qFiPo8Fw9vD0xDJSfCA08G2wqj52WKE02civhufAnvzO7JmtizQ7OSs9aY+NdLxjbaoYKuFcKHszvV7meboPkdRumzWPocouL+GsLn6azZQx0dj2SVpCTWLnMKkuI8JwyneV4lsDevYv1/cEX4cgyMEAlnkjrquZadukfK4s5/miY6hED9g/anRV/sC3fCfEbkrvOouyLLmkSPlrrIWGs0zH9KlemI6J2JfjwY5e7byd0Hm5K7iGogukYEV3PqaGA/HkEk9YjX8DBixKD1Pvi+XbUSVwffiG7ogxTokJijZf8zK+OzxMwEt2UuzoxU0xjQmcf3FJx3YXAGxOmqb4FtPbiJvRy8+1OpfztkpBMX0tSS7ikSfy'}")
-     * @ApiParams(name="data", type="object", nullable=false, description="Json must contain fname, lname, email, phone, password, phone_password, services, sname, number, exp_month, exp_year, cvc.")
+     * @ApiParams(name="data", type="object", nullable=false, description="Json must contain fname, lname, email, phone, password, phonePassword, services, sname, number, exp_month, exp_year, cvc.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="object", sample="{'data': 'AwHLdqaPYWUqunsX7Q7xnJ9ac0UzPgFo95bWo7kxZctQHXT6aqrgp1DuoEc7+MmpW/zFoj7BICGqcoBU+s49icpz2dTOQz14klgx/x+JQlU1Sp7fJOts1LEz7+takbBmHxmhuK3ulnxrf4BlpPXluNgg2y91HQ4AmqPfGKilkKWIilMRUFFzNoFVuQEideWzE8Q=',
      'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ0ODcxODMsImp0aSI6IitFWmtsOGt4bUh1S29vd0JXVHJER1pLbGloVlRYWmM2TTlpZWRlK1lBbEk9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY0NDg3MTgzLCJleHAiOjE0NjU2OTY3ODMsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.IkCI0SUiNZpOOFR1gXMEW8xqDsd4KqPjGXTWNfutosjU0R_Z_qvuUJ3Z6257agQMp8jbCH8sLVhb7NNPaqY4Dw' }")
@@ -76,7 +76,7 @@ class CustLoginController extends Controller {
 		$service->validate($data['email'], 'Invalid email address.')->notNull()->isLen(3,200)->isEmail();
 		$service->validate($data['phone'], 'Invalid phone number.')->notNull();
 		$service->validate($data['password'], 'Error: no password present.')->isLen(3,200)->notNull();
-		$service->validate($data['phone_password'], 'Error: no phone password present.')->isLen(3,200)->notNull()->isInt();
+		$service->validate($data['phonePassword'], 'Error: no phone password present.')->isLen(3,200)->notNull()->isInt();
 		$service->validate($data['services'], 'Error: no service present.')->notNull();
 		$service->validate($data['sname'], 'Error: no stripe name present.')->notNull()->isLen(3,200);
 		$service->validate($data['number'], 'Error: no credit card number present.')->notNull();
@@ -113,6 +113,8 @@ class CustLoginController extends Controller {
 			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("There was a problem during stripe card registration.")));
      		return $response->json(array('data' => $base64Encrypted));
 		}
+
+
 		// Generate jwt token
 		$genToken = $this->generateResponseToken(array("Success" => "Success"));
 		// Store the newly created token
@@ -153,30 +155,30 @@ class CustLoginController extends Controller {
      */
 	public function postForgot($request, $response, $service, $app) {
 		// Take care of token expiration, validity
-		if($request->token){
+		// if($request->token){
 			// Validate token if not expired, or tampered with
-			$this->validateToken($request->token);
+			// $this->validateToken($request->token);
 			//Decrypt input data
 			$data = $this->decryptValues($request->data);
 			// Validate input data
 			$service->validate($data['email'], 'Please enter a valid email address to retrieve your password.')->isLen(3,200)->isEmail();
-			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+			// $service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
 			// Validate token in database for customer stored
-			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
+			// $validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
-			if(!$validated){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
-	     		return $response->json(array('data' => $base64Encrypted));
-			}
+			// if(!$validated){
+			// 	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
+	  //    		return $response->json(array('data' => $base64Encrypted));
+			// }
 			// Check if email is found in the database
-			$CustomerID = CustLogin::checkEmail($data['CustomerID'], $data['email']);
+			$isFound = CustLogin::checkEmail($data['email']);
 			// Error if no email was found in the database
-			if(!$CustomerID){
+			if(!$isFound){
 				$errorJson = $this->encryptValues(json_encode($this->errorJson("Email address does not exist. Please enter correct email address to retrieve your password.")));
 				return $response->json(array('data' => $errorJson));
 			}
 			// Retrieve the customer
-			$customer = CustLogin::getCustomer($data['CustomerID']);
+			$customer = CustLogin::getCustomer1($data['email']);
 			// Error if customer with CustomerID was not found in the database
 			if(!$customer){
 				$errorJson = $this->encryptValues(json_encode($this->errorJson("No user found with supplied email.")));
@@ -202,13 +204,13 @@ class CustLoginController extends Controller {
 			$base64Encrypted = $this->encryptValues(json_encode($this->emailValues($customer)));
 			// Return as json token and encrypted data
 	     	return $response->json(array('data' => $base64Encrypted));
-	    } else {
-	     	return $response->json("No token given");
-	    }
+	    // } else {
+	    //  	return $response->json("No token given");
+	    // }
 	}
 
 	/**
-     * @ApiDescription(section="ViewProfile", description="Retrieve customers information(only fname, lname, phone, phone_password, email, services, telephoniUserID, telephonicPassword, type) stored in the database, based on the request CustomerID of user, a token for autentication.")
+     * @ApiDescription(section="ViewProfile", description="Retrieve customers information(only fname, lname, phone, phonePassword, email, services, telephoniUserID, telephonicPassword, type) stored in the database, based on the request CustomerID of user, a token for autentication.")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/viewProfile")
      * @ApiBody(sample="{'data': 'AwE9pWLBHNSOeTEz2Eyx536/giGgYqW/lzCyxq3r86DrvXA0rSegs70FRlcoHyzlhZSBK2OwBrIXSWogDr74mm3yw0WEtjI2u+YzK6Q2EenuCq/5uM5HUmmVThx/URapFX4=',
@@ -260,6 +262,8 @@ class CustLoginController extends Controller {
      	} else {
      		return $response->json("No token in request TODO.");
      	}
+     	//TODO $base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+     		// return $response->json(array('data' => $base64Encrypted));
 	}
 
 	/**
@@ -267,7 +271,7 @@ class CustLoginController extends Controller {
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/updateProfile")
      * @ApiBody(sample="{ 'data': 'AwFI1Szn84FEu2Qsivkw25sKBqkhIXRDhIoOh0ciG9xxEB3B7Qo7E7eDSyBdNOme++45Hz4hxySPWWRE0TRefQ6cq+T7oAAubWvC7G4XRMgDWPFPdJ2uv0Zlq7JTInDG8xG7w053p2NW0sJmfNPlbQzbNww3JmiW57tAFqhOfVKz6Ucbr2bpaOdL10PsPWkwUoHvjfslgOITIZArwMO2sY23XC5uxU2iZAOAAYqUUYY5KMiiMjl+RAYSgfTRrVR/wM7MOm4aADK+zGdOaMBULPCMOC/XQOcVekMqkYjk+jggXD2imqGVIV7g2edU5zl7n4qKI2MVjqQ2qUGgJS1kv+fyEekj+TIWdIO1hjW3HiAJTotesk+C0UZgI4qe1yHvicERvz8mcR5CCv5FxfL3YiTIllNbt9sJwcDvXANfeCBwhA==', 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ0ODc0ODUsImp0aSI6IndPSTlFRm9kY0RQVDdwc1d6RlphTUQ2dzlUMWhiSjUzV1BiSGxJSXFMZHc9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY0NDg3NDg1LCJleHAiOjE0NjU2OTcwODUsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.z03x_B2G6I3DdxaOsND3QMR0Rz8zCanxu6sf-4oH8x99x5nyvkhI0qClDMOzwXAC5ZU54D4OHgiJiiGoYU_4nQ'}")
-     * @ApiParams(name="data", type="object", nullable=false, description="Json must contain CustomerID, fname, lname, email, phone, password, phone_password, services. Example in body in the data.")
+     * @ApiParams(name="data", type="object", nullable=false, description="Json must contain CustomerID, fname, lname, email, phone, password, phonePassword, services. Example in body in the data.")
      @ApiParams(name="token", type="object", nullable=false, description="Autentication token for users autentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="object", sample="{
@@ -287,7 +291,7 @@ class CustLoginController extends Controller {
 			$service->validate($data['email'], 'Invalid email address.')->notNull()->isLen(3,200)->isEmail();
 			$service->validate($data['phone'], 'Invalid phone number.')->notNull()->isLen(3,200);
 			$service->validate($data['password'], 'Error: no password present.')->notNull()->isLen(3,200);
-			$service->validate($data['phone_password'], 'Error: no phone password present.')->notNull()->isLen(3,200)->isInt();
+			$service->validate($data['phonePassword'], 'Error: no phone password present.')->notNull()->isLen(3,200)->isInt();
 			$service->validate($data['services'], 'Error: no service present.')->notNull();
 			// Validate token in database for customer stored
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
