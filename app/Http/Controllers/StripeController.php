@@ -37,7 +37,6 @@ class StripeController extends Controller {
 		Stripe::setApiKey(getenv('STRIPE_KEY'));
 
 		// $data['exp']
- // TODO IF stripe failed remove customerIF
 		// Create a token for customer credit card details
 		$result = Token::create( array("card" => array(
 			"name" => $data['sname'],

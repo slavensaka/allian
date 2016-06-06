@@ -250,8 +250,8 @@ class CustLoginController extends Controller {
 			$values['status'] = 1;
 			$values['lname'] = $customer->getValueEncoded('LName');
 			$values['telephonicUserId'] = $customer->getValueEncoded('PhLoginId');
-			$values['telephonicPassword'] = $customer->getValueEncoded('PhPassword');
-			$values['phone_number'] = $customer->getValueEncoded('Phone');
+			$values['phonePassword'] = $customer->getValueEncoded('PhPassword');
+			$values['phone'] = $customer->getValueEncoded('Phone');
 			$values['type'] = $customer->getValueEncoded('Type');
 			$values['email'] = $customer->getValueEncoded('Email');
 			$values['services'] = explode(":", $customer->getValueEncoded('Services'));
@@ -265,7 +265,7 @@ class CustLoginController extends Controller {
      	//TODO $base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
      		// return $response->json(array('data' => $base64Encrypted));
 	}
-
+// http://localhost/testgauss/langPairTrans?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ5NTYzNTcsImp0aSI6IlVSR0JMUUdyN1VSTkhPVlJsdnZvWlVqcVwvTlZcL0dTUE1YQXhiU3NXUUVhWT0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQ5NTYzNTcsImV4cCI6MTQ2NjE2NTk1NywiZGF0YSI6eyJTdWNjZXNzIjoiU3VjY2VzcyJ9fQ.FwK7XBbi1hW1-m_c6WrcC-qKjWc5sjxu2ykhCfqNwHS-6Pul-wauMo8V-KkwnHtyGCAkRtJ3V7QgZSKmEHrSow?data=AwHIJNE4QGp9KS1tmqe5/BN6aPrOcf58wWZ3dVomuW0/+MedTQ1hcZByGORwoHNhcVD1hSoTA1v1kAo8175fJvm4yZIAaOP6e670InoJXmF/DTt/t6SjL+FG7ZnmTKKM5xc=
 	/**
      * @ApiDescription(section="UpdateProfile", description="Update customers profile information by giving the CustomerID to recognize him in the database and new info.")
      * @ApiMethod(type="post")
@@ -279,6 +279,7 @@ class CustLoginController extends Controller {
 		}")
      */
 	public function updateProfile($request, $response, $service, $app){
+
 		if($request->token){ //editmain.php i editmainadd.php
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);

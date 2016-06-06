@@ -43,7 +43,7 @@ class LangPairTrans extends DataObject {
 
   	public static function retrieveLangPairTrans($LangId){
   		$conn = parent::connect();
-	    $sql = "SELECT DISTINCT langpair_trans.Lang2, langlist.LangName FROM langpair_trans LEFT JOIN langlist ON langpair_trans.Lang2 = langlist.LangId WHERE langpair_trans.Lang1 = '$LangId' AND Approved = 1 AND Lang2 IS NOT NULL AND Lang2 <> 'N/A' ORDER BY langlist.LangName";
+	    $sql = "SELECT DISTINCT LangPair_Trans.Lang2, LangList.LangName FROM LangPair_Trans LEFT JOIN LangList ON LangPair_Trans.Lang2 = LangList.LangId WHERE LangPair_Trans.Lang1 = '$LangId' AND Approved = 1 AND Lang2 IS NOT NULL AND Lang2 <> 'N/A' ORDER BY LangList.LangName";
 	    try {
 		    $st = $conn->prepare($sql);
 		    $st->bindValue(":LangId", $LangId, \PDO::PARAM_INT);

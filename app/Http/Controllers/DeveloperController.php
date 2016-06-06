@@ -97,24 +97,26 @@ class DeveloperController extends Controller {
 	 *
 	 */
 	public function tester($request, $response, $service, $app){
-		$data = $request->data;
-		$dec = json_decode($data);
-		$ar = (array) $dec;
-		//  TODO Pitat jel se može poslat mob ovak
-		if($ar['services']['telephonic_interpreting']){
-			return $ar['services']['telephonic_interpreting'];
-			$ar['services']['telephonic_interpreting'] = 'Telephonic Interpreting';
-		}
-		if($ar['services'][1]){
-			$ar['services'][1] = 'Translation Services';
-		}
-		if($ar['services'][2]){
-			$ar['services'][2] = 'On-Site Interpreting';
-		}
-		if($ar['services'][3]){
-			$ar['services'][3] = 'Transcription Services';
-		}
-		return $response->json($ar['services']);
+		$all_headers = $klein->request()->headers()->all();
+		return $response->json($all_headers);
+		// $data = $request->data;
+		// $dec = json_decode($data);
+		// $ar = (array) $dec;
+		// //  TODO Pitat jel se može poslat mob ovak
+		// if($ar['services']['telephonic_interpreting']){
+		// 	return $ar['services']['telephonic_interpreting'];
+		// 	$ar['services']['telephonic_interpreting'] = 'Telephonic Interpreting';
+		// }
+		// if($ar['services'][1]){
+		// 	$ar['services'][1] = 'Translation Services';
+		// }
+		// if($ar['services'][2]){
+		// 	$ar['services'][2] = 'On-Site Interpreting';
+		// }
+		// if($ar['services'][3]){
+		// 	$ar['services'][3] = 'Transcription Services';
+		// }
+		// return $response->json($ar['services']);
 		// $services = implode(":", $ar['services']);
 		// return $services;
 

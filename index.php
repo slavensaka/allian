@@ -1,7 +1,6 @@
-<?php // ALTER TABLE CustLogin ADD COLUMN jwt_token VARCHAR(250) NULL AFTER token;
-//Stavi env na server
-// PhPassword also hash and old passwords
-// Potrebno je storat u app jwt_token i CustomerID.
+<?php
+// ALTER TABLE CustLogin ADD COLUMN jwt_token VARCHAR(250) NULL AFTER token;
+// TODO PhPassword also hash and old passwords
 require __DIR__ . '/vendor/autoload.php';
 
 use Allian\Http\Controllers\Controller;
@@ -38,13 +37,18 @@ $klein->onHttpError(function ($code, $klein, $matched, $methods, $exception) {
 $klein->respond(function ($request, $response, $service, $app) use ($klein) {
     $klein->onError(function ($klein, $err_msg) {
     	$base64Encrypted = Controller::encryptValues(json_encode(Controller::errorJson($err_msg)));
+    	// Catch register route & then handle the deletion of user from database.
     	if($klein->request()->uri() == '/testgauss/register'){
+    		// Get data from request
     		$encrypted = $klein->request()->param('data');
+    		// Decrypt it
     		$password = getenv("CRYPTOR");
 			$decryptor = new \RNCryptor\Decryptor();
 			$plaintext = $decryptor->decrypt($encrypted, $password);
 			$data = json_decode($plaintext, true);
+			// Find user in database with email and password
 			$customer = CustLogin::authenticate($data['email'], $data['password']);
+			// Find him again and delete him, BECAUSE his stripe is not valid
 			if($customer){
 				$deleteCustomer = CustLogin::deleteCustomerByEmail($data['email'], $customer->getValueEncoded('LoginPassword'));
 			}
@@ -69,7 +73,7 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('GET', '/support', array($custLogin, 'support'));
 
 	$langPair = new LangPairController();
-	$klein->respond('GET', '/langPairTrans', array($langPair, 'langPairTrans'));
+	$klein->respond('POST', '/langPairTrans', array($langPair, 'langPairTrans'));
 
 	$conferenceSchedule = new ConferenceScheduleController();
 	$klein->respond('POST', '/getTimezones', array($conferenceSchedule, 'getTimezones'));
@@ -78,7 +82,7 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('POST', '/updateStripe', array($stripe, 'updateStripe'));
 
 	$langList = new LangListController();
-	$klein->respond('GET', '/langNames', array($langList, 'langNames'));
+	$klein->respond('POST', '/langNames', array($langList, 'langNames'));
 
 	$twilio = new TwilioController();
 	$klein->respond('GET', '/twilio', array($twilio, 'twilio'));
@@ -88,7 +92,7 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('GET', '/devEncryptJson', array($developer, 'devEncryptJson'));
 	$klein->respond('GET', '/devDecryptJson', array($developer, 'devDecryptJson'));
 	$klein->respond('GET', '/devGenerateAuthToken', array($developer, 'devGenerateAuthToken'));
-	$klein->respond('POST', '/tester', array($developer, 'tester'));
+	$klein->respond('GET', '/tester', array($developer, 'tester'));
 });
 
 $klein->dispatch();
