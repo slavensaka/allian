@@ -93,6 +93,25 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('GET', '/devDecryptJson', array($developer, 'devDecryptJson'));
 	$klein->respond('GET', '/devGenerateAuthToken', array($developer, 'devGenerateAuthToken'));
 	$klein->respond('GET', '/tester', array($developer, 'tester'));
+
+
+
+
+	$klein->respond('GET', '/tester1', function ($request, $response, $service, $app) {
+
+		// $all_headers = $request->headers()->get('token');//DIT it
+		// $all_headers = $request->headers()->all();//DIT it
+		// $all_headers = $request->param('novi');
+		// return $response->json($all_headers);
+
+
+
+
+
+
+	});
+
+
 });
 
 $klein->dispatch();

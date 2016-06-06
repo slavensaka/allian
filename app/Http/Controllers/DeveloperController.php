@@ -97,7 +97,7 @@ class DeveloperController extends Controller {
 	 *
 	 */
 	public function tester($request, $response, $service, $app){
-		$all_headers = $klein->request()->headers()->all();
+		$all_headers = $request->method();
 		return $response->json($all_headers);
 		// $data = $request->data;
 		// $dec = json_decode($data);
