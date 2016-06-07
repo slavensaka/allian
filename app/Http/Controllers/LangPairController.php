@@ -26,15 +26,15 @@ class LangPairController extends Controller {
      * @ApiReturn(type="object", sample="{ 'data': 'json of lang-translationTo' }")
      */
 	public function langPairTrans($request, $response, $service, $app) {
-		if($request->token){
+		if($request->headers()->get('token')){
 			// Validate token if not expired, or tampered with
-			$this->validateToken($request->token);
+			$this->validateToken($request->headers()->get('token'));
 			// Decrypt data
-			$data = $this->decryptValues($request->data);
+			$data = $this->decryptValues($request->headers()->get('data'));
 			// Validate customerId
 			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
 			// Validate token in database for customer stored
-			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
+			$validated = $this->validateTokenInDatabase($request->headers()->get('token'), $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
@@ -58,6 +58,8 @@ class LangPairController extends Controller {
 				$listing[] = array("lang" => $p->getValueEncoded("LangName"), "translationTo" =>$novi );
 			}
 			return $response->json(array("data" => $listing));
+			// $base64Encrypted = $this->encryptValues(json_encode($listing));
+	  //    	return $response->json(array('data' => $base64Encrypted));
 		} else {
 			return $response->json("No token provided. TODO. Encrypt this");
 		}
