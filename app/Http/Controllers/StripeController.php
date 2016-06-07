@@ -8,6 +8,7 @@ use \Dotenv\Dotenv;
 use Stripe\Customer;
 use Allian\Models\Stripe as StripeModel;
 use Allian\Http\Controllers\StripeController;
+use Allian\Models\CustLogin;
 
 class StripeController extends Controller {
 
@@ -87,11 +88,18 @@ class StripeController extends Controller {
 			$data = $this->decryptValues($request->data);
 			// Validate input data
 			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+			// $service->validate($data['sname'], 'Error: no stripe name present.')->notNull()->isLen(3,200);
+			// $service->validate($data['number'], 'Error: no credit card number present.')->notNull();
+			// $service->validate($data['exp_month'], 'Error: Expiration month not present.')->notNull();
+			// $service->validate($data['exp_year'], 'Error: Expiration year not present.')->notNull();
+			// $service->validate($data['cvc'], 'Error: Cvc not present.')->notNull();
+
 			$service->validate($data['sname'], 'Error: no stripe name present.')->notNull()->isLen(3,200);
 			$service->validate($data['number'], 'Error: no credit card number present.')->notNull();
-			$service->validate($data['exp_month'], 'Error: Expiration month not present.')->notNull();
-			$service->validate($data['exp_year'], 'Error: Expiration year not present.')->notNull();
+			$service->validate($data['exp'], 'Error: Expiration month not present.')->notNull();
+			// $service->validate($data['exp_year'], 'Error: Expiration year not present.')->notNull();
 			$service->validate($data['cvc'], 'Error: Cvc not present.')->notNull();
+
 			//Validate the jwt token in the database
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
@@ -101,13 +109,17 @@ class StripeController extends Controller {
 			}
 			// Stripe token then customer create
 			$stripe = new StripeController();
-			$oneTimeToken = $stripe->createToken($data);
+			// Format exp_month and exp_year
+			$exp = explode("/", $data['exp']);
+			$exp_month = ltrim($exp[0], '0');
+			$exp_year = "20".$exp[1];
+			$tokenResult = $stripe->createTokenNew($data, $exp_month, $exp_year);
 			// Retrieve customer stripe token
 			$customer_id = StripeModel::customerToken($data['CustomerID']);
 			$cu = Customer::retrieve($customer_id['token']);
 			$email = $customer_id['Email'];
 			$cu->description = "Gauss:app, update of card for user $email.";
-			$cu->source = $oneTimeToken;
+			$cu->source = $tokenResult;
 	    	$cu->save();
 	    	// Format response
 			$jsonArray = array();
@@ -117,6 +129,44 @@ class StripeController extends Controller {
 			$base64Encrypted = $this->encryptValues(json_encode($jsonArray));
 			// Return as json token and encrypted data
 	     	return $response->json(array('data' => $base64Encrypted));
+		} else {
+			return $response->json("No token provided");
+		}
+	}
+
+	public function viewStripe($request, $response, $service, $app){
+		Stripe::setApiKey(getenv('STRIPE_KEY'));
+
+		if($request->token){
+			// Validate token if not expired, or tampered with
+			$this->validateToken($request->token);
+			// Decrypt input data
+			$data = $this->decryptValues($request->data);
+			// Validate input data
+			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+			//Validate the jwt token in the database
+			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
+			// If error validating token in database
+			if(!$validated){
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
+	     		return $response->json(array('data' => $base64Encrypted));
+			}
+			$customer = CustLogin::getCustomer($data['CustomerID']);
+
+			$cu = Customer::retrieve($customer->getValueEncoded('token'));
+
+			$name = explode(" ", $cu->sources->data[0]->name);
+			//Stripe\Customer JSON: {"id":"cus_8aiUh26TrbDoks","object":"customer","account_balance":0,"business_vat_id":null,"created":1465255354,"currency":null,"default_source":"card_18JXSRJq3h3NbLM4CkJORw1x","delinquent":false,"description":"Gauss:app, update of card for user slavensakacic@gmail.com.","discount":null,"email":null,"livemode":false,"metadata":[],"shipping":null,"sources":{"object":"list","data":[{"id":"card_18JXSRJq3h3NbLM4CkJORw1x","object":"card","address_city":null,"address_country":null,"address_line1":null,"address_line1_check":null,"address_line2":null,"address_state":null,"address_zip":null,"address_zip_check":null,"brand":"Visa","country":"US","customer":"cus_8aiUh26TrbDoks","cvc_check":"pass","dynamic_last4":null,"exp_month":6,"exp_year":2018,"fingerprint":"TkaokMge29sq6hd7","funding":"credit","last4":"1881","metadata":[],"name":"Pero Peri\u0107","tokenization_method":null}],"has_more":false,"total_count":1,"url":"\/v1\/customers\/cus_8aiUh26TrbDoks\/sources"},"subscriptions":{"object":"list","data":[],"has_more":false,"total_count":0,"url":"\/v1\/customers\/cus_8aiUh26TrbDoks\/subscriptions"}}
+
+
+			//data   AwH+aGr68GTFilYFzDy4le8Zja+JYTJLnreah+tzjk33PXvRxJp7SqmVdHIHuDtjwce0kL0v4BKWbWv05irS1PPI2jXbFtdDk0baOTg3Q2KdpZ2c1PgfcrqLl+duhKcmNF5LdmpuVNu9r93NUDL50+92sTLH8N1fxSZJzAQk8NPnu4UU3jcoGHtA9i2N5Wpsz4eAWQKeY3FF7JyeQDhdOlkMFZqgvsxu/Gxa9QNBVo9neXtGmHx4a+uljaiyxncrrjo=
+			return $name[0];
+			return $name[1];
+			return $cu->sources->data[0]->exp_year;
+			return $cu->sources->data[0]->exp_month;
+			return $cu->sources->data[0]->country;
+			return $cu->sources->data[0]->brand;
+			return $cu->sources->data[0]->last4;
 		} else {
 			return $response->json("No token provided");
 		}

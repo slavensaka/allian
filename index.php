@@ -73,13 +73,14 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('GET', '/support', array($custLogin, 'support'));
 
 	$langPair = new LangPairController();
-	$klein->respond('POST', '/langPairTrans', array($langPair, 'langPairTrans'));
+	$klein->respond('GET', '/langPairTrans', array($langPair, 'langPairTrans'));
 
 	$conferenceSchedule = new ConferenceScheduleController();
 	$klein->respond('POST', '/getTimezones', array($conferenceSchedule, 'getTimezones'));
 
 	$stripe = new StripeController();
 	$klein->respond('POST', '/updateStripe', array($stripe, 'updateStripe'));
+	$klein->respond('POST', '/viewStripe', array($stripe, 'viewStripe'));
 
 	$langList = new LangListController();
 	$klein->respond('POST', '/langNames', array($langList, 'langNames'));
