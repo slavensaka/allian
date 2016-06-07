@@ -134,6 +134,19 @@ class StripeController extends Controller {
 		}
 	}
 
+	/**
+     * @ApiDescription(section="ViewStripe", description="View stripe credit card information.")
+     * @ApiMethod(type="post")
+     * @ApiRoute(name="/testgauss/viewStripe")
+     * @ApiBody(sample="{'data': 'AwFFQaHs4W29wIiFcSBKS+qkIihUjw2AZ9aS5xjAGWaOFuYj9PNyRyVpMKbdwD3tDG3tzpzvPkvZr8Qh6CC0VxzhjvJhJ0KmwaFHeg2SsQeVERhGIkMAzz6aU7tcWEl9v/E=',
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUyODA1MDIsImp0aSI6IlVheUZlOUJTcEE5empHWUNneVpnNTJEVFYzRXZ4NFE5YXNKdTQ4MHdEY289IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY1MjgwNTAyLCJleHAiOjE0NjY0OTAxMDIsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.qkGUG0WdaW_Q1aysAgfaEC5300Hk4X9VFEZRGsTOxE4X-P27EdCEfAnDPY0SaXD_VfsHiVYaGwwKxO-Bz0N8Yg'}")
+     *@ApiParams(name="data", type="object", nullable=false, description="Data")
+     @ApiParams(name="token", type="object", nullable=false, description="Autentication token for users autentication.")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     * @ApiReturn(type="object", sample="{
+     *  'data': 'AwFQl/SrPFTgj/O7Jb4FEm1TTR/G7ogHqkVd/is/NA5xpQMUYf7xQMw6N4+WZp6nWx0suUY55VtW4I/axznOLYOrS/EpXwA6q8gV6I9xax9HJIlCPkE2Kp84mX/old3uhpbmVqKIJtOcQYHEc6uaDGnsT1CH7yjE4nuiOcqMbReZ1Z7A1zZl9EyE1pV/Wmt22fn/iCpapqx/1SkpOvgpF/b60AwzQcCidoZvjprdHvKvhA=='
+     * }")
+     */
 	public function viewStripe($request, $response, $service, $app){
 		Stripe::setApiKey(getenv('STRIPE_KEY'));
 
@@ -156,19 +169,23 @@ class StripeController extends Controller {
 			$cu = Customer::retrieve($customer->getValueEncoded('token'));
 
 			$name = explode(" ", $cu->sources->data[0]->name);
-			//Stripe\Customer JSON: {"id":"cus_8aiUh26TrbDoks","object":"customer","account_balance":0,"business_vat_id":null,"created":1465255354,"currency":null,"default_source":"card_18JXSRJq3h3NbLM4CkJORw1x","delinquent":false,"description":"Gauss:app, update of card for user slavensakacic@gmail.com.","discount":null,"email":null,"livemode":false,"metadata":[],"shipping":null,"sources":{"object":"list","data":[{"id":"card_18JXSRJq3h3NbLM4CkJORw1x","object":"card","address_city":null,"address_country":null,"address_line1":null,"address_line1_check":null,"address_line2":null,"address_state":null,"address_zip":null,"address_zip_check":null,"brand":"Visa","country":"US","customer":"cus_8aiUh26TrbDoks","cvc_check":"pass","dynamic_last4":null,"exp_month":6,"exp_year":2018,"fingerprint":"TkaokMge29sq6hd7","funding":"credit","last4":"1881","metadata":[],"name":"Pero Peri\u0107","tokenization_method":null}],"has_more":false,"total_count":1,"url":"\/v1\/customers\/cus_8aiUh26TrbDoks\/sources"},"subscriptions":{"object":"list","data":[],"has_more":false,"total_count":0,"url":"\/v1\/customers\/cus_8aiUh26TrbDoks\/subscriptions"}}
 
+			$rArray =  array();
+			// $rArray['fname']= $name[0];
+			// $rArray['lname'] =$name[1];
+			$exp_year = substr($cu->sources->data[0]->exp_year, 2);
+			$rArray['sname'] = $cu->sources->data[0]->name;
+			$rArray['exp'] =  $cu->sources->data[0]->exp_month . '/' . $exp_year;
 
-			//data   AwH+aGr68GTFilYFzDy4le8Zja+JYTJLnreah+tzjk33PXvRxJp7SqmVdHIHuDtjwce0kL0v4BKWbWv05irS1PPI2jXbFtdDk0baOTg3Q2KdpZ2c1PgfcrqLl+duhKcmNF5LdmpuVNu9r93NUDL50+92sTLH8N1fxSZJzAQk8NPnu4UU3jcoGHtA9i2N5Wpsz4eAWQKeY3FF7JyeQDhdOlkMFZqgvsxu/Gxa9QNBVo9neXtGmHx4a+uljaiyxncrrjo=
-			return $name[0];
-			return $name[1];
-			return $cu->sources->data[0]->exp_year;
-			return $cu->sources->data[0]->exp_month;
-			return $cu->sources->data[0]->country;
-			return $cu->sources->data[0]->brand;
-			return $cu->sources->data[0]->last4;
+			$rArray['country'] =$cu->sources->data[0]->country;
+			$rArray['brand']= $cu->sources->data[0]->brand;
+			$rArray['number'] =$cu->sources->data[0]->last4;
+			$rArray['status'] = 1;
+			// Format response
+			$base64Encrypted = $this->encryptValues(json_encode($rArray));
+	     	return $response->json(array('data' => $base64Encrypted));
 		} else {
-			return $response->json("No token provided");
+			return $response->json(array("data" => "No token provided"));
 		}
 	}
 
