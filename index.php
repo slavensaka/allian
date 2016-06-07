@@ -61,30 +61,30 @@ $klein->respond(function ($request, $response, $service, $app) use ($klein) {
 $klein->with('/testgauss', function() use ($klein){
 	// if(is_callable(array($custLogin, 'testing'))) echo "JE"; else echo "Nije";
 	$custLogin = new CustLoginController();
-	$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
-	$klein->respond('POST', '/register', array($custLogin, 'postRegister'));
-	$klein->respond('POST', '/forgot', array($custLogin, 'postForgot'));
-	$klein->respond('POST', '/viewProfile', array($custLogin, 'viewProfile'));
-	$klein->respond('POST', '/updateProfile', array($custLogin, 'updateProfile'));
-	$klein->respond('POST', '/telephonicAccess', array($custLogin, 'telephonicAccess'));
-	$klein->respond('GET', '/terms', array($custLogin, 'getTerms'));
+	$klein->respond('POST', '/login', array($custLogin, 'postLogin')); // NE DIRAT
+	$klein->respond('POST', '/register', array($custLogin, 'postRegister')); // NE DIRAT
+	$klein->respond('POST', '/forgot', array($custLogin, 'postForgot')); // NE DIRAT
+	$klein->respond('POST', '/viewProfile', array($custLogin, 'viewProfile')); // NE DIRAT
+	$klein->respond('POST', '/updateProfile', array($custLogin, 'updateProfile')); // NE DIRAT
+	$klein->respond('POST', '/telephonicAccess', array($custLogin, 'telephonicAccess')); // NE DIRAT
+	$klein->respond('GET', '/terms', array($custLogin, 'getTerms')); // NE DIRAT
 	$klein->respond('POST', '/logout', array($custLogin, 'logout'));
 	$klein->respond('POST', '/keepLoggedIn', array($custLogin, 'keepLoggedIn'));
 	$klein->respond('GET', '/support', array($custLogin, 'support'));
 
 	$langPair = new LangPairController();
-	$klein->respond('GET', '/langPairTrans', array($langPair, 'langPairTrans'));
+	$klein->respond('GET', '/langPairTrans', array($langPair, 'langPairTrans')); // NE DIRAT
 
 	$conferenceSchedule = new ConferenceScheduleController();
-	$klein->respond('GET', '/getTimezones', array($conferenceSchedule, 'getTimezones'));
+	$klein->respond('GET', '/getTimezones', array($conferenceSchedule, 'getTimezones')); // NE DIRAT
 	$klein->respond('POST', '/schedulePartOne', array($conferenceSchedule, 'schedulePartOne'));
 	$klein->respond('POST', '/schedulePartTwo', array($conferenceSchedule, 'schedulePartTwo'));
 	$klein->respond('POST', '/scheduleFinal', array($conferenceSchedule, 'scheduleFinal'));
 
 
 	$stripe = new StripeController();
-	$klein->respond('POST', '/updateStripe', array($stripe, 'updateStripe'));
-	$klein->respond('POST', '/viewStripe', array($stripe, 'viewStripe'));
+	$klein->respond('POST', '/updateStripe', array($stripe, 'updateStripe')); // NE DIRAT
+	$klein->respond('POST', '/viewStripe', array($stripe, 'viewStripe')); // NE DIRAT
 
 	$langList = new LangListController();
 	$klein->respond('POST', '/langNames', array($langList, 'langNames'));

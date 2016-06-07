@@ -396,9 +396,12 @@ class ConferenceScheduleController extends Controller {
 			$to_time = $data['fromDate'] . ' ' . $data['timeEnds'];
 			$assg_frm_st = $data['timeStarts'];
 			$assg_frm_en = $data['timeEnds'];
+
 			$frmT = new \DateTime($data['fromDate'].' '.$data['timeStarts'],new \DateTimeZone($data['timezone']));
+
 			$frmT->setTimezone(new \DateTimeZone('GMT'));
-		    $toT = new \DateTime($data['fromDate'].' '.$data['fromDate'],new \DateTimeZone($data['timezone']));
+
+		    $toT = new \DateTime($data['fromDate'].' '.$data['timeEnds'],new \DateTimeZone($data['timezone']));
 			$toT->setTimezone(new \DateTimeZone('GMT'));
 
 
@@ -427,6 +430,7 @@ class ConferenceScheduleController extends Controller {
 			$minimum_text = ($minimum_appied) ? "Minimum $scheduling_type telephonic scheduling price is $$minimum_rate" : "";
 			$amount += ($minimum_appied) ? $minimum_rate : $rate_per_min * $minutes;
 			$amount = $this->amt_format($amount);
+
 			if ($data['schedulingType'] == 'conference_call') {
 			    $amount+= $conference_fee;
 
@@ -444,19 +448,62 @@ class ConferenceScheduleController extends Controller {
 			$sArray['assg_to_timestamp'] =$toT->format('U');
 			// $sArray['interpreting_dur'] =$NESTO['interpreting_duration'];
 			$sArray['scheduling_type'] = $data['schedulingType'];
-			$sArray['frm_lang'] = $data['langFrom'];
-			$sArray['to_lang'] = $data['langTo'];
+			$sArray['frm_lang'] = $data['langFrom']; // broj languagea
+			$sArray['to_lang'] = $data['langTo']; // broj Languagea
 			$sArray['country'] = $data['country'];
 			if ($data['schedulingType'] == 'conference_call') {
 				$sArray['onsite_con_phone'] = $data['contacts'];
 			} elseif($data['schedulingType'] == 'get_call'){
 				$data['onsite_con_email'] = $data['contacts']; //TODO
 			}
+			// return $data['contacts'];
 			$sArray['intr_needed_for'] = $data['neededFor'];
 			$sArray['description'] = $data['description'];
 			$sArray['orderID'] = md5(time().$data['description']);
 			$sArray['currency_code']='usd';
-			return $amount;
+			$sArray['scheduling_type'] = $data['schedulingType'];
+			$all_data_valid = true;
+			// if(intval($data['amount'])<=29){ // Amount check if less than 29$ error
+			// 	$all_data_valid=false;
+			// }
+			$sArray['amount'] = $amount; // caluculate_price() TODO
+			if($all_data_valid){
+				if($data['schedulingType'] == 'get_call'){
+					$sArray['interpreter_amt'] = (25/100)*$amount;  // caluculate_price() TODO
+				} elseif($data['schedulingType'] = 'conference_call'){
+					$sArray['interpreter_amt'] = (25/100)*($amount-5); // caluculate_price() TODO
+				}
+			}
+
+			$sArray['interpreting_dur']= $this->telephonic_duration(
+										$data['fromDate'].'T'.$sArray['assg_frm_st'],
+										$data['fromDate']. 'T'.$data['assg_frm_en']);
+			//Mysql insert into order_onsite_interpreterž
+			// return $response->json($sArray);
+			$con=mysqli_connect("localhost","root","","allian10_abs_linguist_portal");
+			foreach($sArray as $key=>$value){
+				$in[$key] = mysqli_real_escape_string($con,$value);
+			}
+			$fields = implode(',', array_keys($in));
+			$values = implode("', '", array_values($in));
+			$query = sprintf("insert into order_onsite_interpreter(%s) values('%s')",$fields,$values);
+			// return $query;
+
+
+
+			$result = mysqli_query($con,$query);
+			if($result and mysqli_affected_rows($con)>0){
+				$feedback = json_encode("true");
+			}else {
+				if(mysqli_errno($con)==1048){
+					$feedback=json_encode("Error--Missing Required Values");
+				}else {
+					$feedback=json_encode("Error--Failed to Save Data");//.mysqli_error($con);
+				}
+			}
+			$retArray = array();
+			$retArray['timezone']
+			return $feedback;
 		} else {
 	    	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
 	 		return $response->json(array('data' => $base64Encrypted));

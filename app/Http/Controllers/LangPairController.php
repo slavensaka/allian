@@ -31,7 +31,7 @@ class LangPairController extends Controller {
 			$this->validateToken($request->token);
 			// Decrypt data
 			$data = $this->decryptValues($request->data);
-			// Validate customerId
+			// Validate CustomerId
 			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
 			// Validate token in database for customer stored
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);

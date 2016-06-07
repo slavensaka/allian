@@ -77,7 +77,7 @@ class CustLogin extends DataObject {
 	    }
   	}
 
-  	/** TODO Save customer and retrieve the customerID and then cid abouce and then UPDATE his PhlogId
+  	/** TODO Save customer and retrieve the CustomerID and then cid abouce and then UPDATE his PhlogId
 		$time=time();
 		$result=mysqli_query($con,"INSERT INTO CustLogin (PhPassword,PhLoginId,FName,LName,BName,Street,Line2,City,State,Postal,Country,Services,InvName,InvEmail,InvPhone,InvNeed,Email,LoginPassword,Type,Phone) VALUES ('$PhPassword','$time','$FName','$LName','$BName','$Street','$Line2','$City','$State','$Postal','$Country','$Services','$InvName','$InvEmail','$InvPhone','$InvNeed','$Email','$LoginPassword','$Type','$Phone') ");
 		echo ($result)?"<p class='alert green closeable'> Signed Up Successfully <br><br> <em>Please wait for confirmation email</em></p>":"";

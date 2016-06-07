@@ -16,7 +16,7 @@ use Allian\Http\Controllers\StripeController;
 class CustLoginController extends Controller {
 
 	 /**
-     * @ApiDescription(section="Login", description="Authenticate customer with email & password, response is a jwt token with expiration date and secret key encoding for server side validation of autenticity of customer, and a data key that's encrypted with RNCryptor (status, userMessage, fname, lname, customerID). <br><b>Storing this token in the app is esential, this is the auth token needed througt the app.</b>(other routes require this token).")
+     * @ApiDescription(section="Login", description="Authenticate customer with email & password, response is a jwt token with expiration date and secret key encoding for server side validation of autenticity of customer, and a data key that's encrypted with RNCryptor (status, userMessage, fname, lname, CustomerID). <br><b>Storing this token in the app is esential, this is the auth token needed througt the app.</b>(other routes require this token).")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/login")
      * @ApiBody(sample="{ 'data': 'AwGTfsuNPRIe9flrvJ4VlNhTUraZY67pp5FPPmym+ptwSCHO/jQkN97t5GB364Ac0zfd2dYsWJiXvawzmmCKSQm4OamHp5cMfjtsNirigo6AFJX4izmUgEcRmxx93W79B0DYpCNrtigYQcAPTF7uZKpiROIhXKBQyotWhyVxFXL9jPYXHtYUNa+uhrZ7r4CzIuI='}")
@@ -322,7 +322,7 @@ class CustLoginController extends Controller {
 	}
 
 	/**
-     * @ApiDescription(section="TelephonicAccess", description="Retrieve customers telephonicUserId registeredUserHostline & telephonicPassword for telephonic access. By giving the customerID.")
+     * @ApiDescription(section="TelephonicAccess", description="Retrieve customers telephonicUserId registeredUserHostline & telephonicPassword for telephonic access. By giving the CustomerID.")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/telephonicAccess")
      @ApiBody(sample="{'data': 'AwGzeHMznmut3LsRZ5qLXL60XdsS8dY6g08KR7HuXgzFm7sMqm/eJRSkxUExI56Crtoi9DXPCgAIjKcw37WYLcF1iaJbXopvUgLC0KkWaFRaBXz0368T53jczZQHzHVKtpc=',
