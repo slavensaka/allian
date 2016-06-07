@@ -130,7 +130,8 @@ class StripeController extends Controller {
 			// Return as json token and encrypted data
 	     	return $response->json(array('data' => $base64Encrypted));
 		} else {
-			return $response->json("No token provided");
+			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+     		return $response->json(array('data' => $base64Encrypted));
 		}
 	}
 
@@ -185,7 +186,8 @@ class StripeController extends Controller {
 			$base64Encrypted = $this->encryptValues(json_encode($rArray));
 	     	return $response->json(array('data' => $base64Encrypted));
 		} else {
-			return $response->json(array("data" => "No token provided"));
+			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+     		return $response->json(array('data' => $base64Encrypted));
 		}
 	}
 

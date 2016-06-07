@@ -127,7 +127,7 @@ class CustLoginController extends Controller {
 		// Format response
 		$jsonArray = array();
 		$jsonArray['status'] = 1;
-		$jsonArray['customerID'] = $customer->getValueEncoded('CustomerID');
+		$jsonArray['CustomerID'] = $customer->getValueEncoded('CustomerID');
 		$fname = $customer->getValueEncoded('FName');
 		$lname = $customer->getValueEncoded('LName');
 		$jsonArray['userMessage'] = "Welcome $fname $lname.";
@@ -260,12 +260,11 @@ class CustLoginController extends Controller {
 			// Return response json
 			return $response->json(array('data' => $base64Encrypted));
      	} else {
-     		return $response->json("No token in request TODO.");
+     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+     		return $response->json(array('data' => $base64Encrypted));
      	}
-     	//TODO $base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
-     		// return $response->json(array('data' => $base64Encrypted));
 	}
-// http://localhost/testgauss/langPairTrans?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ5NTYzNTcsImp0aSI6IlVSR0JMUUdyN1VSTkhPVlJsdnZvWlVqcVwvTlZcL0dTUE1YQXhiU3NXUUVhWT0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQ5NTYzNTcsImV4cCI6MTQ2NjE2NTk1NywiZGF0YSI6eyJTdWNjZXNzIjoiU3VjY2VzcyJ9fQ.FwK7XBbi1hW1-m_c6WrcC-qKjWc5sjxu2ykhCfqNwHS-6Pul-wauMo8V-KkwnHtyGCAkRtJ3V7QgZSKmEHrSow?data=AwHIJNE4QGp9KS1tmqe5/BN6aPrOcf58wWZ3dVomuW0/+MedTQ1hcZByGORwoHNhcVD1hSoTA1v1kAo8175fJvm4yZIAaOP6e670InoJXmF/DTt/t6SjL+FG7ZnmTKKM5xc=
+
 	/**
      * @ApiDescription(section="UpdateProfile", description="Update customers profile information by giving the CustomerID to recognize him in the database and new info.")
      * @ApiMethod(type="post")
@@ -337,7 +336,6 @@ class CustLoginController extends Controller {
      *
      */
 	public function telephonicAccess($request, $response, $service, $app){
-		// Encode and decode customerID with secret key while transfer for secutiry TODO
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -373,7 +371,8 @@ class CustLoginController extends Controller {
 			$base64Encrypted = $this->encryptValues(json_encode($result));
 	     	return $response->json(array('data' => $base64Encrypted));
      	} else {
-     		return $response->json("No token given");
+     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+     		return $response->json(array('data' => $base64Encrypted));
      	}
 	}
 
@@ -438,7 +437,8 @@ class CustLoginController extends Controller {
 			$base64Encrypted = $this->encryptValues(json_encode($jsonArray));
 	     	return $response->json(array('data' => $base64Encrypted, 'token' => null));
 		} else {
-			return $response->json("No token provided");
+			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+     		return $response->json(array('data' => $base64Encrypted));
 		}
 	}
 
@@ -516,7 +516,8 @@ class CustLoginController extends Controller {
 				return $response->json(array('token' => $genToken, 'data' => $base64Encrypted));
 			}
 		} else {
-			return $response->json('No token provided TODO');
+			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+     		return $response->json(array('data' => $base64Encrypted));
 		}
 	}
 

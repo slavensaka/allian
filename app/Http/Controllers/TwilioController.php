@@ -19,6 +19,6 @@ class TwilioController extends Controller {
 	 *
 	 */
 	public function twilio(){
-		return "TODO";
+		return "Twilio";
 	}
 }

@@ -102,7 +102,6 @@ class DeveloperController extends Controller {
 		// $data = $request->data;
 		// $dec = json_decode($data);
 		// $ar = (array) $dec;
-		// //  TODO Pitat jel se može poslat mob ovak
 		// if($ar['services']['telephonic_interpreting']){
 		// 	return $ar['services']['telephonic_interpreting'];
 		// 	$ar['services']['telephonic_interpreting'] = 'Telephonic Interpreting';

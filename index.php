@@ -76,7 +76,11 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('GET', '/langPairTrans', array($langPair, 'langPairTrans'));
 
 	$conferenceSchedule = new ConferenceScheduleController();
-	$klein->respond('POST', '/getTimezones', array($conferenceSchedule, 'getTimezones'));
+	$klein->respond('GET', '/getTimezones', array($conferenceSchedule, 'getTimezones'));
+	$klein->respond('POST', '/schedulePartOne', array($conferenceSchedule, 'schedulePartOne'));
+	$klein->respond('POST', '/schedulePartTwo', array($conferenceSchedule, 'schedulePartTwo'));
+	$klein->respond('POST', '/scheduleFinal', array($conferenceSchedule, 'scheduleFinal'));
+
 
 	$stripe = new StripeController();
 	$klein->respond('POST', '/updateStripe', array($stripe, 'updateStripe'));
@@ -94,8 +98,6 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('GET', '/devDecryptJson', array($developer, 'devDecryptJson'));
 	$klein->respond('GET', '/devGenerateAuthToken', array($developer, 'devGenerateAuthToken'));
 	$klein->respond('GET', '/tester', array($developer, 'tester'));
-
-
 
 
 	$klein->respond('GET', '/tester1', function ($request, $response, $service, $app) {

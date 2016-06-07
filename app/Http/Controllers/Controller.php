@@ -11,7 +11,7 @@ class Controller {
 	/**
 	 *
 	 * Block comment
-	 * TODO MORAM SPREMIT TOKEN_ID IZ JWT U BAZU i UVIJEK PROVJERIT
+	 *
 	 */
 	public function generateResponseToken($dataArray){
 		$secretKey = base64_decode(getenv('jwtKey'));
@@ -167,7 +167,7 @@ class Controller {
 		$jsonArray = array();
 		$email = $customer->getValueEncoded('Email');
 		$phonePassword  = $customer->getValueEncoded('PhPassword');
-		$jsonArray['customerID'] = $customer->getValueEncoded('CustomerID');
+		$jsonArray['CustomerID'] = $customer->getValueEncoded('CustomerID');
 		$jsonArray['status'] = 1;
 		$jsonArray['email'] = $email;
 		$jsonArray['phonePassword'] = $phonePassword;

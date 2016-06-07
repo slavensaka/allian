@@ -61,7 +61,8 @@ class LangPairController extends Controller {
 			// $base64Encrypted = $this->encryptValues(json_encode($listing));
 	  //    	return $response->json(array('data' => $base64Encrypted));
 		} else {
-			return $response->json("No token provided. TODO. Encrypt this");
+			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+     		return $response->json(array('data' => $base64Encrypted));
 		}
 	}
 }

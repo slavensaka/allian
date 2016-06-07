@@ -57,7 +57,8 @@ class LangListController extends Controller {
 			}
 			return $response->json(array('data' => array('languages' =>  $new)));
 		} else {
-			return $response->json("No token provided. TODO. Encrypt this");
+			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+     		return $response->json(array('data' => $base64Encrypted));
 		}
 	}
 }
