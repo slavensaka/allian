@@ -25,19 +25,19 @@ class ConferenceScheduleController extends Controller {
      */
 	public function getTimezones($request, $response, $service, $app){
 
-		if($request->headers()->get('token')){
+		if($request->token){
 			// Validate token if not expired, or tampered with
-			$this->validateToken($request->headers()->get('token'));
+			$this->validateToken($request->token);
 			//Decrypt input data
-			$data = $this->decryptValues($request->headers()->get('data'));
+			$data = $this->decryptValues($request->data);
 			// Validate input data
 			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
 			// Validate token in database for customer stored
-			$validated = $this->validateTokenInDatabase($request->headers()->get('token'), $data['CustomerID']);
+			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
-	     		return $response->json(array('data' => $base64Encrypted));
+				// $base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
+	     		return $response->json(array('data' => $this->errorJson("Authentication problems present")));
 			}
 			// Retrieve timezones
 			// $timezones = include getcwd() . "/app/Http/Controllers/timezones.php";
@@ -187,8 +187,7 @@ class ConferenceScheduleController extends Controller {
 			// Encrypt the data
 	     	return $response->json(array('data' => $result));
 	    } else {
-	    	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
-     		return $response->json(array('data' => $base64Encrypted));
+	    	return $response->json("No token provided. TODO. Encrypt this");
 	    }
 	}
 	/**
@@ -453,7 +452,10 @@ class ConferenceScheduleController extends Controller {
 			} elseif($data['schedulingType'] == 'get_call'){
 				$data['onsite_con_email'] = $data['contacts']; //TODO
 			}
-
+			$sArray['intr_needed_for'] = $data['neededFor'];
+			$sArray['description'] = $data['description'];
+			$sArray['orderID'] = md5(time().$data['description']);
+			$sArray['currency_code']='usd';
 			return $amount;
 		} else {
 	    	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
