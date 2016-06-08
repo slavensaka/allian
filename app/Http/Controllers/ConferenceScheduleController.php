@@ -9,6 +9,8 @@ use Firebase\JWT\DomainException;
 use Firebase\JWT\BeforeValidException;
 use RNCryptor\Encryptor;
 use RNCryptor\Decryptor;
+use Allian\Models\LangList;
+use Database\Connect;
 
 class ConferenceScheduleController extends Controller {
 
@@ -190,20 +192,20 @@ class ConferenceScheduleController extends Controller {
 	    	return $response->json("No token provided. TODO. Encrypt this");
 	    }
 	}
+
 	/**
      * @ApiDescription(section="SchedulePartOne", description="Retrieve the first part of the payment after user selects end time.")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/schedulePartOne")
-     * @ApiBody(sample="{ 'data': 'AwGsq1rYpTw4g6yAX/P7mkrAoKWLlnkxcAQUlNqeV1dyqztE1M4OiLEsM62DaKYeSBCyHilqoynA8MPx2St6jk+fioyzDMm6JZJ9DvECc4MIQpB7NYzK201LUoKl0Rhp7QY=',
-     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTMzNjcsImp0aSI6IlJoOGpiMVhUZHFvUDVDVUVSQ29VY3pWR0dnSVFsQWJ1bFwvRFp1U2pcL050OD0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQ1OTMzNjcsImV4cCI6MTQ2NTgwMjk2NywiZGF0YSI6eyJTdWNjZXNzIjoiU3VjY2VzcyJ9fQ.JDwNdycstmqNC0dyrNgNuik_zXCYbx3PwbIkdTX7is3oDrQr6CKQ6mREUt-9tbOys361mcH1kyXaahn9Y2tTRg'}")
+     * @ApiBody(sample="{ 'data': 'AwE263pKXPZL87/0KgQvzdtyzKhzyS77SKEH8+dD3zmbF7/jYo0rmM31JmqKm1JPhze22UzITS6jScO8CI/oW6f22zK5E75CdXGPIWQ8WifVTuDaww+rpgb9yg4pJ5CaRnZe5w4z9KVsqa+5rpnhcTgo3XRV/vuFWoRZeVwYZM0LamBgyHIm3y1gP6IhMb3t/y4tfydEm/ar9auKlrK+WzPecbS0OHpbCdC2B2Njn5j0iw==',
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUzODMxNjUsImp0aSI6IlJpRW16NzRHSGhGR043QzEzT1JpQ1FuWXRnOHJ4bk9YVHRRZ002NnBDN1E9IiwiaXNzIjoiYWxsaWFudHJhbnNsYXRlLmNvbSIsIm5iZiI6MTQ2NTM4MzE2NSwiZXhwIjoxNDY2NTkyNzY1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.DvPdwcIGybU3zs5NH4NRmldNbhrer8AgvSSwi9lBY6SwJ-WKegETMRQmXZvtLu5-qrAx5hwBkEKXqG80zTqByw'}")
      * @ApiParams(name="data", type="object", nullable=false, description="CustomerId.")
      * @ApiParams(name="token", type="object", nullable=false, description="Autentication token for users autentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
-     * @ApiReturn(type="object", sample="{'data': ''}")
+     * @ApiReturn(type="object", sample="{'data': 'AwFwlYcP0ZNBJb0tUins+7EoIcFFKEGpYHMnsV95lB84Lj4EAkPQRunwvNvzBrZzSZ+Gi8dSb4ekV/HCpqMevPSyXX1XfzUgo/vB5/luOVfY4DPUJwz83mCusI4uNxP9Y7+zC0JEgmAU3c59AZnXzM+MMLB+5cHgp6ZdTqSPso+dnGRmutrMiBp1UKBiYK0eU0xw5y4euMY19rvZPuEUAozNeshcIJ2TVjImGEHG0DuEP4vlJOQJ9nm+d98glpQDZoE='}")
      */
 	public function schedulePartOne($request, $response, $service, $app){
 		if($request->token){
-			//Order Summary will be displayed after you choose Scheduling Date/Time
 			// $type = 'conference_call'; // conference_call or get_call
 			// $fromDate = "2016-06-07";
 			// $timeStarts = "2016-06-07 12:50:00 AM";
@@ -279,12 +281,17 @@ class ConferenceScheduleController extends Controller {
 	}
 
 	/**
-	 *
-	 * Block comment
-	 *
-	 */
+     * @ApiDescription(section="SchedulePartTwo", description="Retrieve the second part of the payment after user selects or diselects scheduling type.")
+     * @ApiMethod(type="post")
+     * @ApiRoute(name="/testgauss/schedulePartTwo")
+     * @ApiBody(sample="{ 'data': 'AwHczgm1k6rprkY4mM5G4FuNE6uiVAXOh3xuljdu1qz5keZV1o/DfT+OaxQ1R6kz5XGpqj9NM4ESDHcMNT1RsWegVpQMwJhELSbTQBjZLPz0ZlF1aghV8Au6uzssiBN/C9fgulUvkvaQoFx83cvn9w74LAz/eaeqajJvosLv7pb6U9fapQ/HyBDchQpbM1V47F25pYQ2llx2qJDL6ES5sPopPxRu5evI8AlPm4NxiwwjWVABsQYZFRN+KG/FkuosxG8eBdyoxMbnnY/XuwbWLvmMW52k7jBMEaGD9wwJLDxbEg==',
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUzODMxNjUsImp0aSI6IlJpRW16NzRHSGhGR043QzEzT1JpQ1FuWXRnOHJ4bk9YVHRRZ002NnBDN1E9IiwiaXNzIjoiYWxsaWFudHJhbnNsYXRlLmNvbSIsIm5iZiI6MTQ2NTM4MzE2NSwiZXhwIjoxNDY2NTkyNzY1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.DvPdwcIGybU3zs5NH4NRmldNbhrer8AgvSSwi9lBY6SwJ-WKegETMRQmXZvtLu5-qrAx5hwBkEKXqG80zTqByw'}")
+     * @ApiParams(name="data", type="object", nullable=false, description="CustomerId.")
+     * @ApiParams(name="token", type="object", nullable=false, description="Autentication token for users autentication.")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     * @ApiReturn(type="object", sample="{'data': 'AwF47Ao19bvyqfmkLviIOTYKLJsHt2SAj14XEbJ/KmxrNUa0diKjvncePWQ1LrTFvjOHWFNKFW2Rhe1Lm60UaeU5fdZ7rfMEIZ4XAAzaPG593bymYaLEIkWnrscNZ4ExLV/uQkxrZBLCs3+xhFG8m0TrJbBEPVGqlT8nXcbwAWDu0iUfGcZfiqb9Gz4SN3xu3rLK6GJWgQIdOTNI8b23Na0AVoSCTvZTPox+GdWMdHKclZy6IDMkEdwYGgjckBoLtnESW7JXD703/yMyqiQoTdnAnsIXCF7mxtkUAW8a3kfGWlxprFsY5HcvPHgrOZyP4MrcQoguAKUv+rltj6Zt6i6tuz4BYs5s/nSpAByGPhAwVWvvghqt1B/UACZWcK7G3oQ='}")
+     */
 	public function schedulePartTwo($request, $response, $service, $app){
-		//CHOOSE TYPE Adds 5 dollars
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -296,7 +303,6 @@ class ConferenceScheduleController extends Controller {
 			$service->validate($data['fromDate'], 'Error: from date not present.')->notNull();
 			$service->validate($data['timeStarts'], 'Error: timeStarts not present.')->notNull();
 			$service->validate($data['timeEnds'], 'Error: timeEnds not present.')->notNull();
-			// $service->validate($data['timezone'], 'Error: timezone not present.')->notNull();
 			$service->validate($data['schedulingType'], 'Error: from date not present.')->notNull();
 
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
@@ -334,7 +340,6 @@ class ConferenceScheduleController extends Controller {
 			$amount = $this->amt_format($amount);
 
 			$rArray = array();
-			$rArray['totalPrice'] = $this->amt_format($amount);
 			$rArray['daily'] = "ATS - $scheduling_type Telephonic Scheduling ($$rate_per_min/Min) for $actual_minutes minutes";
 			if($minimum_text){
 				$rArray['minimumText'] = $minimum_text ;
@@ -342,13 +347,13 @@ class ConferenceScheduleController extends Controller {
 				$rArray['minimum_text'] = null;
 			}
 
-
 			if ($data['schedulingType'] == 'conference_call') {
 			    $amount+= $conference_fee;
 			    $rArray['conferencePresent'] = "Conference Calling Fee:: $$conference_fee";
 			} else{
 				$rArray['conferencePresent'] = null;
 			}
+			$rArray['totalPrice'] = $this->amt_format($amount);
 			$base64Encrypted = $this->encryptValues(json_encode($rArray));
 			// Return response json
 			return $response->json(array('data' => $base64Encrypted));
@@ -359,10 +364,16 @@ class ConferenceScheduleController extends Controller {
 	}
 
 	/**
-	 *
-	 * Block comment
-	 *
-	 */
+     * @ApiDescription(section="ScheduleFinal", description="Send everything in form. Store in database, schedule new conference, or call.")
+     * @ApiMethod(type="post")
+     * @ApiRoute(name="/testgauss/scheduleFinal")
+     * @ApiBody(sample="{ 'data': 'AwHwABArb8N5y0oZEHQSqVra9u35WbD3ZiphKB5EkiZpDyUXtFoP/qGZy/qCQ18CSsXawb5Ey7ZaXddxtZExK6dYc+I0FSXysJ16MsGSl0qeRQPFwovstAY0srXddCbKb2IfzfXITcSonEzX/AUiutG5sQlqfPUrnTqpKMqZ5Kv6fu9B3aSQYXj6rpGbueN0vnxG4vk3fegKtQHVjNLy8Y4khPt3inVxdcWCcN5gUdzQqB3N+NuBewzzfG8JBp92jneWjutJyTVSTCcgzImWa2xAYGUGhgyZWwpBezLeRv+Q2/UB891hSnY06kw0Ezq4GUBItqnFmsrubOxVufciaIS1yJQ1GnOrfzM5Ts0xTuKgE0Ax0ayE+QcvRLx6ru6acDCa4YCyDA3YuKEITbzaFnvO0rrTTfc42oI72ERIBfDwmchNJ27JrUK4160IgURimNkycRPFfgDghFJKMadDqkG+FGz/NxrhuXrtUELvbZH9c6yfYnth+XbOCiACSK8wcMwraIWpZdVShpCffPJw6y/7DmvMzia7OdA99fDHZnh90Qks/bU5CCYY1uYUI85IL0eJsbXa0YnE4q3e9zhz5i3t',
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUzODMxNjUsImp0aSI6IlJpRW16NzRHSGhGR043QzEzT1JpQ1FuWXRnOHJ4bk9YVHRRZ002NnBDN1E9IiwiaXNzIjoiYWxsaWFudHJhbnNsYXRlLmNvbSIsIm5iZiI6MTQ2NTM4MzE2NSwiZXhwIjoxNDY2NTkyNzY1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.DvPdwcIGybU3zs5NH4NRmldNbhrer8AgvSSwi9lBY6SwJ-WKegETMRQmXZvtLu5-qrAx5hwBkEKXqG80zTqByw'}")
+     * @ApiParams(name="data", type="object", nullable=false, description="CustomerId.")
+     * @ApiParams(name="token", type="object", nullable=false, description="Autentication token for users autentication.")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     * @ApiReturn(type="object", sample="{'data': 'AwEWTkHxsaqqx0l3xnIpeu+2F4HNrEFBqflCJww0B2cgOr76pcJ69gA3tyF/zrHL+9ApX2uihQ7ZU+icBAX/6IxyuMuhPCVNIAhskrwy8IaGDW0UYvuxbl1dyN0gF6YPRD+KQf+UHdwG9MNjY8oqjqu2+H3Y7Evp4c3KJWXCYKsaidT+2cmW82IssJHzYEyIL6PdqpxEqow4fK6n0Y2yaSsI6AZ5Wicoi1pqG+Fe90LwKdMF4meARSwhJJhfbg7pATK/YbPS2tQPwUYkKR4X23xC5eXAYoaCMp2XV+OgpFQlRA4nF4MMfGFh29sRIK8OnMg='}")
+     */
 	public function scheduleFinal($request, $response, $service, $app){
 		if($request->token){
 			// Validate token if not expired, or tampered with
@@ -383,7 +394,6 @@ class ConferenceScheduleController extends Controller {
 			$service->validate($data['neededFor'], 'Error: neededFor not present.')->notNull();
 			$service->validate($data['description'], 'Error: description not present.')->notNull();
 
-
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
@@ -391,20 +401,19 @@ class ConferenceScheduleController extends Controller {
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
 
-
 			$frm_time = $data['fromDate'] . ' ' . $data['timeStarts'];
 			$to_time = $data['fromDate'] . ' ' . $data['timeEnds'];
 			$assg_frm_st = $data['timeStarts'];
 			$assg_frm_en = $data['timeEnds'];
 
 			$frmT = new \DateTime($data['fromDate'].' '.$data['timeStarts'],new \DateTimeZone($data['timezone']));
-
 			$frmT->setTimezone(new \DateTimeZone('GMT'));
 
 		    $toT = new \DateTime($data['fromDate'].' '.$data['timeEnds'],new \DateTimeZone($data['timezone']));
 			$toT->setTimezone(new \DateTimeZone('GMT'));
 
-
+			$frm_lang = $this->get_language_by_name($data['langFrom']);
+			$to_lang = $this->get_language_by_name($data['langTo']);
 
 			$details = array();
 			$amount = 0;
@@ -448,8 +457,8 @@ class ConferenceScheduleController extends Controller {
 			$sArray['assg_to_timestamp'] =$toT->format('U');
 			// $sArray['interpreting_dur'] =$NESTO['interpreting_duration'];
 			$sArray['scheduling_type'] = $data['schedulingType'];
-			$sArray['frm_lang'] = $data['langFrom']; // broj languagea
-			$sArray['to_lang'] = $data['langTo']; // broj Languagea
+			$sArray['frm_lang'] = $frm_lang; // broj languagea
+			$sArray['to_lang'] = $to_lang; // broj Languagea
 			$sArray['country'] = $data['country'];
 			if ($data['schedulingType'] == 'conference_call') {
 				$sArray['onsite_con_phone'] = $data['contacts'];
@@ -477,10 +486,13 @@ class ConferenceScheduleController extends Controller {
 
 			$sArray['interpreting_dur']= $this->telephonic_duration(
 										$data['fromDate'].'T'.$sArray['assg_frm_st'],
-										$data['fromDate']. 'T'.$data['assg_frm_en']);
+										$data['fromDate'].'T'.$sArray['assg_frm_en']);
+
+
 			//Mysql insert into order_onsite_interpreterž
 			// return $response->json($sArray);
-			$con=mysqli_connect("localhost","root","","allian10_abs_linguist_portal");
+			// $con=mysqli_connect("localhost","root","","allian10_abs_linguist_portal"); // TODO for server
+			$con = Connect::con();
 			foreach($sArray as $key=>$value){
 				$in[$key] = mysqli_real_escape_string($con,$value);
 			}
@@ -488,8 +500,6 @@ class ConferenceScheduleController extends Controller {
 			$values = implode("', '", array_values($in));
 			$query = sprintf("insert into order_onsite_interpreter(%s) values('%s')",$fields,$values);
 			// return $query;
-
-
 
 			$result = mysqli_query($con,$query);
 			if($result and mysqli_affected_rows($con)>0){
@@ -501,9 +511,17 @@ class ConferenceScheduleController extends Controller {
 					$feedback=json_encode("Error--Failed to Save Data");//.mysqli_error($con);
 				}
 			}
+
 			$retArray = array();
-			$retArray['timezone']
-			return $feedback;
+			$retArray['timezone'] = $data['timezone'];
+			$retArray['status'] = 1;
+			$retArray['confStarts'] = $data['fromDate'] . ' ' . $data['timeStarts'];
+			$retArray['confEnds'] = $data['fromDate'] . ' ' . $data['timeEnds'];
+			$retArray['confCode'] = "12345";
+			$retArray['confDialNumber'] = "+18555129043";
+
+			$base64Encrypted = $this->encryptValues(json_encode($retArray));
+	 		return $response->json(array('data' => $base64Encrypted));
 		} else {
 	    	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
 	 		return $response->json(array('data' => $base64Encrypted));
@@ -547,6 +565,7 @@ class ConferenceScheduleController extends Controller {
 
 	    $start_date = new \DateTime($frm_time);
 	    $since_start = $start_date->diff(new \DateTime($to_time));
+
 	    $days = $since_start->d + 1;
 	    $minutes += $since_start->h * 60;
 	    $minutes += $since_start->i;
@@ -554,6 +573,15 @@ class ConferenceScheduleController extends Controller {
 	    return $minutes * $days;
 	}
 
+	function get_language_by_name($langName, $get = 'LangId') {
+		// $con=mysqli_connect("localhost","root","","allian10_abs_linguist_portal"); // TODO for server
+		$con = Connect::con();
+		$query = "SELECT $get FROM `LangList` where LangName LIKE  '%".trim($langName)."%'";
+		$get_lang_info = mysqli_query($con, $query);
+		$lang = mysqli_fetch_array($get_lang_info);
+		$get = $lang[$get];
+		return $get;
+	}
 
 
 

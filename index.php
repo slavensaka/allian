@@ -97,7 +97,7 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('GET', '/devEncryptJson', array($developer, 'devEncryptJson'));
 	$klein->respond('GET', '/devDecryptJson', array($developer, 'devDecryptJson'));
 	$klein->respond('GET', '/devGenerateAuthToken', array($developer, 'devGenerateAuthToken'));
-	$klein->respond('GET', '/tester', array($developer, 'tester'));
+	$klein->respond('POST', '/tester', array($developer, 'tester'));
 
 
 	$klein->respond('GET', '/tester1', function ($request, $response, $service, $app) {

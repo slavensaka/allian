@@ -9,6 +9,7 @@ use Firebase\JWT\DomainException;
 use Firebase\JWT\BeforeValidException;
 use RNCryptor\Encryptor;
 use RNCryptor\Decryptor;
+use Database\Connect;
 
 class DeveloperController extends Controller {
 
@@ -97,8 +98,14 @@ class DeveloperController extends Controller {
 	 *
 	 */
 	public function tester($request, $response, $service, $app){
-		$all_headers = $request->headers()->get('Tester');
-		return $response->json($all_headers);
+		// $all_headers = $request->headers()->get('Tester');
+		// return $response->json($all_headers);
+
+		$con = Connect::con();
+
+		$order_inserted = mysqli_query($con, "INSERT INTO `translation_orders` (`user_id`)". "VALUES('" . 111111 . "')");
+			$order_id = mysqli_insert_id($con); // Vrati od order_id
+            return $response->json($order_id);
 		// $data = $request->data;
 		// $dec = json_decode($data);
 		// $ar = (array) $dec;

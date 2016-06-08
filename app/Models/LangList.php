@@ -31,4 +31,30 @@ class LangList extends DataObject {
 		      die("Query failed: " . $e->getMessage());
 	    }
   	}
+
+
+
+
+  	public static function langIdByName($LangName) {  // TODO
+	    $conn = parent::connect();
+	    // $sql = "SELECT * FROM " . getenv('TBL_LANG_LIST') . " WHERE LangName LIKE $LangName";
+	    $sql = "SELECT * FROM" . getenv('TBL_LANG_LIST') . "where LangName LIKE  '%".trim($LangName)."%'";
+	    try {
+		 	$st = $conn->prepare($sql);
+		 	$st->bindValue(":LangName", $LangName, \PDO::PARAM_STR);
+		    $st->execute();
+		    $row = $st->fetch();
+		    parent::disconnect($conn);
+		    if ($row) {
+		      	return new LangList($row);
+		    } else return false;
+	    } catch (\PDOException $e) {
+		      parent::disconnect($conn);
+		      return false;
+	    }
+  	}
+
+
+
+
 }
