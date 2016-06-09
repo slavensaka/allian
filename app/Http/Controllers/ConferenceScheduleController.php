@@ -26,7 +26,24 @@ class ConferenceScheduleController extends Controller {
      * @ApiReturn(type="object", sample="{'data': ''}")
      */
 	public function getTimezones($request, $response, $service, $app){
-
+		// TODO       $q = "select * from LangList";
+		//        $res = mysqli_query($con, $q) or die("An Error Occurred");
+		//        $langs_from = '';
+		//        $langs_to = '';
+		//        if ($res and mysqli_num_rows($res) > 0) {
+		//            for ($k = 0; $k < mysqli_num_rows($res); $k++) {
+		//                $row = mysqli_fetch_assoc($res);
+		//                $lid = $row['LangId'];
+		//                $ln = $row['LangName'];
+		//                $checked = (SERVER === "L" && $ln === "English") ? "selected='selected'" : "";
+		//                $langs_from .= "<option value='$lid' $checked>$ln</option>
+		// ";
+		//                $checked = (SERVER === "L" && $ln === "Test") ? "selected='selected'" : "";
+		//                $langs_to .= "
+		// <option value='$lid' $checked>$ln</option>
+		// ";
+		//            }
+		//        }
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -68,7 +85,6 @@ class ConferenceScheduleController extends Controller {
 				'Australia/Sydney' => "Australia (UTC +10:00)",
 				'Pacific/Auckland' => "New Zeland (UTC +12:00)",
 			);
-
 			$timezones_array = array(
 			    'Pacific/Midway' => "Midway Island (UTC -11:00) ",
 			    'US/Samoa' => "Samoa (UTC -11:00)",
@@ -184,8 +200,270 @@ class ConferenceScheduleController extends Controller {
 			    'Pacific/Fiji' => "Fiji (UTC +12:00)",
 			);
 
+			$countries = array(
+				"United States"  => "United States",
+				"United Kingdom"  => "United Kingdom",
+				"Australia"  => "Australia",
+				"Canada"  => "Canada",
+				"France"  => "France",
+				"New Zealand"  => "New Zealand",
+				"India"  => "India",
+				"Brazil"  => "Brazil",
+				"Afghanistan"  => "Afghanistan",
+				"Åland Islands"  => "Åland Islands",
+				"Albania"  => "Albania",
+				"Algeria"  => "Algeria",
+				"American Samoa"  => "American Samoa",
+				"Andorra"  => "Andorra",
+				"Angola"  => "Angola",
+				"Anguilla"  => "Anguilla",
+				"Antarctica"  => "Antarctica",
+				"Antigua and Barbuda"  => "Antigua and Barbuda",
+				"Argentina"  => "Argentina",
+				"Armenia"  => "Armenia",
+				"Aruba"  => "Aruba",
+				"Austria"  => "Austria",
+				"Azerbaijan"  => "Azerbaijan",
+				"Bahamas"  => "Bahamas",
+				"Bahrain"  => "Bahrain",
+				"Bangladesh"  => "Bangladesh",
+				"Barbados"  => "Barbados",
+				"Belarus"  => "Belarus",
+				"Belgium"  => "Belgium",
+				"Belize"  => "Belize",
+				"Benin"  => "Benin",
+				"Bermuda"  => "Bermuda",
+				"Bhutan"  => "Bhutan",
+				"Bolivia"  => "Bolivia",
+				"Bosnia and Herzegovina"  => "Bosnia and Herzegovina",
+				"Botswana"  => "Botswana",
+				"British Indian Ocean Territory"  => "British Indian Ocean Territory",
+				"Brunei Darussalam"  => "Brunei Darussalam",
+				"Bulgaria"  => "Bulgaria",
+				"Burkina Faso"  => "Burkina Faso",
+				"Burundi"  => "Burundi",
+				"Cambodia"  => "Cambodia",
+				"Cameroon"  => "Cameroon",
+				"Cape Verde"  => "Cape Verde",
+				"Cayman Islands"  => "Cayman Islands",
+				"Central African Republic"  => "Central African Republic",
+				"Chad"  => "Chad",
+				"Chile"  => "Chile",
+				"China"  => "China",
+				"Colombia"  => "Colombia",
+				"Comoros"  => "Comoros",
+				"Democratic Republic of the Congo"  => "Democratic Republic of the Congo",
+				"Republic of the Congo"  => "Republic of the Congo",
+				"Cook Islands"  => "Cook Islands",
+				"Costa Rica"  => "Costa Rica",
+				"C&ocirc;te d'Ivoire"  => "C&ocirc;te d'Ivoire",
+				"Croatia"  => "Croatia",
+				"Cuba"  => "Cuba",
+				"Cyprus"  => "Cyprus",
+				"Czech Republic"  => "Czech Republic",
+				"Denmark"  => "Denmark",
+				"Djibouti"  => "Djibouti",
+				"Dominica"  => "Dominica",
+				"Dominican Republic"  => "Dominican Republic",
+				"East Timor"  => "East Timor",
+				"Ecuador"  => "Ecuador",
+				"Egypt"  => "Egypt",
+				"El Salvador"  => "El Salvador",
+				"Equatorial Guinea"  => "Equatorial Guinea",
+				"Eritrea"  => "Eritrea",
+				"Estonia"  => "Estonia",
+				"Ethiopia"  => "Ethiopia",
+				"Faroe Islands"  => "Faroe Islands",
+				"Fiji"  => "Fiji",
+				"Finland"  => "Finland",
+				"Gabon"  => "Gabon",
+				"Gambia"  => "Gambia",
+				"Georgia"  => "Georgia",
+				"Germany"  => "Germany",
+				"Ghana"  => "Ghana",
+				"Gibraltar"  => "Gibraltar",
+				"Greece"  => "Greece",
+				"Grenada"  => "Grenada",
+				"Guatemala"  => "Guatemala",
+				"Guinea"  => "Guinea",
+				"Guinea-Bissau"  => "Guinea-Bissau",
+				"Guyana"  => "Guyana",
+				"Haiti"  => "Haiti",
+				"Honduras"  => "Honduras",
+				"Hong Kong"  => "Hong Kong",
+				"Hungary"  => "Hungary",
+				"Iceland"  => "Iceland",
+				"Indonesia"  => "Indonesia",
+				"Iran"  => "Iran",
+				"Iraq"  => "Iraq",
+				"Ireland"  => "Ireland",
+				"Israel"  => "Israel",
+				"Italy"  => "Italy",
+				"Jamaica"  => "Jamaica",
+				"Japan"  => "Japan",
+				"Jordan"  => "Jordan",
+				"Kazakhstan"  => "Kazakhstan",
+				"Kenya"  => "Kenya",
+				"Kiribati"  => "Kiribati",
+				"North Korea"  => "North Korea",
+				"South Korea"  => "South Korea",
+				"Kuwait"  => "Kuwait",
+				"Kyrgyzstan"  => "Kyrgyzstan",
+				"Laos"  => "Laos",
+				"Latvia"  => "Latvia",
+				"Lebanon"  => "Lebanon",
+				"Lesotho"  => "Lesotho",
+				"Liberia"  => "Liberia",
+				"Libya"  => "Libya",
+				"Liechtenstein"  => "Liechtenstein",
+				"Lithuania"  => "Lithuania",
+				"Luxembourg"  => "Luxembourg",
+				"Macedonia"  => "Macedonia",
+				"Madagascar"  => "Madagascar",
+				"Malawi"  => "Malawi",
+				"Malaysia"  => "Malaysia",
+				"Maldives"  => "Maldives",
+				"Mali"  => "Mali",
+				"Malta"  => "Malta",
+				"Marshall Islands"  => "Marshall Islands",
+				"Mauritania"  => "Mauritania",
+				"Mauritius"  => "Mauritius",
+				"Mexico"  => "Mexico",
+				"Micronesia"  => "Micronesia",
+				"Moldova"  => "Moldova",
+				"Monaco"  => "Monaco",
+				"Mongolia"  => "Mongolia",
+				"Montenegro"  => "Montenegro",
+				"Morocco"  => "Morocco",
+				"Mozambique"  => "Mozambique",
+				"Myanmar"  => "Myanmar",
+				"Namibia"  => "Namibia",
+				"Nauru"  => "Nauru",
+				"Nepal"  => "Nepal",
+				"Netherlands"  => "Netherlands",
+				"Netherlands Antilles"  => "Netherlands Antilles",
+				"Nicaragua"  => "Nicaragua",
+				"Niger"  => "Niger",
+				"Nigeria"  => "Nigeria",
+				"Norway"  => "Norway",
+				"Oman"  => "Oman",
+				"Pakistan"  => "Pakistan",
+				"Palau"  => "Palau",
+				"Palestine"  => "Palestine",
+				"Panama"  => "Panama",
+				"Papua New Guinea"  => "Papua New Guinea",
+				"Paraguay"  => "Paraguay",
+				"Peru"  => "Peru",
+				"Philippines"  => "Philippines",
+				"Poland"  => "Poland",
+				"Portugal"  => "Portugal",
+				"Puerto Rico"  => "Puerto Rico",
+				"Qatar"  => "Qatar",
+				"Romania"  => "Romania",
+				"Russia"  => "Russia",
+				"Rwanda"  => "Rwanda",
+				"Saint Kitts and Nevis"  => "Saint Kitts and Nevis",
+				"Saint Lucia"  => "Saint Lucia",
+				"Saint Vincent and the Grenadines"  => "Saint Vincent and the Grenadines",
+				"Samoa"  => "Samoa",
+				"San Marino"  => "San Marino",
+				"Sao Tome and Principe"  => "Sao Tome and Principe",
+				"Saudi Arabia"  => "Saudi Arabia",
+				"Senegal"  => "Senegal",
+				"Serbia"  => "Serbia",
+				"Seychelles"  => "Seychelles",
+				"Sierra Leone"  => "Sierra Leone",
+				"Singapore"  => "Singapore",
+				"Slovakia"  => "Slovakia",
+				"Slovenia"  => "Slovenia",
+				"Solomon Islands"  => "Solomon Islands",
+				"Somalia"  => "Somalia",
+				"South Africa"  => "South Africa",
+				"Spain"  => "Spain",
+				"Sri Lanka"  => "Sri Lanka",
+				"Sudan"  => "Sudan",
+				"Suriname"  => "Suriname",
+				"Swaziland"  => "Swaziland",
+				"Sweden"  => "Sweden",
+				"Switzerland"  => "Switzerland",
+				"Syria"  => "Syria",
+				"Taiwan"  => "Taiwan",
+				"Tajikistan"  => "Tajikistan",
+				"Tanzania"  => "Tanzania",
+				"Thailand"  => "Thailand",
+				"Togo"  => "Togo",
+				"Tonga"  => "Tonga",
+				"Trinidad and Tobago"  => "Trinidad and Tobago",
+				"Tunisia"  => "Tunisia",
+				"Turkey"  => "Turkey",
+				"Turkmenistan"  => "Turkmenistan",
+				"Tuvalu"  => "Tuvalu",
+				"Uganda"  => "Uganda",
+				"Ukraine"  => "Ukraine",
+				"United Arab Emirates"  => "United Arab Emirates",
+				"United States Minor Outlying Islands"  => "United States Minor Outlying Islands",
+				"Uruguay"  => "Uruguay",
+				"Uzbekistan"  => "Uzbekistan",
+				"Vanuatu"  => "Vanuatu",
+				"Vatican City"  => "Vatican City",
+				"Venezuela"  => "Venezuela",
+				"Vietnam"  => "Vietnam",
+				"Virgin Islands, British"  => "Virgin Islands, British",
+				"Virgin Islands, U.S."  => "Virgin Islands, U.S.",
+				"Yemen"  => "Yemen",
+				"Zambia"  => "Zambia",
+				"Zimbabwe"  => "Zimbabwe"
+			);
+
+	$langFrom = array(
+				"Spanish"  => "Spanish",
+				"Arabic"  => "Arabic",
+				"Chinese"  => "Chinese",
+				"French"  => "French");
+	$langTo = $langFrom = array(
+				"Spanish"  => "Spanish",
+				"Arabic"  => "Arabic",
+				"Chinese"  => "Chinese",
+				"French"  => "French");
+	$neededFor = array("Business Meeting" => "Business Meeting",
+					"Court" => "Court",
+					"Conference" => "Conference",
+					"Depositions" => "Depositions",
+					"Immigration Related" => "Immigration Related(USCIS/U.S. Consulate)",
+					"Investigations" => "Investigations",
+					"Medical" => "Medical",
+					"Other" => "Other",
+					);
+		$con = Connect::con();
+		$q = "select * from LangList";
+        $res = mysqli_query($con, $q) or die("An Error Occurred");
+        $langs_from = array();
+        $config = array();
+        $langs_to = array();
+        if ($res and mysqli_num_rows($res) > 0) {
+            for ($k = 0; $k < mysqli_num_rows($res); $k++) {
+                $row = mysqli_fetch_assoc($res);
+                // $langs_from[] = ;
+
+                $langs_from[trim($row['LangName'])] = trim($row['LangName']);
+
+
+            }
+        }
+
+		$schedulingType = array('get_call' => 'Get Interpreters Call',
+				'conference_call' => 'Conference Call');
+
+
 			// Encrypt fomrat json response
-			$result = array_merge(array('timezones_top' => $timezones_array_top), array('timezones' => $timezones_array));
+			$result = array_merge(array('timezones_top' => $timezones_array_top),
+				array('timezones' => $timezones_array),
+				array('langTo' => $langs_from),
+				array('langFrom' => $langs_from),
+				array('countries' => $countries),
+				array('schedulingType' => $schedulingType),
+				array('neededFor' => $neededFor)
+				);
 			// Encrypt the data
 	     	return $response->json(array('data' => $result));
 	    } else {
@@ -492,7 +770,7 @@ class ConferenceScheduleController extends Controller {
 			//Mysql insert into order_onsite_interpreterž
 			// return $response->json($sArray);
 			// $con=mysqli_connect("localhost","root","","allian10_abs_linguist_portal"); // TODO for server
-			$con = Connect::con();
+			$con = Connect::con(); // TODO PUT INTO model OrderOnsiteInterpreter
 			foreach($sArray as $key=>$value){
 				$in[$key] = mysqli_real_escape_string($con,$value);
 			}
@@ -502,15 +780,17 @@ class ConferenceScheduleController extends Controller {
 			// return $query;
 
 			$result = mysqli_query($con,$query);
-			if($result and mysqli_affected_rows($con)>0){
-				$feedback = json_encode("true");
-			}else {
+			if(!$result and mysqli_affected_rows($con)>0){
 				if(mysqli_errno($con)==1048){
 					$feedback=json_encode("Error--Missing Required Values");
 				}else {
 					$feedback=json_encode("Error--Failed to Save Data");//.mysqli_error($con);
 				}
+
 			}
+
+			// TU
+
 
 			$retArray = array();
 			$retArray['timezone'] = $data['timezone'];
@@ -518,7 +798,7 @@ class ConferenceScheduleController extends Controller {
 			$retArray['confStarts'] = $data['fromDate'] . ' ' . $data['timeStarts'];
 			$retArray['confEnds'] = $data['fromDate'] . ' ' . $data['timeEnds'];
 			$retArray['confCode'] = "12345";
-			$retArray['confDialNumber'] = "+18555129043";
+			$retArray['confDialNumber'] = "+18555129043"; //TODO
 
 			$base64Encrypted = $this->encryptValues(json_encode($retArray));
 	 		return $response->json(array('data' => $base64Encrypted));

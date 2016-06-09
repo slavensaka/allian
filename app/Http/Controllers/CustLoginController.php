@@ -41,7 +41,7 @@ class CustLoginController extends Controller {
      		return $response->json(array('data' =>$base64Encrypted));
 		}
 		// Generate token
-		$genToken = $this->generateResponseToken(array("Success" => "Success"));
+		$genToken = $this->generateInfiniteToken(array("Success" => "Success"));
 		// Store the newly created token
 		$storeToken = $this->storeToken($genToken, $customer->getValueEncoded('CustomerID'));
 		// If internal error, return encrypted message
@@ -116,7 +116,7 @@ class CustLoginController extends Controller {
 
 
 		// Generate jwt token
-		$genToken = $this->generateResponseToken(array("Success" => "Success"));
+		$genToken = $this->generateInfiniteToken(array("Success" => "Success"));
 		// Store the newly created token
 		$storeToken = $this->storeToken($genToken, $customer->getValueEncoded('CustomerID'));
 		// If internal error, return encrypted message
@@ -354,19 +354,15 @@ class CustLoginController extends Controller {
 			// Retrieve telephones and pictures
 			// $t = include getcwd() . "/resources/assets/telAccess.php";
 			$tel = array(
-				"1 (877) 512 1195" => 'http://alliantranscribe.com/img/us.png',
-				"1(877) 512 1195"=> 'http://alliantranscribe.com/img/canada.png',
-				"+44 800 011 9648" =>'http://alliantranscribe.com/img/uk.png',
-				"+33 9 75 18 41 68"=> 'http://alliantranscribe.com/img/france.png',
-				"+34 518 88 82 27" =>'http://alliantranscribe.com/img/spain.png',
-				"+39 06 9480 3714" =>'http://alliantranscribe.com/img/italy.png',
-				"+49 157 3598 1132"=> 'http://alliantranscribe.com/img/german.png',
-				"+61 8 7100 1671" =>'http://alliantranscribe.com/img/australia.png',
-				"+31 85 888 5243"=> 'http://alliantranscribe.com/img/holland.png',
-				"+32 2 588 55 16" =>'http://alliantranscribe.com/img/belgium.png',
-				"+52 55 4161 3617"=> 'http://alliantranscribe.com/img/mexico.png',
-				"+1 615 645 1041" =>'http://alliantranscribe.com/img/intl.png',
-			);
+				 'http://alliantranscribe.com/img/us.png',
+				 'http://alliantranscribe.com/img/canada.png',
+				 'http://alliantranscribe.com/img/uk.png',
+				 'http://alliantranscribe.com/img/australia.png',);
+			$tele = array("1 855-733-6655"
+					,"1 855-733-6655",
+					"+44 800 802 1231",
+					"+61 3 8609 8382",);
+
 			// Retrieve the customer
 			$customer = CustLogin::getCustomer($data['CustomerID']);
 			//If error retrieving customer
@@ -379,9 +375,13 @@ class CustLoginController extends Controller {
 			$jsonArray['status'] = 1;
 			$jsonArray['telephonicUserId'] = $customer->getValueEncoded('PhLoginId');
 			$jsonArray['telephonicPassword'] = $customer->getValueEncoded('PhPassword');
-			$jsonArray['registeredUserHotline'] = '1 855-733-6655';
+			$jsonArray['registeredUserHotline'] = '1 855-733-6655'; //TODO make into dictionary, or dinamy
 			// Encrypt fomrat json response
-			$result = array_merge(array('tel' => $tel), $jsonArray);
+			$result = array_merge(array('flags' =>$tel), array('tel' =>$tele), $jsonArray);
+			// $novi = array_merge(, $jsonArray);
+
+
+
 			// Encrypt the data
 			$base64Encrypted = $this->encryptValues(json_encode($result));
 	     	return $response->json(array('data' => $base64Encrypted));
@@ -390,6 +390,32 @@ class CustLoginController extends Controller {
      		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
 	     		return $response->json(array('data' => $base64Encrypted));
 
+     	}
+	}
+
+	public function telephonicAccessEmail($request, $response, $service, $app){
+		if($request->token){
+			// Validate token if not expired, or tampered with
+			$this->validateToken($request->token);
+			//Decrypt input data
+			$data = $this->decryptValues($request->data);
+			// Validate input data
+			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+			// Validate token in database for customer stored
+			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
+			// If error validating token in database
+			if(!$validated){
+				// $base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
+	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
+	     		return $response->json(array('data' => $base64Encrypted));
+			}
+			$customer = CustLogin::getCustomer($data['CustomerID']);
+			return $customer->getValueEncoded('Email');
+			//TODO
+		} else {
+     		// $base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
+	     		return $response->json(array('data' => $base64Encrypted));
      	}
 	}
 

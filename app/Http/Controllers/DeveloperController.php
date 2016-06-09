@@ -103,9 +103,17 @@ class DeveloperController extends Controller {
 
 		$con = Connect::con();
 
-		$order_inserted = mysqli_query($con, "INSERT INTO `translation_orders` (`user_id`)". "VALUES('" . 111111 . "')");
-			$order_id = mysqli_insert_id($con); // Vrati od order_id
-            return $response->json($order_id);
+		$order_time = date("Y-m-d H:i");
+		$order_insert_query = "INSERT INTO `translation_orders` (`order_type`, `user_id`, `invoice_id`, `name`,  `business_name`, `email`, `phone`, `file_ids`,`total_units`, `total_price`,`status`, `order_time`,`project_reference`)VALUES('" . $order_type . "','" . $user . "','" . $invoice_id . "','" . $name . "','" . $bsn_name . "','" . $email . "','" . $phone . "','" . $file_ids . "','" . $total_units . "','" . $total_price . "','0','$order_time','$project_reference_number')";
+		$order_inserted = mysqli_query($con, $order_insert_query);
+		if ($order_inserted) {
+	        $order_id = mysqli_insert_id($con); // PRAVI ORDER ID $$$
+	        return $order_id;
+	    }
+		// $order_inserted = mysqli_query($con, "INSERT INTO `translation_orders` (`user_id`)". "VALUES('" . 111111 . "')");
+		// $order_id = mysqli_insert_id($con); // Vrati od order_id
+  //       return $response->json($order_id);
+
 		// $data = $request->data;
 		// $dec = json_decode($data);
 		// $ar = (array) $dec;

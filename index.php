@@ -67,6 +67,7 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('POST', '/viewProfile', array($custLogin, 'viewProfile')); // NE DIRAT
 	$klein->respond('POST', '/updateProfile', array($custLogin, 'updateProfile')); // NE DIRAT
 	$klein->respond('POST', '/telephonicAccess', array($custLogin, 'telephonicAccess')); // NE DIRAT
+	$klein->respond('POST', '/telephonicAccessEmail', array($custLogin, 'telephonicAccessEmail'));
 	$klein->respond('GET', '/terms', array($custLogin, 'getTerms')); // NE DIRAT
 	$klein->respond('POST', '/logout', array($custLogin, 'logout'));
 	$klein->respond('POST', '/keepLoggedIn', array($custLogin, 'keepLoggedIn'));

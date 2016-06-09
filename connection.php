@@ -36,13 +36,15 @@
 // $dbhost="localhost";
 
 // // CONNECTION
-$con = mysqli_connect("vps9239.inmotionhosting.com", "alliantr_gauss", "124L3lSFlM5Ngyk9", "alliantr_testgauss");
-$langID = 1;
-$query ="SELECT DISTINCT langpair_trans.Lang2 AS lang2, langlist.LangName AS langName FROM langpair_trans LEFT JOIN langlist ON langpair_trans.Lang2 = langlist.LangId WHERE langpair_trans.Lang1 = '$langID' AND Approved = 1 AND Lang2 IS NOT NULL AND Lang2 <> 'N/A' ORDER BY langlist.LangName";
-while($row = mysqli_fetch_array($con,$query)){
-	var_dump($result["langName"]);
-}
+// $con = mysqli_connect("vps9239.inmotionhosting.com", "alliantr_gauss", "124L3lSFlM5Ngyk9", "alliantr_testgauss");
+// $langID = 1;
+// $query ="SELECT DISTINCT langpair_trans.Lang2 AS lang2, langlist.LangName AS langName FROM langpair_trans LEFT JOIN langlist ON langpair_trans.Lang2 = langlist.LangId WHERE langpair_trans.Lang1 = '$langID' AND Approved = 1 AND Lang2 IS NOT NULL AND Lang2 <> 'N/A' ORDER BY langlist.LangName";
+// while($row = mysqli_fetch_raray($con,$query)){
+// 	var_dump($result["langName"]);
+// }
 
+$timezones = include getcwd() . "/app/Http/Controllers/timezones.php";
+// print_r($timezones_as
 
 // if (CRYPT_BLOWFISH == 1) {
 //     echo "Yes";
