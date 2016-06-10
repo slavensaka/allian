@@ -87,7 +87,7 @@ class CustLogin extends DataObject {
 		$login=$const+$cid;
   	 * TODO See linguist/register.php
   	 */
-  	public static function register($data){
+  	public static function register($data){ // TODO check when same email. It updates password
   		$conn = parent::connect();
   		$sql = "SELECT PhLoginId FROM " . getenv('TBL_CUSTLOGIN') . " ORDER BY CustomerID DESC LIMIT 1";
   		try {

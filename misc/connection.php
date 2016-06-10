@@ -43,9 +43,6 @@
 // 	var_dump($result["langName"]);
 // }
 
-$timezones = include getcwd() . "/app/Http/Controllers/timezones.php";
-// print_r($timezones_as
-
 // if (CRYPT_BLOWFISH == 1) {
 //     echo "Yes";
 // } else {

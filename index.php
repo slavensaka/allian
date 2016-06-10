@@ -18,23 +18,20 @@ $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
 
 $klein = new \Klein\Klein();
-// ==========================================================================
-// TODO Style render views 404, 405, error
-// ==========================================================================
+
 $klein->onHttpError(function ($code, $klein, $matched, $methods, $exception) {
-    switch ($code) {
-        case 404:
-        	$klein->service()->render("/resources/views/errors/404.php");
-            break;
-        case 405:
-        	$klein->service()->render("/resources/views/errors/405.php");
-            break;
-        default:
-        	$klein->service()->render("/resources/views/errors/error.php");
-    }
+	$type = $klein->request()->method();
+	if($type == 'GET'){
+		return $klein->response()->json(Controller::errorJson("Type of HTTP status code error: $code"));
+	} elseif($type == 'POST'){
+		return $klein->response()->json(array("data" => Controller::encryptValues(json_encode(Controller::errorJson("Type of HTTP status code error: $code")))));
+	} else {
+	    return $klein->response()->json(Controller::errorJson("Type of HTTP status code error: $code"));
+	}
 });
 
 $klein->respond(function ($request, $response, $service, $app) use ($klein) {
+	//TODO GET I POST KAO GORE
     $klein->onError(function ($klein, $err_msg) {
     	$base64Encrypted = Controller::encryptValues(json_encode(Controller::errorJson($err_msg)));
     	// Catch register route & then handle the deletion of user from database.
@@ -67,7 +64,7 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('POST', '/viewProfile', array($custLogin, 'viewProfile')); // NE DIRAT
 	$klein->respond('POST', '/updateProfile', array($custLogin, 'updateProfile')); // NE DIRAT
 	$klein->respond('POST', '/telephonicAccess', array($custLogin, 'telephonicAccess')); // NE DIRAT
-	$klein->respond('POST', '/telephonicAccessEmail', array($custLogin, 'telephonicAccessEmail'));
+	$klein->respond('GET', '/telephonicAccessEmail', array($custLogin, 'telephonicAccessEmail'));
 	$klein->respond('GET', '/terms', array($custLogin, 'getTerms')); // NE DIRAT
 	$klein->respond('POST', '/logout', array($custLogin, 'logout'));
 	$klein->respond('POST', '/keepLoggedIn', array($custLogin, 'keepLoggedIn'));
@@ -88,7 +85,7 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('POST', '/viewStripe', array($stripe, 'viewStripe')); // NE DIRAT
 
 	$langList = new LangListController();
-	$klein->respond('POST', '/langNames', array($langList, 'langNames'));
+	$klein->respond('GET', '/langNames', array($langList, 'langNames'));
 
 	$twilio = new TwilioController();
 	$klein->respond('GET', '/twilio', array($twilio, 'twilio'));
@@ -99,23 +96,11 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('GET', '/devDecryptJson', array($developer, 'devDecryptJson'));
 	$klein->respond('GET', '/devGenerateAuthToken', array($developer, 'devGenerateAuthToken'));
 	$klein->respond('POST', '/tester', array($developer, 'tester'));
-
-
-	$klein->respond('GET', '/tester1', function ($request, $response, $service, $app) {
-
-		// $all_headers = $request->headers()->get('token');//DIT it
-		// $all_headers = $request->headers()->all();//DIT it
-		// $all_headers = $request->param('novi');
-		// return $response->json($all_headers);
-
-
-
-
-
-
-	});
-
-
+	$klein->respond('GET', '/tester1', array($developer, 'tester1'));
+	// $all_headers = $request->headers()->get('token');//DIT it
+	// $all_headers = $request->headers()->all();//DIT it
+	// $all_headers = $request->param('novi');
+	// return $response->json($all_headers);
 });
 
 $klein->dispatch();

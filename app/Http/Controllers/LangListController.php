@@ -20,12 +20,26 @@ class LangListController extends Controller {
      * @ApiDescription(section="LangNames", description="Retrieve json of list of langauges to translate.")
      * @ApiMethod(type="get")
      * @ApiRoute(name="/testgauss/langNames")
-     * @ApiBody(sample="{ 'data': 'AwGpffM+XeQYxfv6jtXscmjFor51Puy4mWFkJc7qMc79ZC85yb9ZaDFudc+Yp6dTkojWTpKRvRPncZj5YvP+Mj53AucYCr+x8yIW39wwgelcR2LGlXkJt3lSbi5ofVSyw/8='}")
+     * @ApiBody(sample="{ 'data': {
+    'CustomerID': '800'
+  }}")
      * @ApiBody(sample="{ 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ2MDE1MTUsImp0aSI6InAwaFpucWxqaUpqWStDdmdrb3c0MjJITTQ1TkYweFVobCtHU2lWZFwvUlN3PSIsImlzcyI6ImxvY2FsaG9zdCIsIm5iZiI6MTQ2NDYwMTUxNSwiZXhwIjoxNDY1ODExMTE1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.wwxlnjSCmInwNYinJ-LIyHMOys3oYTeoQem2MJTfgNREFZ8rcDB9uZ61Hw6vHIVMh_8BKzJUKS-_0nwhfrJVxQ'}")
-     * @ApiParams(name="data", type="object", nullable=false, description="Data.")
-     * @ApiParams(name="token", type="object", nullable=false, description="Token.")
+     * @ApiParams(name="data", type="string", nullable=false, description="Data.")
+     * @ApiParams(name="token", type="string", nullable=false, description="Token.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
-     * @ApiReturn(type="object", sample="{'data': 'json of langauges' }")
+     * @ApiReturn(type="string", sample="{'data': {
+        'languages': [
+            {
+                'langId': '10',
+                'phoneKey': '237',
+                'langName': 'Afrikaans',
+                'tierType': '1',
+                'tierType_interpret': '3'
+            },
+            { '...': '...' }
+        ]
+    }
+ }")
      */
 	public function langNames($request, $response, $service, $app) {
 		if($request->token){
@@ -39,8 +53,7 @@ class LangListController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
-	     		return $response->json(array('data' => $base64Encrypted));
+	     		return $response->json(array('data' => $this->errorJson("Authentication problems present")));
 			}
 			// Retrieve langugage names from database
 			list($langNames) = LangList::langNames();

@@ -10,6 +10,7 @@ use Firebase\JWT\BeforeValidException;
 use RNCryptor\Encryptor;
 use RNCryptor\Decryptor;
 use Database\Connect;
+use Allian\Helpers\ArrayValues;
 
 class DeveloperController extends Controller {
 
@@ -33,10 +34,17 @@ class DeveloperController extends Controller {
      * @ApiDescription(section="DevEncryptJson", description="Developer used route for easy encrypting json request data. Input json value into field in sandbox are retrieve a encrypted API used data string for development purposes.Example {'CustomerID': 720}")
      * @ApiMethod(type="get")
      * @ApiRoute(name="/testgauss/devEncryptJson")
-     * @ApiBody(sample="{ 'data': 'Some json string'}")
+     * @ApiBody(sample="{
+    'CustomerID': '800'
+  }")
      * @ApiParams(name="data", type="object", nullable=false, description="")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
-     * @ApiReturn(type="object", sample="{'json': '', 'encrypted': '' }")
+     * @ApiReturn(type="object", sample="{
+  'json': {
+    'CustomerID': '800'
+  },
+  'encrypted': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc='
+}")
      */
 	public function devEncryptJson($request, $response, $service, $app){
 		$json = $request->data;
@@ -51,10 +59,15 @@ class DeveloperController extends Controller {
      * @ApiDescription(section="DevDecryptJson", description="Decrypt the encrypted data into plaintext. So if json was encrypted, retrieve the json in the encrypted data. Used for development purposes.")
      * @ApiMethod(type="get")
      * @ApiRoute(name="/testgauss/devDecryptJson")
-     * @ApiBody(sample="{ 'data': ''}")
+     * @ApiBody(sample="{ 'data': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc='}")
      * @ApiParams(name="data", type="object", nullable=false, description="")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
-     * @ApiReturn(type="object", sample="{'data': '', 'decrypted': '' }")
+     * @ApiReturn(type="object", sample="{
+  'data': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc=',
+  'decrypted': {
+    'CustomerID': '800'
+  }
+}")
      */
 	public function devDecryptJson($request, $response, $service, $app){
 		$data = $request->data;
@@ -66,7 +79,7 @@ class DeveloperController extends Controller {
 	}
 
 	/**
-     * @ApiDescription(section="DevGenerateAuthToken", description="Generate a jwt token, that can be used for any user as his, used for development purposes for now. Put into any sandbox with data and call succefully the route.")
+     * @ApiDescription(section="DevGenerateAuthToken", description="Generate a jwt token, Not used anymore.")
      * @ApiMethod(type="get")
      * @ApiRoute(name="/testgauss/devGenerateAuthToken")
      * @ApiBody(sample="{ 'data': ''}")
@@ -112,7 +125,7 @@ class DeveloperController extends Controller {
 	    }
 		// $order_inserted = mysqli_query($con, "INSERT INTO `translation_orders` (`user_id`)". "VALUES('" . 111111 . "')");
 		// $order_id = mysqli_insert_id($con); // Vrati od order_id
-  //       return $response->json($order_id);
+  		//       return $response->json($order_id);
 
 		// $data = $request->data;
 		// $dec = json_decode($data);
@@ -134,5 +147,14 @@ class DeveloperController extends Controller {
 		// $services = implode(":", $ar['services']);
 		// return $services;
 
+	}
+
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	public function tester1($request, $response, $service, $app){
+		return "TEstER";
 	}
 }
