@@ -908,7 +908,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion6" href="#collapseOne6"> /testgauss/telephonicAccessEmail</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion6" href="#collapseOne6"> /testgauss/telephonicAccessEmail</a>
         </h4>
     </div>
     <div id="collapseOne6" class="panel-collapse collapse">
@@ -926,7 +926,7 @@
 
                 <div class="tab-pane active" id="info6">
                     <div class="well">
-                    TODO TBD
+                    Send a user an email with the telephonic id and telephonic password and number to call
                     </div>
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Headers</strong></div>
@@ -953,7 +953,7 @@
     <td>data</td>
     <td>string</td>
     <td>Yes</td>
-    <td>Customers id. Stored in mobile phone, as this is the identifier for the user using the app.</td>
+    <td>Customers id and telphone number selected by user. Stored in mobile phone, as this is the identifier for the user using the app.</td>
 </tr>
 
 <tr>
@@ -970,7 +970,8 @@
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
                         <pre id="sample_post_body6">{'data': {
-    'CustomerID': '800'
+    'CustomerID': '800',
+    'tel': '1 855-733-6655'
   },
      'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ0ODc0ODUsImp0aSI6IndPSTlFRm9kY0RQVDdwc1d6RlphTUQ2dzlUMWhiSjUzV1BiSGxJSXFMZHc9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY0NDg3NDg1LCJleHAiOjE0NjU2OTcwODUsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.z03x_B2G6I3DdxaOsND3QMR0Rz8zCanxu6sf-4oH8x99x5nyvkhI0qClDMOzwXAC5ZU54D4OHgiJiiGoYU_4nQ'}</pre>
                       </div>
@@ -989,7 +990,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/telephonicAccessEmail" method="get" name="form6" id="form6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/telephonicAccessEmail" method="post" name="form6" id="form6">
     
     Parameters
     <hr/>
@@ -1024,7 +1025,10 @@
 
 <hr>
 <pre id="sample_response6">{
-  'data': 'To be defined.'
+  'data': {
+    'status': 1,
+    'userMessage': 'YOUR TELEPHONIC ACCESS CARD HAS BEEN E-MAILED TO: slavensakacic@gmail.com IF YOU DO NOT RECEIVE THE EMAIL, PLEASE E-MAIL SUPPORT AT cs@alliantranslate.com'
+  }
  }</pre>
                         </div>
                     </div>
@@ -2917,7 +2921,7 @@
 
         <div class="row mt0 footer">
             <div class="col-md-6" align="left">
-                Generated on 2016-06-10, 14:39:39
+                Generated on 2016-06-13, 08:38:07
             </div>
             <div class="col-md-6" align="right">
                 <a href="https://github.com/calinrada/php-apidoc" target="_blank">php-apidoc v 1.3.4</a>

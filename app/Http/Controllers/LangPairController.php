@@ -74,7 +74,7 @@ class LangPairController extends Controller {
 			}
 			return $response->json(array("data" => $listing));
 		} else {
-			return $response->json("No token provided. TODO. Encrypt this");
+			return $response->json("No token provided.");
 		}
 	}
 }

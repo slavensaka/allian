@@ -305,8 +305,8 @@ class ConferenceScheduleController extends Controller {
 		    $toT = new \DateTime($data['fromDate'].' '.$data['timeEnds'],new \DateTimeZone($data['timezone']));
 			$toT->setTimezone(new \DateTimeZone('GMT'));
 
-			$frm_lang = $this->get_language_by_name($data['langFrom']);
-			$to_lang = $this->get_language_by_name($data['langTo']);
+			$frm_lang = LangList::langIdByName($data['langFrom']);
+			$to_lang = LangList::langIdByName($data['langTo']);
 
 			$details = array();
 			$amount = 0;
@@ -456,6 +456,11 @@ class ConferenceScheduleController extends Controller {
 		return number_format($amt, $decimels, $decimel_point, $thousand_sep);
 	}
 
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
 	function telephonic_duration($frm_time, $to_time) {
 
 	    $start_date = new \DateTime($frm_time);
@@ -467,17 +472,5 @@ class ConferenceScheduleController extends Controller {
 	    //echo "<br>".$minutes."<br>";
 	    return $minutes * $days;
 	}
-
-	function get_language_by_name($langName, $get = 'LangId') {
-		// $con=mysqli_connect("localhost","root","","allian10_abs_linguist_portal"); // TODO for server
-		$con = Connect::con();
-		$query = "SELECT $get FROM `LangList` where LangName LIKE  '%".trim($langName)."%'";
-		$get_lang_info = mysqli_query($con, $query);
-		$lang = mysqli_fetch_array($get_lang_info);
-		$get = $lang[$get];
-		return $get;
-	}
-
-
 
 }

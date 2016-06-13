@@ -151,10 +151,10 @@ class DeveloperController extends Controller {
 
 	/**
 	 *
-	 * Block comment
+	 * GET tester
 	 *
 	 */
 	public function tester1($request, $response, $service, $app){
-		return "TEstER";
+		return getenv("CS_EMAIL");
 	}
 }

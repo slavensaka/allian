@@ -3,6 +3,7 @@
 namespace Allian\Models;
 
 use Database\DataObject;
+use Database\Connect;
 
 class LangList extends DataObject {
 
@@ -35,23 +36,13 @@ class LangList extends DataObject {
 
 
 
-  	public static function langIdByName($LangName) {  // TODO
-	    $conn = parent::connect();
-	    // $sql = "SELECT * FROM " . getenv('TBL_LANG_LIST') . " WHERE LangName LIKE $LangName";
-	    $sql = "SELECT * FROM" . getenv('TBL_LANG_LIST') . "where LangName LIKE  '%".trim($LangName)."%'";
-	    try {
-		 	$st = $conn->prepare($sql);
-		 	$st->bindValue(":LangName", $LangName, \PDO::PARAM_STR);
-		    $st->execute();
-		    $row = $st->fetch();
-		    parent::disconnect($conn);
-		    if ($row) {
-		      	return new LangList($row);
-		    } else return false;
-	    } catch (\PDOException $e) {
-		      parent::disconnect($conn);
-		      return false;
-	    }
+  	public static function langIdByName($langName, $get = 'LangId') {
+	    $con = Connect::con();
+		$query = "SELECT $get FROM `LangList` where LangName LIKE  '%".trim($langName)."%'";
+		$get_lang_info = mysqli_query($con, $query);
+		$lang = mysqli_fetch_array($get_lang_info);
+		$get = $lang[$get];
+		return $get;
   	}
 
 

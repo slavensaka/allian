@@ -7,6 +7,7 @@ use \Dotenv\Dotenv;
 use Firebase\JWT\JWT;
 use RNCryptor\Encryptor;
 use RNCryptor\Decryptor;
+use Allian\Helpers\Mail;
 use Allian\Models\CustLogin;
 use Firebase\JWT\DomainException;
 use Firebase\JWT\ExpiredException;
@@ -219,10 +220,10 @@ class CustLoginController extends Controller {
 			// Generate a radnom password for the customer to email and store in the database
 			$pass = $this->generatePassword();
 			// Send an email with the new pass to the user
-			$sentEmail = $this->newPassEmail($data['email'], $customer->getValueEncoded('FName'), $pass);
+			$sentEmail = Mail::newPassEmail($data['email'], $customer->getValueEncoded('FName'), $pass);
 			// Error if sending of email failed
 			if(!$sentEmail){
-				$errorJson = $this->encryptValues(json_encode($this->errorJson("Error: Problem sending email to customer.")));
+				$errorJson = $this->encryptValues(json_encode($this->errorJson("Error: Problem sending email. Contact support!")));
 				return $response->json(array('data' => $errorJson));
 			}
 			// Insert the random generated password into the database for customer with CustomerID
@@ -458,7 +459,7 @@ class CustLoginController extends Controller {
 			$jsonArray['status'] = 1;
 			$jsonArray['telephonicUserId'] = $customer->getValueEncoded('PhLoginId');
 			$jsonArray['telephonicPassword'] = $customer->getValueEncoded('PhPassword');
-			$jsonArray['registeredUserHotline'] = '1 855-733-6655'; //TODO make into dictionary, or dinamy
+			$jsonArray['registeredUserHotline'] = '1 855-733-6655'; //NOT NEEDED REMOVE
 			// Encrypt fomrat json response
 			$result = array_merge(array('flags' =>$flags), array('tel' =>$tele), $jsonArray);
 			// $novi = array_merge(, $jsonArray);
@@ -476,18 +477,22 @@ class CustLoginController extends Controller {
 	}
 
 	/**
-     * @ApiDescription(section="TelephonicAccessEmail", description="TODO TBD")
-     * @ApiMethod(type="get")
+     * @ApiDescription(section="TelephonicAccessEmail", description="Send a user an email with the telephonic id and telephonic password and number to call")
+     * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/telephonicAccessEmail")
      @ApiBody(sample="{'data': {
-    'CustomerID': '800'
+    'CustomerID': '800',
+    'tel': '1 855-733-6655'
   },
      'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ0ODc0ODUsImp0aSI6IndPSTlFRm9kY0RQVDdwc1d6RlphTUQ2dzlUMWhiSjUzV1BiSGxJSXFMZHc9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY0NDg3NDg1LCJleHAiOjE0NjU2OTcwODUsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.z03x_B2G6I3DdxaOsND3QMR0Rz8zCanxu6sf-4oH8x99x5nyvkhI0qClDMOzwXAC5ZU54D4OHgiJiiGoYU_4nQ'}")
-     * @ApiParams(name="data", type="string", nullable=false, description="Customers id. Stored in mobile phone, as this is the identifier for the user using the app.")
+     * @ApiParams(name="data", type="string", nullable=false, description="Customers id and telphone number selected by user. Stored in mobile phone, as this is the identifier for the user using the app.")
       @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="string", sample="{
-     *  'data': 'To be defined.'
+     *  'data': {
+    'status': 1,
+    'userMessage': 'YOUR TELEPHONIC ACCESS CARD HAS BEEN E-MAILED TO: slavensakacic@gmail.com IF YOU DO NOT RECEIVE THE EMAIL, PLEASE E-MAIL SUPPORT AT cs@alliantranslate.com'
+  }
      * }")
      *
      */
@@ -499,6 +504,7 @@ class CustLoginController extends Controller {
 			$data = $this->decryptValues($request->data);
 			// Validate input data
 			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+			$service->validate($data['tel'], 'Error: No telehpone is present.')->notNull();
 			// Validate token in database for customer stored
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
@@ -508,12 +514,30 @@ class CustLoginController extends Controller {
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
 			$customer = CustLogin::getCustomer($data['CustomerID']);
-			return $customer->getValueEncoded('Email');
-			//TODO
+
+			$values = array();
+			$values['Email'] = $customer->getValueEncoded('Email');
+			$values['FName'] = ucfirst($customer->getValueEncoded('FName'));
+			$values['LName'] = ucfirst($customer->getValueEncoded('LName'));
+			$values['telephonicUserId'] = $customer->getValueEncoded('PhLoginId');
+			$values['telephonicPassword'] = $customer->getValueEncoded('PhPassword');
+			$values['csEmail'] = getenv('CS_EMAIL');
+			$values['tel'] = $data['tel'];
+			$sent =  Mail::telAccessEmail($values);
+			if(!$sent){
+				$errorJson = $this->encryptValues(json_encode($this->errorJson("Error: Problem sending email. Contact support!")));
+				return $response->json(array('data' => $errorJson));
+			}
+			$jsonArray = array();
+			$jsonArray['status'] = 1;
+			$jsonArray['userMessage'] = "YOUR TELEPHONIC ACCESS CARD HAS BEEN E-MAILED TO:" . $values['Email'] . "IF YOU DO NOT RECEIVE THE EMAIL, PLEASE E-MAIL SUPPORT AT cs@alliantranslate.com";
+
+			$base64Encrypted = $this->encryptValues(json_encode($jsonArray));
+	     	return $response->json(array('data' => $base64Encrypted));
 		} else {
      		// $base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
      		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
-	     		return $response->json(array('data' => $base64Encrypted));
+	     	return $response->json(array('data' => $base64Encrypted));
      	}
 	}
 

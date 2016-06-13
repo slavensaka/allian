@@ -172,7 +172,7 @@ class CustLogin extends DataObject {
 
   	/**
   	 *
-  	 * Block comment
+  	 * Block comment NOT USED
   	 *
   	 */
   	public static function deleteCustomerByEmail($Email, $LoginPassword){
