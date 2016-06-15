@@ -77,55 +77,24 @@ class CustLogin extends DataObject {
 	    }
   	}
 
-  	/** TODO Save customer and retrieve the CustomerID and then cid abouce and then UPDATE his PhlogId
-		$time=time();
-		$result=mysqli_query($con,"INSERT INTO CustLogin (PhPassword,PhLoginId,FName,LName,BName,Street,Line2,City,State,Postal,Country,Services,InvName,InvEmail,InvPhone,InvNeed,Email,LoginPassword,Type,Phone) VALUES ('$PhPassword','$time','$FName','$LName','$BName','$Street','$Line2','$City','$State','$Postal','$Country','$Services','$InvName','$InvEmail','$InvPhone','$InvNeed','$Email','$LoginPassword','$Type','$Phone') ");
-		echo ($result)?"<p class='alert green closeable'> Signed Up Successfully <br><br> <em>Please wait for confirmation email</em></p>":"";
-		$id=mysqli_fetch_assoc(mysqli_query($con,"SELECT CustomerID from CustLogin WHERE Email = '$Email' "));
-		$cid=$id['CustomerID'];
-		$const=112450;
-		$login=$const+$cid;
-  	 * TODO See linguist/register.php
-  	 */
-  	public static function register($data){ // TODO check when same email. It updates password
-  		$conn = parent::connect();
-  		$sql = "SELECT PhLoginId FROM " . getenv('TBL_CUSTLOGIN') . " ORDER BY CustomerID DESC LIMIT 1";
-  		try {
-  			$last = $conn->prepare($sql);
-  			$last->execute();
-  			$last_phloginid = $last->fetch();
-  			parent::disconnect($conn);
-		    if ($last_phloginid) {
-		    	$int_phloginid = (int)$last_phloginid['PhLoginId'];
-		    	$new_phloginid = $int_phloginid + 1;
-		    	$inserted = self::insertUser($data, $new_phloginid);
-		    	return $inserted;
-		    }
-		} catch ( \PDOException $e ) {
-	      	parent::disconnect( $conn );
-	      	return "Internal error. Contact support!";
-	      	throw new \Exception("Internal error. Contact support!");
-	    }
-  	}
-
   	/**
   	 *
   	 * Block comment
   	 *
   	 */
-  	public static function insertUser($data, $new_phloginid){
+  	public static function register($data){
   		$conn = parent::connect();
   		$services = implode(":", $data['services']);
   		$sql_1 = "INSERT INTO " . getenv('TBL_CUSTLOGIN') . "(FName, LName, Email, Phone, LoginPassword, PhPassword, PhLoginId, Services, Type, Saved) VALUES (:FName, :LName, :Email, :Phone, :LoginPassword, :PhPassword, :PhLoginId, :Services, :Type, :Saved)";
 	    try{
-	    	$st = $conn->prepare( $sql_1 );
+	    	$st = $conn->prepare($sql_1);
   			$st->bindValue(":FName", $data['fname'], \PDO::PARAM_STR);
   			$st->bindValue(":LName", $data['lname'], \PDO::PARAM_STR);
   			$st->bindValue(":Email", $data['email'], \PDO::PARAM_STR);
   			$st->bindValue(":Phone", $data['phone'], \PDO::PARAM_STR);
   			$st->bindValue(":LoginPassword", PassHash::hash($data['password']), \PDO::PARAM_STR);
   			$st->bindValue(":PhPassword", $data['phonePassword'], \PDO::PARAM_STR);
-  			$st->bindValue(":PhLoginId", $new_phloginid, \PDO::PARAM_INT);
+  			$st->bindValue(":PhLoginId", time(), \PDO::PARAM_INT);
   			$st->bindValue(":Services", $services, \PDO::PARAM_STR);
   			if (is_null($data['type'])) { $value = 1; } else { $value =  $data['type']; }
             $st->bindValue(":Type", $value, \PDO::PARAM_INT);
@@ -133,8 +102,10 @@ class CustLogin extends DataObject {
   			$success = $st->execute();
   			parent::disconnect($conn);
   			if($success){
-  				$authCustomer = self::authenticate($data['email'], $data['password']);
-  				return $authCustomer;
+  				$customer = self::authenticate($data['email'], $data['password']);
+  				$PhLoginId = $customer->getValueEncoded('CustomerID');
+  				$update = self::updateRegLoginId($PhLoginId);
+  				return $customer;
   			} else {
   				throw new \Exception("There was a problem during registration.");
   			}
@@ -143,6 +114,32 @@ class CustLogin extends DataObject {
 	    	if ($e->errorInfo[1] == 1062) {
     			throw new \Exception("Email already taken. Please try another email.");
 			}
+	    }
+  	}
+
+  	/**
+  	 *
+  	 * Block comment
+  	 *
+  	 */
+  	public static function updateRegLoginId($PhLoginId){
+  		$conn = parent::connect();
+  		$CustomerID = $PhLoginId;
+		$const = 112450;
+		$login = $const + $CustomerID;
+		$sql = "UPDATE " . getenv('TBL_CUSTLOGIN') . " SET PhLoginId = :login WHERE CustomerID = :CustomerID";
+		try{
+			$st = $conn->prepare($sql);
+			$st->bindValue(":login", $login, \PDO::PARAM_STR);
+			$st->bindValue(":CustomerID", $CustomerID, \PDO::PARAM_STR);
+			$success = $st->execute();
+			parent::disconnect($conn);
+  			if($success){
+  				return true;
+  			}
+		} catch (\PDOException $e) {
+	    	parent::disconnect($conn);
+	    	throw new \Exception("Internal error occurred.");
 	    }
   	}
 
@@ -366,7 +363,7 @@ class CustLogin extends DataObject {
 		    $row = $st->fetch();
 		    parent::disconnect($conn);
 		    if ($row) {
-		      	return new CustLogin( $row );
+		      	return new CustLogin($row);
 		    } else return false;
 	    } catch (\PDOException $e) {
 		      parent::disconnect($conn);

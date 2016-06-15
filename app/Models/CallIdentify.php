@@ -69,6 +69,10 @@ class CallIdentify extends DataObject {
 	    }
   	}
 
+  	public function getByCustomerID(){ //OVO
+  		$call_query = "SELECT * FROM CallIdentify WHERE CustomerID='$CustomerID' AND state='Success' AND (Billed > 0 OR Charged > 0) ORDER BY `UnqID` DESC";
+
+  	}
   	public function getGenderString() {
     	return ( $this->data["gender"] == "f" ) ? "Female" : "Male";
   	}
@@ -76,4 +80,5 @@ class CallIdentify extends DataObject {
   	public function getFavoriteGenreString() {
     	return ( $this->_genres[$this->data["favoriteGenre"]] );
   	}
+
 }

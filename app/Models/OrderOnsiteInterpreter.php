@@ -2,6 +2,9 @@
 
 namespace Allian\Models;
 
+use Database\DataObject;
+use Database\Connect;
+
 class OrderOnsiteInterpreter extends DataObject {
 
 	protected $data = array(
@@ -69,4 +72,71 @@ class OrderOnsiteInterpreter extends DataObject {
 	    "deleted" => "",
 	    "project_submitted" => "",
 	);
+
+	public static function insertScheduleOrder($sArray){
+		$con = Connect::con();
+		foreach($sArray as $key=>$value){
+			$in[$key] = mysqli_real_escape_string($con,$value);
+		}
+		$fields = implode(',', array_keys($in));
+		$values = implode("', '", array_values($in));
+		$query = sprintf("insert into order_onsite_interpreter(%s) values('%s')",$fields,$values);
+		$result = mysqli_query($con,$query);
+		if($result){
+			return mysqli_insert_id($con);
+		}
+		if(!$result and mysqli_affected_rows($con)>0){
+			if(mysqli_errno($con) == 1048){
+				return "Error--Missing Required Values";
+			}else {
+				 return "Error--Failed to Save Data";
+			}
+		}
+	}
+
+	public static function updateScheduleOrderID(){
+		$con = Connect::con();
+		$update_query = "UPDATE `order_onsite_interpreter` set orderID = '$orderID' WHERE autoID='" . $onsiteAutoId."'";
+		$result = mysqli_query($con, $update_query);
+		if($result){
+			return true;
+		}
+		return false;
+	}
+
+	/**
+  	 *
+  	 * Block comment TO USE
+  	 *
+  	 */
+  	public static function getOrderOnsiteInterpreter($CustomerID) {
+	    $conn = parent::connect();
+	    $sql = "SELECT * FROM " . getenv('TBL_ORDER_ONSITE_INTERPRETER') . " WHERE CustomerID = :CustomerID";
+	    try {
+		    $st = $conn->prepare($sql );
+		    $st->bindValue(":CustomerID", $CustomerID, \PDO::PARAM_INT);
+		    $st->execute();
+		    $row = $st->fetch();
+		    parent::disconnect($conn);
+		    if ($row) {
+		      	return new CustLogin($row);
+		    } else return false;
+	    } catch (\PDOException $e) {
+		      parent::disconnect($conn);
+		      return false;
+	    }
+  	}
+
+  	function get_interpret_order($order_id, $get_value) {
+  		$con = Connect::con();
+	    $get_values = (is_array($get_value)) ? implode(",", $get_value) : $get_value;
+	    $get_order_info = mysqli_query($con, "SELECT $get_values FROM order_onsite_interpreter WHERE orderID =  '$order_id'");
+	    $order = mysqli_fetch_array($get_order_info);
+	    if ($get_value === "*" || is_array($get_value)) {
+	        return $order;
+	    } else {
+	        return $order[$get_value];
+	    }
+	}
+
 }

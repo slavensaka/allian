@@ -13,6 +13,7 @@ $classes = array(
     'Allian\Http\Controllers\LangListController',
     'Allian\Http\Controllers\TwilioController',
     'Allian\Http\Controllers\DeveloperController',
+    'Allian\Http\Controllers\TranslationOrdersController',
     // 'Some\Namespace\OtherClass',
 );
 

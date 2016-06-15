@@ -8,10 +8,14 @@ use Firebase\JWT\JWT;
 use RNCryptor\Encryptor;
 use RNCryptor\Decryptor;
 use Allian\Models\LangList;
+use Allian\Models\CustLogin;
 use Allian\Helpers\ArrayValues;
 use Firebase\JWT\DomainException;
 use Firebase\JWT\ExpiredException;
+use Allian\Models\TranslationOrders;
 use Firebase\JWT\BeforeValidException;
+use Allian\Models\OrderOnsiteInterpreter;
+use Allian\Http\Controllers\StripeController;
 
 class ConferenceScheduleController extends Controller {
 
@@ -64,6 +68,7 @@ class ConferenceScheduleController extends Controller {
      * @ApiBody(sample="{ 'data': {
 			    'CustomerID': '800',
 			    'fromDate': '2016-06-07',
+			    'status': 1,
 			    'timeStarts': '3:00:00 AM',
 			    'timeEnds': '3:05:00 AM'
 			  },
@@ -72,10 +77,10 @@ class ConferenceScheduleController extends Controller {
      * @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="string", sample="{'data': {
-    'totalPrice': '30.00',
-    'daily': 'ATS - Short Notice Telephonic Scheduling ($3/Min) for 5 minutes',
-    'minimumText': 'Minimum Short Notice telephonic scheduling price is $30'
-  }}")
+	    'totalPrice': '30.00',
+	    'daily': 'ATS - Short Notice Telephonic Scheduling ($3/Min) for 5 minutes',
+	    'minimumText': 'Minimum Short Notice telephonic scheduling price is $30'
+	  	}}")
      */
 	public function schedulePartOne($request, $response, $service, $app){
 		if($request->token){
@@ -103,15 +108,15 @@ class ConferenceScheduleController extends Controller {
 			$timing = $this->get_assignment_time($frm_time,$to_time);
 
 			$hours_left = $timing["hours_to_start"];
-			$minimum_rate = 30; // $30
+			$minimum_rate = 30;
 			$conference_fee = $this->amt_format(5);
 			if($hours_left<24) {
-			    $minimum_minutes = 10; // 10 minutes
-			    $rate_per_min=3; // $3
+			    $minimum_minutes = 10;
+			    $rate_per_min=3;
 			    $scheduling_type="Short Notice";
 			}else{
-			    $minimum_minutes = 15;  // 30 minutes
-			    $rate_per_min=1.75; // $1.75
+			    $minimum_minutes = 15;
+			    $rate_per_min=1.75;
 			    $scheduling_type="Regular";
 			}
 	 		$minutes = $this->telephonic_duration($frm_time, $to_time);
@@ -126,6 +131,7 @@ class ConferenceScheduleController extends Controller {
 			$rArray = array();
 			$rArray['totalPrice'] = $this->amt_format($amount);
 			$rArray['daily'] = "ATS - $scheduling_type Telephonic Scheduling ($$rate_per_min/Min) for $actual_minutes minutes";
+			$rArray['status'] = 1;
 			if($minimum_text){
 				$rArray['minimumText'] = $minimum_text ;
 			} else {
@@ -145,12 +151,13 @@ class ConferenceScheduleController extends Controller {
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/schedulePartTwo")
      * @ApiBody(sample="{ 'data': {
-    'CustomerID': '800',
-    'fromDate': '2016-06-07',
-    'timeStarts': '3:00:00 AM',
-    'timeEnds': '3:05:00 AM',
-    'schedulingType': 'conference_call'
-  },
+	    'CustomerID': '800',
+	    'fromDate': '2016-06-07',
+	    'timeStarts': '3:00:00 AM',
+	    'timeEnds': '3:05:00 AM',
+	    'status': 1,
+	    'schedulingType': 'conference_call'
+	  },
      'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUzODMxNjUsImp0aSI6IlJpRW16NzRHSGhGR043QzEzT1JpQ1FuWXRnOHJ4bk9YVHRRZ002NnBDN1E9IiwiaXNzIjoiYWxsaWFudHJhbnNsYXRlLmNvbSIsIm5iZiI6MTQ2NTM4MzE2NSwiZXhwIjoxNDY2NTkyNzY1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.DvPdwcIGybU3zs5NH4NRmldNbhrer8AgvSSwi9lBY6SwJ-WKegETMRQmXZvtLu5-qrAx5hwBkEKXqG80zTqByw'}")
      * @ApiParams(name="data", type="string", nullable=false, description="CustomerId.")
      * @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
@@ -160,7 +167,7 @@ class ConferenceScheduleController extends Controller {
 	    'minimumText': 'Minimum Short Notice telephonic scheduling price is $30',
 	    'conferencePresent': 'Conference Calling Fee:: $5.00',
 	    'totalPrice': '35.00'
-  }}")
+  		}}")
      */
 	public function schedulePartTwo($request, $response, $service, $app){
 		if($request->token){
@@ -225,6 +232,7 @@ class ConferenceScheduleController extends Controller {
 				$rArray['conferencePresent'] = null;
 			}
 			$rArray['totalPrice'] = $this->amt_format($amount);
+			$rArray['status'] = 1;
 			// Return response json
 			$base64Encrypted = $this->encryptValues(json_encode($rArray));
 			return $response->json(array('data' => $base64Encrypted));
@@ -239,33 +247,33 @@ class ConferenceScheduleController extends Controller {
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/scheduleFinal")
      * @ApiBody(sample="{ 'data': {
-    'CustomerID': '800',
-    'timezone': 'US/Central',
-    'fromDate': '2016-06-07',
-    'timeStarts': '3:00:00 AM',
-    'timeEnds': '3:05:00 AM',
-    'langFrom': 'Spanish',
-    'langTo': 'Arabic',
-    'country': 'Canada',
-    'schedulingType': 'get_call',
-    'clients': [
-      '+16757568578'
-    ],
-    'neededFor': 'Court',
-    'description': 'Opis zašto treba prijevod'
-  },
+	    'CustomerID': '800',
+	    'timezone': 'US/Central',
+	    'fromDate': '2016-06-07',
+	    'timeStarts': '3:00:00 AM',
+	    'timeEnds': '3:05:00 AM',
+	    'langFrom': 'Spanish',
+	    'langTo': 'Arabic',
+	    'country': 'Canada',
+	    'schedulingType': 'get_call',
+	    'clients': [
+	      '+16757568578'
+	    ],
+	    'neededFor': 'Court',
+	    'description': 'Opis zašto treba prijevod'
+  		},
      'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUzODMxNjUsImp0aSI6IlJpRW16NzRHSGhGR043QzEzT1JpQ1FuWXRnOHJ4bk9YVHRRZ002NnBDN1E9IiwiaXNzIjoiYWxsaWFudHJhbnNsYXRlLmNvbSIsIm5iZiI6MTQ2NTM4MzE2NSwiZXhwIjoxNDY2NTkyNzY1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.DvPdwcIGybU3zs5NH4NRmldNbhrer8AgvSSwi9lBY6SwJ-WKegETMRQmXZvtLu5-qrAx5hwBkEKXqG80zTqByw'}")
      * @ApiParams(name="data", type="string", nullable=false, description="CustomerId.")
      * @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="string", sample="{'data': {
-    'timezone': 'US/Central',
-    'status': 1,
-    'confStarts': '2016-06-07 3:00:00 AM',
-    'confEnds': '2016-06-07 3:05:00 AM',
-    'confCode': '12345',
-    'confDialNumber': '+18555129043'
-  }}")
+	    'timezone': 'US/Central',
+	    'status': 1,
+	    'confStarts': '2016-06-07 3:00:00 AM',
+	    'confEnds': '2016-06-07 3:05:00 AM',
+	    'confCode': '12345',
+	    'confDialNumber': '+18555129043'
+	  	}}")
      */
 	public function scheduleFinal($request, $response, $service, $app){
 		if($request->token){
@@ -296,6 +304,7 @@ class ConferenceScheduleController extends Controller {
 
 			$frm_time = $data['fromDate'] . ' ' . $data['timeStarts'];
 			$to_time = $data['fromDate'] . ' ' . $data['timeEnds'];
+
 			$assg_frm_st = $data['timeStarts'];
 			$assg_frm_en = $data['timeEnds'];
 
@@ -313,15 +322,15 @@ class ConferenceScheduleController extends Controller {
 			$timing = $this->get_assignment_time($frm_time,$to_time);
 
 			$hours_left = $timing["hours_to_start"];
-			$minimum_rate = 30; // $30
+			$minimum_rate = 30;
 			$conference_fee = $this->amt_format(5);
 			if($hours_left<24) {
-			    $minimum_minutes = 10; // 10 minutes
-			    $rate_per_min=3; // $3
+			    $minimum_minutes = 10;
+			    $rate_per_min=3;
 			    $scheduling_type="Short Notice";
 			}else{
-			    $minimum_minutes = 15;  // 30 minutes
-			    $rate_per_min=1.75; // $1.75
+			    $minimum_minutes = 15;
+			    $rate_per_min=1.75;
 			    $scheduling_type="Regular";
 			}
 	 		$minutes = $this->telephonic_duration($frm_time, $to_time);
@@ -354,58 +363,153 @@ class ConferenceScheduleController extends Controller {
 			$sArray['to_lang'] = $to_lang; // broj Languagea
 			$sArray['country'] = $data['country'];
 			if ($data['schedulingType'] == 'conference_call') {
-				$sArray['onsite_con_phone'] = $data['contacts'];
+				$sArray['onsite_con_phone'] = $data['clients']; //TODO pogledaj order_telephonic_notification 2393 telephonic_conference_recipients
 			} elseif($data['schedulingType'] == 'get_call'){
-				$data['onsite_con_email'] = $data['contacts']; //TODO
+				$sArray['onsite_con_phone'] = $data['clients'][0];
 			}
-			// return $data['contacts'];
 			$sArray['intr_needed_for'] = $data['neededFor'];
 			$sArray['description'] = $data['description'];
 			$sArray['orderID'] = md5(time().$data['description']);
 			$sArray['currency_code']='usd';
+			$sArray['interpreting_type'] = '';
+			$sArray['service_region'] = '';
+			$sArray['service_area'] = '';
+			$sArray['dist_frm_reg_srvc_area'] = 0;
+			$sArray['address_line_2'] = '';
+			$sArray['onsite_con_name'] = '';
+			$sArray['onsite_con_email'] = '';
+			$sArray['headsets_needed'] = 0;
 			$sArray['scheduling_type'] = $data['schedulingType'];
-			$all_data_valid = true;
-			// if(intval($data['amount'])<=29){ // Amount check if less than 29$ error
-			// 	$all_data_valid=false;
-			// }
-			$sArray['amount'] = $amount; // caluculate_price() TODO
-			if($all_data_valid){
-				if($data['schedulingType'] == 'get_call'){
-					$sArray['interpreter_amt'] = (25/100)*$amount;  // caluculate_price() TODO
-				} elseif($data['schedulingType'] = 'conference_call'){
-					$sArray['interpreter_amt'] = (25/100)*($amount-5); // caluculate_price() TODO
-				}
+			if(intval($data['amount'])<=29){ // Amount check if less than 29$ error
+				$all_data_valid=false;
+			}
+			$sArray['amount'] = $amount;
+			if($data['schedulingType'] == 'get_call'){
+				$sArray['interpreter_amt'] = (25/100)*$amount;  // caluculate_price() TODO
+			} elseif($data['schedulingType'] = 'conference_call'){
+				$sArray['interpreter_amt'] = (25/100)*($amount-5); // caluculate_price() TODO
 			}
 
 			$sArray['interpreting_dur']= $this->telephonic_duration(
 										$data['fromDate'].'T'.$sArray['assg_frm_st'],
 										$data['fromDate'].'T'.$sArray['assg_frm_en']);
 
-
-			//Mysql insert into order_onsite_interpreterž
-			// return $response->json($sArray);
-			// $con=mysqli_connect("localhost","root","","allian10_abs_linguist_portal"); // TODO for server
-			$con = Connect::con(); // TODO PUT INTO model OrderOnsiteInterpreter
-			foreach($sArray as $key=>$value){
-				$in[$key] = mysqli_real_escape_string($con,$value);
+			$onsiteAutoId = OrderOnsiteInterpreter::insertScheduleOrder($sArray);
+			if(!$onsiteAutoId){
+				return $response->json("Onsite order not inserted"); // TODO encrypt
 			}
-			$fields = implode(',', array_keys($in));
-			$values = implode("', '", array_values($in));
-			$query = sprintf("insert into order_onsite_interpreter(%s) values('%s')",$fields,$values);
-			// return $query;
-
-			$result = mysqli_query($con,$query);
-			if(!$result and mysqli_affected_rows($con)>0){
-				if(mysqli_errno($con)==1048){
-					$feedback=json_encode("Error--Missing Required Values");
-				}else {
-					$feedback=json_encode("Error--Failed to Save Data");//.mysqli_error($con);
-				}
-
+			$orderID = TranslationOrders::insertTransationOrder($sArray);
+			if(!$orderID){
+				return $response->json("Order not inserted"); // TODO encrypt
 			}
 
-			// TU
+			$updated = OrderOnsiteInterpreter::updateScheduleOrderID($orderID, $onsiteAutoId);
 
+			if(!$updated){
+				return $response->json("Problem with updating order_onsite_interpreter table"); // TODO encrypt
+			}
+
+			$customer = CustLogin::getCustomer($sArray['customer_id']);
+
+			/*=============================================
+			=     CALCULATE DISCOUNT PROMOTIONAL CODE TODO =
+			=============================================*/
+			$dArray = array();// orders_scritp/get_discoutn.php
+			$dArray['usps_fee'] = 0;
+			$dArray['shipping_fee'] = 0;
+			$dArray['Apostille_Price'] = 0;
+			$dArray['DTP_Price'] = 0;
+			$dArray['RP_Price'] = 0;
+			$dArray['Copies_Price'] = 0;
+			$dArray['Verbatim_Price'] = 0;
+			$dArray['TS_Price'] = 0;
+			$dArray['TS_Type'] = 0;
+			$dArray['additional_fee'] = 0;
+			$dArray['add_RP']= "";
+			if($RP_Price>0){
+			    $turn_around = 8; // 8 Hours
+			    $time_starts = "8:00 AM";
+			    $time_ends   = "6:00 PM";
+			    $est_time = $this->times($time_starts, $time_ends, $turn_around, "Sat");
+			    $dArray['add_RP'] = ",rp_delivery='".$est_time."' ";
+    		}
+    		$charge_amount = number_format(($sArray['amount'] + $Apostille_Price + $usps_fee + $shipping_fee + $RP_Price + $DTP_Price + $Copies_Price + $additional_fee + $TS_Price + $Verbatim_Price), 2, ".", "") * 100;
+    		// $discount_off = $this->apply_discount($charge_amount);
+    		$charge_amount -= $discount_off;
+    		$discount_off /= 100;
+    		$desc = ($discount_off>0) ? "$email gets discount of $discount_off USD" : $email;
+   			//$this->set_translation_order($con, $orderID, "discount", $discount_off);
+     		//function set_translation_order($con, $order_id, $set, $value) { //
+			//     return mysqli_query($con, "UPDATE translation_orders SET $set='$value' WHERE order_id =  '$order_id'");
+			// }
+			// function apply_discount($order_total) {
+			//     $discount = 0;
+			// 	// Discount Calculator
+			//     if (isset($_SESSION["Discount"])) {
+			//         $discount_session = explode("-", $_SESSION["Discount"]);
+			//         $discount_type = $discount_session[0];
+			//         $discount_amount = $discount_session[1];
+			//         $discount = ($discount_type === "$") ? $discount_amount * 100 : ($discount_amount) * ($order_total / 100);
+			//     }
+			// 	// return discount in cents
+			//     return ceil($discount);
+			// }
+			// function times($startTime="8:00 AM", $endTime="6:00 PM", $turn_around=8, $skipDay="Sat") {
+			//     $turn_around *= 3600; // convert to seconds
+			//     $oneDay = 86400; //Seconds in a Day
+			//     $startTime = strtotime($startTime);
+			//     $endTime = strtotime($endTime);
+			//     $current_time = time(); // current timestamp
+			//     $skipTomorrow = (date("D", $current_time + $oneDay) === $skipDay) ? $oneDay : 0; // Check if tomorrow is off
+			//     $todayIsOFF = (date("D", $current_time) === $skipDay) ? 1 : 0; // Check if today is off
+			//     if ($todayIsOFF) {
+			//         // If today is OFF (sat) then Consider Next Delivery Day
+			//         $est_time = $startTime + $turn_around + $oneDay;
+			//     } else {
+			//         $inTime = $current_time >= $startTime && $current_time <= $endTime;
+
+			//         if ($inTime) {
+			//             // Time has started today
+			//         $est_time = $current_time + $turn_around;
+			//         if ($est_time > $endTime) {
+			//                 // Time frame does not complete today, add additional hours to next day
+			//                 // Add tomorrow's time in start time
+			//                 $startTime += ($oneDay + $skipTomorrow); // seconds in 24 hours
+			//                 $est_time = $startTime + ($est_time - $endTime);
+			//             }
+			//         } else {
+			//             // Time has not started today or has passed
+			//             if ($current_time > $endTime) {
+			//                 // Today's time frame has passed, Count turnaround from tomorrow
+			//                 // Add tomorrow's time in start time
+			//                 $startTime += ($oneDay + $skipTomorrow); // seconds in 24 hours
+			//             }
+			//             $est_time = $startTime + $turn_around;
+			//         }
+			//     }
+			//     return $est_time;
+			// }
+			/*=====  End of Section comment block  ======*/
+
+			// Charge the customer an amount
+			$stripe = new StripeController();
+			$stripe_id = $stripe->chargeCustomer($charge_amount, $customer->getValueEncoded('token'));
+			// If stripe error where charge token is not returned
+			if(!$stripe_id){
+				return $response->json("Stripe error"); // TODO encrypt
+			}
+
+			$dArray['stripe_id'] = $stripe_id;
+			$dArray['order_id'] = $orderID;
+
+			// Update translation orders with new info, user paid & did or not had discount
+			$complete = TranslationOrders::updateTranslationOrdersSch($dArray);
+
+	    	if(!$complete){
+	    		return $response->json("Problems with updating translation orders."); // TODO encrypt
+	    	}
+
+	    	order_telephonic_notification($con,$orderID); // TODO
 
 			$retArray = array();
 			$retArray['timezone'] = $data['timezone'];

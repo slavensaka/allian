@@ -6,6 +6,7 @@ use Stripe\Token;
 use Stripe\Stripe;
 use \Dotenv\Dotenv;
 use Stripe\Customer;
+use Stripe\Charge;
 use Allian\Models\Stripe as StripeModel;
 use Allian\Http\Controllers\StripeController;
 use Allian\Models\CustLogin;
@@ -17,21 +18,21 @@ class StripeController extends Controller {
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/updateStripe")
      * @ApiBody(sample="{'data': {
-    'CustomerID': '800',
-    'sname': 'Pero Perić',
-    'number': '4012888888881881',
-    'exp': '05/18',
-    'cvc': '314'
-  },
+	    'CustomerID': '800',
+	    'sname': 'Pero Perić',
+	    'number': '4012888888881881',
+	    'exp': '05/18',
+	    'cvc': '314'
+	  },
      'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ2MDE1MTUsImp0aSI6InAwaFpucWxqaUpqWStDdmdrb3c0MjJITTQ1TkYweFVobCtHU2lWZFwvUlN3PSIsImlzcyI6ImxvY2FsaG9zdCIsIm5iZiI6MTQ2NDYwMTUxNSwiZXhwIjoxNDY1ODExMTE1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.wwxlnjSCmInwNYinJ-LIyHMOys3oYTeoQem2MJTfgNREFZ8rcDB9uZ61Hw6vHIVMh_8BKzJUKS-_0nwhfrJVxQ'}")
      *@ApiParams(name="data", type="string", nullable=false, description="Data")
      @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="string", sample="{
      *  'data': {
-    'status': 1,
-    'userMessage': 'Stripe information updated.'
-  }
+	    'status': 1,
+	    'userMessage': 'Stripe information updated.'
+	  	}
      * }")
      */
 	public function updateStripe($request, $response, $service, $app) {
@@ -96,21 +97,21 @@ class StripeController extends Controller {
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/viewStripe")
      * @ApiBody(sample="{'data': {
-    'CustomerID': '800'
-  },
+    	'CustomerID': '800'
+  		},
      'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUyODA1MDIsImp0aSI6IlVheUZlOUJTcEE5empHWUNneVpnNTJEVFYzRXZ4NFE5YXNKdTQ4MHdEY289IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY1MjgwNTAyLCJleHAiOjE0NjY0OTAxMDIsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.qkGUG0WdaW_Q1aysAgfaEC5300Hk4X9VFEZRGsTOxE4X-P27EdCEfAnDPY0SaXD_VfsHiVYaGwwKxO-Bz0N8Yg'}")
      *@ApiParams(name="data", type="string", nullable=false, description="Data")
      @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="string", sample="{
      *  'data': {
-    'sname': 'Pero Perić',
-    'exp': '5/18',
-    'country': 'US',
-    'brand': 'Visa',
-    'number': '1881',
-    'status': 1
-  }
+	    'sname': 'Pero Perić',
+	    'exp': '5/18',
+	    'country': 'US',
+	    'brand': 'Visa',
+	    'number': '1881',
+	    'status': 1
+	  }
      * }")
      */
 	public function viewStripe($request, $response, $service, $app){
@@ -158,33 +159,39 @@ class StripeController extends Controller {
 
 	/**
 	 *
-	 * TODO
+	 * Charge the customer with stripe token
 	 *
 	 */
-	public function chargeCustomer($request, $response, $service, $app){
+	public function chargeCustomer($charge_amount, $token){
 		Stripe::setApiKey(getenv('STRIPE_KEY'));
-		// $myCard = array('number' => '4242424242424242', 'exp_month' => 8, 'exp_year' => 2018);
-		// $charge = \Stripe\Charge::create(array('card' => $myCard, 'amount' => 2000, 'currency' => 'usd'));
-		// return $charge;
-		// Check out linguist/register.php
-
-
-		// 		$token = $_REQUEST['stripeToken'];
-		// try{ 	// Create a Customer
-		// 	$customer = Stripe_Customer::create(array("card" => $token,"description" => $desc));
-		// }catch(Stripe_InvalidRequestError $e) { // The card has been declined
-		// 	echo "Invalid request The card has been declined Try Again";
-		// }catch(Stripe_CardError $e) {// The card has been declined
-		// 	echo "Credit Card not Accepted The card has been declined Try Again";
-		// }
-		// if(is_null($e)){// no errors
-		// 	$token = $customer->id;
-		// 	$query = "update CustLogin set token='$token' where CustomerID='$cust_id'";
-		// 	$result = mysqli_query($con,$query);
-		// 	if($result and mysqli_affected_rows($con)>0){
-		// 		...
-		// 	}
-		// }
+		try { // "amount" => ($charge_amount) TODO
+	        $charge = Charge::create(array("amount" => (30*100), "currency" => "usd", "customer" => $token,"description" => "Bit će email"));
+			// Check that it was paid:
+			if ($charge->paid == true) {
+				return $charge->id;
+				// Store the order in the database. MAYBE TODO
+			} else { // Charge was not paid!
+				throw new \Exception("Payment System Error! Your payment could NOT be processed (i.e., you have not been charged) because the payment system rejected the transaction. You can try again or use another card.");
+			}
+		} catch (\Stripe\Error\Card $e) {
+		    // Card was declined.
+			return $e->getJsonBody();
+			 $response = $e->getMessage();
+	        // echo "Credit Card not Accepted: <em>The card has been declined</em><br><br> Stripe Response: " . $response;
+	        // $card = array("card"=>$_POST["card"],"cvc"=>$_POST["cvc"],"exp_month"=>$_POST["exp_month"],
+			 //"exp_year"=>$_POST["exp_year"],"reason"=>$response);
+	        // send_card_declined_email($con,$card);
+			// $err = $e_json['error'];
+			// $errors['stripe'] = $err['message'];
+		} catch (\Stripe\Error\ApiConnection $e) {
+			throw new \Exception($e->getJsonBody());
+		} catch (\Stripe\Error\InvalidRequest $e) {
+			throw new \Exception($e->getJsonBody());
+		} catch (\Stripe\Error\Api $e) {
+			throw new \Exception($e->getJsonBody());
+		} catch (\Stripe\Error\Base $e) {
+			throw new \Exception($e->getJsonBody());
+		}
 	}
 
 	/**
@@ -194,9 +201,6 @@ class StripeController extends Controller {
 	 */
 	public function createToken($data){
 		Stripe::setApiKey(getenv('STRIPE_KEY'));
-
-		// $data['exp']
-
 		// Create a token for customer credit card details
 		$result = Token::create( array("card" => array(
 			"name" => $data['sname'],

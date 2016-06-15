@@ -2,9 +2,10 @@
 // ALTER TABLE CustLogin ADD COLUMN jwt_token VARCHAR(250) NULL AFTER token;
 // TODO PhPassword also hash and old passwords
 require __DIR__ . '/vendor/autoload.php';
-
+// $disc_label = ($_SESSION["admin-order"]) ? "Enter Discount Amount in cents" : "Enter a Promotional or Offer Code:"; telephonic_order.php 1099
 use Allian\Http\Controllers\Controller;
 use Allian\Http\Controllers\CustLoginController;
+use Allian\Http\Controllers\TranslationOrdersController;
 use Allian\Http\Controllers\LangPairController;
 use Allian\Http\Controllers\StripeController;
 use Allian\Http\Controllers\DeveloperController;
@@ -95,6 +96,10 @@ $klein->with('/testgauss', function() use ($klein){
 
 	$twilio = new TwilioController();
 	$klein->respond('GET', '/twilio', array($twilio, 'twilio'));
+
+	$translationOrders = new TranslationOrdersController();
+	$klein->respond('POST', '/orderSummary', array($translationOrders, 'orderSummary'));
+	$klein->respond('POST', '/orderSummaryDetails', array($translationOrders, 'orderSummaryDetails'));
 
 	$developer = new DeveloperController();
 	$klein->respond('GET', '/renderdocs', array($developer, 'renderDocs'));

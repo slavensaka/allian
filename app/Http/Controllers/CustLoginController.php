@@ -117,6 +117,7 @@ class CustLoginController extends Controller {
 		$service->validate($data['cvc'], 'Error: Cvc not present.')->notNull();
 		// Try to register customer with inputed data
 		$customer = CustLogin::register($data);
+		// $customer = CustLogin::register($data);
 		// On error, return message
 		if(!$customer){
 			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("There was a problem during registration.")));
@@ -351,13 +352,13 @@ class CustLoginController extends Controller {
 			$data = $this->decryptValues($request->data);
 			// Validate input data
 			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
-			$service->validate($data['fname'], 'Error: no first name is present.')->notNull()->isLen(3,200);
-			$service->validate($data['lname'], 'Error: no last name is present.')->notNull()->isLen(3,200);
-			$service->validate($data['email'], 'Invalid email address.')->notNull()->isLen(3,200)->isEmail();
-			$service->validate($data['phone'], 'Invalid phone number.')->notNull()->isLen(3,200);
-			$service->validate($data['password'], 'Error: no password present.')->notNull()->isLen(3,200);
-			$service->validate($data['phonePassword'], 'Error: no phone password present.')->notNull()->isLen(3,200)->isInt();
-			$service->validate($data['services'], 'Error: no service present.')->notNull();
+			$service->validate($data['fname'], 'Error: no first name is present.')->isLen(3,200);
+			$service->validate($data['lname'], 'Error: no last name is present.')->isLen(3,200);
+			$service->validate($data['email'], 'Invalid email address.')->isLen(3,200)->isEmail();
+			$service->validate($data['phone'], 'Invalid phone number.')->isLen(3,200);
+			$service->validate($data['password'], 'Error: no password present.')->isLen(3,200);
+			$service->validate($data['phonePassword'], 'Error: no phone password present.')->isLen(3,200)->isInt();
+			$service->validate($data['services'], 'Error: no service present.');
 			// Validate token in database for customer stored
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
