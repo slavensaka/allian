@@ -7,6 +7,8 @@ use \Dotenv\Dotenv;
 use Allian\Models\TranslationOrders;
 use Database\Connect;
 use Allian\Models\OrderOnsiteInterpreter;
+use Allian\Models\LangList;
+use Allian\Models\Login;
 
 class TranslationOrdersController extends Controller {
 
@@ -44,7 +46,8 @@ class TranslationOrdersController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-	     		return $response->json(array('data' => $this->errorJson("Authentication problems present")));
+	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+	     		return $response->json(array('data' => $base64Encrypted));
 			}
 
 			$result = TranslationOrders::getTranslationOrders($data['CustomerID']);
@@ -60,7 +63,9 @@ class TranslationOrdersController extends Controller {
 					$arr[] = array('orderId' => $order_id, 'orderTime' => $order_time, 'cost' => 'Total: ' .  $cost . '$');
 				}
 			}
-			return $response->json(array('data' => array('orderSummary' => $arr, 'status' => 1)));
+			$base64Encrypted = $this->encryptValues(json_encode(array('orderSummary' => $arr, 'status' => 1)));
+			// Return response json
+			return $response->json(array('data' => $base64Encrypted));
 		} else {
 			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
      		return $response->json(array('data' => $base64Encrypted));
@@ -73,7 +78,7 @@ class TranslationOrdersController extends Controller {
      * @ApiRoute(name="/testgauss/orderSummaryDetails")
      * @ApiBody(sample="{'data': {
 	    'CustomerID': '406',
-	    'orderID': '1'
+	    'orderID': '3763'
 	  },
      'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjU1NDY1MjcsImp0aSI6IklGSTJTcmxlbWtQck1ncUZNSmV1RDZYYTlUTzRQbm02TmVGdThyK1VLV2c9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY1NTQ2NTI3LCJleHAiOjE1OTE2OTA1MjcsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.ff_JJqrXL1HLsTGRo7HA6q9YQJWiLaQRoVy0RcQYnDPpFQu-0HH1bYQ8PLHnyaOzSm3yYXkCle0gLd1O80vREg'}")
      *@ApiParams(name="data", type="string", nullable=false, description="Data")
@@ -81,62 +86,86 @@ class TranslationOrdersController extends Controller {
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="string", sample="{
      *  'data': {
-	     'orderSummary': [
-	     {
-		'orderId': '3763',
-        'orderTime': '2015-05-23',
-        'cost': 'Total: 185$'
-        }], '...': ''
-	  	}
+        'projectDescription': 'TEST',
+        'projectId': '3763',
+        'projectLangs': 'Test <> English',
+        'projectStartDate': '2015-05-24 Sunday',
+        'projectEndDate': '2015-05-24 Sunday',
+        'minutesScheduled': '60 Minutes',
+        'timezone': 'US/Pacific',
+        'timeStarts': '08:00 AM',
+        'timeEnds': '09:00 AM',
+        'conferenceDialNumber': '+18555129043',
+        'conferenceSecretCode': '39118',
+        'daily': 'ATS - Regular Telephonic Scheduling ($3/Min) for 60 minutes',
+        'dailyPrice': '$180.00',
+        'conferencePresent': 'Conference Calling Fee $5.00',
+        'grandTotal': '185.00'
+    }
      * }")
      */
 	public function orderSummaryDetails($request, $response, $service, $app) {
-
+		if($request->token){
+		// 	Validate token if not expired, or tampered with
+			$this->validateToken($request->token);
 		// 	Decrypt data
-		$data = $this->decryptValues($request->data);
+			$data = $this->decryptValues($request->data);
 
-		$service->validate($data['orderId'], 'Error: No order id is present.')->notNull();
-		$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull();
+			$service->validate($data['orderId'], 'Error: No order id is present.')->notNull();
+			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull();
+			//Validate the jwt token in the database
+			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
+			// If error validating token in database
+			if(!$validated){
+	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+	     		return $response->json(array('data' => $base64Encrypted));
+			}
+			// $translation_order = TranslationOrders::getTranslationOrder($orderId,"*");
+			// $order_user_id = $translation_order["user_id"];
+			// return $order_user_id;
+			// if($order_user_id !== $data['CustomerID']){
+			// 	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Invalid Order")));
+	  		//    		return $response->json(array('data' => $base64Encrypted));
+			// }
+			$display_order = $this->order_onsite_template($data['orderId'], 'account');
+			if(!$display_order){
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Order not Found. ")));
+	     		return $response->json(array('data' => $base64Encrypted));
+			}
+			// return $response->json(array('data' => $display_order));
+			$base64Encrypted = $this->encryptValues(json_encode($display_order));
+			return $response->json(array('data' => $base64Encrypted));
 
-		// $translation_order = TranslationOrders::getTranslationOrder($orderId,"*");
-		// $order_user_id = $translation_order["user_id"];
-		// return $order_user_id;
-		// if($order_user_id !== $data['CustomerID']){
-		// 	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Invalid Order")));
-  		//    		return $response->json(array('data' => $base64Encrypted));
-		// }
-		$display_order = $this->order_onsite_template($data['orderId'], 'account');
-		return $response->json(array('data' => $display_order));
+		} else {
+			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+     		return $response->json(array('data' => $base64Encrypted));
+		}
 	}
 
-		/*
-	order_onsite_template function renders order template for transcription orders so that it may be sent to Customer as a Receipt,
-	to Linguist as an Order Detail and to Admin.
-	@Param  $con: Required to create database connection. Required argument.
-	@Param  $order_id: It is the Order Id against what the reports/reciept/template is generated. Required argument.
-	@Param  $user_type: Different templates are generated for different users. This argument is provided at the time of calling this function to generate template. The possible users are as a follows.
-	admin: to generate order details template for admins
-	account: to generate order details template for Customers to view in their portals.
-	guest: to generate order details template for customer who checkout as a guest.
-	login: to generate order details template for customer who logs in with existing account before checkout.
-	register: to generate order details template for customer who newly registers with Alliance Business Solutions before checkout.
-	@Param  $view_type: Either editable view or Readable view. Possbile values are as follows
-	user: For readable view. It is the default value
-	admin: For editable view. when passed this value to displays textfields with actual values in them for admin to update them when required.
-	NOTE: The Order details are almost same for all type of users but just changed the look and feel as well as provided different guidence for different users.
-	Usage:
-	1: Please press Ctrl+Shift+f
-	2: A search Window asks to search specific function. You may search "order_onsite_template(" without double quotes and with opening parentheses.
-	3: choose directory to search within and press "Find" Button
-	4: The "Search Results" panel will search and display the pages where this functions has been used in the code.
+	/*
+		order_onsite_template function renders order template for transcription orders so that it may be sent to Customer as a Receipt,
+		to Linguist as an Order Detail and to Admin.
+		@Param  $con: Required to create database connection. Required argument.
+		@Param  $order_id: It is the Order Id against what the reports/reciept/template is generated. Required argument.
+		@Param  $user_type: Different templates are generated for different users. This argument is provided at the time of calling this function to generate template. The possible users are as a follows.
+		admin: to generate order details template for admins
+		account: to generate order details template for Customers to view in their portals.
+		guest: to generate order details template for customer who checkout as a guest.
+		login: to generate order details template for customer who logs in with existing account before checkout.
+		register: to generate order details template for customer who newly registers with Alliance Business Solutions before checkout.
+		@Param  $view_type: Either editable view or Readable view. Possbile values are as follows
+		user: For readable view. It is the default value
+		admin: For editable view. when passed this value to displays textfields with actual values in them for admin to update them when required.
+		NOTE: The Order details are almost same for all type of users but just changed the look and feel as well as provided different guidence for different users.
+		Usage:
+		1: Please press Ctrl+Shift+f
+		2: A search Window asks to search specific function. You may search "order_onsite_template(" without double quotes and with opening parentheses.
+		3: choose directory to search within and press "Find" Button
+		4: The "Search Results" panel will search and display the pages where this functions has been used in the code.
 	*/
 	function order_onsite_template($order_id, $user_type, $view_type = "user") {
-		// $con = Connect::con();
-	    //  $result = mysqli_query($con, "SELECT * FROM translation_orders WHERE order_id=$order_id");
-	    // return $row = mysqli_fetch_assoc($result);
 	   	$row = TranslationOrders::getTranslationOrder($order_id, '*');
 	    $interpret_order = OrderOnsiteInterpreter::get_interpret_order($order_id, "*");
-
 	    // Check if results are found in translation orders table and onsite_order table
 	    if(is_array($row) and is_array($interpret_order)){
 
@@ -215,7 +244,7 @@ class TranslationOrdersController extends Controller {
 		    }
 		    $hasPaid = ($status === "0" || $status === "1" || $status === "2") ? true : false;
 		    $project_location = $interpret_order["service_region"] . " > " . $interpret_order["service_area"];
-		    $project_langs = $this->get_language_name($con, $interpret_order["frm_lang"]) . " <> " . $this->get_language_name($con, $interpret_order["to_lang"]);
+		    $project_langs = LangList::get_language_name($interpret_order["frm_lang"]) . " <> " . LangList::get_language_name($interpret_order["to_lang"]);
 		    $project_timezone = $interpret_order["timezone"];
 		    $project_date_from = $interpret_order["assg_frm_date"];
 		    $project_date_from .= " " . date('l', strtotime($project_date_from));
@@ -223,8 +252,8 @@ class TranslationOrdersController extends Controller {
 		    $project_date_to .= " " . date('l', strtotime($project_date_to));
 		    $project_start_time = date('h:i A', strtotime($interpret_order["assg_frm_st"]));
 		    $project_end_time = date('h:i A', strtotime($interpret_order["assg_frm_en"]));
-		    $date1 = new DateTime($project_date_from);
-		    $date2 = new DateTime($project_date_to);
+		    $date1 = new \DateTime($project_date_from);
+		    $date2 = new \DateTime($project_date_to);
 		    $project_days = $date2->diff($date1)->format("%a") + 1;
 		    $s = ($project_days > 1) ? "s" : "";
 		    $project_amount = $interpret_order["amount"];
@@ -244,7 +273,7 @@ class TranslationOrdersController extends Controller {
 		    if ($user_type === "account") {
 		        // check if the order is assigned to interpreter
 		        $interpreter_id = $interpret_order["interpreter_id"];
-		        $ip = get_linguist($con, $interpreter_id);
+		        $ip = Login::get_linguist($con, $interpreter_id);
 		        if (is_array($ip)) {
 		            $ip_name = $ip["Fname"] . " " . $ip["Lname"];
 		            $interpret_address.= "<h2 style='$headStyle'>Interpreter Assigned</h2>"
@@ -312,7 +341,7 @@ class TranslationOrdersController extends Controller {
 	    	$project_detail .= "<tr><td $head_td_style >Project Languages:</td><td $td_style >$project_langs</td></tr>";
 			$project_detail .= "<tr><td $head_td_style >Project Start Date:</td><td $td_style >$project_date_from</td></tr><tr><td $head_td_style >Project End Date:</td><td $td_style >$project_date_to</td></tr>";
 		    if ($isTelephonic) {
-		        $telephonic_duration = get_assignment_time($project_start_time, $project_end_time);
+		        $telephonic_duration = $this->get_assignment_time($project_start_time, $project_end_time);
 		        $telephonic_duration = $telephonic_duration['duration'] / 60; // get minutes
 		        $project_detail .= "<tr><td $head_td_style >Minutes Scheduled:</td><td $td_style >$telephonic_duration Minutes</td></tr> <tr><td $head_td_style >Time Zone:</td><td $td_style >$project_timezone</td> </tr> ";
 	   		} else {
@@ -332,15 +361,17 @@ class TranslationOrdersController extends Controller {
 		        $project_detail .= "<tr style='background:lemonchiffon'><td $head_td_style ><span  style='color:red;font-size:12px'>Overage Charge Period:</span></td><td $td_style ><span  style='color:red;font-weight:bold'>$intProjectOverTime {$time_unit}(s)</span></td></tr> ";
 		        $project_detail .= "<tr style='background:lemonchiffon'><td $head_td_style ><span  style='color:red;font-size:12px'>Overage Fee:</span></td><td $td_style ><span  style='color:red;font-weight:bold'>$$overage_fee_per_unit USD per $time_unit</span></td></tr> ";
 	    	}
-	    	$invoice_summary = "<tr><td colspan='2' ><h4 style='background-color:#f2f2f2; color:#333; padding:5px 5px; margin:10px 0;'> Price Summary </h4></td></tr><tr><td style='color:#111; font-weight:bold;  vertical-align:top; padding:5px 0;  font-size:11px; border-bottom: 1px dotted #ccc;'>Subtotal for Invoice ID#$project_invoice_id</td><td style='color:#111; font-weight:bold;  vertical-align:top; padding:5px 0;  font-size:11px; border-bottom: 1px dotted #ccc;'> $" . amt_format($project_amount) . "</td></tr><tr style='background:#FFFFDD;'><td  style='color: darkgreen; font-weight:bold; font-size:14px;   margin: 5px 0; border-bottom:2px solid #ccc; padding: 5px 0'>Total Price</td><td  style='color: darkgreen; font-weight:bold; font-size:14px;   margin: 5px 0; border-bottom:2px solid #ccc; padding: 5px 0'>$" . amt_format($project_amount) . "</td></tr>";
-	    	$order_price_summary = (isset($project_invoice_id) && $project_invoice_id != "") ? $invoice_summary : $interpret_order["order_summary_html"];
+	    	// $interpret_order["order_summary_html"];
+	    	$invoice_summary = "<tr><td colspan='2' ><h4 style='background-color:#f2f2f2; color:#333; padding:5px 5px; margin:10px 0;'> Price Summary </h4></td></tr><tr><td style='color:#111; font-weight:bold;  vertical-align:top; padding:5px 0;  font-size:11px; border-bottom: 1px dotted #ccc;'>Subtotal for Invoice ID#$project_invoice_id</td><td style='color:#111; font-weight:bold;  vertical-align:top; padding:5px 0;  font-size:11px; border-bottom: 1px dotted #ccc;'> $" . $this->amt_format($project_amount) . "</td></tr><tr style='background:#FFFFDD;'><td  style='color: darkgreen; font-weight:bold; font-size:14px;   margin: 5px 0; border-bottom:2px solid #ccc; padding: 5px 0'>Total Price</td><td  style='color: darkgreen; font-weight:bold; font-size:14px;   margin: 5px 0; border-bottom:2px solid #ccc; padding: 5px 0'>$" . $this->amt_format($project_amount) . "</td></tr>";
+	    	 $order_price_summary = (isset($project_invoice_id) && $project_invoice_id != "") ? $invoice_summary : $interpret_order["order_summary_html"];
 	    	if ($is_overage && $view_type == "overage") {
-	        	$project_detail .= "<tr style='background:#FFFFDD;'><td  $foot_td_style>Overage Subtotal</td><td  $foot_td_style> $" . amt_format($overage_charge) . "</td></tr>";
+	        	$project_detail .= "<tr style='background:#FFFFDD;'><td  $foot_td_style>Overage Subtotal</td><td  $foot_td_style> $" . $this->amt_format($overage_charge) . "</td></tr>";
 	    	} else {
-	        	$project_detail .= ($order_price_summary == "") ? "<tr style='background:#FFFFDD;'><td  $foot_td_style>Fee</td><td  $foot_td_style> $" . amt_format($total_price) . "</td></tr>" : $order_price_summary;
+	        	 $project_detail .= ($order_price_summary == "") ? "<tr style='background:#FFFFDD;'><td  $foot_td_style>Fee</td><td  $foot_td_style> $" . amt_format($total_price) . "</td></tr>" : $order_price_summary;
+
 	    	}
 	    	$project_detail .= "</table>";
-	    	$discount = amt_format($row["discount"], 2, ".", "");
+	    	$discount = $this->amt_format($row["discount"], 2, ".", "");
 	    	$body = "<html><head></head><body style='font-family: arial; font-size: 12px; color: #444;'><div>";
 		    $addons_price = 0;
 		    $addons_price_summary = "";
@@ -444,21 +475,21 @@ class TranslationOrdersController extends Controller {
 		            $overage_amt = $overage_charge;
 		            $body .= "<tr style = 'font-weight:bold'><td style = '$bold;font-size:12px;color:red' >+ $" . $overage_amt . " <img src='".HOME_SECURE."img/check.gif' width='13px' /> Overage Charges</td></tr>";
 		       	} else {
-		            $body .= "<tr style = 'font-weight:bold'><td style = '$bold;font-size:12px;' >+ $" . amt_format($total_price) . " <img src='".HOME_SECURE."img/check.gif' width='13px' /> Subtotal</td></tr>";
+		            $body .= "<tr style = 'font-weight:bold'><td style = '$bold;font-size:12px;' >+ $" . $this->amt_format($total_price) . " <img src='".HOME_SECURE."img/check.gif' width='13px' /> Subtotal</td></tr>";
 		            $additional_fee = $interpret_order["additional_fee"];
 		            if ($additional_fee > 0) {
 		                $additional_fee_desc = $interpret_order["additional_fee_desc"];
-		                $body .= "<tr style = 'font-weight:bold'><td style = '$bold;font-size:12px;' >+ $" . amt_format($additional_fee) . " <img src='".HOME_SECURE."img/check.gif' width='13px' /> $additional_fee_desc</td></tr>";
+		                $body .= "<tr style = 'font-weight:bold'><td style = '$bold;font-size:12px;' >+ $" . $this->amt_format($additional_fee) . " <img src='".HOME_SECURE."img/check.gif' width='13px' /> $additional_fee_desc</td></tr>";
 		            }
 		            if ($discount > 0) {
-		                $body .= "<tr style = 'font-weight:bold'><td style = '$bold;font-size:12px;color:green' >- $" . amt_format($discount) . " <img src='".HOME_SECURE."img/check.gif' width='13px' /> Discount</td></tr>";
+		                $body .= "<tr style = 'font-weight:bold'><td style = '$bold;font-size:12px;color:green' >- $" . $this->amt_format($discount) . " <img src='".HOME_SECURE."img/check.gif' width='13px' /> Discount</td></tr>";
 		            }
 		            if ($is_overage && $is_overage_charged) {
-		                $overage_amt = $overage_charge;
+		                $$conference['user_code'] = $overage_charge;
 		                $body .= "<tr style = 'font-weight:bold'><td style = '$bold;font-size:12px;color:red' >+ $" . $overage_amt . " <img src='".HOME_SECURE."img/check.gif' width='13px' /> Overage Charges</td></tr>";
 		            }
 		        }
-		        $grand_total = ($is_overage && $view_type == "overage") ? amt_format($overage_amt) : amt_format(($total_price + $addons_price + $additional_fee) - $discount + $overage_amt);
+		        $grand_total = ($is_overage && $view_type == "overage") ? $this->amt_format($overage_amt) : $this->amt_format(($total_price + $addons_price + $additional_fee) - $discount + $overage_amt);
 		        //$body .=$addons_price_list;
 		        $body .="<tr style = 'font-weight:bold  !important; color:green !important'><td style = '$bold  !important;border-top:1px dashed #000  !important;color:green !important; ". "font-size:14px !important; padding-top:10px  !important' >$" . $grand_total . " Grand total</td></tr>";
 		        $body .="</tbody></table></div><!--End of Order Summary -->";
@@ -482,26 +513,42 @@ class TranslationOrdersController extends Controller {
 		        }
 		    }
 		    $body .="</body></html>";
-		    return $body;
+
+
+		    $rArray['projectDescription'] = $interpret_order["description"];
+		    $rArray['projectId']  = $order_id;
+		    $rArray['projectLangs'] =  $project_langs;
+		    $rArray['timeStarts'] = $project_date_from;
+			$rArray['timeEnds'] = $project_date_to;
+			$rArray['minutesScheduled'] = $telephonic_duration . ' Minutes';
+			$rArray['timezone'] = $project_timezone ;
+			$rArray['scheduledStartTime'] = $project_start_time;
+			$rArray['scheduledEndTime'] = $project_end_time;
+			$rArray['conferenceDialNumber'] = '+18555129043'; //$client_dial='+18555129043'; global database.php
+			$rArray['conferenceSecretCode'] = $conference['user_code'];
+			$daily = $grand_total - 5;
+			$rArray['daily'] = "ATS - Regular Telephonic Scheduling ($3/Min) for " . $telephonic_duration . " minutes";
+			$rArray['dailyPrice'] = "$$daily" . ".00"; // $this->getFromTime();
+			$rArray['conferencePresent'] = "Conference Calling Fee $5.00";
+			$rArray['grandTotal'] = $grand_total;
+			// $rArray['daily'] = "$scheduling_type Telephonic Scheduling ($$rate_per_min/Min) for $actual_minutes minutes";
+		    return $rArray;
 	    }  else{ // order_id was greater than 0 or not equal to "0"
 	        // if order_id was zero then do not display email contents
-	        return "Order not found.";
+	        return false;
 	    }
 	}
 
-		/*
-
+	/*
 	  get_conference function resturns the value from conference_shedule database table against order id.
 	  @Param $con: Required for database connection.
 	  @Param $order_id: Order ID against what the value from table is returned.
 	  @Param $get_value: The actual value that is returned from table.
-
-	 Usage:
-	1: Please press Ctrl+Shift+f
-	2: A search Window asks to search specific function. You may search "get_conference(" without double quotes and with opening parentheses.
-	3: choose directory to search within and press "Find" Button
-	4: The "Search Results" panel will search and display the pages where this functions has been used in the code.
-
+		 Usage:
+		1: Please press Ctrl+Shift+f
+		2: A search Window asks to search specific function. You may search "get_conference(" without double quotes and with opening parentheses.
+		3: choose directory to search within and press "Find" Button
+		4: The "Search Results" panel will search and display the pages where this functions has been used in the code.
 	*/
 	function get_conference($order_id, $get_value) {
 		$con = Connect::con();
@@ -512,41 +559,68 @@ class TranslationOrdersController extends Controller {
 	    return ($get_value === "*") ? $order : $get;
 	}
 
-		/* amt_format function is used to format the amount (price) value.
+	/* amt_format function is used to format the amount (price) value.
 	 * For example a system calculates price something like 23 and this function reformats the price into 23.00
 	 * @Param @amt: The amout value to be reformatted. Required argument
 	 * @Param $decimels: The position of decimels point. By default set as "2". Optional argument
 	 * @Param $decimel_point: Character to show decimels. By default set as a point ".". Optional argument
 	 * @Param $thousand_sep: This is used as a thousand seperator. By default set nothing. Optional argument
-
-	Usage:
-	1: Please press Ctrl+Shift+f
-	2: A search Window asks to search specific function. You may search "amt_format(" without double quotes and with opening parentheses.
-	3: choose directory to search within and press "Find" Button
-	4: The "Search Results" panel will search and display the pages where this functions has been used in the code.
+		Usage:
+		1: Please press Ctrl+Shift+f
+		2: A search Window asks to search specific function. You may search "amt_format(" without double quotes and with opening parentheses.
+		3: choose directory to search within and press "Find" Button
+		4: The "Search Results" panel will search and display the pages where this functions has been used in the code.
 	*/
 	function amt_format($amt, $decimels = "2", $decimel_point = ".", $thousand_sep = "") {
-	return number_format($amt, $decimels, $decimel_point, $thousand_sep);
+		return number_format($amt, $decimels, $decimel_point, $thousand_sep);
 	}
 
-	/*
-	get_language_name function returns the records from LangList table of database
-	against Language ID.
-	@Param  $con: It is required to make connection with database. Required argument
-	@Param  $langID: It is the Language Id against what the record/value is fetched and returned. Required argument
-	@Param  $get: It is the actual record/value which is fetched and returned. Optional argument as it fetches LangName by default.
-
-	Usage:
-	1: Please press Ctrl+Shift+f
-	2: A search Window asks to search specific function. You may search "get_language_name(" without double quotes and with opening parentheses.
-	3: choose directory to search within and press "Find" Button
-	4: The "Search Results" panel will search and display the pages where this functions has been used in the code.
-	*/
-	function get_language_name($con, $langID, $get = 'LangName') {
-	    $get_lang_info = mysqli_query($con, "SELECT $get FROM `LangList` where LangId = $langID");
-	    $lang = mysqli_fetch_array($get_lang_info);
-	    $get = $lang[$get];
-	    return $get;
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	function get_assignment_time($actual_starting_time, $actual_ending_time = "") {
+	    $time_difference = strtotime($actual_starting_time) - time();
+	    $duration = strtotime($actual_ending_time) - strtotime($actual_starting_time);
+	    $hours = floor($time_difference / 3600);
+	    $hours = ($hours < 10) ? "0" . $hours : $hours;
+	    $minutes = floor(($time_difference / 60) % 60);
+	    $minutes = ($minutes < 10) ? "0" . $minutes : $minutes;
+	    $seconds = $time_difference % 60;
+	    $seconds = ($seconds < 10) ? "0" . $seconds : $seconds;
+	    $time_left = "$hours:$minutes:$seconds";
+	    // True if start time is less than 24
+	    // False if start time is greater than 24 hours
+	    // False if start time is less than an Hour (no need to send 24hr prior notification when only 1 hour is left)
+	    $notify = (86400 > $time_difference && $time_difference > 3600); // 24 hours left
+	    $notify_checkout = ($actual_ending_time == "") ? false : time() > strtotime($actual_ending_time);
+	    return array("notify_24_hours" => $notify, "notify_checkout" => $notify_checkout, "time_to_start" => $time_left, "hours_to_start" => $hours, "minutes_to_start" => $minutes, "time" => $time_difference, "duration" => $duration);
 	}
+
+	/**
+	 *
+	 * TODO
+	 *
+	 */
+	function getFromTime($actual_starting_time, $actual_ending_time = "") {
+	    $time_difference = strtotime($actual_starting_time) - time();
+	    $duration = strtotime($actual_ending_time) - strtotime($actual_starting_time);
+	    $hours = floor($time_difference / 3600);
+	    $hours = ($hours < 10) ? "0" . $hours : $hours;
+	    $minutes = floor(($time_difference / 60) % 60);
+	    $minutes = ($minutes < 10) ? "0" . $minutes : $minutes;
+	    $seconds = $time_difference % 60;
+	    $seconds = ($seconds < 10) ? "0" . $seconds : $seconds;
+	    $time_left = "$hours:$minutes:$seconds";
+	    // True if start time is less than 24
+	    // False if start time is greater than 24 hours
+	    // False if start time is less than an Hour (no need to send 24hr prior notification when only 1 hour is left)
+	    $notify = (86400 > $time_difference && $time_difference > 3600); // 24 hours left
+	    $notify_checkout = ($actual_ending_time == "") ? false : time() > strtotime($actual_ending_time);
+	    return array("notify_24_hours" => $notify, "notify_checkout" => $notify_checkout, "time_to_start" => $time_left, "hours_to_start" => $hours, "minutes_to_start" => $minutes, "time" => $time_difference, "duration" => $duration);
+	}
+
+
 
 }

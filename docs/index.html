@@ -1819,7 +1819,6 @@
                         <pre id="sample_post_body13">{ 'data': {
 			    'CustomerID': '800',
 			    'fromDate': '2016-06-07',
-			    'status': 1,
 			    'timeStarts': '3:00:00 AM',
 			    'timeEnds': '3:05:00 AM'
 			  },
@@ -1875,7 +1874,7 @@
 
 <hr>
 <pre id="sample_response13">{'data': {
-	    'totalPrice': '30.00',
+	    'totalPrice': '30.00', 'status': 1,
 	    'daily': 'ATS - Short Notice Telephonic Scheduling ($3/Min) for 5 minutes',
 	    'minimumText': 'Minimum Short Notice telephonic scheduling price is $30'
 	  	}}</pre>
@@ -1957,7 +1956,7 @@
 	    'fromDate': '2016-06-07',
 	    'timeStarts': '3:00:00 AM',
 	    'timeEnds': '3:05:00 AM',
-	    'status': 1,
+
 	    'schedulingType': 'conference_call'
 	  },
      'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUzODMxNjUsImp0aSI6IlJpRW16NzRHSGhGR043QzEzT1JpQ1FuWXRnOHJ4bk9YVHRRZ002NnBDN1E9IiwiaXNzIjoiYWxsaWFudHJhbnNsYXRlLmNvbSIsIm5iZiI6MTQ2NTM4MzE2NSwiZXhwIjoxNDY2NTkyNzY1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.DvPdwcIGybU3zs5NH4NRmldNbhrer8AgvSSwi9lBY6SwJ-WKegETMRQmXZvtLu5-qrAx5hwBkEKXqG80zTqByw'}</pre>
@@ -2014,6 +2013,7 @@
 <pre id="sample_response14">{'data': {
 	    'daily': 'ATS - Short Notice Telephonic Scheduling ($3/Min) for 5 minutes',
 	    'minimumText': 'Minimum Short Notice telephonic scheduling price is $30',
+	    'status': 1,
 	    'conferencePresent': 'Conference Calling Fee:: $5.00',
 	    'totalPrice': '35.00'
   		}}</pre>
@@ -2985,7 +2985,6 @@
                       <div class="panel-body">
                         <pre id="sample_post_body22">{'data': {
 	    'CustomerID': '406'
-
 	  },
      'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjU1NDY1MjcsImp0aSI6IklGSTJTcmxlbWtQck1ncUZNSmV1RDZYYTlUTzRQbm02TmVGdThyK1VLV2c9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY1NTQ2NTI3LCJleHAiOjE1OTE2OTA1MjcsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.ff_JJqrXL1HLsTGRo7HA6q9YQJWiLaQRoVy0RcQYnDPpFQu-0HH1bYQ8PLHnyaOzSm3yYXkCle0gLd1O80vREg'}</pre>
                       </div>
@@ -3040,8 +3039,8 @@
 <hr>
 <pre id="sample_response22">{
   'data': {
-     'orderSummary': [
-     {
+	     'orderSummary': [
+	     {
 		'orderId': '3763',
         'orderTime': '2015-05-23',
         'cost': 'Total: 185$'
@@ -3055,13 +3054,440 @@
             </div><!-- .tab-content -->
         </div>
     </div>
+</div><h2>OrderSummaryDetails</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion23" href="#collapseOne23"> /testgauss/orderSummaryDetails</a>
+        </h4>
+    </div>
+    <div id="collapseOne23" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab23">
+                <li class="active"><a href="#info23" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox23" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample23" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info23">
+                    <div class="well">
+                    Retrieve the orders summaries details json.
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+<tr>
+    <td>data</td>
+    <td>string</td>
+    <td>Yes</td>
+    <td>Data</td>
+</tr>
+
+<tr>
+    <td>token</td>
+    <td>string</td>
+    <td>Yes</td>
+    <td>Autentication token for users autentication.</td>
+</tr>
+    </tbody>
+</table>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body23">{'data': {
+	    'CustomerID': '406',
+	    'orderID': '3763'
+	  },
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjU1NDY1MjcsImp0aSI6IklGSTJTcmxlbWtQck1ncUZNSmV1RDZYYTlUTzRQbm02TmVGdThyK1VLV2c9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY1NTQ2NTI3LCJleHAiOjE1OTE2OTA1MjcsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.ff_JJqrXL1HLsTGRo7HA6q9YQJWiLaQRoVy0RcQYnDPpFQu-0HH1bYQ8PLHnyaOzSm3yYXkCle0gLd1O80vREg'}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox23">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/orderSummaryDetails" method="post" name="form23" id="form23">
+    
+    Parameters
+    <hr/>
+    
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
+</div>
+
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
+</div>
+    <button type="submit" class="btn btn-success send" rel="23">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers23"></pre>
+                                <pre id="response23"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample23">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header23">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response23">{
+  'data': {
+        'projectDescription': 'TEST',
+        'projectId': '3763',
+        'projectLangs': 'Test <> English',
+        'projectStartDate': '2015-05-24 Sunday',
+        'projectEndDate': '2015-05-24 Sunday',
+        'minutesScheduled': '60 Minutes',
+        'timezone': 'US/Pacific',
+        'timeStarts': '08:00 AM',
+        'timeEnds': '09:00 AM',
+        'conferenceDialNumber': '+18555129043',
+        'conferenceSecretCode': '39118',
+        'daily': 'ATS - Regular Telephonic Scheduling ($3/Min) for 60 minutes',
+        'dailyPrice': '$180.00',
+        'conferencePresent': 'Conference Calling Fee $5.00',
+        'grandTotal': '185.00'
+    }
+ }</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
+</div><h2>ScheduledSessions</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion24" href="#collapseOne24"> /testgauss/scheduledSessions</a>
+        </h4>
+    </div>
+    <div id="collapseOne24" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab24">
+                <li class="active"><a href="#info24" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox24" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample24" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info24">
+                    <div class="well">
+                    Retrieve scheduled session.
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+<tr>
+    <td>token</td>
+    <td>string</td>
+    <td>Yes</td>
+    <td>Autentication token for users autentication.</td>
+</tr>
+
+<tr>
+    <td>data</td>
+    <td>string</td>
+    <td>Yes</td>
+    <td>Customer ID.</td>
+</tr>
+    </tbody>
+</table>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body24">{'data': {
+    'CustomerID': '800'
+  }, 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTMzNjcsImp0aSI6IlJoOGpiMVhUZHFvUDVDVUVSQ29VY3pWR0dnSVFsQWJ1bFwvRFp1U2pcL050OD0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQ1OTMzNjcsImV4cCI6MTQ2NTgwMjk2NywiZGF0YSI6eyJTdWNjZXNzIjoiU3VjY2VzcyJ9fQ.JDwNdycstmqNC0dyrNgNuik_zXCYbx3PwbIkdTX7is3oDrQr6CKQ6mREUt-9tbOys361mcH1kyXaahn9Y2tTRg'}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox24">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/scheduledSessions" method="post" name="form24" id="form24">
+    
+    Parameters
+    <hr/>
+    
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
+</div>
+
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
+</div>
+    <button type="submit" class="btn btn-success send" rel="24">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers24"></pre>
+                                <pre id="response24"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample24">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header24">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response24">{ 'data': {
+    'status': 1,
+    'scheduledSessions': [
+	      {
+	        'date': '2015-05-24',
+	        'schedulingType': 'Conference Call',
+	        'upcoming': 'upcoming'
+	      },
+
+	      {
+	        'date': '2015-05-13',
+	        'schedulingType': 'Interpreters call',
+	        'upcoming': 'completed'
+	      }
+
+	    ]
+		} }</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
+</div><h2>ScheduledSessionsDetails</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion25" href="#collapseOne25"> /testgauss/scheduledSessionsDetails</a>
+        </h4>
+    </div>
+    <div id="collapseOne25" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab25">
+                <li class="active"><a href="#info25" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox25" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample25" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info25">
+                    <div class="well">
+                    Retrieve scheduled session.
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+<tr>
+    <td>token</td>
+    <td>string</td>
+    <td>Yes</td>
+    <td>Autentication token for users autentication.</td>
+</tr>
+
+<tr>
+    <td>data</td>
+    <td>string</td>
+    <td>Yes</td>
+    <td>Customer ID.</td>
+</tr>
+    </tbody>
+</table>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body25">{'data': {
+    'CustomerID': '800' ,
+    'orderId' : '2345'
+  }, 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTMzNjcsImp0aSI6IlJoOGpiMVhUZHFvUDVDVUVSQ29VY3pWR0dnSVFsQWJ1bFwvRFp1U2pcL050OD0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQ1OTMzNjcsImV4cCI6MTQ2NTgwMjk2NywiZGF0YSI6eyJTdWNjZXNzIjoiU3VjY2VzcyJ9fQ.JDwNdycstmqNC0dyrNgNuik_zXCYbx3PwbIkdTX7is3oDrQr6CKQ6mREUt-9tbOys361mcH1kyXaahn9Y2tTRg'}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox25">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/scheduledSessionsDetails" method="post" name="form25" id="form25">
+    
+    Parameters
+    <hr/>
+    
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
+</div>
+
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
+</div>
+    <button type="submit" class="btn btn-success send" rel="25">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers25"></pre>
+                                <pre id="response25"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample25">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header25">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response25">{ 'data': {
+	    'timezone': 'US/Central',
+	    'date': 'US/Central',
+	    'schedulingType': 'regular',
+	    'timeStarts': '01:00 PM',
+	    'timeEnds': '04:00 PM',
+	    'langFrom': 'Spanish',
+	    'langTo': 'English',
+	    'status': '1'
+	  } }</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
 </div>
         </div>
         <hr>
 
         <div class="row mt0 footer">
             <div class="col-md-6" align="left">
-                Generated on 2016-06-15, 10:25:15
+                Generated on 2016-06-16, 14:34:59
             </div>
             <div class="col-md-6" align="right">
                 <a href="https://github.com/calinrada/php-apidoc" target="_blank">php-apidoc v 1.3.4</a>

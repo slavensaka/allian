@@ -68,7 +68,6 @@ class ConferenceScheduleController extends Controller {
      * @ApiBody(sample="{ 'data': {
 			    'CustomerID': '800',
 			    'fromDate': '2016-06-07',
-			    'status': 1,
 			    'timeStarts': '3:00:00 AM',
 			    'timeEnds': '3:05:00 AM'
 			  },
@@ -77,7 +76,7 @@ class ConferenceScheduleController extends Controller {
      * @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="string", sample="{'data': {
-	    'totalPrice': '30.00',
+	    'totalPrice': '30.00', 'status': 1,
 	    'daily': 'ATS - Short Notice Telephonic Scheduling ($3/Min) for 5 minutes',
 	    'minimumText': 'Minimum Short Notice telephonic scheduling price is $30'
 	  	}}")
@@ -155,7 +154,7 @@ class ConferenceScheduleController extends Controller {
 	    'fromDate': '2016-06-07',
 	    'timeStarts': '3:00:00 AM',
 	    'timeEnds': '3:05:00 AM',
-	    'status': 1,
+
 	    'schedulingType': 'conference_call'
 	  },
      'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUzODMxNjUsImp0aSI6IlJpRW16NzRHSGhGR043QzEzT1JpQ1FuWXRnOHJ4bk9YVHRRZ002NnBDN1E9IiwiaXNzIjoiYWxsaWFudHJhbnNsYXRlLmNvbSIsIm5iZiI6MTQ2NTM4MzE2NSwiZXhwIjoxNDY2NTkyNzY1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.DvPdwcIGybU3zs5NH4NRmldNbhrer8AgvSSwi9lBY6SwJ-WKegETMRQmXZvtLu5-qrAx5hwBkEKXqG80zTqByw'}")
@@ -165,6 +164,7 @@ class ConferenceScheduleController extends Controller {
      * @ApiReturn(type="string", sample="{'data': {
 	    'daily': 'ATS - Short Notice Telephonic Scheduling ($3/Min) for 5 minutes',
 	    'minimumText': 'Minimum Short Notice telephonic scheduling price is $30',
+	    'status': 1,
 	    'conferencePresent': 'Conference Calling Fee:: $5.00',
 	    'totalPrice': '35.00'
   		}}")
@@ -292,7 +292,7 @@ class ConferenceScheduleController extends Controller {
 			$service->validate($data['country'], 'Error: country not present.')->notNull();
 			$service->validate($data['schedulingType'], 'Error: schedulingType not present.')->notNull();
 			$service->validate($data['clients'], 'Error: clients not present.')->notNull();
-			$service->validate($data['neededFor'], 'Error: neededFor not present.')->notNull();
+			// $service->validate($data['neededFor'], 'Error: neededFor not present.')->notNull();
 			$service->validate($data['description'], 'Error: description not present.')->notNull();
 
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
@@ -509,7 +509,7 @@ class ConferenceScheduleController extends Controller {
 	    		return $response->json("Problems with updating translation orders."); // TODO encrypt
 	    	}
 
-	    	order_telephonic_notification($con,$orderID); // TODO
+	    	// order_telephonic_notification($con,$orderID); // TODO
 
 			$retArray = array();
 			$retArray['timezone'] = $data['timezone'];

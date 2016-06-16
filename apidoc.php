@@ -14,6 +14,7 @@ $classes = array(
     'Allian\Http\Controllers\TwilioController',
     'Allian\Http\Controllers\DeveloperController',
     'Allian\Http\Controllers\TranslationOrdersController',
+    'Allian\Http\Controllers\OrderOnsiteInterpreterController',
     // 'Some\Namespace\OtherClass',
 );
 

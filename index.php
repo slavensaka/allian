@@ -12,6 +12,7 @@ use Allian\Http\Controllers\DeveloperController;
 use Allian\Http\Controllers\ConferenceScheduleController;
 use Allian\Http\Controllers\TwilioController;
 use Allian\Http\Controllers\LangListController;
+use Allian\Http\Controllers\OrderOnsiteInterpreterController;
 
 use Allian\Models\CustLogin;
 
@@ -100,6 +101,10 @@ $klein->with('/testgauss', function() use ($klein){
 	$translationOrders = new TranslationOrdersController();
 	$klein->respond('POST', '/orderSummary', array($translationOrders, 'orderSummary'));
 	$klein->respond('POST', '/orderSummaryDetails', array($translationOrders, 'orderSummaryDetails'));
+
+	$orderOnSiteInterpreter = new OrderOnsiteInterpreterController();
+	$klein->respond('POST', '/scheduledSessions', array($orderOnSiteInterpreter, 'scheduledSessions'));
+	$klein->respond('POST', '/scheduledSessionsDetails', array($orderOnSiteInterpreter, 'scheduledSessionsDetails'));
 
 	$developer = new DeveloperController();
 	$klein->respond('GET', '/renderdocs', array($developer, 'renderDocs'));

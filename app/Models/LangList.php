@@ -46,6 +46,20 @@ class LangList extends DataObject {
   	}
 
 
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	function get_language_name($langID, $get = 'LangName') {
+		$con = Connect::con();
+	    $get_lang_info = mysqli_query($con, "SELECT $get FROM `LangList` where LangId = $langID");
+	    $lang = mysqli_fetch_array($get_lang_info);
+	    $get = $lang[$get];
+	    return $get;
+	}
+
+
 
 
 }
