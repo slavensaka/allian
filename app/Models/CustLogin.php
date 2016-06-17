@@ -3,6 +3,7 @@
 namespace Allian\Models;
 
 use Database\DataObject;
+use Database\Connect;
 use Allian\Helpers\PassHash;
 
 class CustLogin extends DataObject {
@@ -370,6 +371,23 @@ class CustLogin extends DataObject {
 		      return false;
 	    }
   	}
+
+  	/*
+	get_customer function returns the whole record against Customer ID (cid) from CustLogin database table
+	@Param $con: Connection to database. Required Argument
+	@Param $cid: Customer ID against what the record is returned. Required Argument
+	Usage:
+	1: Please press Ctrl+Shift+f
+	2: A search Window asks to search specific function. You may search "get_interpret_order(" without double quotes and with opening parentheses.
+	3: choose directory to search within and press "Find" Button
+	4: The "Search Results" panel will search and display the pages where this functions has been used in the code.
+	*/
+	function get_customer($cid) {
+		$con = Connect::con();
+	    $get_cust_info = mysqli_query("SELECT * FROM CustLogin WHERE CustomerID =  '$cid'");
+	    $cust = mysqli_fetch_array($get_cust_info);
+	    return $cust;
+	}
 
   	/**
   	 *

@@ -31,54 +31,6 @@ class DeveloperController extends Controller {
 	}
 
 	/**
-     * @ApiDescription(section="DevEncryptJson", description="Developer used route for easy encrypting json request data. Input json value into field in sandbox are retrieve a encrypted API used data string for development purposes.Example {'CustomerID': 720}")
-     * @ApiMethod(type="get")
-     * @ApiRoute(name="/testgauss/devEncryptJson")
-     * @ApiBody(sample="{
-    'CustomerID': '800'
-  }")
-     * @ApiParams(name="data", type="object", nullable=false, description="")
-     * @ApiReturnHeaders(sample="HTTP 200 OK")
-     * @ApiReturn(type="object", sample="{
-  'json': {
-    'CustomerID': '800'
-  },
-  'encrypted': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc='
-}")
-     */
-	public function devEncryptJson($request, $response, $service, $app){
-		$json = $request->data;
-		$password = getenv('CRYPTOR');
-		$cryptor = new \RNCryptor\Encryptor();
-		$base64Encrypted = $cryptor->encrypt($json, $password);
-		$json = json_decode($json);
-		return $response->json(array('json' => $json, 'encrypted' => $base64Encrypted));
-	}
-
-	/**
-     * @ApiDescription(section="DevDecryptJson", description="Decrypt the encrypted data into plaintext. So if json was encrypted, retrieve the json in the encrypted data. Used for development purposes.")
-     * @ApiMethod(type="get")
-     * @ApiRoute(name="/testgauss/devDecryptJson")
-     * @ApiBody(sample="{ 'data': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc='}")
-     * @ApiParams(name="data", type="object", nullable=false, description="")
-     * @ApiReturnHeaders(sample="HTTP 200 OK")
-     * @ApiReturn(type="object", sample="{
-  'data': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc=',
-  'decrypted': {
-    'CustomerID': '800'
-  }
-}")
-     */
-	public function devDecryptJson($request, $response, $service, $app){
-		$data = $request->data;
-		$password = getenv('CRYPTOR');
-		$cryptor = new \RNCryptor\Decryptor();
-		$plaintext = $cryptor->decrypt($data, $password);
-		$json = json_decode($plaintext);
-		return $response->json(array('data' => $data, 'decrypted' => $json));
-	}
-
-	/**
      * @ApiDescription(section="DevGenerateAuthToken", description="Generate a jwt token, Not used anymore.")
      * @ApiMethod(type="get")
      * @ApiRoute(name="/testgauss/devGenerateAuthToken")
@@ -104,6 +56,58 @@ class DeveloperController extends Controller {
 	    $jwt = JWT::encode($data, $secretKey, 'HS512');
 	    return $response->json(array('jwtToken' => $jwt, 'tokenContent' => $data));
 	}
+
+	/**
+     * @ApiDescription(section="DevEncryptJson", description="Developer used route for easy encrypting json request data. Input json value into field in sandbox are retrieve a encrypted API used data string for development purposes.Example {'CustomerID': 720}")
+     * @ApiMethod(type="get")
+     * @ApiRoute(name="/testgauss/devEncryptJson")
+     * @ApiBody(sample="{
+    'CustomerID': '800'
+  }")
+     * @ApiParams(name="data", type="object", nullable=false, description="")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     * @ApiReturn(type="object", sample="{
+  'json': {
+    'CustomerID': '800'
+  },
+  'encrypted': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc='
+}")
+     */
+	public function devEncryptJson($request, $response, $service, $app){
+		$json = $request->data;
+		$password = getenv('CRYPTOR');
+		$cryptor = new \RNCryptor\Encryptor();
+		$base64Encrypted = $cryptor->encrypt($json, $password);
+		$json = json_decode($json);
+		return $response->json(array('json' => $json, 'encrypted' => $base64Encrypted));
+	}
+
+
+
+	/**
+     * @ApiDescription(section="DevDecryptJson", description="Decrypt the encrypted data into plaintext. So if json was encrypted, retrieve the json in the encrypted data. Used for development purposes.")
+     * @ApiMethod(type="get")
+     * @ApiRoute(name="/testgauss/devDecryptJson")
+     * @ApiBody(sample="{ 'data': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc='}")
+     * @ApiParams(name="data", type="object", nullable=false, description="")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     * @ApiReturn(type="object", sample="{
+  'data': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc=',
+  'decrypted': {
+    'CustomerID': '800'
+  }
+}")
+     */
+	public function devDecryptJson($request, $response, $service, $app){
+		$data = $request->data;
+		$password = getenv('CRYPTOR');
+		$cryptor = new \RNCryptor\Decryptor();
+		$plaintext = $cryptor->decrypt($data, $password);
+		$json = json_decode($plaintext);
+		return $response->json(array('data' => $data, 'decrypted' => $json));
+	}
+
+
 
 	/**
 	 *

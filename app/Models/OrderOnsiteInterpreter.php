@@ -94,7 +94,7 @@ class OrderOnsiteInterpreter extends DataObject {
 		}
 	}
 
-	public static function updateScheduleOrderID(){
+	public static function updateScheduleOrderID($orderID, $onsiteAutoId){
 		$con = Connect::con();
 		$update_query = "UPDATE `order_onsite_interpreter` set orderID = '$orderID' WHERE autoID='" . $onsiteAutoId."'";
 		$result = mysqli_query($con, $update_query);

@@ -12,9 +12,9 @@ $classes = array(
     'Allian\Http\Controllers\StripeController',
     'Allian\Http\Controllers\LangListController',
     'Allian\Http\Controllers\TwilioController',
-    'Allian\Http\Controllers\DeveloperController',
     'Allian\Http\Controllers\TranslationOrdersController',
     'Allian\Http\Controllers\OrderOnsiteInterpreterController',
+    'Allian\Http\Controllers\DeveloperController',
     // 'Some\Namespace\OtherClass',
 );
 
