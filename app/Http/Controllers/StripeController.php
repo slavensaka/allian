@@ -175,8 +175,7 @@ class StripeController extends Controller {
 			}
 		} catch (\Stripe\Error\Card $e) {
 		    // Card was declined.
-			return $e->getJsonBody();
-			 $response = $e->getMessage();
+			return $e->getMessage();
 	        // echo "Credit Card not Accepted: <em>The card has been declined</em><br><br> Stripe Response: " . $response;
 	        // $card = array("card"=>$_POST["card"],"cvc"=>$_POST["cvc"],"exp_month"=>$_POST["exp_month"],
 			 //"exp_year"=>$_POST["exp_year"],"reason"=>$response);
@@ -184,13 +183,13 @@ class StripeController extends Controller {
 			// $err = $e_json['error'];
 			// $errors['stripe'] = $err['message'];
 		} catch (\Stripe\Error\ApiConnection $e) {
-			throw new \Exception($e->getJsonBody());
+			throw new \Exception($e->getMessage());
 		} catch (\Stripe\Error\InvalidRequest $e) {
-			throw new \Exception($e->getJsonBody());
+			throw new \Exception($e->getMessage());
 		} catch (\Stripe\Error\Api $e) {
-			throw new \Exception($e->getJsonBody());
+			throw new \Exception($e->getMessage());
 		} catch (\Stripe\Error\Base $e) {
-			throw new \Exception($e->getJsonBody());
+			throw new \Exception($e->getMessage());
 		}
 	}
 

@@ -5,7 +5,7 @@ namespace Allian\Http\Controllers;
 use PHPMailer;
 use Firebase\JWT\JWT;
 use Allian\Models\CustLogin;
-
+use Allian\Helpers\TwilioConference\DatabaseAccess;
 class Controller {
 
 	/**
@@ -243,6 +243,21 @@ class Controller {
 		$jsonArray['status'] = 1;
 		$jsonArray['userMessage'] = "New password has been sent to your e-mail address. Please check your e-mail to retrieve your password.";
 		return $jsonArray;
+	}
+
+	public function create_secret_code(){
+		$code=rand(10000, 99999);
+		$db=new DatabaseAccess();
+		$n=100;
+		do{
+			if($db->codeused($code)){
+				$code= $this->create_secret_code();
+				$n--;
+			}else{
+				$n=0;
+				return $code;
+			}
+		}while($n);
 	}
 
 

@@ -48,7 +48,7 @@ class OrderOnsiteInterpreterController extends Controller {
 			// If error validating token in database
 			if(!$validated){
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
-	     		return $response->json(array('data' => $this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+	     		return $response->json(array('data' => $base64Encrypted));
 			}
 			$result = OrderOnsiteInterpreter::getOrderOnsiteInterpreters($data['CustomerID']);
 			$arr = array();
@@ -58,9 +58,11 @@ class OrderOnsiteInterpreterController extends Controller {
 				if($row['scheduling_type'] == 'get_call'){
 					$date = $row['assg_frm_date'];
 					$schedulingType = 'Interpreters call';
+					$orderId = $row['orderID'];
 				} elseif($row['scheduling_type'] == 'conference_call'){
 					$date = $row['assg_frm_date'];
 					$schedulingType = 'Conference Call';
+					$orderId = $row['orderID'];
 				} else {
 					// return "No telephonic info found";
 				}
@@ -74,7 +76,7 @@ class OrderOnsiteInterpreterController extends Controller {
 				}else{
 				  $upcoming = 'completed';
 				}
-				$arr[] = array('date' => $date, 'schedulingType' => $schedulingType, 'upcoming' => $upcoming);
+				$arr[] = array('date' => $date, 'schedulingType' => $schedulingType, 'upcoming' => $upcoming, 'orderId' => $orderId);
 			}
 			// foreach($arr as $key =>  $r){
 			// 	if($r['date'] == null){
@@ -98,13 +100,13 @@ class OrderOnsiteInterpreterController extends Controller {
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/scheduledSessionsDetails")
      * @ApiBody(sample="{'data': {
-    'CustomerID': '800' ,
-    'orderId' : '2345'
-  }, 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTMzNjcsImp0aSI6IlJoOGpiMVhUZHFvUDVDVUVSQ29VY3pWR0dnSVFsQWJ1bFwvRFp1U2pcL050OD0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQ1OTMzNjcsImV4cCI6MTQ2NTgwMjk2NywiZGF0YSI6eyJTdWNjZXNzIjoiU3VjY2VzcyJ9fQ.JDwNdycstmqNC0dyrNgNuik_zXCYbx3PwbIkdTX7is3oDrQr6CKQ6mREUt-9tbOys361mcH1kyXaahn9Y2tTRg'}")
-     @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
-     @ApiParams(name="data", type="string", nullable=false, description="Customer ID.")
-     * @ApiReturnHeaders(sample="HTTP 200 OK")
-     * @ApiReturn(type="string", sample="{ 'data': {
+    	'CustomerID': '800' ,
+    	'orderId' : '2345'
+  		}, 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTMzNjcsImp0aSI6IlJoOGpiMVhUZHFvUDVDVUVSQ29VY3pWR0dnSVFsQWJ1bFwvRFp1U2pcL050OD0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQ1OTMzNjcsImV4cCI6MTQ2NTgwMjk2NywiZGF0YSI6eyJTdWNjZXNzIjoiU3VjY2VzcyJ9fQ.JDwNdycstmqNC0dyrNgNuik_zXCYbx3PwbIkdTX7is3oDrQr6CKQ6mREUt-9tbOys361mcH1kyXaahn9Y2tTRg'}")
+     	@ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
+     	@ApiParams(name="data", type="string", nullable=false, description="Customer ID.")
+     	* @ApiReturnHeaders(sample="HTTP 200 OK")
+     	* @ApiReturn(type="string", sample="{ 'data': {
 	    'timezone': 'US/Central',
 	    'date': 'US/Central',
 	    'schedulingType': 'regular',
@@ -129,7 +131,7 @@ class OrderOnsiteInterpreterController extends Controller {
 			// If error validating token in database
 			if(!$validated){
 	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
-	     		return $response->json(array('data' => $this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+	     		return $response->json(array('data' => $this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
 			}
 
 			// $result = OrderOnsiteInterpreter::getOrderOnsiteInterpreters($data['CustomerID']);

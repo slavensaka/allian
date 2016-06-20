@@ -46,7 +46,7 @@ class TranslationOrdersController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
 
@@ -117,7 +117,7 @@ class TranslationOrdersController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
 			// $translation_order = TranslationOrders::getTranslationOrder($orderId,"*");

@@ -141,9 +141,10 @@ class OrderOnsiteInterpreter extends DataObject {
 
 	public static function getOrderOnsiteInterpreters($CustomerID){ // Limit where scheduling_type = getcall ili conferenceCall
 		$con = Connect::con();
-		$project_query =  "SELECT * FROM " . getenv("TBL_ORDER_ONSITE_INTERPRETER") . " WHERE customer_id='$CustomerID' ORDER BY `orderID` DESC";
+		$project_query =  "SELECT * FROM " . getenv("TBL_ORDER_ONSITE_INTERPRETER") . " WHERE customer_id='$CustomerID' AND  (`scheduling_type` = 'get_call' OR  `scheduling_type` =  'conference_call') ORDER BY `orderID` DESC";
 		$result = mysqli_query($con, $project_query);
 		return $result;
 	}
 
 }
+

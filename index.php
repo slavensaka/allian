@@ -95,8 +95,8 @@ $klein->with('/testgauss', function() use ($klein){
 	$langList = new LangListController();
 	$klein->respond('GET', '/langNames', array($langList, 'langNames'));
 
-	$twilio = new TwilioController();
-	$klein->respond('GET', '/twilio', array($twilio, 'twilio'));
+	// $twilio = new TwilioController();
+	// $klein->respond('GET', '/twilio', array($twilio, 'twilio'));
 
 	$translationOrders = new TranslationOrdersController();
 	$klein->respond('POST', '/orderSummary', array($translationOrders, 'orderSummary'));

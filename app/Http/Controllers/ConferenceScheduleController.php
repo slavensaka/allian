@@ -15,8 +15,9 @@ use Firebase\JWT\DomainException;
 use Firebase\JWT\ExpiredException;
 use Allian\Models\TranslationOrders;
 use Firebase\JWT\BeforeValidException;
+use Allian\Http\Controllers\TwilioController;
 use Allian\Models\OrderOnsiteInterpreter;
-use Allian\Http\Controllers\StripeController;
+
 
 class ConferenceScheduleController extends Controller {
 
@@ -43,7 +44,7 @@ class ConferenceScheduleController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-	     		return $response->json(array('data' => $this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+	     		return $response->json(array('data' => $this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
 			}
 			// Retrieve array values for populating scheduling form
 			$timezonesTop =  ArrayValues::timezonesTop();
@@ -97,7 +98,7 @@ class ConferenceScheduleController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
 			$frm_time = $data['fromDate'] . ' ' . $data['timeStarts'];
@@ -147,7 +148,7 @@ class ConferenceScheduleController extends Controller {
 	}
 
 	/**
-     * @ApiDescription(section="SchedulePartTwo", description="Retrieve the second part of the payment after user selects or diselects scheduling type.")
+     * @ApiDescription(section="SchedulePartTwo", description="NOT USED. SKIPPED TO SchedulePartTwo. Retrieve the second part of the payment after user selects or diselects scheduling type.")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/schedulePartTwo")
      * @ApiBody(sample="{ 'data': {
@@ -187,13 +188,13 @@ class ConferenceScheduleController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
 			$frm_time = $data['fromDate'] . ' ' . $data['timeStarts'];
 			$to_time = $data['fromDate'] . ' ' . $data['timeEnds'];
 
-			$details = array();
+			$details = array(); // Not used TODO ?
 			$amount = 0;
 			$timing = $this->get_assignment_time($frm_time,$to_time);
 
@@ -293,38 +294,40 @@ class ConferenceScheduleController extends Controller {
 			$service->validate($data['country'], 'Error: country not present.')->notNull();
 			$service->validate($data['schedulingType'], 'Error: schedulingType not present.')->notNull();
 			$service->validate($data['clients'], 'Error: clients not present.')->notNull();
-			// $service->validate($data['neededFor'], 'Error: neededFor not present.')->notNull();
+			$service->validate($data['neededFor'], 'Error: neededFor not present.')->notNull();
 			$service->validate($data['description'], 'Error: description not present.')->notNull();
-
+			// Validate token in database with customerID, added security
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token.")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
-
+			// Format date with timeStarts & timeEnds
 			$frm_time = $data['fromDate'] . ' ' . $data['timeStarts'];
 			$to_time = $data['fromDate'] . ' ' . $data['timeEnds'];
-
+			//Get only the time that it starts
 			$assg_frm_st = $data['timeStarts'];
+			// Get only the time that it ends
 			$assg_frm_en = $data['timeEnds'];
-
+			// Format date with timeStarts with the timezone
 			$frmT = new \DateTime($data['fromDate'].' '.$data['timeStarts'],new \DateTimeZone($data['timezone']));
 			$frmT->setTimezone(new \DateTimeZone('GMT'));
-
+			// Format date with timeEnds with the timezone
 		    $toT = new \DateTime($data['fromDate'].' '.$data['timeEnds'],new \DateTimeZone($data['timezone']));
 			$toT->setTimezone(new \DateTimeZone('GMT'));
-
+			// Get the languages ids stored in the database
 			$frm_lang = LangList::langIdByName($data['langFrom']);
 			$to_lang = LangList::langIdByName($data['langTo']);
 
-			$details = array();
+			$details = array(); // NOT USED. TODO ?
 			$amount = 0;
-			$timing = $this->get_assignment_time($frm_time,$to_time);
-
-			$hours_left = $timing["hours_to_start"];
 			$minimum_rate = 30;
 			$conference_fee = $this->amt_format(5);
+
+			$timing = $this->get_assignment_time($frm_time,$to_time);
+			$hours_left = $timing["hours_to_start"];
+
 			if($hours_left<24) {
 			    $minimum_minutes = 10;
 			    $rate_per_min=3;
@@ -364,7 +367,7 @@ class ConferenceScheduleController extends Controller {
 			$sArray['to_lang'] = $to_lang; // broj Languagea
 			$sArray['country'] = $data['country'];
 			if ($data['schedulingType'] == 'conference_call') {
-				$sArray['onsite_con_phone'] = $data['clients']; //TODO pogledaj order_telephonic_notification 2393 telephonic_conference_recipients
+				$sArray['onsite_con_phone'] = "";
 			} elseif($data['schedulingType'] == 'get_call'){
 				$sArray['onsite_con_phone'] = $data['clients'][0];
 			}
@@ -380,124 +383,45 @@ class ConferenceScheduleController extends Controller {
 			$sArray['onsite_con_name'] = '';
 			$sArray['onsite_con_email'] = '';
 			$sArray['headsets_needed'] = 0;
-			$sArray['scheduling_type'] = $data['schedulingType'];
-			if(intval($data['amount'])<=29){ // Amount check if less than 29$ error
-				$all_data_valid=false;
-			}
-			$sArray['amount'] = $amount;
+			$sArray['amount'] = "$amount";
+			// $sArray['order_summary_html'] = TODO
 			if($data['schedulingType'] == 'get_call'){
 				$sArray['interpreter_amt'] = (25/100)*$amount;  // caluculate_price() TODO
 			} elseif($data['schedulingType'] = 'conference_call'){
 				$sArray['interpreter_amt'] = (25/100)*($amount-5); // caluculate_price() TODO
 			}
-
 			$sArray['interpreting_dur']= $this->telephonic_duration(
 										$data['fromDate'].'T'.$sArray['assg_frm_st'],
 										$data['fromDate'].'T'.$sArray['assg_frm_en']);
-
 			$onsiteAutoId = OrderOnsiteInterpreter::insertScheduleOrder($sArray);
 			if(!$onsiteAutoId){
-				return $response->json("Onsite order not inserted"); // TODO encrypt
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Onsite order not inserted")));
+				return $response->json(array('data' => $base64Encrypted));
 			}
 			$orderID = TranslationOrders::insertTransationOrder($sArray);
 			if(!$orderID){
-				return $response->json("Order not inserted"); // TODO encrypt
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Order not inserted")));
+				return $response->json(array('data' => $base64Encrypted));
 			}
 
 			$updated = OrderOnsiteInterpreter::updateScheduleOrderID($orderID, $onsiteAutoId);
 
 			if(!$updated){
-				return $response->json("Problem with updating order_onsite_interpreter table"); // TODO encrypt
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Problem with updating order_onsite_interpreter table.")));
+				return $response->json(array('data' => $base64Encrypted));
 			}
 
 			$customer = CustLogin::getCustomer($sArray['customer_id']);
 
-			/*=============================================
-			=     CALCULATE DISCOUNT PROMOTIONAL CODE TODO =
-			=============================================*/
-			$dArray = array();// orders_scritp/get_discoutn.php
-			$dArray['usps_fee'] = 0;
-			$dArray['shipping_fee'] = 0;
-			$dArray['Apostille_Price'] = 0;
-			$dArray['DTP_Price'] = 0;
-			$dArray['RP_Price'] = 0;
-			$dArray['Copies_Price'] = 0;
-			$dArray['Verbatim_Price'] = 0;
-			$dArray['TS_Price'] = 0;
-			$dArray['TS_Type'] = 0;
-			$dArray['additional_fee'] = 0;
-			$dArray['add_RP']= "";
-			if($RP_Price>0){
-			    $turn_around = 8; // 8 Hours
-			    $time_starts = "8:00 AM";
-			    $time_ends   = "6:00 PM";
-			    $est_time = $this->times($time_starts, $time_ends, $turn_around, "Sat");
-			    $dArray['add_RP'] = ",rp_delivery='".$est_time."' ";
-    		}
-    		$charge_amount = number_format(($sArray['amount'] + $Apostille_Price + $usps_fee + $shipping_fee + $RP_Price + $DTP_Price + $Copies_Price + $additional_fee + $TS_Price + $Verbatim_Price), 2, ".", "") * 100;
-    		// $discount_off = $this->apply_discount($charge_amount);
-    		$charge_amount -= $discount_off;
-    		$discount_off /= 100;
-    		$desc = ($discount_off>0) ? "$email gets discount of $discount_off USD" : $email;
-   			//$this->set_translation_order($con, $orderID, "discount", $discount_off);
-     		//function set_translation_order($con, $order_id, $set, $value) { //
-			//     return mysqli_query($con, "UPDATE translation_orders SET $set='$value' WHERE order_id =  '$order_id'");
-			// }
-			// function apply_discount($order_total) {
-			//     $discount = 0;
-			// 	// Discount Calculator
-			//     if (isset($_SESSION["Discount"])) {
-			//         $discount_session = explode("-", $_SESSION["Discount"]);
-			//         $discount_type = $discount_session[0];
-			//         $discount_amount = $discount_session[1];
-			//         $discount = ($discount_type === "$") ? $discount_amount * 100 : ($discount_amount) * ($order_total / 100);
-			//     }
-			// 	// return discount in cents
-			//     return ceil($discount);
-			// }
-			// function times($startTime="8:00 AM", $endTime="6:00 PM", $turn_around=8, $skipDay="Sat") {
-			//     $turn_around *= 3600; // convert to seconds
-			//     $oneDay = 86400; //Seconds in a Day
-			//     $startTime = strtotime($startTime);
-			//     $endTime = strtotime($endTime);
-			//     $current_time = time(); // current timestamp
-			//     $skipTomorrow = (date("D", $current_time + $oneDay) === $skipDay) ? $oneDay : 0; // Check if tomorrow is off
-			//     $todayIsOFF = (date("D", $current_time) === $skipDay) ? 1 : 0; // Check if today is off
-			//     if ($todayIsOFF) {
-			//         // If today is OFF (sat) then Consider Next Delivery Day
-			//         $est_time = $startTime + $turn_around + $oneDay;
-			//     } else {
-			//         $inTime = $current_time >= $startTime && $current_time <= $endTime;
-
-			//         if ($inTime) {
-			//             // Time has started today
-			//         $est_time = $current_time + $turn_around;
-			//         if ($est_time > $endTime) {
-			//                 // Time frame does not complete today, add additional hours to next day
-			//                 // Add tomorrow's time in start time
-			//                 $startTime += ($oneDay + $skipTomorrow); // seconds in 24 hours
-			//                 $est_time = $startTime + ($est_time - $endTime);
-			//             }
-			//         } else {
-			//             // Time has not started today or has passed
-			//             if ($current_time > $endTime) {
-			//                 // Today's time frame has passed, Count turnaround from tomorrow
-			//                 // Add tomorrow's time in start time
-			//                 $startTime += ($oneDay + $skipTomorrow); // seconds in 24 hours
-			//             }
-			//             $est_time = $startTime + $turn_around;
-			//         }
-			//     }
-			//     return $est_time;
-			// }
-			/*=====  End of Section comment block  ======*/
+			// discount_skript GOES HERE TODO order-scripts/get_disount.php
 
 			// Charge the customer an amount
 			$stripe = new StripeController();
 			$stripe_id = $stripe->chargeCustomer($charge_amount, $customer->getValueEncoded('token'));
 			// If stripe error where charge token is not returned
 			if(!$stripe_id){
-				return $response->json("Stripe error"); // TODO encrypt
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Customer stripe charge token not generated.")));
+	 			return $response->json(array('data' => $base64Encrypted));
 			}
 
 			$dArray['stripe_id'] = $stripe_id;
@@ -506,20 +430,23 @@ class ConferenceScheduleController extends Controller {
 			// Update translation orders with new info, user paid & did or not had discount
 			$complete = TranslationOrders::updateTranslationOrdersSch($dArray);
 
-
 	    	if(!$complete){
 	    		return $response->json("Problems with updating translation orders."); // TODO encrypt
 	    	}
 
-	    	$return = $this->order_telephonic_notification($orderID, $data['CustomerID'], $customer->getValueEncoded('Email'));
-	    	return $response->json($return);
+	    	$user_code = $this->order_telephonic_notification($orderID, $data['CustomerID'], $customer->getValueEncoded('Email'), $data['clients']);
+
+	    	if(!$user_code){
+	    		$base64Encrypted = $this->encryptValues(json_encode("Couldn't find the order in our systems"));
+	 			return $response->json(array('data' => $base64Encrypted));
+	    	}
 
 			$retArray = array();
 			$retArray['timezone'] = $data['timezone'];
 			$retArray['status'] = 1;
 			$retArray['confStarts'] = $data['fromDate'] . ' ' . $data['timeStarts'];
 			$retArray['confEnds'] = $data['fromDate'] . ' ' . $data['timeEnds'];
-			$retArray['confCode'] = "12345"; //TODO
+			$retArray['confCode'] = "$user_code";
 			$retArray['confDialNumber'] = "+18555129043";
 
 			$base64Encrypted = $this->encryptValues(json_encode($retArray));
@@ -569,14 +496,11 @@ class ConferenceScheduleController extends Controller {
 	 *
 	 */
 	function telephonic_duration($frm_time, $to_time) {
-
 	    $start_date = new \DateTime($frm_time);
 	    $since_start = $start_date->diff(new \DateTime($to_time));
-
 	    $days = $since_start->d + 1;
 	    $minutes += $since_start->h * 60;
 	    $minutes += $since_start->i;
-	    //echo "<br>".$minutes."<br>";
 	    return $minutes * $days;
 	}
 
@@ -590,7 +514,7 @@ class ConferenceScheduleController extends Controller {
 	4: The "Search Results" panel will search and display the pages where this functions has been used in the code.
 
 	*/
-	function order_telephonic_notification($order_id, $CustomerID, $CustEmail) {
+	function order_telephonic_notification($order_id, $CustomerID, $CustEmail, $clients) {
 	    // require_once '../emailhandler.php';
 	    // require_once '../onsite_check_lang_pair.php';
 	    //just double check and keep the order type RIGHT
@@ -598,7 +522,7 @@ class ConferenceScheduleController extends Controller {
 	    // mysqli_query($con, "UPDATE `translation_orders` SET `order_type` = '5' WHERE `order_id` = $order_id;");
 	    $con = Connect::con();
 	    $CustID = $CustomerID;
-
+	    $CustLogin = CustLogin::getCustomer($CustID);
 	    $Order_Discount = TranslationOrders::getTranslationOrder($order_id, "discount");
 	    // $additional_fee = ($_SESSION["admin-order"] && isset($_SESSION['admin_logged']) && isset($_SESSION["Fee"])) ? $_SESSION["Fee"] : 0;
 	    // $additional_fee_desc = ($_SESSION["admin-order"] && isset($_SESSION['admin_logged']) && isset($_SESSION["Fee_Desc"])) ? $_SESSION["Fee_Desc"] : "";
@@ -696,31 +620,31 @@ class ConferenceScheduleController extends Controller {
 	        // send notifications to enabled linguists
 	        $update_query = "UPDATE `order_onsite_interpreter` set telephonic_linguists_cj='$telephonic_linguist'  WHERE orderID='" . $order_id . "'";
 	        mysqli_query($con, $update_query);
-	        if ($order["scheduling_type"] == "conference_call") { // TODO za conference_call,
+	        if ($order["scheduling_type"] == "conference_call") {
 	            //set up conference
-	            require_once '../twilio-conf-enhanced/shedule_conf.php'; // Koristi se enhanced twilio
+	            // require_once '../twilio-conf-enhanced/shedule_conf.php'; // Koristi se enhanced twilio
 	            $date = date_create_from_format('U', $order['assg_frm_timestamp']);
 	            $conf_from = date_format($date, 'Y-m-d H:i');
 	            $date = date_create_from_format('U', $order['assg_to_timestamp']);
 	            $conf_to = date_format($date, 'Y-m-d H:i');
-	            $conf = shedule_conference($order_id, $conf_from, $conf_to);
+	            $conf = TwilioController::shedule_conference($order_id, $conf_from, $conf_to);
 	            $conf_id = $conf['conf_id'];
 	            if ($conf_id > 0) {
-	                $conf['client_name'] = ucwords(get_translation_order($con, $order_id, "name"));
+	                $conf['client_name'] = ucwords(TranslationOrders::getTranslationOrder($order_id, "name"));
 	                $conf['project_starts'] = $fromDateTime;
 	                $conf['project_ends'] = $toDateTime;
-	                $conf['timezone'] = get_interpret_order($con, $order_id, "timezone");
-	                $conference_datails = get_conf_body($conf);
-	                send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, $_SESSION["email"]);
+	                $conf['timezone'] = OrderOnSiteInterpreter::get_interpret_order($order_id, "timezone");
+	                $conference_datails = $this->get_conf_body($conf);
+	                // TODO remove in production
+	                // Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, $CustLogin->getValueEncoded('Email'));
+
 	                // if client added recipients send emails
-	                if (isset($_SESSION["telephonic_conference_recipients"])) {
-	                    foreach ($_SESSION["telephonic_conference_recipients"] as $key => $recipient) {
+	                if (isset($clients)) {
+	                    foreach ($clients as $key => $recipient) {
 	                        if ($recipient != "") {
-	                            send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, $recipient);
+	                            // Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, $recipient);
 	                        }
 	                    }
-	                    // remove recipients after sending emails
-	                    unset($_SESSION["telephonic_conference_recipients"]);
 	                }
 	            }
 	        }
@@ -735,20 +659,46 @@ class ConferenceScheduleController extends Controller {
 		        // Ne treba u localhost, RADI TODO UNkomentiraj
 	        	// Mail::send_notification("Receipt for Telephonic Interpreter ID $order_id", $email_body, $email);
 		        // Send notifications to Admins
-		        return $email_body_admin = $this->order_onsite_template($order_id, "admin");
+		        $email_body_admin = $this->order_onsite_template($order_id, "admin");
 
 		        // $to = "orders@alliancebizsolutions.com,iorders@alliancebizsolutions.com,support@alliancebizsolutions.com,support2@alliancebizsolutions.com"; // TODO IN PRODUCTION SEND
-		        $to = "slavensakacic@gmail";
-		        $name = $_SESSION["name"];
+		        $to = "slavensakacic@gmail.com";
+		        // $name = $_SESSION["name"];
+		        $name = $CustLogin->getValueEncoded('FName') . ' ' .  $CustLogin->getValueEncoded('LName');
 		        $from = $name . "<orders@alliancebizsolutions.com>";
 		        $reply_to = $email;
-		        return Mail::send_notification("ORDER - Telephonic Interpreter (PAID)", $email_body_admin, $to, $from, $reply_to);
-		        send_notification("ORDER#$order_id - Telephonic Interpreter (PAID)", $email_body_admin, "goharulzaman@yahoo.com", $from, $reply_to);
-	       		 // return true;
-	   	 } else {
-	        echo "Order not saved";
-	        exit();
+		        // Ne treba u localhost, RADI TODO UNkomentiraj
+		        // Mail::send_notification("ORDER - Telephonic Interpreter (PAID)", $email_body_admin, $to, $from, $reply_to);
+		        if ($order["scheduling_type"] == "conference_call") {
+	       			return $conf['user_code'];
+	       		} else {
+	       			return null;
+	       		}
+	    } else {
+	        return false;
 	    }
+	}
+
+	// get_conf_body function returns conference details and is used in order_telephonic_notification function
+	// to display conference details in email notification when telephonic order is placed.
+	function get_conf_body($conf) {
+	    $conf_timezone = $conf['timezone'];
+	    $client_code = $conf['user_code'];
+	    $conf_starts = date("Y-m-d h:i A", strtotime($conf['project_starts']));
+	    $conf_ends = date("Y-m-d h:i A", strtotime($conf['project_ends']));
+	    $client_name = $conf['client_name'];
+	    $client_dial = getenv('CONF_DIAL_NUMBER');
+		// Send client conference notification
+	    $conf_title = "style='display: inline-block; width: 150px; font-weight:bold; text-transform:uppercase; background-color:#FFFFDD; border:1px solid #ccc; margin:5px 0; padding:5px; width:100%;color:#555'";
+	    $conference_datails = "<p>Dear $client_name, <br><br>Thank you for scheduling a Telephonic Interpreter with Alliance Business Solutions LLC</p><br>";
+	    $conference_datails .= "<h2>Conference Detail</h2>";
+	    $conference_datails .= "<div $conf_title>Timezone</div><br> $conf_timezone<br><br>";
+	    $conference_datails .= "<div $conf_title>Conference Starts</div><br> $conf_starts <br><br>";
+	    $conference_datails .= "<div $conf_title>Conference Ends</div><br> $conf_ends <br><br>";
+	    $conference_datails .= "<div $conf_title>Conference Code</div><br> $client_code <br><br>";
+	    $conference_datails .= "<div $conf_title>Conference Dial Number</div><br> $client_dial <br><br>";
+	    $conference_datails .= $this->get_footer();
+	    return $conference_datails;
 	}
 
 	/*
@@ -1004,7 +954,7 @@ class ConferenceScheduleController extends Controller {
 	        	$project_detail .= "<tr><td $head_td_style >Headsets Needed:</td><td $td_style >$project_headsets_needed</td></tr> ";
 	    	}
 	    	if ($isTelephonic && $interpret_order["scheduling_type"] == "conference_call" && $view_type !== "overage") {
-	        	global $client_dial;
+	        	$client_dial = getenv('CONF_DIAL_NUMBER');
 	        	$project_detail .= "<tr style='background:lemonchiffon'><td $head_td_style ><span  style='color:red;font-size:14px'>Conference Dial Number:</span></td><td $head_td_style ><span  style='color:red;font-size:14px'>$client_dial</span></td></tr> ";
 	        	$project_detail .= "<tr style='background:lemonchiffon'><td $head_td_style ><span  style='color:red;font-size:14px'>Conference Secret Code:</span></td><td $head_td_style ><span  style='color:red;font-size:14px'>{$conference['user_code']}</span></td></tr> ";
 	    	}
@@ -1086,7 +1036,7 @@ class ConferenceScheduleController extends Controller {
 		        $charge_msg = ($is_invoiced) ? "You will be invoiced at the end of the month for the noted order." : "Your credit card was charged as per the Order Summary below.";
 		        // change the charge message if overage
 		        if ($is_overage && $view_type === "overage") {
-		            $CustLogin = CustLogin::get_customer($con, $customer_id);
+		            $CustLogin = CustLogin::get_customer($customer_id);
 		            $type = $CustLogin["Type"];
 		            $invoicing_order = ($type == "1" || $type == "4") ? false : true;
 		            // If customer is a client and invoicing then use different informations

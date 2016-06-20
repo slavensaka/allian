@@ -201,7 +201,7 @@ class CustLoginController extends Controller {
 			// $validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			// if(!$validated){
-			// 	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+			// 	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
 	  //    		return $response->json(array('data' => $base64Encrypted));
 			// }
 			// Check if email is found in the database
@@ -285,7 +285,7 @@ class CustLoginController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
 			// Retrieve the customer
@@ -363,7 +363,7 @@ class CustLoginController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
 			// Try to update customer with inputed data
@@ -432,8 +432,8 @@ class CustLoginController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-				// $base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
-	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+				// $base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
+	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
 			// Retrieve telephones and pictures
@@ -471,7 +471,7 @@ class CustLoginController extends Controller {
 	     	return $response->json(array('data' => $base64Encrypted));
      	} else {
      		// $base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
-     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
 	     		return $response->json(array('data' => $base64Encrypted));
 
      	}
@@ -510,8 +510,8 @@ class CustLoginController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-				// $base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
-	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+				// $base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
+	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
 			$customer = CustLogin::getCustomer($data['CustomerID']);
@@ -537,7 +537,7 @@ class CustLoginController extends Controller {
 	     	return $response->json(array('data' => $base64Encrypted));
 		} else {
      		// $base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
-     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
 	     	return $response->json(array('data' => $base64Encrypted));
      	}
 	}
@@ -595,7 +595,7 @@ class CustLoginController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// Error if validation of jwt token
 			if(!$validated){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
 			// Null the jwt in the database for CustomerID
@@ -651,7 +651,7 @@ class CustLoginController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// Error if validation of jwt token
 			if(!$validated){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token")));
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
 			// If flag 1, user wants to be logged in forever
