@@ -524,7 +524,7 @@ class TranslationOrdersController extends Controller {
 			$rArray['timezone'] = $project_timezone ;
 			$rArray['scheduledStartTime'] = $project_start_time;
 			$rArray['scheduledEndTime'] = $project_end_time;
-			$rArray['conferenceDialNumber'] = '+18555129043'; //$client_dial='+18555129043'; global database.php
+			$rArray['conferenceDialNumber'] = getenv('CONF_DIAL_NUMBER');
 			$rArray['conferenceSecretCode'] = $conference['user_code'];
 			$daily = $grand_total - 5;
 			$rArray['daily'] = "ATS - Regular Telephonic Scheduling ($3/Min) for " . $telephonic_duration . " minutes";

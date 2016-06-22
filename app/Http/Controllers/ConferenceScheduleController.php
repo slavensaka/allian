@@ -294,7 +294,7 @@ class ConferenceScheduleController extends Controller {
 			$service->validate($data['country'], 'Error: country not present.')->notNull();
 			$service->validate($data['schedulingType'], 'Error: schedulingType not present.')->notNull();
 			$service->validate($data['clients'], 'Error: clients not present.')->notNull();
-			$service->validate($data['neededFor'], 'Error: neededFor not present.')->notNull();
+			// $service->validate($data['neededFor'], 'Error: interpreting needed for not present.')->notNull();
 			$service->validate($data['description'], 'Error: description not present.')->notNull();
 			// Validate token in database with customerID, added security
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
@@ -342,16 +342,27 @@ class ConferenceScheduleController extends Controller {
 			$minimum_appied = ($minutes <= $minimum_minutes) ? true : false;
 			$minutes = ($minimum_appied) ? $minimum_minutes : $minutes;
 
+
+
+
+			//TUTU
 			$minimum_text = ($minimum_appied) ? "Minimum $scheduling_type telephonic scheduling price is $$minimum_rate" : "";
+			$rArray['daily'] = "ATS - $scheduling_type Telephonic Scheduling ($$rate_per_min/Min) for $actual_minutes minutes";
 			$amount += ($minimum_appied) ? $minimum_rate : $rate_per_min * $minutes;
 			$amount = $this->amt_format($amount);
 
 			if ($data['schedulingType'] == 'conference_call') {
 			    $amount+= $conference_fee;
-
+			    // $rArray['daily'][] = "Conference Calling Fee:: $$conference_fee";
 			} elseif($data['schedulingType'] == 'get_call'){
 
 			}
+			$this->addOrderSummaryHtml($rArray['daily'], $amount);
+
+
+
+
+
 			$sArray = array();
 			$sArray['customer_id'] = $data['CustomerID'];
 			$sArray['assg_frm_date'] = $data['fromDate'];
@@ -361,7 +372,6 @@ class ConferenceScheduleController extends Controller {
 			$sArray['timezone'] = $data['timezone'];
 			$sArray['assg_frm_timestamp'] =$frmT->format('U');
 			$sArray['assg_to_timestamp'] =$toT->format('U');
-			// $sArray['interpreting_dur'] =$NESTO['interpreting_duration'];
 			$sArray['scheduling_type'] = $data['schedulingType'];
 			$sArray['frm_lang'] = $frm_lang; // broj languagea
 			$sArray['to_lang'] = $to_lang; // broj Languagea
@@ -385,6 +395,9 @@ class ConferenceScheduleController extends Controller {
 			$sArray['headsets_needed'] = 0;
 			$sArray['amount'] = "$amount";
 			// $sArray['order_summary_html'] = TODO
+
+
+
 			if($data['schedulingType'] == 'get_call'){
 				$sArray['interpreter_amt'] = (25/100)*$amount;  // caluculate_price() TODO
 			} elseif($data['schedulingType'] = 'conference_call'){
@@ -420,25 +433,25 @@ class ConferenceScheduleController extends Controller {
 			$stripe_id = $stripe->chargeCustomer($charge_amount, $customer->getValueEncoded('token'));
 			// If stripe error where charge token is not returned
 			if(!$stripe_id){
+
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Customer stripe charge token not generated.")));
 	 			return $response->json(array('data' => $base64Encrypted));
 			}
 
 			$dArray['stripe_id'] = $stripe_id;
 			$dArray['order_id'] = $orderID;
-
 			// Update translation orders with new info, user paid & did or not had discount
 			$complete = TranslationOrders::updateTranslationOrdersSch($dArray);
-
 	    	if(!$complete){
-	    		return $response->json("Problems with updating translation orders."); // TODO encrypt
+	    		$errorJson = $this->encryptValues(json_encode($this->errorJson("Problems with updating translation orders."))); // TODO, charged user but if error make better user message
+	 			return $response->json(array('data' => $errorJson));
 	    	}
 
 	    	$user_code = $this->order_telephonic_notification($orderID, $data['CustomerID'], $customer->getValueEncoded('Email'), $data['clients']);
 
 	    	if(!$user_code){
-	    		$base64Encrypted = $this->encryptValues(json_encode("Couldn't find the order in our systems"));
-	 			return $response->json(array('data' => $base64Encrypted));
+	    		$errorJson = $this->encryptValues(json_encode($this->errorJson("Couldn't find the order in our systems")));
+	 			return $response->json(array('data' => $errorJson));
 	    	}
 
 			$retArray = array();
@@ -446,7 +459,11 @@ class ConferenceScheduleController extends Controller {
 			$retArray['status'] = 1;
 			$retArray['confStarts'] = $data['fromDate'] . ' ' . $data['timeStarts'];
 			$retArray['confEnds'] = $data['fromDate'] . ' ' . $data['timeEnds'];
-			$retArray['confCode'] = "$user_code";
+			if($data['schedulingType'] == 'conference_call'){
+				$retArray['confCode'] = "$user_code";
+			} else if($data['schedulingType'] == 'get_call'){
+				$retArray['confCode'] = null;
+			}
 			$retArray['confDialNumber'] = "+18555129043";
 
 			$base64Encrypted = $this->encryptValues(json_encode($retArray));
@@ -455,6 +472,10 @@ class ConferenceScheduleController extends Controller {
 	    	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
 	 		return $response->json(array('data' => $base64Encrypted));
     	}
+
+	}
+
+	public function addOrderSummaryHtml(){
 
 	}
 
@@ -671,8 +692,8 @@ class ConferenceScheduleController extends Controller {
 		        // Mail::send_notification("ORDER - Telephonic Interpreter (PAID)", $email_body_admin, $to, $from, $reply_to);
 		        if ($order["scheduling_type"] == "conference_call") {
 	       			return $conf['user_code'];
-	       		} else {
-	       			return null;
+	       		} elseif ($order["scheduling_type"] == "get_call"){
+	       			return true;
 	       		}
 	    } else {
 	        return false;

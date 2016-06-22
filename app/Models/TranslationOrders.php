@@ -81,25 +81,29 @@ class TranslationOrders extends DataObject {
 
 	public static function updateTranslationOrdersSch($dArray){
 		$con = Connect::con();
+		try {
+			$complete = mysqli_query($con, "UPDATE " . getenv("TBL_TRANSLATION_ORDERS") . " SET
+				status = '1',
+				stripe_id = '" . $dArray['stripe_id']
+				. "',dtp='" . $dArray['DTP_Price']
+				. "',rush_processing='" . $dArray['RP_Price']
+				. "',verbatim='" . $dArray['Verbatim_Price']
+				. "',time_stamping='" . $dArray['TS_Price']
+				. "',time_stamping_type='" . $dArray['TS_Type']
+				. "',USPS='" . $dArray['usps_fee']
+				. "',apostille='" . $dArray['Apostille_Price']
+				 . "',international_shipping='" . $dArray['shipping_fee']
+				 . "', copies_price='" . $dArray['Copies_Price']
+				// . "'   '" $dArray['add_RP'] .
+				."' WHERE order_id=" . $dArray['order_id']);
+	    	if(!$complete){
+	    		return false;
+	    	}
 
-		$complete = mysqli_query($con, "UPDATE " . getenv("TBL_TRANSLATION_ORDERS") . " SET
-			status = '1',
-			stripe_id = '" . $dArray['stripe_id']
-			. "',dtp='" . $dArray['DTP_Price']
-			. "',rush_processing='" . $dArray['RP_Price']
-			. "',verbatim=" . $dArray['Verbatim_Price']
-			. ",time_stamping=" . $dArray['TS_Price']
-			. ",time_stamping_type='" . $dArray['TS_Type']
-			. "',USPS='" . $dArray['usps_fee']
-			. "',apostille='" . $dArray['Apostille_Price']
-			 . "',international_shipping='" . $dArray['shipping_fee']
-			 . "', copies_price='" . $dArray['Copies_Price']
-			// . "'   '" $dArray['add_RP'] .
-			."' WHERE order_id=" . $dArray['order_id']);
-    	if(!$complete){
-    		return false;
+	    	return $complete;
+    	} catch(\Exception $e){
+    		return $e->getMessage();
     	}
-    	return true;
 	}
 
 	public static function getTranslationOrder($order_id, $get_value){

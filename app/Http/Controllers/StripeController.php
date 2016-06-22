@@ -2,13 +2,13 @@
 
 namespace Allian\Http\Controllers;
 
+use \Dotenv\Dotenv;
 use Stripe\Token;
 use Stripe\Stripe;
-use \Dotenv\Dotenv;
-use Stripe\Customer;
 use Stripe\Charge;
+use Stripe\Customer;
 use Allian\Models\Stripe as StripeModel;
-use Allian\Http\Controllers\StripeController;
+use Allian\Http\Controllers\StripeController;// TODO
 use Allian\Models\CustLogin;
 
 class StripeController extends Controller {
@@ -174,14 +174,7 @@ class StripeController extends Controller {
 				throw new \Exception("Payment System Error! Your payment could NOT be processed (i.e., you have not been charged) because the payment system rejected the transaction. You can try again or use another card.");
 			}
 		} catch (\Stripe\Error\Card $e) {
-		    // Card was declined.
 			return $e->getMessage();
-	        // echo "Credit Card not Accepted: <em>The card has been declined</em><br><br> Stripe Response: " . $response;
-	        // $card = array("card"=>$_POST["card"],"cvc"=>$_POST["cvc"],"exp_month"=>$_POST["exp_month"],
-			 //"exp_year"=>$_POST["exp_year"],"reason"=>$response);
-	        // send_card_declined_email($con,$card);
-			// $err = $e_json['error'];
-			// $errors['stripe'] = $err['message'];
 		} catch (\Stripe\Error\ApiConnection $e) {
 			throw new \Exception($e->getMessage());
 		} catch (\Stripe\Error\InvalidRequest $e) {

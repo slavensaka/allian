@@ -243,7 +243,7 @@ class ArrayValues {
 				"Republic of the Congo"  => "Republic of the Congo",
 				"Cook Islands"  => "Cook Islands",
 				"Costa Rica"  => "Costa Rica",
-				"C&ocirc;te d'Ivoire"  => "C&ocirc;te d'Ivoire",
+				"Côte d'Ivoire"  => "Côte d'Ivoire",
 				"Croatia"  => "Croatia",
 				"Cuba"  => "Cuba",
 				"Cyprus"  => "Cyprus",
