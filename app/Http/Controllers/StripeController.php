@@ -188,7 +188,8 @@ class StripeController extends Controller {
 
 	/**
 	 *
-	 * Block comment
+	 * Create a new customer with stripe servers
+	 * & return customers token
 	 *
 	 */
 	public function createToken($data){
@@ -228,16 +229,16 @@ class StripeController extends Controller {
 
 	/**
 	 *
-	 * Block comment
+	 * Create a stripe customer based on the token generated
+	 * 	in createTokenNew()
 	 *
 	 */
 	public function createCustomer($email, $token){
-		// Create a stripe customer based on the token generate
 		$customer = Customer::create(array(
-			"description" => "Gauss:app, CustLogin with $email email",
+			"description" => "Gauss:app, Customer with $email email",
 			"source" => $token
 		));
-		//Return tthe customer cus_6odw... token
+		//Return the customer
   		return $customer['id'];
 	}
 }

@@ -15,9 +15,9 @@ use Firebase\JWT\DomainException;
 use Firebase\JWT\ExpiredException;
 use Allian\Models\TranslationOrders;
 use Firebase\JWT\BeforeValidException;
-use Allian\Http\Controllers\TwilioController;
 use Allian\Models\OrderOnsiteInterpreter;
-
+use Allian\Helpers\Allian\ScheduleFunctions;
+use Allian\Http\Controllers\TwilioController;
 
 class ConferenceScheduleController extends Controller {
 
@@ -32,7 +32,7 @@ class ConferenceScheduleController extends Controller {
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="string", sample="{'data': {'timezonesTop':'...', 'timezones':'...', 'langFrom': '...', 'langTo': '...', 'countries': '...', 'schedulingType': '...', 'neededFor': '...'}}")
      */
-	public function getTimezones($request, $response, $service, $app){
+	public function getTimezones($request, $response, $service, $app){ // FIX
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -44,7 +44,7 @@ class ConferenceScheduleController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-	     		return $response->json(array('data' => $this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
+	     		return $response->json(array('data' => $this->errorJson("Authentication problems. CustomerID doesn't match that with token.")));
 			}
 			// Retrieve array values for populating scheduling form
 			$timezonesTop =  ArrayValues::timezonesTop();
@@ -83,7 +83,7 @@ class ConferenceScheduleController extends Controller {
 	    'minimumText': 'Minimum Short Notice telephonic scheduling price is $30'
 	  	}}")
      */
-	public function schedulePartOne($request, $response, $service, $app){
+	public function schedulePartOne($request, $response, $service, $app){ // DONT CHANGE
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -101,44 +101,10 @@ class ConferenceScheduleController extends Controller {
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
-			$frm_time = $data['fromDate'] . ' ' . $data['timeStarts'];
-			$to_time = $data['fromDate'] . ' ' . $data['timeEnds'];
-
-			$details = array();
-			$amount = 0;
-			$timing = $this->get_assignment_time($frm_time,$to_time);
-
-			$hours_left = $timing["hours_to_start"];
-			$minimum_rate = 30;
-			$conference_fee = $this->amt_format(5);
-			if($hours_left<24) {
-			    $minimum_minutes = 10;
-			    $rate_per_min=3;
-			    $scheduling_type="Short Notice";
-			}else{
-			    $minimum_minutes = 15;
-			    $rate_per_min=1.75;
-			    $scheduling_type="Regular";
-			}
-	 		$minutes = $this->telephonic_duration($frm_time, $to_time);
-			$actual_minutes = $minutes;
-			$minimum_appied = ($minutes <= $minimum_minutes) ? true : false;
-			$minutes = ($minimum_appied) ? $minimum_minutes : $minutes;
-
-			$minimum_text = ($minimum_appied) ? "Minimum $scheduling_type telephonic scheduling price is $$minimum_rate" : "";
-			$amount += ($minimum_appied) ? $minimum_rate : $rate_per_min * $minutes;
-			$amount = $this->amt_format($amount);
-
-			$rArray = array();
-			$rArray['totalPrice'] = $this->amt_format($amount);
-			$rArray['daily'] = "ATS - $scheduling_type Telephonic Scheduling ($$rate_per_min/Min) for $actual_minutes minutes";
-			$rArray['status'] = 1;
-			if($minimum_text){
-				$rArray['minimumText'] = $minimum_text ;
-			} else {
-				$rArray['minimumText'] = null;
-			}
-			$base64Encrypted = $this->encryptValues(json_encode($rArray));
+			// Calculate the amount for customer to pay
+			$amountArray = ScheduleFunctions::calculateAmountToPay($data);
+			// Encrypt the values
+			$base64Encrypted = $this->encryptValues(json_encode($amountArray));
 			// Return response json
 			return $response->json(array('data' => $base64Encrypted));
 		} else {
@@ -171,7 +137,7 @@ class ConferenceScheduleController extends Controller {
 	    'totalPrice': '35.00'
   		}}")
      */
-	public function schedulePartTwo($request, $response, $service, $app){
+	public function schedulePartTwo($request, $response, $service, $app){ // DONT CHANGE
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -179,64 +145,21 @@ class ConferenceScheduleController extends Controller {
 			$data = $this->decryptValues($request->data);
 			// Validate input data
 			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
-			// $service->validate($data['timezone'], 'Error: timezone not present.')->notNull();
 			$service->validate($data['fromDate'], 'Error: from date not present.')->notNull();
-			$service->validate($data['timeStarts'], 'Error: timeStarts not present.')->notNull();
-			$service->validate($data['timeEnds'], 'Error: timeEnds not present.')->notNull();
+			$service->validate($data['timeStarts'], 'Error: time Starts not present.')->notNull();
+			$service->validate($data['timeEnds'], 'Error: time ends not present.')->notNull();
 			$service->validate($data['schedulingType'], 'Error: from date not present.')->notNull();
 			// Validate token in database
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token.")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
-			$frm_time = $data['fromDate'] . ' ' . $data['timeStarts'];
-			$to_time = $data['fromDate'] . ' ' . $data['timeEnds'];
 
-			$details = array(); // Not used TODO ?
-			$amount = 0;
-			$timing = $this->get_assignment_time($frm_time,$to_time);
+			$amountArray = ScheduleFunctions::calculateAmountToPay($data);
 
-			$hours_left = $timing["hours_to_start"];
-			$minimum_rate = 30; // $30
-			$conference_fee = $this->amt_format(5);
-			if($hours_left<24) {
-			    $minimum_minutes = 10; // 10 minutes
-			    $rate_per_min=3; // $3
-			    $scheduling_type="Short Notice";
-			}else{
-			    $minimum_minutes = 15;  // 30 minutes
-			    $rate_per_min=1.75; // $1.75
-			    $scheduling_type="Regular";
-			}
-	 		$minutes = $this->telephonic_duration($frm_time, $to_time);
-			$actual_minutes = $minutes;
-			$minimum_appied = ($minutes <= $minimum_minutes) ? true : false;
-			$minutes = ($minimum_appied) ? $minimum_minutes : $minutes;
-
-			$minimum_text = ($minimum_appied) ? "Minimum $scheduling_type telephonic scheduling price is $$minimum_rate" : "";
-			$amount += ($minimum_appied) ? $minimum_rate : $rate_per_min * $minutes;
-			$amount = $this->amt_format($amount);
-
-			$rArray = array();
-			$rArray['daily'] = "ATS - $scheduling_type Telephonic Scheduling ($$rate_per_min/Min) for $actual_minutes minutes";
-			if($minimum_text){
-				$rArray['minimumText'] = $minimum_text ;
-			} else {
-				$rArray['minimumText'] = null;
-			}
-
-			if ($data['schedulingType'] == 'conference_call') {
-			    $amount+= $conference_fee;
-			    $rArray['conferencePresent'] = "Conference Calling Fee:: $$conference_fee";
-			} else{
-				$rArray['conferencePresent'] = null;
-			}
-			$rArray['totalPrice'] = $this->amt_format($amount);
-			$rArray['status'] = 1;
-			// Return response json
-			$base64Encrypted = $this->encryptValues(json_encode($rArray));
+			$base64Encrypted = $this->encryptValues(json_encode($amountArray));
 			return $response->json(array('data' => $base64Encrypted));
 		} else {
 	    	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
@@ -288,11 +211,11 @@ class ConferenceScheduleController extends Controller {
 			$service->validate($data['timezone'], 'Error: timezone not present.')->notNull();
 			$service->validate($data['fromDate'], 'Error: from date not present.')->notNull();
 			$service->validate($data['timeStarts'], 'Error: time starts not present.')->notNull();
-			$service->validate($data['timeEnds'], 'Error: timeEnds not present.')->notNull();
+			$service->validate($data['timeEnds'], 'Error: time ends not present.')->notNull();
 			$service->validate($data['langFrom'], 'Error: lang from not present.')->notNull();
 			$service->validate($data['langTo'], 'Error: lang to present.')->notNull();
 			$service->validate($data['country'], 'Error: country not present.')->notNull();
-			$service->validate($data['schedulingType'], 'Error: schedulingType not present.')->notNull();
+			$service->validate($data['schedulingType'], 'Error: scheduling type not present.')->notNull();
 			$service->validate($data['clients'], 'Error: clients not present.')->notNull();
 			// $service->validate($data['neededFor'], 'Error: interpreting needed for not present.')->notNull();
 			$service->validate($data['description'], 'Error: description not present.')->notNull();
@@ -303,84 +226,33 @@ class ConferenceScheduleController extends Controller {
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token.")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
-			// Format date with timeStarts & timeEnds
-			$frm_time = $data['fromDate'] . ' ' . $data['timeStarts'];
-			$to_time = $data['fromDate'] . ' ' . $data['timeEnds'];
-			//Get only the time that it starts
-			$assg_frm_st = $data['timeStarts'];
-			// Get only the time that it ends
-			$assg_frm_en = $data['timeEnds'];
+
+			$amountArray = ScheduleFunctions::calculateAmountToPay($data);
+
 			// Format date with timeStarts with the timezone
 			$frmT = new \DateTime($data['fromDate'].' '.$data['timeStarts'],new \DateTimeZone($data['timezone']));
 			$frmT->setTimezone(new \DateTimeZone('GMT'));
 			// Format date with timeEnds with the timezone
 		    $toT = new \DateTime($data['fromDate'].' '.$data['timeEnds'],new \DateTimeZone($data['timezone']));
 			$toT->setTimezone(new \DateTimeZone('GMT'));
-			// Get the languages ids stored in the database
-			$frm_lang = LangList::langIdByName($data['langFrom']);
-			$to_lang = LangList::langIdByName($data['langTo']);
-
-			$details = array(); // NOT USED. TODO ?
-			$amount = 0;
-			$minimum_rate = 30;
-			$conference_fee = $this->amt_format(5);
-
-			$timing = $this->get_assignment_time($frm_time,$to_time);
-			$hours_left = $timing["hours_to_start"];
-
-			if($hours_left<24) {
-			    $minimum_minutes = 10;
-			    $rate_per_min=3;
-			    $scheduling_type="Short Notice";
-			}else{
-			    $minimum_minutes = 15;
-			    $rate_per_min=1.75;
-			    $scheduling_type="Regular";
-			}
-	 		$minutes = $this->telephonic_duration($frm_time, $to_time);
-			$actual_minutes = $minutes;
-			$minimum_appied = ($minutes <= $minimum_minutes) ? true : false;
-			$minutes = ($minimum_appied) ? $minimum_minutes : $minutes;
 
 
-
-
-			//TUTU
-			$minimum_text = ($minimum_appied) ? "Minimum $scheduling_type telephonic scheduling price is $$minimum_rate" : "";
-			$rArray['daily'] = "ATS - $scheduling_type Telephonic Scheduling ($$rate_per_min/Min) for $actual_minutes minutes";
-			$amount += ($minimum_appied) ? $minimum_rate : $rate_per_min * $minutes;
-			$amount = $this->amt_format($amount);
-
-			if ($data['schedulingType'] == 'conference_call') {
-			    $amount+= $conference_fee;
-			    // $rArray['daily'][] = "Conference Calling Fee:: $$conference_fee";
-			} elseif($data['schedulingType'] == 'get_call'){
-
-			}
-			$this->addOrderSummaryHtml($rArray['daily'], $amount);
-
-
-
+			//TODO discount tu mislim
 
 
 			$sArray = array();
 			$sArray['customer_id'] = $data['CustomerID'];
 			$sArray['assg_frm_date'] = $data['fromDate'];
-			$sArray['assg_frm_st'] = date("H:i:s",strtotime($assg_frm_st));
-			$sArray['assg_frm_en'] = date("H:i:s",strtotime($assg_frm_en));
+			$sArray['assg_frm_st'] = date("H:i:s",strtotime($data['timeStarts']));
+			$sArray['assg_frm_en'] = date("H:i:s",strtotime($data['timeEnds']));
 			$sArray['assg_to_date'] = $data['fromDate'];
 			$sArray['timezone'] = $data['timezone'];
 			$sArray['assg_frm_timestamp'] =$frmT->format('U');
 			$sArray['assg_to_timestamp'] =$toT->format('U');
 			$sArray['scheduling_type'] = $data['schedulingType'];
-			$sArray['frm_lang'] = $frm_lang; // broj languagea
-			$sArray['to_lang'] = $to_lang; // broj Languagea
+			$sArray['frm_lang'] = LangList::langIdByName($data['langFrom']);
+			$sArray['to_lang'] = LangList::langIdByName($data['langTo']);
 			$sArray['country'] = $data['country'];
-			if ($data['schedulingType'] == 'conference_call') {
-				$sArray['onsite_con_phone'] = "";
-			} elseif($data['schedulingType'] == 'get_call'){
-				$sArray['onsite_con_phone'] = $data['clients'][0];
-			}
 			$sArray['intr_needed_for'] = $data['neededFor'];
 			$sArray['description'] = $data['description'];
 			$sArray['orderID'] = md5(time().$data['description']);
@@ -393,30 +265,35 @@ class ConferenceScheduleController extends Controller {
 			$sArray['onsite_con_name'] = '';
 			$sArray['onsite_con_email'] = '';
 			$sArray['headsets_needed'] = 0;
-			$sArray['amount'] = "$amount";
+			$sArray['amount'] = $amountArray['totalPrice'];
+			$sArray['interpreting_dur']= ScheduleFunctions::telephonic_duration($data['fromDate'].'T'.$sArray['assg_frm_st'], $data['fromDate'].'T'.$sArray['assg_frm_en']);
+			if ($data['schedulingType'] == 'conference_call') {
+				$sArray['onsite_con_phone'] = "";
+			} elseif($data['schedulingType'] == 'get_call'){
+				$sArray['onsite_con_phone'] = $data['clients'][0];
+			}
+			if($data['schedulingType'] == 'get_call'){
+				$sArray['interpreter_amt'] = (25/100) * $amountArray['totalPrice'];  // caluculate_price() TODO
+			} elseif($data['schedulingType'] = 'conference_call'){
+				$sArray['interpreter_amt'] = (25/100) * ($amountArray['totalPrice'] - 5);
+			}
+			//$sArray['overage_amt_per_30min'] = //TODO linguist/orders-script/functions 2305 linija
+			// $this->addOrderSummaryHtml($rArray['daily'], $amount);
 			// $sArray['order_summary_html'] = TODO
 
-
-
-			if($data['schedulingType'] == 'get_call'){
-				$sArray['interpreter_amt'] = (25/100)*$amount;  // caluculate_price() TODO
-			} elseif($data['schedulingType'] = 'conference_call'){
-				$sArray['interpreter_amt'] = (25/100)*($amount-5); // caluculate_price() TODO
-			}
-			$sArray['interpreting_dur']= $this->telephonic_duration(
-										$data['fromDate'].'T'.$sArray['assg_frm_st'],
-										$data['fromDate'].'T'.$sArray['assg_frm_en']);
 			$onsiteAutoId = OrderOnsiteInterpreter::insertScheduleOrder($sArray);
 			if(!$onsiteAutoId){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Onsite order not inserted")));
-				return $response->json(array('data' => $base64Encrypted));
-			}
-			$orderID = TranslationOrders::insertTransationOrder($sArray);
-			if(!$orderID){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Order not inserted")));
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Telephonic order not scheduled. Contact Support.")));
 				return $response->json(array('data' => $base64Encrypted));
 			}
 
+			$orderID = TranslationOrders::insertTransationOrder($sArray);
+			if(!$orderID){
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Telephonic order not scheduled. Contact Support.")));
+				return $response->json(array('data' => $base64Encrypted));
+			}
+
+			return $response->json($orderID);
 			$updated = OrderOnsiteInterpreter::updateScheduleOrderID($orderID, $onsiteAutoId);
 
 			if(!$updated){
@@ -479,51 +356,11 @@ class ConferenceScheduleController extends Controller {
 
 	}
 
-	/**
-	 *
-	 * Block comment
-	 *
-	 */
-	function get_assignment_time($actual_starting_time, $actual_ending_time = "") {
-	    $time_difference = strtotime($actual_starting_time) - time();
-	    $duration = strtotime($actual_ending_time) - strtotime($actual_starting_time);
-	    $hours = floor($time_difference / 3600);
-	    $hours = ($hours < 10) ? "0" . $hours : $hours;
-	    $minutes = floor(($time_difference / 60) % 60);
-	    $minutes = ($minutes < 10) ? "0" . $minutes : $minutes;
-	    $seconds = $time_difference % 60;
-	    $seconds = ($seconds < 10) ? "0" . $seconds : $seconds;
-	    $time_left = "$hours:$minutes:$seconds";
-	    // True if start time is less than 24
-	    // False if start time is greater than 24 hours
-	    // False if start time is less than an Hour (no need to send 24hr prior notification when only 1 hour is left)
-	    $notify = (86400 > $time_difference && $time_difference > 3600); // 24 hours left
-	    $notify_checkout = ($actual_ending_time == "") ? false : time() > strtotime($actual_ending_time);
-	    return array("notify_24_hours" => $notify, "notify_checkout" => $notify_checkout, "time_to_start" => $time_left, "hours_to_start" => $hours, "minutes_to_start" => $minutes, "time" => $time_difference, "duration" => $duration);
-	}
 
-	/**
-	 *
-	 * Block comment
-	 *
-	 */
-	function amt_format($amt, $decimels = "2", $decimel_point = ".", $thousand_sep = "") {
-		return number_format($amt, $decimels, $decimel_point, $thousand_sep);
-	}
 
-	/**
-	 *
-	 * Block comment
-	 *
-	 */
-	function telephonic_duration($frm_time, $to_time) {
-	    $start_date = new \DateTime($frm_time);
-	    $since_start = $start_date->diff(new \DateTime($to_time));
-	    $days = $since_start->d + 1;
-	    $minutes += $since_start->h * 60;
-	    $minutes += $since_start->i;
-	    return $minutes * $days;
-	}
+
+
+
 
 	/* order_telephonic_notification function is responsible for sending notification to admin, to linguists and to customer who placed telephonic interpreting orders.
 	@Param  $con: Required to create database connection. Required argument.

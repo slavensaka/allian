@@ -36,8 +36,7 @@ class LangPairTrans extends DataObject {
 		    // return false;
 	    } catch ( \PDOException $e ) {
 		      parent::disconnect( $conn );
-		      return false;
-		      die( "Query failed: " . $e->getMessage() );
+		      throw new \Exception("Database retrieval problems experienced.");
 	    }
   	}
 
@@ -56,7 +55,7 @@ class LangPairTrans extends DataObject {
 		    return array($translationTo);
 	    } catch (\PDOException $e) {
 		      parent::disconnect($conn);
-		      die("Query failed: " . $e->getMessage());
+		      throw new \Exception("Database retrieval problems experienced.");
 	    }
   	}
 }

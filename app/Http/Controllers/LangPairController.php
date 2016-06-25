@@ -20,12 +20,12 @@ class LangPairController extends Controller {
      * @ApiMethod(type="get")
      * @ApiRoute(name="/testgauss/langPairTrans")
      * @ApiBody(sample="{'data': {
-    'CustomerID': '800'
-  }, 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTMzNjcsImp0aSI6IlJoOGpiMVhUZHFvUDVDVUVSQ29VY3pWR0dnSVFsQWJ1bFwvRFp1U2pcL050OD0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQ1OTMzNjcsImV4cCI6MTQ2NTgwMjk2NywiZGF0YSI6eyJTdWNjZXNzIjoiU3VjY2VzcyJ9fQ.JDwNdycstmqNC0dyrNgNuik_zXCYbx3PwbIkdTX7is3oDrQr6CKQ6mREUt-9tbOys361mcH1kyXaahn9Y2tTRg'}")
-     @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
-     @ApiParams(name="data", type="string", nullable=false, description="Customer ID.")
-     * @ApiReturnHeaders(sample="HTTP 200 OK")
-     * @ApiReturn(type="string", sample="{ 'data': [
+    	'CustomerID': '800'
+	  }, 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTMzNjcsImp0aSI6IlJoOGpiMVhUZHFvUDVDVUVSQ29VY3pWR0dnSVFsQWJ1bFwvRFp1U2pcL050OD0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQ1OTMzNjcsImV4cCI6MTQ2NTgwMjk2NywiZGF0YSI6eyJTdWNjZXNzIjoiU3VjY2VzcyJ9fQ.JDwNdycstmqNC0dyrNgNuik_zXCYbx3PwbIkdTX7is3oDrQr6CKQ6mREUt-9tbOys361mcH1kyXaahn9Y2tTRg'}")
+	     @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
+	     @ApiParams(name="data", type="string", nullable=false, description="Customer ID.")
+	     * @ApiReturnHeaders(sample="HTTP 200 OK")
+	     * @ApiReturn(type="string", sample="{ 'data': [
         {
             'lang': 'Afrikaans',
             'translationTo': [
@@ -38,9 +38,9 @@ class LangPairController extends Controller {
                 'English'
             ]
         }
-    ] }")
+    	] }")
      */
-	public function langPairTrans($request, $response, $service, $app) {
+	public function langPairTrans($request, $response, $service, $app) { //CHECK
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -52,8 +52,7 @@ class LangPairController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-				// $base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
-	     		return $response->json(array('data' => $this->errorJson("Authentication problems present")));
+	     		return $response->json(array('data' => $this->errorJson("Authentication problems. CustomerID doesn't match that with token.")));
 			}
 			// Retrieve all languages ASC order
 			list($listLanguages) = LangPairTrans::getLanguages();
@@ -70,7 +69,7 @@ class LangPairController extends Controller {
 					$novi[] = trim($l->getValueEncoded("LangName"));
 				}
 				//Create a valid, and dev requested type of json response
-				$listing[] = array("lang" => trim($p->getValueEncoded("LangName")), "translationTo" =>$novi );
+				$listing[] = array("lang" => trim($p->getValueEncoded("LangName")), "translationTo" => $novi);
 			}
 			return $response->json(array("data" => $listing));
 		} else {

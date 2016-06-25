@@ -46,7 +46,7 @@ For immediate access to a interpreter please call the number below and use the u
 	</div>
 </div>
 
-<br><strong>If you have any questions, please email us at any time.</strong><br><br>Alliance Business Solutions<br>-Client Services<br>E: %csEmail%.<br>
+<br><strong>If you have any questions, please email us at any time.</strong><br><br>Alliance Business Solutions<br>-Client Services<br>E: %csEmail%<br>
 
 
 

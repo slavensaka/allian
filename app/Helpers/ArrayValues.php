@@ -423,8 +423,8 @@ class ArrayValues {
 		return array('neededFor' => $neededFor);
 	}
 
-	public static function telAccess(){
-		$tel = array(
+	public static function supportPhones(){
+		$supportPhones = array(
 			"1 (877) 512 1195" => 'http://alliantranscribe.com/img/us.png',
 			"1(877) 512 1195"=> 'http://alliantranscribe.com/img/canada.png',
 			"+44 800 011 9648" =>'http://alliantranscribe.com/img/uk.png',
@@ -438,7 +438,63 @@ class ArrayValues {
 			"+52 55 4161 3617"=> 'http://alliantranscribe.com/img/mexico.png',
 			"+1 615 645 1041" =>'http://alliantranscribe.com/img/intl.png',
 		);
-		return array('telephone' => $tel);
+		return array('supportPhones' => $supportPhones);
+	}
+
+	public static function supportFlags(){
+		$supportFlags = array(
+			 'http://alliantranscribe.com/img/us.png',
+			 'http://alliantranscribe.com/img/canada.png',
+			'http://alliantranscribe.com/img/uk.png',
+			 'http://alliantranscribe.com/img/france.png',
+			'http://alliantranscribe.com/img/spain.png',
+			'http://alliantranscribe.com/img/italy.png',
+			 'http://alliantranscribe.com/img/german.png',
+			'http://alliantranscribe.com/img/australia.png',
+			 'http://alliantranscribe.com/img/holland.png',
+			'http://alliantranscribe.com/img/belgium.png',
+			 'http://alliantranscribe.com/img/mexico.png',
+			'http://alliantranscribe.com/img/intl.png',
+		);
+		return array('supportFlags' => $supportFlags);
+	}
+
+	public static function supportTel(){
+		$supportTel = array(
+			 "1 (877) 512 1195" ,
+			"1(877) 512 1195",
+			"+44 800 011 9648" ,
+			"+33 9 75 18 41 68",
+			"+34 518 88 82 27" ,
+			"+39 06 9480 3714" ,
+			"+49 157 3598 1132",
+			"+61 8 7100 1671" ,
+			"+31 85 888 5243",
+			"+32 2 588 55 16" ,
+			"+52 55 4161 3617",
+			"+1 615 645 1041" ,
+		);
+		return array('supportPhones' => $supportTel);
+	}
+
+	public static function flags(){
+		$flags = array(
+			 'http://alliantranscribe.com/img/us.png',
+			 'http://alliantranscribe.com/img/canada.png',
+			 'http://alliantranscribe.com/img/uk.png',
+			 'http://alliantranscribe.com/img/australia.png',
+		);
+		return array("flags" => $flags);
+	}
+
+	public static function telephones(){
+		$telephones = array(
+			"1 855-733-6655",
+			"1 855-733-6655",
+			"+44 800 802 1231",
+			"+61 3 8609 8382",
+		);
+		return array("tel" => $telephones);
 	}
 
 }

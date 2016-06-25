@@ -73,8 +73,8 @@ class CustLogin extends DataObject {
 				}
 			}
 	    } catch (\PDOException $e) {
-		      parent::disconnect($conn);
-		      die("Query failed: " . $e->getMessage());
+		    parent::disconnect($conn);
+		    throw new \Exception('Authentication failed.');
 	    }
   	}
 
@@ -232,8 +232,8 @@ class CustLogin extends DataObject {
   			} else {
   				return false;
   			}
-	    } catch ( \PDOException $e ) {
-	      parent::disconnect( $conn );
+	    } catch (\PDOException $e) {
+	      parent::disconnect($conn);
 	      return false;
 	    }
   	}
@@ -269,7 +269,7 @@ class CustLogin extends DataObject {
   	 * Block comment
   	 *
   	 */
-  	public static function updateStripe($stripeToken, $CustomerID){
+  	public static function updateCustLoginStripe($stripeToken, $CustomerID){
   		$conn = parent::connect();
 		$sql = "UPDATE " . getenv('TBL_CUSTLOGIN') . " SET token = :token WHERE CustomerID= :CustomerID";
 		try {
@@ -317,10 +317,9 @@ class CustLogin extends DataObject {
   			} else {
   				return false;
   			}
-	    } catch ( \PDOException $e ) {
-	      parent::disconnect( $conn );
-	      return false;
-	      exit;
+	    } catch (\PDOException $e) {
+	      	parent::disconnect($conn);
+			throw new \Exception("Email address already taken. Try entering another email address.");
 	    }
   	}
 
@@ -394,19 +393,21 @@ class CustLogin extends DataObject {
   	 * Block comment
   	 *
   	 */
-  	public static function getCustomer1($Email) {
+  	public static function getCustomerByEmail($Email) {
 	    $conn = parent::connect();
 	    $sql = "SELECT * FROM " . getenv('TBL_CUSTLOGIN') . " WHERE Email = :Email";
 	    try {
-		    $st = $conn->prepare($sql );
+		    $st = $conn->prepare($sql);
 		    $st->bindValue(":Email", $Email, \PDO::PARAM_INT);
 		    $st->execute();
 		    $row = $st->fetch();
 		    parent::disconnect($conn);
 		    if ($row) {
-		      	return new CustLogin( $row );
-		    } else return false;
-	    } catch (\PDOException $e) {
+		      	return new CustLogin($row);
+		    } else {
+		    	return false;
+		    }
+	    } catch(\PDOException $e) {
 		      parent::disconnect($conn);
 		      return false;
 	    }
@@ -417,18 +418,19 @@ class CustLogin extends DataObject {
   	 * Block comment
   	 *
   	 */
-  	public static function insertPass($LoginPassword, $CustomerID){
+  	public static function insertPasswordCustLogin($LoginPassword, $CustomerID){
   		$conn = parent::connect();
   		$sql = "UPDATE " . getenv('TBL_CUSTLOGIN') . " SET LoginPassword=:LoginPassword WHERE CustomerID = :CustomerID";
   		try{
-	    	$st = $conn->prepare( $sql );
-  			$st->bindValue( ":LoginPassword", PassHash::hash($LoginPassword), \PDO::PARAM_STR );
-  			$st->bindValue( ":CustomerID", $CustomerID, \PDO::PARAM_INT );
+	    	$st = $conn->prepare($sql);
+  			$st->bindValue(":LoginPassword", PassHash::hash($LoginPassword), \PDO::PARAM_STR);
+  			$st->bindValue(":CustomerID", $CustomerID, \PDO::PARAM_INT);
   			$success = $st->execute();
-  			parent::disconnect( $conn );
+  			parent::disconnect($conn);
   			return $success;
-	    } catch ( \PDOException $e ) {
-	      parent::disconnect( $conn );
+	    } catch (\PDOException $e) {
+	      parent::disconnect($conn);
+	      throw new \Exception("Problems with storing password. Try again!");
 	    }
   	}
 

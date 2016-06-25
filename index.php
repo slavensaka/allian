@@ -87,7 +87,6 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('POST', '/schedulePartTwo', array($conferenceSchedule, 'schedulePartTwo'));
 	$klein->respond('POST', '/scheduleFinal', array($conferenceSchedule, 'scheduleFinal'));
 
-
 	$stripe = new StripeController();
 	$klein->respond('POST', '/updateStripe', array($stripe, 'updateStripe'));
 	$klein->respond('POST', '/viewStripe', array($stripe, 'viewStripe'));

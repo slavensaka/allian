@@ -75,8 +75,6 @@ class TranslationOrders extends DataObject {
 				return mysqli_insert_id($con);
 			}
 		return false;
-
-
 	}
 
 	public static function updateTranslationOrdersSch($dArray){

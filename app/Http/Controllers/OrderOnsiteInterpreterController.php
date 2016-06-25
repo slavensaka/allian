@@ -12,14 +12,14 @@ class OrderOnsiteInterpreterController extends Controller {
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/scheduledSessions")
      * @ApiBody(sample="{'data': {
-    'CustomerID': '800'
+    	'CustomerID': '800'
   		}, 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTMzNjcsImp0aSI6IlJoOGpiMVhUZHFvUDVDVUVSQ29VY3pWR0dnSVFsQWJ1bFwvRFp1U2pcL050OD0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQ1OTMzNjcsImV4cCI6MTQ2NTgwMjk2NywiZGF0YSI6eyJTdWNjZXNzIjoiU3VjY2VzcyJ9fQ.JDwNdycstmqNC0dyrNgNuik_zXCYbx3PwbIkdTX7is3oDrQr6CKQ6mREUt-9tbOys361mcH1kyXaahn9Y2tTRg'}")
-     @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
-     @ApiParams(name="data", type="string", nullable=false, description="Customer ID.")
-     * @ApiReturnHeaders(sample="HTTP 200 OK")
-     * @ApiReturn(type="string", sample="{ 'data': {
-    'status': 1,
-    'scheduledSessions': [
+	     @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
+	     @ApiParams(name="data", type="string", nullable=false, description="Customer ID.")
+	     * @ApiReturnHeaders(sample="HTTP 200 OK")
+	     * @ApiReturn(type="string", sample="{ 'data': {
+	    'status': 1,
+	    'scheduledSessions': [
 	      {
 	        'date': '2015-05-24',
 	        'schedulingType': 'Conference Call',
