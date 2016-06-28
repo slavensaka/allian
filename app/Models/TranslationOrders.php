@@ -42,7 +42,7 @@ class TranslationOrders extends DataObject {
 	    "last_updated" => "",
 	);
 
-	public static function insertTransationOrder($sArray){
+	public static function insertTransationOrder($sArray, $FName, $LName, $Email, $Phone){
 		// $name = $FName." ".$LName;
 		// $user = CustomerID
 		// $order_type = 5
@@ -55,19 +55,16 @@ class TranslationOrders extends DataObject {
 		// $status is 0, with time should be 7 . (0=Pending; 1=Paid; 2=Invoiced; 3=Abandoned; 4=Cancelled; 5=Deleted; 6=Card Declined; 7=Project Submitted)
 		// order_time = date("Y-m-d H:i");
 		$con = Connect::con();
-
-		$customer = CustLogin::getCustomer($sArray['customer_id']);
-
 		$order_type = 5;
 		$user =	$sArray['customer_id'];
 		$invoice_id = '';
 		$file_ids = '';
 		$total_units = 0;
 		$total_price = $sArray['amount'];
-		$name =$customer->getValueEncoded('FName')." ".$customer->getValueEncoded('LName');
+		$name =$FName . " " . $LName;
 		$bsn_name = '';
-		$email = $customer->getValueEncoded('Email');
-		$phone = $customer->getValueEncoded('Phone');
+		$email = $Email;
+		$phone = $Phone;
 		$order_time = date("Y-m-d H:i");
 		$order_insert_query = "INSERT INTO " . getenv("TBL_TRANSLATION_ORDERS") . " (`order_type`, `user_id`, `invoice_id`, `name`,  `business_name`, `email`, `phone`, `file_ids`,`total_units`, `total_price`,`status`, `order_time`)VALUES('" . $order_type . "','" . $user . "','" . $invoice_id . "','" . $name . "','" . $bsn_name . "','" . $email . "','" . $phone . "','" . $file_ids . "','" . $total_units . "','" . $total_price . "','0','$order_time')";
 			$order_inserted = mysqli_query($con, $order_insert_query);
@@ -81,18 +78,18 @@ class TranslationOrders extends DataObject {
 		$con = Connect::con();
 		try {
 			$complete = mysqli_query($con, "UPDATE " . getenv("TBL_TRANSLATION_ORDERS") . " SET
-				status = '1',
-				stripe_id = '" . $dArray['stripe_id']
-				. "',dtp='" . $dArray['DTP_Price']
-				. "',rush_processing='" . $dArray['RP_Price']
-				. "',verbatim='" . $dArray['Verbatim_Price']
-				. "',time_stamping='" . $dArray['TS_Price']
-				. "',time_stamping_type='" . $dArray['TS_Type']
-				. "',USPS='" . $dArray['usps_fee']
-				. "',apostille='" . $dArray['Apostille_Price']
-				 . "',international_shipping='" . $dArray['shipping_fee']
-				 . "', copies_price='" . $dArray['Copies_Price']
-				// . "'   '" $dArray['add_RP'] .
+				status = '1', stripe_id = '" . $dArray['stripe_id']
+				//TODO status je 0 ako je charged korisnik, status 1 ako je cus_ kreiran ili, stripe_id mora i biti invoice, ako je 1. DAKLE POPRAVIT ZA STRIPE_ID I STATUS COLUMN
+				. "',dtp='" . $dArray['DTP_Price'] // nevidim da se koristi
+				. "',rush_processing='" . $dArray['RP_Price'] // nevidim da se koristi
+				. "',verbatim='" . $dArray['Verbatim_Price'] // nevidim da se koristi
+				. "',time_stamping='" . $dArray['TS_Price'] // nevidim da se koristi
+				. "',time_stamping_type='" . $dArray['TS_Type'] // nevidim da se koristi
+				. "',USPS='" . $dArray['usps_fee'] // nevidim da se koristi
+				. "',apostille='" . $dArray['Apostille_Price'] // nevidim da se koristi
+				 . "',international_shipping='" . $dArray['shipping_fee'] // nevidim da se koristi
+				 . "', copies_price='" . $dArray['Copies_Price'] // nevidim da se koristi
+				// . "'   '" $dArray['add_RP'] . // nevidim da se koristi
 				."' WHERE order_id=" . $dArray['order_id']);
 	    	if(!$complete){
 	    		return false;
@@ -100,7 +97,7 @@ class TranslationOrders extends DataObject {
 
 	    	return $complete;
     	} catch(\Exception $e){
-    		return $e->getMessage();
+    		throw new \Exception("Problem with inserting order into translation order. Contact support.");
     	}
 	}
 

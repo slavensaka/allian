@@ -2,13 +2,13 @@
 
 namespace Allian\Http\Controllers;
 
-use Firebase\JWT\JWT;
 use \Dotenv\Dotenv;
-use Allian\Models\TranslationOrders;
 use Database\Connect;
-use Allian\Models\OrderOnsiteInterpreter;
-use Allian\Models\LangList;
 use Allian\Models\Login;
+use Allian\Models\LangList;
+use Allian\Models\TranslationOrders;
+use Allian\Models\OrderOnsiteInterpreter;
+// use Allian\Helpers\Allian\ScheduleFunctions;
 
 class TranslationOrdersController extends Controller {
 
@@ -19,7 +19,7 @@ class TranslationOrdersController extends Controller {
      * @ApiBody(sample="{'data': {
 	    'CustomerID': '406'
 	  },
-     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjU1NDY1MjcsImp0aSI6IklGSTJTcmxlbWtQck1ncUZNSmV1RDZYYTlUTzRQbm02TmVGdThyK1VLV2c9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY1NTQ2NTI3LCJleHAiOjE1OTE2OTA1MjcsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.ff_JJqrXL1HLsTGRo7HA6q9YQJWiLaQRoVy0RcQYnDPpFQu-0HH1bYQ8PLHnyaOzSm3yYXkCle0gLd1O80vREg'}")
+     	'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjU1NDY1MjcsImp0aSI6IklGSTJTcmxlbWtQck1ncUZNSmV1RDZYYTlUTzRQbm02TmVGdThyK1VLV2c9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY1NTQ2NTI3LCJleHAiOjE1OTE2OTA1MjcsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.ff_JJqrXL1HLsTGRo7HA6q9YQJWiLaQRoVy0RcQYnDPpFQu-0HH1bYQ8PLHnyaOzSm3yYXkCle0gLd1O80vREg'}")
      *@ApiParams(name="data", type="string", nullable=false, description="Data")
      @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
@@ -101,7 +101,7 @@ class TranslationOrdersController extends Controller {
         'dailyPrice': '$180.00',
         'conferencePresent': 'Conference Calling Fee $5.00',
         'grandTotal': '185.00'
-    }
+    	}
      * }")
      */
 	public function orderSummaryDetails($request, $response, $service, $app) {
@@ -367,7 +367,7 @@ class TranslationOrdersController extends Controller {
 	    	if ($is_overage && $view_type == "overage") {
 	        	$project_detail .= "<tr style='background:#FFFFDD;'><td  $foot_td_style>Overage Subtotal</td><td  $foot_td_style> $" . $this->amt_format($overage_charge) . "</td></tr>";
 	    	} else {
-	        	 $project_detail .= ($order_price_summary == "") ? "<tr style='background:#FFFFDD;'><td  $foot_td_style>Fee</td><td  $foot_td_style> $" . amt_format($total_price) . "</td></tr>" : $order_price_summary;
+	        	 $project_detail .= ($order_price_summary == "") ? "<tr style='background:#FFFFDD;'><td  $foot_td_style>Fee</td><td  $foot_td_style> $" . $this->amt_format($total_price) . "</td></tr>" : $order_price_summary;
 
 	    	}
 	    	$project_detail .= "</table>";
@@ -380,7 +380,7 @@ class TranslationOrdersController extends Controller {
 	    	$additional_fee = $interpret_order["additional_fee"];
 	    	if ($additional_fee > 0) {
 		        $additional_fee_desc = $interpret_order["additional_fee_desc"];
-		        $addons_price_admin.= "<p style='$bold;color:green'>+ $" . amt_format($additional_fee) . " " . $additional_fee_desc . " </p>";
+		        $addons_price_admin.= "<p style='$bold;color:green'>+ $" . $this->amt_format($additional_fee) . " " . $additional_fee_desc . " </p>";
 	    	}
 	    	if ($discount > 0) {
 	        	$addons_price_admin.= "<p style='$bold;color:red'>- $$discount Discount </p>";
@@ -524,7 +524,8 @@ class TranslationOrdersController extends Controller {
 			$rArray['timezone'] = $project_timezone ;
 			$rArray['scheduledStartTime'] = $project_start_time;
 			$rArray['scheduledEndTime'] = $project_end_time;
-			$rArray['conferenceDialNumber'] = getenv('CONF_DIAL_NUMBER');
+			// $rArray['conferenceDialNumber'] = getenv('CONF_DIAL_NUMBER_LIVE'); // TODO FOR PRODUCTION
+			$rArray['conferenceDialNumber'] = getenv('S_TEST_TWILIO_NO_E_CONF_CALL');
 			$rArray['conferenceSecretCode'] = $conference['user_code'];
 			$daily = $grand_total - 5;
 			$rArray['daily'] = "ATS - Regular Telephonic Scheduling ($3/Min) for " . $telephonic_duration . " minutes";

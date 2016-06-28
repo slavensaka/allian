@@ -48,3 +48,33 @@
 // } else {
 //     echo "No";
 // }
+
+
+// $all_headers = $request->headers()->get('Tester');
+		// return $response->json($all_headers);
+		// $order_inserted = mysqli_query($con, "INSERT INTO `translation_orders` (`user_id`)". "VALUES('" . 111111 . "')");
+		// $order_id = mysqli_insert_id($con); // Vrati od order_id
+  		// $response->json($order_id);
+		// $all_headers = $request->headers()->get('token');//DIT it
+		// $all_headers = $request->headers()->all();//DIT it
+		// $all_headers = $request->param('novi');
+		// return $response->json($all_headers);
+		// $data = $request->data;
+		// $dec = json_decode($data);
+		// $ar = (array) $dec;
+		// if($ar['services']['telephonic_interpreting']){
+		// 	return $ar['services']['telephonic_interpreting'];
+		// 	$ar['services']['telephonic_interpreting'] = 'Telephonic Interpreting';
+		// }
+		// if($ar['services'][1]){
+		// 	$ar['services'][1] = 'Translation Services';
+		// }
+		// if($ar['services'][2]){
+		// 	$ar['services'][2] = 'On-Site Interpreting';
+		// }
+		// if($ar['services'][3]){
+		// 	$ar['services'][3] = 'Transcription Services';
+		// }
+		// return $response->json($ar['services']);
+		// $services = implode(":", $ar['services']);
+		// return $services;

@@ -21,8 +21,8 @@ class LangListController extends Controller {
      * @ApiMethod(type="get")
      * @ApiRoute(name="/testgauss/langNames")
      * @ApiBody(sample="{ 'data': {
-    'CustomerID': '800'
-  }}")
+    	'CustomerID': '800'
+  		}}")
      * @ApiBody(sample="{ 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ2MDE1MTUsImp0aSI6InAwaFpucWxqaUpqWStDdmdrb3c0MjJITTQ1TkYweFVobCtHU2lWZFwvUlN3PSIsImlzcyI6ImxvY2FsaG9zdCIsIm5iZiI6MTQ2NDYwMTUxNSwiZXhwIjoxNDY1ODExMTE1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.wwxlnjSCmInwNYinJ-LIyHMOys3oYTeoQem2MJTfgNREFZ8rcDB9uZ61Hw6vHIVMh_8BKzJUKS-_0nwhfrJVxQ'}")
      * @ApiParams(name="data", type="string", nullable=false, description="Data.")
      * @ApiParams(name="token", type="string", nullable=false, description="Token.")
@@ -38,10 +38,10 @@ class LangListController extends Controller {
             },
             { '...': '...' }
         ]
-    }
- }")
+    	}
+ 		}")
      */
-	public function langNames($request, $response, $service, $app) {
+	public function langNames($request, $response, $service, $app) { // MAYBE NOT USED
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -55,7 +55,7 @@ class LangListController extends Controller {
 			if(!$validated){
 	     		return $response->json(array('data' => $this->errorJson("Authentication problems present")));
 			}
-			// Retrieve langugage names from database
+			// Retrieve langugages from database
 			list($langNames) = LangList::langNames();
 			// Format only
 			$new = array();
@@ -70,7 +70,7 @@ class LangListController extends Controller {
 			}
 			return $response->json(array('data' => array('languages' =>  $new)));
 		} else {
-			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+			$base64Encrypted = $this->errorJson("No token provided in request");
      		return $response->json(array('data' => $base64Encrypted));
 		}
 	}

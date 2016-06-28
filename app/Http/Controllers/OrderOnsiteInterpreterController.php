@@ -131,7 +131,7 @@ class OrderOnsiteInterpreterController extends Controller {
 			// If error validating token in database
 			if(!$validated){
 	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
-	     		return $response->json(array('data' => $this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
+	     		return $response->json(array('data' => $base64Encrypted));
 			}
 
 			// $result = OrderOnsiteInterpreter::getOrderOnsiteInterpreters($data['CustomerID']);

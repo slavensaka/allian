@@ -29,7 +29,7 @@ class LangList extends DataObject {
 		      return array($langs);
 	    } catch (\PDOException $e) {
 		      parent::disconnect($conn);
-		      die("Query failed: " . $e->getMessage());
+		      throw new \Exception("Failed to retrieve langauges names from database");
 	    }
   	}
 

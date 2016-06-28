@@ -2,7 +2,6 @@
 
 namespace Allian\Http\Controllers;
 
-use Firebase\JWT\JWT;
 use \Dotenv\Dotenv;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\DomainException;
@@ -11,6 +10,9 @@ use RNCryptor\Encryptor;
 use RNCryptor\Decryptor;
 use Database\Connect;
 use Allian\Helpers\ArrayValues;
+use Services_Twilio;
+use Services_Twilio_TinyHttp;
+use Services_Twilio_Twiml;
 
 class DeveloperController extends Controller {
 
@@ -20,11 +22,11 @@ class DeveloperController extends Controller {
 	 *
 	 */
 	public function renderDocs($request, $response, $service, $app){
-    		if ( !isset($_SERVER['PHP_AUTH_USER'] ) || !isset( $_SERVER['PHP_AUTH_PW'] ) ||
-    			$_SERVER['PHP_AUTH_USER'] != getenv('BASIC_AUTH_USER') || $_SERVER['PHP_AUTH_PW'] != getenv('BASIC_AUTH_PASS') ) {
-        		header( 'WWW-Authenticate: Basic realm="NO auth!"' );
-        		header( 'HTTP/1.0 401 Unauthorized' );
-        		exit;
+		if (!isset($_SERVER['PHP_AUTH_USER'] ) || !isset( $_SERVER['PHP_AUTH_PW']) ||
+			$_SERVER['PHP_AUTH_USER'] != getenv('BASIC_AUTH_USER') || $_SERVER['PHP_AUTH_PW'] != getenv('BASIC_AUTH_PASS')) {
+    		header('WWW-Authenticate: Basic realm="NO auth!"');
+    		header('HTTP/1.0 401 Unauthorized');
+    		exit;
     	} else {
        		$service->render('./docs/index.html');
     	}
@@ -62,16 +64,16 @@ class DeveloperController extends Controller {
      * @ApiMethod(type="get")
      * @ApiRoute(name="/testgauss/devEncryptJson")
      * @ApiBody(sample="{
-    'CustomerID': '800'
-  }")
+    	'CustomerID': '800'
+  		}")
      * @ApiParams(name="data", type="object", nullable=false, description="")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="object", sample="{
-  'json': {
-    'CustomerID': '800'
-  },
-  'encrypted': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc='
-}")
+  		'json': {
+    	'CustomerID': '800'
+  		},
+  		'encrypted': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc='
+		}")
      */
 	public function devEncryptJson($request, $response, $service, $app){
 		$json = $request->data;
@@ -92,11 +94,11 @@ class DeveloperController extends Controller {
      * @ApiParams(name="data", type="object", nullable=false, description="")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="object", sample="{
-  'data': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc=',
-  'decrypted': {
-    'CustomerID': '800'
-  }
-}")
+  		'data': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc=',
+  		'decrypted': {
+    	'CustomerID': '800'
+  		}
+		}")
      */
 	public function devDecryptJson($request, $response, $service, $app){
 		$data = $request->data;
@@ -107,50 +109,17 @@ class DeveloperController extends Controller {
 		return $response->json(array('data' => $data, 'decrypted' => $json));
 	}
 
-
-
 	/**
 	 *
-	 * Block comment
+	 * POST tester
 	 *
 	 */
 	public function tester($request, $response, $service, $app){
-		// $all_headers = $request->headers()->get('Tester');
-		// return $response->json($all_headers);
-
-		$con = Connect::con();
-
-		$order_time = date("Y-m-d H:i");
-		$order_insert_query = "INSERT INTO `translation_orders` (`order_type`, `user_id`, `invoice_id`, `name`,  `business_name`, `email`, `phone`, `file_ids`,`total_units`, `total_price`,`status`, `order_time`,`project_reference`)VALUES('" . $order_type . "','" . $user . "','" . $invoice_id . "','" . $name . "','" . $bsn_name . "','" . $email . "','" . $phone . "','" . $file_ids . "','" . $total_units . "','" . $total_price . "','0','$order_time','$project_reference_number')";
-		$order_inserted = mysqli_query($con, $order_insert_query);
-		if ($order_inserted) {
-	        $order_id = mysqli_insert_id($con); // PRAVI ORDER ID $$$
-	        return $order_id;
-	    }
-		// $order_inserted = mysqli_query($con, "INSERT INTO `translation_orders` (`user_id`)". "VALUES('" . 111111 . "')");
-		// $order_id = mysqli_insert_id($con); // Vrati od order_id
-  		//       return $response->json($order_id);
-
-		// $data = $request->data;
-		// $dec = json_decode($data);
-		// $ar = (array) $dec;
-		// if($ar['services']['telephonic_interpreting']){
-		// 	return $ar['services']['telephonic_interpreting'];
-		// 	$ar['services']['telephonic_interpreting'] = 'Telephonic Interpreting';
-		// }
-		// if($ar['services'][1]){
-		// 	$ar['services'][1] = 'Translation Services';
-		// }
-		// if($ar['services'][2]){
-		// 	$ar['services'][2] = 'On-Site Interpreting';
-		// }
-		// if($ar['services'][3]){
-		// 	$ar['services'][3] = 'Transcription Services';
-		// }
-		// return $response->json($ar['services']);
-		// $services = implode(":", $ar['services']);
-		// return $services;
-
+		$headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+		$headers .= "From: cs@alliantranslate.com\r\n";
+        $headers.="Reply-To: cs@alliantranslate.com\r\n";
+		mail("slavensakacic@gmail.com", "SUBJECT", "OVO JE PORUKA", $headers);
 	}
 
 	/**
@@ -159,6 +128,36 @@ class DeveloperController extends Controller {
 	 *
 	 */
 	public function tester1($request, $response, $service, $app){
-		return getenv("CS_EMAIL");
+		$http = new Services_Twilio_TinyHttp('https://api.twilio.com', array('curlopts' => array(CURLOPT_SSL_VERIFYPEER => false)));
+		$version = '2010-04-01';
+		$sid = getenv('S_TEST_TWILIO_SID');
+		$token = getenv('S_TEST_TWILIO_TOKEN');
+		$testPhone = getenv('S_TEST_TWILIO_NO_E_CONF_CALL');
+		$client = new Services_Twilio($sid, $token, $version, $http);
+		$call = $client->account->calls->create("+15005550006", "+14108675309", "http://demo.twilio.com/docs/voice.xml", array());
+		// return $response->json($call->sid);
+
+		// $re = new Services_Twilio_Twiml();
+		// $re->say('Hello');
+		// $re->play('https://api.twilio.com/cowbell.mp3', array("loop" => 5));
+		$call = $client->account->calls->create(
+		  	'+15005550006', // From a valid Twilio number
+		  	'+14108675309', // Call this number
+		  // Read TwiML at this URL when a call connects (hold music)
+		  'http://twimlets.com/holdmusic?Bucket=com.twilio.music.ambient'
+		);
+		return  $call;
+
+
+
+		// $client = new Services_Twilio(getenv('S_TEST_TWILIO_SID'), getenv('S_TEST_TWILIO_TOKEN'), $version, $http);
+		// $number = $client->account->incoming_phone_numbers->create(array( "VoiceUrl" => "http://demo.twilio.com/docs/voice.xml", "PhoneNumber" => "+15005550006" ));
+		// return $response->json("TEst");
 	}
 }
+
+
+
+
+
+

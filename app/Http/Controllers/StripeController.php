@@ -7,9 +7,9 @@ use Stripe\Token;
 use Stripe\Stripe;
 use Stripe\Charge;
 use Stripe\Customer;
-use Allian\Models\Stripe as StripeModel;
-use Allian\Http\Controllers\StripeController;// TODO
 use Allian\Models\CustLogin;
+use Allian\Models\Stripe as StripeModel;
+use Allian\Http\Controllers\StripeController;// TODO remove?
 
 class StripeController extends Controller {
 
@@ -35,9 +35,7 @@ class StripeController extends Controller {
 	  	}
      * }")
      */
-	public function updateStripe($request, $response, $service, $app) {
-		Stripe::setApiKey(getenv('STRIPE_KEY'));
-
+	public function updateStripe($request, $response, $service, $app) { // DONT CHANGE
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -45,18 +43,10 @@ class StripeController extends Controller {
 			$data = $this->decryptValues($request->data);
 			// Validate input data
 			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
-			// $service->validate($data['sname'], 'Error: no stripe name present.')->notNull()->isLen(3,200);
-			// $service->validate($data['number'], 'Error: no credit card number present.')->notNull();
-			// $service->validate($data['exp_month'], 'Error: Expiration month not present.')->notNull();
-			// $service->validate($data['exp_year'], 'Error: Expiration year not present.')->notNull();
-			// $service->validate($data['cvc'], 'Error: Cvc not present.')->notNull();
-
 			$service->validate($data['sname'], 'Error: no stripe name present.')->notNull()->isLen(3,200);
 			$service->validate($data['number'], 'Error: no credit card number present.')->notNull();
 			$service->validate($data['exp'], 'Error: Expiration month not present.')->notNull();
-			// $service->validate($data['exp_year'], 'Error: Expiration year not present.')->notNull();
 			$service->validate($data['cvc'], 'Error: Cvc not present.')->notNull();
-
 			//Validate the jwt token in the database
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
@@ -64,18 +54,19 @@ class StripeController extends Controller {
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
+			Stripe::setApiKey(getenv('STRIPE_KEY'));
 			// Stripe token then customer create
 			$stripe = new StripeController();
 			// Format exp_month and exp_year
 			$exp = explode("/", $data['exp']);
 			$exp_month = ltrim($exp[0], '0');
-			$exp_year = "20".$exp[1];
+			$exp_year = "20" . $exp[1];
 			$tokenResult = $stripe->createTokenNew($data, $exp_month, $exp_year);
 			// Retrieve customer stripe token
 			$customer_id = StripeModel::customerToken($data['CustomerID']);
 			$cu = Customer::retrieve($customer_id['token']);
 			$email = $customer_id['Email'];
-			$cu->description = "Gauss:app, update of card for user $email.";
+			$cu->description = "Gauss:app, Customer UPDATED card with email $email.";
 			$cu->source = $tokenResult;
 	    	$cu->save();
 	    	// Format response
@@ -114,9 +105,7 @@ class StripeController extends Controller {
 	  }
      * }")
      */
-	public function viewStripe($request, $response, $service, $app){
-		Stripe::setApiKey(getenv('STRIPE_KEY'));
-
+	public function viewStripe($request, $response, $service, $app){ // DONT CHANGE
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -131,19 +120,18 @@ class StripeController extends Controller {
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
+			Stripe::setApiKey(getenv('STRIPE_KEY'));
+			// Get the customer from db
 			$customer = CustLogin::getCustomer($data['CustomerID']);
-
+			// Retrieve the stripe customer from db stripe token
 			$cu = Customer::retrieve($customer->getValueEncoded('token'));
-
+			// Get the stripe customer name
 			$name = explode(" ", $cu->sources->data[0]->name);
-
-			$rArray =  array();
-			// $rArray['fname']= $name[0];
-			// $rArray['lname'] =$name[1];
+			// Get stripe exp year
 			$exp_year = substr($cu->sources->data[0]->exp_year, 2);
+			$rArray =  array();
 			$rArray['sname'] = $cu->sources->data[0]->name;
 			$rArray['exp'] =  $cu->sources->data[0]->exp_month . '/' . $exp_year;
-
 			$rArray['country'] =$cu->sources->data[0]->country;
 			$rArray['brand']= $cu->sources->data[0]->brand;
 			$rArray['number'] =$cu->sources->data[0]->last4;
@@ -162,15 +150,13 @@ class StripeController extends Controller {
 	 * Charge the customer with stripe token
 	 *
 	 */
-	public function chargeCustomer($charge_amount, $token){
+	public function chargeCustomer($amount, $token, $email){ // DONT CHANGE
 		Stripe::setApiKey(getenv('STRIPE_KEY'));
-		try { // "amount" => ($charge_amount) TODO
-	        $charge = Charge::create(array("amount" => (30*100), "currency" => "usd", "customer" => $token,"description" => "Bit će email"));
-			// Check that it was paid:
+		try {
+	        $charge = Charge::create(array("amount" => ($amount * 100), "currency" => "usd", "customer" => $token,"description" => "Gauss:app, Customer CHARGED with email $email"));
 			if ($charge->paid == true) {
 				return $charge->id;
-				// Store the order in the database. MAYBE TODO
-			} else { // Charge was not paid!
+			} else {
 				throw new \Exception("Payment System Error! Your payment could NOT be processed (i.e., you have not been charged) because the payment system rejected the transaction. You can try again or use another card.");
 			}
 		} catch (\Stripe\Error\Card $e) {
@@ -192,37 +178,24 @@ class StripeController extends Controller {
 	 * & return customers token
 	 *
 	 */
-	public function createToken($data){
+	public function createToken($data){ // REMOVE MAYBE
 		Stripe::setApiKey(getenv('STRIPE_KEY'));
 		// Create a token for customer credit card details
-		$result = Token::create( array("card" => array(
-			"name" => $data['sname'],
-			"number" => $data['number'],
-			"exp_month" => $data['exp_month'],
-			"exp_year" => $data['exp_year'],
-			"cvc" => $data['cvc']
-		)));
+		$result = Token::create( array("card" => array( "name" => $data['sname'], "number" => $data['number'],
+			"exp_month" => $data['exp_month'], "exp_year" => $data['exp_year'], "cvc" => $data['cvc'] )));
 		// Return one time created stripe token
 		return $result['id'];
 	}
 
 	/**
 	 *
-	 * Block comment
+	 * Create a new stripe token based on user's card info
 	 *
 	 */
-	public function createTokenNew($data, $exp_month, $exp_year){
+	public function createTokenNew($data, $exp_month, $exp_year){ // DONT CHANGE
 		Stripe::setApiKey(getenv('STRIPE_KEY'));
-
-		// $data['exp']
-		// Create a token for customer credit card details
-		$result = Token::create( array("card" => array(
-			"name" => $data['sname'],
-			"number" => $data['number'],
-			"exp_month" => (int)$exp_month,
-			"exp_year" => (int)$exp_year,
-			"cvc" => $data['cvc']
-		)));
+		$result = Token::create( array("card" => array( "name" => $data['sname'], "number" => $data['number'],
+			"exp_month" => (int)$exp_month, "exp_year" => (int)$exp_year, "cvc" => $data['cvc'] )));
 		// Return one time created stripe token
 		return $result['id'];
 	}
@@ -233,12 +206,8 @@ class StripeController extends Controller {
 	 * 	in createTokenNew()
 	 *
 	 */
-	public function createCustomer($email, $token){
-		$customer = Customer::create(array(
-			"description" => "Gauss:app, Customer with $email email",
-			"source" => $token
-		));
-		//Return the customer
+	public function createCustomer($email, $token){ // DONT CHANGE
+		$customer = Customer::create(array( "description" => "Gauss:app, Customer CREATED with email $email", "source" => $token ));
   		return $customer['id'];
 	}
 }

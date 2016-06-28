@@ -2,6 +2,12 @@
 // ALTER TABLE CustLogin ADD COLUMN jwt_token VARCHAR(250) NULL AFTER token;
 // TODO PhPassword also hash and old passwords
 require __DIR__ . '/vendor/autoload.php';
+
+// C:\xampp\htdocs\allian\linguist\twilio_app\outgoing.php
+// $ITSUrl = "http://www.alliantranslate.com/linguist_dev_test_backup/phoneapp/interpreter.php";
+// $conferenceURL = "http://alliantranslate.com/linguist_dev_test_backup/twilio-conf-enhanced/conference.php?Digits=1&amp;vcode=";
+
+
 // $disc_label = ($_SESSION["admin-order"]) ? "Enter Discount Amount in cents" : "Enter a Promotional or Offer Code:"; telephonic_order.php 1099
 use Allian\Http\Controllers\Controller;
 use Allian\Http\Controllers\CustLoginController;
@@ -15,6 +21,7 @@ use Allian\Http\Controllers\LangListController;
 use Allian\Http\Controllers\OrderOnsiteInterpreterController;
 
 use Allian\Models\CustLogin;
+
 
 $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
@@ -112,10 +119,7 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('GET', '/devGenerateAuthToken', array($developer, 'devGenerateAuthToken'));
 	$klein->respond('POST', '/tester', array($developer, 'tester'));
 	$klein->respond('GET', '/tester1', array($developer, 'tester1'));
-	// $all_headers = $request->headers()->get('token');//DIT it
-	// $all_headers = $request->headers()->all();//DIT it
-	// $all_headers = $request->param('novi');
-	// return $response->json($all_headers);
+
 });
 
 $klein->dispatch();

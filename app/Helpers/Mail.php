@@ -33,12 +33,12 @@ class Mail {
 		$mail->SMTPSecure = getenv('MAIL_ENCRYPTION');
 		$mail->Username = getenv('MAIL_USERNAME');
 		$mail->Password = getenv('MAIL_PASSWORD');
-		$mail->setFrom(getenv('MAIL_FROM'), 'Allian Translate');
-		$mail->addReplyTo(getenv('MAIL_REPLY_TO'), 'Allian Translate');
+		$mail->setFrom(getenv('MAIL_REPLY_TO'), 'ALLIAN');
+		$mail->addReplyTo(getenv('MAIL_REPLY_TO'), 'ALLIAN');
 
 		$mail->addAddress($email, $FName);
 		$mail->IsHTML(true);
-		$mail->Subject = 'Allian Translate new password.';
+		$mail->Subject = 'Your account credentials for ALLIAN';
 		$mail->MsgHTML($message);
 		if (!$mail->send()) {
 		   return false;
@@ -77,7 +77,7 @@ class Mail {
 
 		$mail->addAddress($values['Email'], $FName);
 		$mail->IsHTML(true);
-		$mail->Subject = 'Allian Translate new password.';
+		$mail->Subject = 'Telephonic Access Session Credentials.';
 		$mail->MsgHTML($message);
 		if (!$mail->send()) {
 		   return false;
@@ -85,8 +85,6 @@ class Mail {
 		    return true;
 		}
 	}
-
-
 
 	/**
 	 *
