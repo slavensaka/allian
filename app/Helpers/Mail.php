@@ -10,6 +10,49 @@ class Mail {
 
 	/**
 	 *
+	 * Block comment
+	 *
+	 */
+	public function tester($request, $response, $service, $app){
+		$headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+		$headers .= "From: cs@alliantranslate.com\r\n";
+        $headers.="Reply-To: cs@alliantranslate.com\r\n";
+		mail("slavensakacic@gmail.com", "SUBJECT", "OVO JE PORUKA", $headers);
+	}
+
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	public function newPassProduction($email, $FName, $LoginPassword){
+		$mail = new PHPMailer;
+		$mail->From = getenv('MAIL_REPLY_TO');
+		$mail->FromName = "ALLIAN";
+
+		date_default_timezone_set('Etc/UTC');
+
+		$message = file_get_contents('resources/views/emails/newpassword.php');
+		$message = str_replace('%FName%', $FName, $message);
+		$message = str_replace('%logo%', getenv('LOGO'), $message);
+		$message = str_replace('%LoginPassword%', $LoginPassword, $message);
+
+		$mail->isHTML(true);
+		$mail->Subject = "Your account credentials for ALLIAN";
+		$mail->MsgHTML($message);
+
+		$mail->addAddress($email, $FName);
+
+		if(!$mail->send()) {
+		    return false;
+		} else {
+		    return true;
+		}
+	}
+
+	/**
+	 *
 	 * Maybe create Mail Model?
 	 *
 	 */
@@ -42,6 +85,39 @@ class Mail {
 		$mail->MsgHTML($message);
 		if (!$mail->send()) {
 		   return false;
+		} else {
+		    return true;
+		}
+	}
+
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	public function telAccessProduction($values){
+		$mail = new PHPMailer;
+		$mail->From = getenv('MAIL_REPLY_TO');
+		$mail->FromName = "ALLIAN";
+
+		date_default_timezone_set('Etc/UTC');
+
+		$message = file_get_contents('resources/views/emails/telephonicAccessEmail.php');
+		$message = str_replace('%FName%',$values['FName'], $message);
+		$message = str_replace('%LName%', $values['LName'], $message);
+		$message = str_replace('%telephonicUserId%', $values['telephonicUserId'], $message);
+		$message = str_replace('%telephonicPassword%', $values['telephonicPassword'], $message);
+		$message = str_replace('%tel%', $values['tel'], $message);
+		$message = str_replace('%csEmail%', $values['csEmail'], $message);
+
+		$mail->isHTML(true);
+		$mail->Subject = "Telephonic Access Session Credentials.";
+		$mail->MsgHTML($message);
+
+		$mail->addAddress($values['Email'], $FName);
+
+		if(!$mail->send()) {
+		    return false;
 		} else {
 		    return true;
 		}
@@ -87,7 +163,7 @@ class Mail {
 	}
 
 	/**
-	 *
+	 * TODO SEND_NOTIFICATION da bude jedan localhost jedan za alliantranslate
 	 * PRavi za live production $to = "orders@alliancebizsolutions.com,cs@alliantranslate.com"
 	 *
 	 */
@@ -122,9 +198,8 @@ class Mail {
 		} else {
 		    return true;
 		}
-
-
 	}
+
 	/*
 		send_notification function is used to send notifications/emails.
 		@Param  $subject: Subject of the email notification. empty by default.

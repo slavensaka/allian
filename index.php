@@ -7,7 +7,6 @@ require __DIR__ . '/vendor/autoload.php';
 // $ITSUrl = "http://www.alliantranslate.com/linguist_dev_test_backup/phoneapp/interpreter.php";
 // $conferenceURL = "http://alliantranslate.com/linguist_dev_test_backup/twilio-conf-enhanced/conference.php?Digits=1&amp;vcode=";
 
-
 // $disc_label = ($_SESSION["admin-order"]) ? "Enter Discount Amount in cents" : "Enter a Promotional or Offer Code:"; telephonic_order.php 1099
 use Allian\Http\Controllers\Controller;
 use Allian\Http\Controllers\CustLoginController;
@@ -101,8 +100,10 @@ $klein->with('/testgauss', function() use ($klein){
 	$langList = new LangListController();
 	$klein->respond('GET', '/langNames', array($langList, 'langNames'));
 
-	// $twilio = new TwilioController();
-	// $klein->respond('GET', '/twilio', array($twilio, 'twilio'));
+	$twilio = new TwilioController();
+	$klein->respond('GET', '/twilioConference', array($twilio, 'twilioConference'));
+	$klein->respond('GET', '/conferenceEntryPoint', array($twilio, 'conferenceEntryPoint'));
+	$klein->respond('GET', '/incoming', array($twilio, 'incoming'));
 
 	$translationOrders = new TranslationOrdersController();
 	$klein->respond('POST', '/orderSummary', array($translationOrders, 'orderSummary'));
@@ -119,6 +120,7 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('GET', '/devGenerateAuthToken', array($developer, 'devGenerateAuthToken'));
 	$klein->respond('POST', '/tester', array($developer, 'tester'));
 	$klein->respond('GET', '/tester1', array($developer, 'tester1'));
+	$klein->respond('GET', '/test', array($developer, 'test'));
 
 });
 

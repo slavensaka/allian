@@ -115,11 +115,9 @@ class DeveloperController extends Controller {
 	 *
 	 */
 	public function tester($request, $response, $service, $app){
-		$headers = "MIME-Version: 1.0" . "\r\n";
-        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-		$headers .= "From: cs@alliantranslate.com\r\n";
-        $headers.="Reply-To: cs@alliantranslate.com\r\n";
-		mail("slavensakacic@gmail.com", "SUBJECT", "OVO JE PORUKA", $headers);
+		$redir = "Location: https://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+		header($redir);
+		exit;
 	}
 
 	/**
@@ -133,26 +131,32 @@ class DeveloperController extends Controller {
 		$sid = getenv('S_TEST_TWILIO_SID');
 		$token = getenv('S_TEST_TWILIO_TOKEN');
 		$testPhone = getenv('S_TEST_TWILIO_NO_E_CONF_CALL');
-		$client = new Services_Twilio($sid, $token, $version, $http);
-		$call = $client->account->calls->create("+15005550006", "+14108675309", "http://demo.twilio.com/docs/voice.xml", array());
-		// return $response->json($call->sid);
-
-		// $re = new Services_Twilio_Twiml();
-		// $re->say('Hello');
-		// $re->play('https://api.twilio.com/cowbell.mp3', array("loop" => 5));
-		$call = $client->account->calls->create(
-		  	'+15005550006', // From a valid Twilio number
-		  	'+14108675309', // Call this number
-		  // Read TwiML at this URL when a call connects (hold music)
-		  'http://twimlets.com/holdmusic?Bucket=com.twilio.music.ambient'
-		);
-		return  $call;
+		$client = new Services_Twilio($sid, $token);
+		$twiml_url = 'https://alliantranslate.com/testgauss/twilioConference';
+		$call = $client->account->calls->create("+15005550006", "+14108675309", $twiml_url, array());
+		return $call;
 
 
+	}
+
+	public function test($request, $response, $service, $app){
+		$server = trim($_SERVER['HTTP_HOST']);
+		$server=trim($server);
+		// This block of code just redirects users from www to non-www
+		// if (substr($server, 0, 4) === 'www.'){
+		//     header('Location: http'.(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on' ? 's':'').'://' . substr($server, 4).$_SERVER['REQUEST_URI']);
+		//     exit;
+		// }
+		// Use this as the default. This will be used when scripts are executed from command line
+		// This is just for developers working on their local machine
+		if($server=="localhost"){
+			return "localhost";
+		} else if($server=="alliantranslate.com"){ // This is for production site
+			return "alliantranslate";
+	}
 
 		// $client = new Services_Twilio(getenv('S_TEST_TWILIO_SID'), getenv('S_TEST_TWILIO_TOKEN'), $version, $http);
 		// $number = $client->account->incoming_phone_numbers->create(array( "VoiceUrl" => "http://demo.twilio.com/docs/voice.xml", "PhoneNumber" => "+15005550006" ));
-		// return $response->json("TEst");
 	}
 }
 

@@ -383,7 +383,7 @@ class CustLogin extends DataObject {
 	*/
 	function get_customer($cid) {
 		$con = Connect::con();
-	    $get_cust_info = mysqli_query("SELECT * FROM CustLogin WHERE CustomerID =  '$cid'");
+	    $get_cust_info = mysqli_query($con, "SELECT * FROM " . getenv('TBL_CUSTLOGIN') . " WHERE CustomerID =  '$cid'");
 	    $cust = mysqli_fetch_array($get_cust_info);
 	    return $cust;
 	}

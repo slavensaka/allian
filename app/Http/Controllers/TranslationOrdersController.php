@@ -8,7 +8,7 @@ use Allian\Models\Login;
 use Allian\Models\LangList;
 use Allian\Models\TranslationOrders;
 use Allian\Models\OrderOnsiteInterpreter;
-// use Allian\Helpers\Allian\ScheduleFunctions;
+use Allian\Helpers\Allian\ScheduleFunctions;
 
 class TranslationOrdersController extends Controller {
 
@@ -18,7 +18,7 @@ class TranslationOrdersController extends Controller {
      * @ApiRoute(name="/testgauss/orderSummary")
      * @ApiBody(sample="{'data': {
 	    'CustomerID': '406'
-	  },
+	  	},
      	'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjU1NDY1MjcsImp0aSI6IklGSTJTcmxlbWtQck1ncUZNSmV1RDZYYTlUTzRQbm02TmVGdThyK1VLV2c9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY1NTQ2NTI3LCJleHAiOjE1OTE2OTA1MjcsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.ff_JJqrXL1HLsTGRo7HA6q9YQJWiLaQRoVy0RcQYnDPpFQu-0HH1bYQ8PLHnyaOzSm3yYXkCle0gLd1O80vREg'}")
      *@ApiParams(name="data", type="string", nullable=false, description="Data")
      @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
@@ -34,9 +34,9 @@ class TranslationOrdersController extends Controller {
 	  	}
      * }")
      */
-	public function orderSummary($request, $response, $service, $app) {
+	public function orderSummary($request, $response, $service, $app) { // DONT CHANGE
 		if($request->token){
-		// 	Validate token if not expired, or tampered with
+			// 	Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
 			// 	Decrypt data
 			$data = $this->decryptValues($request->data);
@@ -46,24 +46,22 @@ class TranslationOrdersController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
+	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token.")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
-
-			$result = TranslationOrders::getTranslationOrders($data['CustomerID']);
-
+			// Retrieve orders that are already paid, and are telephonic
+			$result = TranslationOrders::getTranslationOrders($data['CustomerID'], "*");
 			$arr = array();
 			while ($row = mysqli_fetch_array($result)) {
 				$order_id = $row["order_id"];
-				$order_time = substr($row["order_time"], 0, -9);
+				$order_time = str_replace("/", ".", date("m/d/Y", strtotime($row['order_time'])));
 				$order_type = $row["order_type"];
-				// $cost = ($row["total_price"]+$addon); TODO
-				$cost = ($row["total_price"] + 0 );
-				if($order_type == 5){ // Telephonic only
-					$arr[] = array('orderId' => $order_id, 'orderTime' => $order_time, 'cost' => 'Total: ' .  $cost . '$');
+				$cost = ($row["total_price"] - $row['discount']);
+				if($order_type == 5){
+					$arr[] = array('orderId' => $order_id, 'orderTime' => $order_time, 'cost' => 'Total: ' . $cost . '$');
 				}
 			}
-			$base64Encrypted = $this->encryptValues(json_encode(array('orderSummary' => $arr, 'status' => 1)));
+			$base64Encrypted = $this->encryptValues(json_encode(array('orderSummary' => $arr, 'status' => 1, 'userMessage' => 'Orders Summary')));
 			// Return response json
 			return $response->json(array('data' => $base64Encrypted));
 		} else {
@@ -106,36 +104,31 @@ class TranslationOrdersController extends Controller {
      */
 	public function orderSummaryDetails($request, $response, $service, $app) {
 		if($request->token){
-		// 	Validate token if not expired, or tampered with
+			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
-		// 	Decrypt data
+			// Decrypt data
 			$data = $this->decryptValues($request->data);
-
+			// Validate inputed data
 			$service->validate($data['orderId'], 'Error: No order id is present.')->notNull();
 			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull();
 			//Validate the jwt token in the database
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
+	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token.")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
-			// $translation_order = TranslationOrders::getTranslationOrder($orderId,"*");
-			// $order_user_id = $translation_order["user_id"];
-			// return $order_user_id;
-			// if($order_user_id !== $data['CustomerID']){
-			// 	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Invalid Order")));
-	  		//    		return $response->json(array('data' => $base64Encrypted));
-			// }
+
+
+
 			$display_order = $this->order_onsite_template($data['orderId'], 'account');
+			// return $response->json($display_order);
 			if(!$display_order){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Order not Found. ")));
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Order not Found.")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
-			// return $response->json(array('data' => $display_order));
 			$base64Encrypted = $this->encryptValues(json_encode($display_order));
 			return $response->json(array('data' => $base64Encrypted));
-
 		} else {
 			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
      		return $response->json(array('data' => $base64Encrypted));
@@ -163,19 +156,18 @@ class TranslationOrdersController extends Controller {
 		3: choose directory to search within and press "Find" Button
 		4: The "Search Results" panel will search and display the pages where this functions has been used in the code.
 	*/
+		   // order_onsite_template($data['orderId'], 'account', "user")
 	function order_onsite_template($order_id, $user_type, $view_type = "user") {
 	   	$row = TranslationOrders::getTranslationOrder($order_id, '*');
 	    $interpret_order = OrderOnsiteInterpreter::get_interpret_order($order_id, "*");
-	    // Check if results are found in translation orders table and onsite_order table
 	    if(is_array($row) and is_array($interpret_order)){
-
-		    $bold = "font-weight:bold";
-		    $td_style = "style='color:#111;  vertical-align:top; padding:5px 0;  font-size:11px; border-bottom: 1px dotted #ccc;'";
-		    $headStyle = "background-color:#f2f2f2; padding:5px 5px; margin:10px 0;";
-		    $head_td_style = "style='color: #222; font-weight:bold; font-size:11px;   margin: 5px 0; border-bottom:1px dotted #ccc; padding: 5px 0'; ";
-		    $foot_td_style = "style='color: darkgreen; font-weight:bold; font-size:14px;   margin: 5px 0; border-bottom:2px solid #ccc; padding: 5px 0'";
+		    // $bold = "font-weight:bold";
+		    // $td_style = "style='color:#111;  vertical-align:top; padding:5px 0;  font-size:11px; border-bottom: 1px dotted #ccc;'";
+		    // $headStyle = "background-color:#f2f2f2; padding:5px 5px; margin:10px 0;";
+		    // $head_td_style = "style='color: #222; font-weight:bold; font-size:11px;   margin: 5px 0; border-bottom:1px dotted #ccc; padding: 5px 0'; ";
+		    // $foot_td_style = "style='color: darkgreen; font-weight:bold; font-size:14px;   margin: 5px 0; border-bottom:2px solid #ccc; padding: 5px 0'";
 		    $order_type = $row["order_type"];
-		    $isAdmin = ($user_type === "admin") ? true : false;
+		    $isAdmin = false;
 		    $h = ($isAdmin) ? "h3" : "h2";
 		    $isTelephonic = false;
 	    	if ($order_type == 4) {
@@ -532,6 +524,8 @@ class TranslationOrdersController extends Controller {
 			$rArray['dailyPrice'] = "$$daily" . ".00"; // $this->getFromTime();
 			$rArray['conferencePresent'] = "Conference Calling Fee $5.00";
 			$rArray['grandTotal'] = $grand_total;
+			$rArray['status'] = 1;
+			$rArray['userMessage'] = "Order summary";
 			// $rArray['daily'] = "$scheduling_type Telephonic Scheduling ($$rate_per_min/Min) for $actual_minutes minutes";
 		    return $rArray;
 	    }  else{ // order_id was greater than 0 or not equal to "0"
@@ -560,7 +554,8 @@ class TranslationOrdersController extends Controller {
 	    return ($get_value === "*") ? $order : $get;
 	}
 
-	/* amt_format function is used to format the amount (price) value.
+	/*
+		amt_format function is used to format the amount (price) value.
 	 * For example a system calculates price something like 23 and this function reformats the price into 23.00
 	 * @Param @amt: The amout value to be reformatted. Required argument
 	 * @Param $decimels: The position of decimels point. By default set as "2". Optional argument
@@ -573,6 +568,7 @@ class TranslationOrdersController extends Controller {
 		4: The "Search Results" panel will search and display the pages where this functions has been used in the code.
 	*/
 	function amt_format($amt, $decimels = "2", $decimel_point = ".", $thousand_sep = "") {
+		// Return number formate
 		return number_format($amt, $decimels, $decimel_point, $thousand_sep);
 	}
 

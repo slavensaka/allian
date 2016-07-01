@@ -78,3 +78,7 @@
 		// return $response->json($ar['services']);
 		// $services = implode(":", $ar['services']);
 		// return $services;
+
+$server = trim($_SERVER['HTTP_HOST']);
+$server=trim($server);
+echo $server;

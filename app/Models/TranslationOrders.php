@@ -42,8 +42,9 @@ class TranslationOrders extends DataObject {
 	    "last_updated" => "",
 	);
 
-	public static function insertTransationOrder($sArray, $FName, $LName, $Email, $Phone){
-		// $name = $FName." ".$LName;
+	/**
+	 *
+	 * // $name = $FName." ".$LName;
 		// $user = CustomerID
 		// $order_type = 5
 		// $invoice_id = null
@@ -54,6 +55,9 @@ class TranslationOrders extends DataObject {
 		// $total_price = možda amount
 		// $status is 0, with time should be 7 . (0=Pending; 1=Paid; 2=Invoiced; 3=Abandoned; 4=Cancelled; 5=Deleted; 6=Card Declined; 7=Project Submitted)
 		// order_time = date("Y-m-d H:i");
+	 *
+	 */
+	public static function insertTransationOrder($sArray, $FName, $LName, $Email, $Phone){
 		$con = Connect::con();
 		$order_type = 5;
 		$user =	$sArray['customer_id'];
@@ -74,6 +78,11 @@ class TranslationOrders extends DataObject {
 		return false;
 	}
 
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
 	public static function updateTranslationOrdersSch($dArray){
 		$con = Connect::con();
 		try {
@@ -101,33 +110,31 @@ class TranslationOrders extends DataObject {
     	}
 	}
 
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
 	public static function getTranslationOrder($order_id, $get_value){
 		$con = Connect::con();
 	    $get_order_info = mysqli_query($con, "SELECT $get_value FROM " . getenv("TBL_TRANSLATION_ORDERS") . " WHERE order_id =  '$order_id'");
 		$order = mysqli_fetch_array($get_order_info);
 		$get = $order[$get_value];
-		// If whole record is required then return whole object
 		return ($get_value === "*") ? $order : $get;
 	}
 
-	public static function getTranslationOrders($CustomerID){ // OVO
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	public static function getTranslationOrders($CustomerID){
 		$con = Connect::con();
-		$project_query =  "SELECT * FROM " . getenv("TBL_TRANSLATION_ORDERS") . " WHERE user_id='$CustomerID' AND status  IN(1,2,7)  ORDER BY `order_id` DESC";
+		$telephonic_type = 5;
+		// Return only those that are Paid, Invoiced & Project Submitted
+		$project_query =  "SELECT * FROM " . getenv("TBL_TRANSLATION_ORDERS") . " WHERE user_id='$CustomerID' AND status  IN(1,2,7) AND order_type = '$telephonic_type'  ORDER BY `order_id` DESC";
 		$result = mysqli_query($con, $project_query);
 		return $result;
 	}
-
-	// public static function getTranslationOrdersByOrderId($order_id){
-	// 	$con = Connect::con();
-	// 	$sql = "SELECT * FROM " . getenv("TBL_TRANSLATION_ORDERS") . " WHERE order_id = $order_id";
-	// 	$result = mysqli_query($con, $sql);
-	// 	$new = mysqli_fetch_array($result);
-	// 	return $new;
-	// }
-
-
-
-
-
 
 }

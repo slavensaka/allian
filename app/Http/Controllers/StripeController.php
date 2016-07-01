@@ -9,9 +9,24 @@ use Stripe\Charge;
 use Stripe\Customer;
 use Allian\Models\CustLogin;
 use Allian\Models\Stripe as StripeModel;
-use Allian\Http\Controllers\StripeController;// TODO remove?
+use Allian\Http\Controllers\StripeController;
 
 class StripeController extends Controller {
+
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	public function getStripeKey(){
+		$server = trim($_SERVER['HTTP_HOST']);
+		$server=trim($server);
+		if($server=="localhost"){
+			return Stripe::setApiKey(getenv('STRIPE_KEY'));
+		} else if($server=="alliantranslate.com"){
+			return Stripe::setApiKey(getenv('STRIPE_KEY_ALLIAN_TEST'));
+		}
+	}
 
 	/**
      * @ApiDescription(section="UpdateStripe", description="Update customer information for card.")
@@ -54,7 +69,7 @@ class StripeController extends Controller {
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
-			Stripe::setApiKey(getenv('STRIPE_KEY'));
+			$this->getStripeKey();
 			// Stripe token then customer create
 			$stripe = new StripeController();
 			// Format exp_month and exp_year
@@ -120,7 +135,8 @@ class StripeController extends Controller {
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
-			Stripe::setApiKey(getenv('STRIPE_KEY'));
+
+			$this->getStripeKey();
 			// Get the customer from db
 			$customer = CustLogin::getCustomer($data['CustomerID']);
 			// Retrieve the stripe customer from db stripe token
@@ -136,6 +152,7 @@ class StripeController extends Controller {
 			$rArray['brand']= $cu->sources->data[0]->brand;
 			$rArray['number'] =$cu->sources->data[0]->last4;
 			$rArray['status'] = 1;
+
 			// Format response
 			$base64Encrypted = $this->encryptValues(json_encode($rArray));
 	     	return $response->json(array('data' => $base64Encrypted));
@@ -151,7 +168,8 @@ class StripeController extends Controller {
 	 *
 	 */
 	public function chargeCustomer($amount, $token, $email){ // DONT CHANGE
-		Stripe::setApiKey(getenv('STRIPE_KEY'));
+
+		$this->getStripeKey();
 		try {
 	        $charge = Charge::create(array("amount" => ($amount * 100), "currency" => "usd", "customer" => $token,"description" => "Gauss:app, Customer CHARGED with email $email"));
 			if ($charge->paid == true) {
@@ -179,7 +197,7 @@ class StripeController extends Controller {
 	 *
 	 */
 	public function createToken($data){ // REMOVE MAYBE
-		Stripe::setApiKey(getenv('STRIPE_KEY'));
+		$this->getStripeKey();
 		// Create a token for customer credit card details
 		$result = Token::create( array("card" => array( "name" => $data['sname'], "number" => $data['number'],
 			"exp_month" => $data['exp_month'], "exp_year" => $data['exp_year'], "cvc" => $data['cvc'] )));
@@ -193,7 +211,8 @@ class StripeController extends Controller {
 	 *
 	 */
 	public function createTokenNew($data, $exp_month, $exp_year){ // DONT CHANGE
-		Stripe::setApiKey(getenv('STRIPE_KEY'));
+
+		$this->getStripeKey();
 		$result = Token::create( array("card" => array( "name" => $data['sname'], "number" => $data['number'],
 			"exp_month" => (int)$exp_month, "exp_year" => (int)$exp_year, "cvc" => $data['cvc'] )));
 		// Return one time created stripe token

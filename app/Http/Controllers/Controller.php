@@ -6,6 +6,7 @@ use PHPMailer;
 use Firebase\JWT\JWT;
 use Allian\Models\CustLogin;
 use Allian\Helpers\TwilioConference\DatabaseAccess;
+
 class Controller {
 
 	/**
@@ -259,6 +260,25 @@ class Controller {
 			}
 		}while($n);
 	}
+
+	public function serverEnv(){
+		$server = trim($_SERVER['HTTP_HOST']);
+		$server=trim($server);
+		if($server=="localhost"){
+			return "localhost";
+		} else if($server=="alliantranslate.com"){
+			return "alliantranslate";
+		}
+	}
+
+	public function load_https(){
+	//force the page to use ssl
+	if ($_SERVER["SERVER_PORT"] != 443) {
+	    $url = "Location: https://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+	    return header($url);
+
+	}
+}
 
 
 }

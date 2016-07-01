@@ -6,6 +6,11 @@ use Database\DatabaseConnection;
 
 class DatabaseAccess extends DatabaseConnection {
 
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
 	public function db_insert($query){
 		$this->mysqli->query($query);
 	    $id=$this->mysqli->insert_id;
@@ -13,7 +18,11 @@ class DatabaseAccess extends DatabaseConnection {
 		return $id;
 	}
 
-	//check code already exists
+	/**
+	 *
+	 * Can be interpreter or client
+	 *
+	 */
 	public function codeused($code){
 		$query="SELECT  `user_code`, `interpreter_code` FROM `conference_shedule` WHERE `user_code`=? OR `interpreter_code`= ?";
 		$stmt=$this->mysqli->prepare($query);
@@ -24,9 +33,14 @@ class DatabaseAccess extends DatabaseConnection {
 		$stmt->free_result();
 		$stmt->close();
 		return $a;
-		}
-	public function conf_exist($order_id)
-	{
+	}
+
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	public function conf_exist($order_id){
 		$query="SELECT  `user_code`, `interpreter_code` FROM `conference_shedule` WHERE `orderID`= ?";
 		$stmt=$this->mysqli->prepare($query);
 		$stmt->bind_param('s',$order_id);
@@ -37,6 +51,12 @@ class DatabaseAccess extends DatabaseConnection {
 		$stmt->close();
 		return $a;
 	}
+
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
 	public function oline_calls($code){
 		$value=0;
 		$query="SELECT `call_sid` FROM `conference_log` WHERE `secret_code`=? AND `is_disconnected`=?";
@@ -49,8 +69,13 @@ class DatabaseAccess extends DatabaseConnection {
 		$stmt->close();
 		return $a;
 	}
-	public function get_conf_data($code)
-	{
+
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	public function get_conf_data($code){
 		$result=array();
 		$query="SELECT  `conf_tag`, `user_code`, `interpreter_code`, `start_datetime`, `end_datetime` FROM `conference_shedule` WHERE `user_code`=? OR `interpreter_code`= ?";
 		$stmt=$this->mysqli->prepare($query);
@@ -68,8 +93,12 @@ class DatabaseAccess extends DatabaseConnection {
 		return $result;
 	}
 
-	public function expired_conf($today)
-	{
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	public function expired_conf($today){
 		$result=array();
 		$query="SELECT  `user_code`, `interpreter_code`FROM `conference_shedule` WHERE `end_datetime`< '$today'";
 		$stmt=$this->mysqli->prepare($query);
@@ -86,8 +115,12 @@ class DatabaseAccess extends DatabaseConnection {
 		return $result;
 	}
 
-	public function get_conf_bridge($order_id)
-	{
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	public function get_conf_bridge($order_id){
 		$result=array();
 		$query="SELECT `user_code`, `interpreter_code`, `start_datetime`, `end_datetime` FROM `conference_shedule` WHERE `orderID`=?";
 		$stmt=$this->mysqli->prepare($query);
@@ -103,8 +136,14 @@ class DatabaseAccess extends DatabaseConnection {
 		$stmt->close();
 		return $result;
 	}
-	public function delete_data($query)
-	{
+
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	public function delete_data($query){
 		$this->mysqli->query($query);
 	}
+
 }

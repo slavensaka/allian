@@ -209,7 +209,12 @@ class CustLoginController extends Controller {
 		// Generate a radnom password for the customer to email and store in the database
 		$pass = $this->generatePassword();
 		// Send an email with the new pass to the user
-		$sentEmail = Mail::newPassEmail($data['email'], $customer->getValueEncoded('FName'), $pass);
+		$server = $this->serverEnv();
+		if($server=="localhost"){
+			$sentMail = Mail::newPassEmail($data['email'], $customer->getValueEncoded('FName'), $pass);
+		} else if($server=="alliantranslate"){
+			$sentMail = Mail::newPassProduction($data['email'], $customer->getValueEncoded('FName'), $pass);
+		}
 		// Error if sending of email failed
 		if(!$sentEmail){
 			$errorJson = $this->encryptValues(json_encode($this->errorJson("Error: Problem sending email. Contact support!")));
@@ -495,8 +500,13 @@ class CustLoginController extends Controller {
 			$values['telephonicPassword'] = $customer->getValueEncoded('PhPassword');
 			$values['csEmail'] = getenv('CS_EMAIL');
 			$values['tel'] = $data['tel'];
-
-			$sent =  Mail::telAccessEmail($values);
+			// Send email
+			$server = $this->serverEnv();
+			if($server=="localhost"){
+				$sent = Mail::telAccessEmail($values);
+			} else if($server=="alliantranslate"){
+				$sent = Mail::telAccessProduction($values);
+			}
 			if(!$sent){
 				$errorJson = $this->encryptValues(json_encode($this->errorJson("Error: Problem sending email. Contact support!")));
 				return $response->json(array('data' => $errorJson));
