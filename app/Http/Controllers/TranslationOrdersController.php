@@ -522,7 +522,7 @@ class TranslationOrdersController extends Controller {
 			$daily = $grand_total - 5;
 			$rArray['daily'] = "ATS - Regular Telephonic Scheduling ($3/Min) for " . $telephonic_duration . " minutes";
 			$rArray['dailyPrice'] = "$$daily" . ".00"; // $this->getFromTime();
-			$rArray['conferencePresent'] = "Conference Calling Fee $5.00";
+			$rArray['conferencePresent'] = "$5.00";
 			$rArray['grandTotal'] = $grand_total;
 			$rArray['status'] = 1;
 			$rArray['userMessage'] = "Order summary";

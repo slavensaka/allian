@@ -1,5 +1,5 @@
 <?php
-
+// php apidoc.php
 require __DIR__ . './vendor/autoload.php';
 
 use Crada\Apidoc\Builder;
@@ -27,5 +27,3 @@ try {
 } catch (Exception $e) {
     echo 'There was an error generating the documentation: ', $e->getMessage();
 }
-
-// php apidoc.php

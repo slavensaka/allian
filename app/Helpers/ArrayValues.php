@@ -37,7 +37,9 @@ class ArrayValues {
 			'Australia/Sydney' => "Australia (UTC +10:00)",
 			'Pacific/Auckland' => "New Zeland (UTC +12:00)",
 		);
-		return array('timezonesTop' => $timezones_array_top);
+
+			return $timezones_array_top;
+		// return array('timezonesTop' => $timezones_array_top);
 	}
 
 	public static function timezones(){
@@ -154,7 +156,7 @@ class ArrayValues {
 		    'Asia/Magadan' => "Magadan (UTC +12:00) ",
 		    'Pacific/Auckland' => "Auckland (UTC +12:00) ",
 		    'Pacific/Fiji' => "Fiji (UTC +12:00)",);
-
+		return $timezones_array;
 		return array('timezones' => $timezones_array);
 	}
 
@@ -169,6 +171,7 @@ class ArrayValues {
 	            $langsFrom[trim($row['LangName'])] = trim($row['LangName']);
             }
         }
+        return $langsFrom;
         return array('langFrom' => $langsFrom);
 	}
 
@@ -183,6 +186,7 @@ class ArrayValues {
 	            $langsTo[trim($row['LangName'])] = trim($row['LangName']);
             }
         }
+        return $langsTo;
         return array('langTo' => $langsTo);
 	}
 
@@ -400,6 +404,7 @@ class ArrayValues {
 				"Yemen"  => "Yemen",
 				"Zambia"  => "Zambia",
 				"Zimbabwe"  => "Zimbabwe");
+		return $countries;
 		return array('countries' => $countries);
 	}
 
@@ -407,6 +412,7 @@ class ArrayValues {
 		$schedulingType = array(
 			'get_call' => 'Get Interpreters Call',
 			'conference_call' => 'Conference Call');
+		// return $schedulingType;
 		return array('schedulingType' => $schedulingType);
 	}
 
@@ -420,6 +426,7 @@ class ArrayValues {
 			"Investigations" => "Investigations",
 			"Medical" => "Medical",
 			"Other" => "Other",);
+		// return $neededFor;
 		return array('neededFor' => $neededFor);
 	}
 

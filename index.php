@@ -1,13 +1,6 @@
 <?php
-// ALTER TABLE CustLogin ADD COLUMN jwt_token VARCHAR(250) NULL AFTER token;
-// TODO PhPassword also hash and old passwords
 require __DIR__ . '/vendor/autoload.php';
 
-// C:\xampp\htdocs\allian\linguist\twilio_app\outgoing.php
-// $ITSUrl = "http://www.alliantranslate.com/linguist_dev_test_backup/phoneapp/interpreter.php";
-// $conferenceURL = "http://alliantranslate.com/linguist_dev_test_backup/twilio-conf-enhanced/conference.php?Digits=1&amp;vcode=";
-
-// $disc_label = ($_SESSION["admin-order"]) ? "Enter Discount Amount in cents" : "Enter a Promotional or Offer Code:"; telephonic_order.php 1099
 use Allian\Http\Controllers\Controller;
 use Allian\Http\Controllers\CustLoginController;
 use Allian\Http\Controllers\TranslationOrdersController;
@@ -18,9 +11,7 @@ use Allian\Http\Controllers\ConferenceScheduleController;
 use Allian\Http\Controllers\TwilioController;
 use Allian\Http\Controllers\LangListController;
 use Allian\Http\Controllers\OrderOnsiteInterpreterController;
-
 use Allian\Models\CustLogin;
-
 
 $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
@@ -102,8 +93,10 @@ $klein->with('/testgauss', function() use ($klein){
 
 	$twilio = new TwilioController();
 	$klein->respond('GET', '/twilioConference', array($twilio, 'twilioConference'));
-	$klein->respond('GET', '/conferenceEntryPoint', array($twilio, 'conferenceEntryPoint'));
-	$klein->respond('GET', '/incoming', array($twilio, 'incoming'));
+	$klein->respond('GET', '/addNewMember', array($twilio, 'addNewMember'));
+	$klein->respond('GET', '/incoming', array($twilio, 'incoming')); // TESTING
+	$klein->respond('POST', '/incomingInbound', array($twilio, 'incomingInbound')); // TESTING
+	$klein->respond('GET', '/twilioCall', array($twilio, 'twilioCall')); // TESTING
 
 	$translationOrders = new TranslationOrdersController();
 	$klein->respond('POST', '/orderSummary', array($translationOrders, 'orderSummary'));
@@ -118,8 +111,8 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('GET', '/devEncryptJson', array($developer, 'devEncryptJson'));
 	$klein->respond('GET', '/devDecryptJson', array($developer, 'devDecryptJson'));
 	$klein->respond('GET', '/devGenerateAuthToken', array($developer, 'devGenerateAuthToken'));
-	$klein->respond('POST', '/tester', array($developer, 'tester'));
-	$klein->respond('GET', '/tester1', array($developer, 'tester1'));
+	$klein->respond('POST', '/postTester', array($developer, 'postTester'));
+	$klein->respond('GET', '/getTester', array($developer, 'getTester'));
 	$klein->respond('GET', '/test', array($developer, 'test'));
 
 });

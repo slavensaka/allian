@@ -34,7 +34,7 @@ class ConferenceFunctions{
 	 */
 	function verify_caller($code){
 		$db = new DatabaseAccess();
-		if($db->codeused($code)){
+		if($db->codeused($code)){ // TODO Check only if the number if from client, because only clients will do requet
 			$conf=$db->get_conf_data($code);
 			if($conf['interpreter_code']==$code){
 				$data['auto_start']="true";
@@ -43,19 +43,15 @@ class ConferenceFunctions{
 			}
 			$end = new \DateTime($conf['end_datetime']);
 			$today=new \DateTime(gmdate("Y-m-d H:i"));
-			if($today>$end){
-				$data['msg']="The conference sheduled is expired.";
-				$data['status'] = 0;
+			if($today > $end){
+				$data['msg']="The conference scheduled is expired.";
 			}else {
 				$data['conf_tag']=$conf['conf_tag'];
-				$data['auth']=TRUE;// dont use
-				$data['msg']="Please hold while connecting to conference";
-				$data['status'] = 1;
+				$data['auth']=true;
+				$data['msg']="Please hold while connecting to conference.";
 			}
 		}else{
-			$data['msg']="The secret code you given is not valid";
-			$data['status'] = 0;
-			$data['auto_start']="false";
+			$data['msg']="The secret code you given is not valid.";
 		}
 		return $data;
 	}

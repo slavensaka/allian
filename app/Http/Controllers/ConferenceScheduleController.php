@@ -46,17 +46,78 @@ class ConferenceScheduleController extends Controller {
 			if(!$validated){
 	     		return $response->json(array('data' => $this->errorJson("Authentication problems. CustomerID doesn't match that with token.")));
 			}
+
+			// TimezonesTop
+			$timezonesTop = array();
+			foreach (ArrayValues::timezonesTop() as $number => $row){
+			    $timezonesTop[] = array($number => $row);
+			}
+			$for1 = array('timezonesTop' => $timezonesTop);
+
+			// Timezones
+			$timezones = array();
+			foreach (ArrayValues::timezones() as $dd => $aa){
+			    $timezones[] = array($dd => $aa);
+			}
+			$for2 = array('timezones' => $timezones);
+
+			// LangFrom
+			$langFrom = array();
+			foreach (ArrayValues::langFrom() as $number => $row){
+			    $langFrom[] = array($number => $row);
+			}
+			$for3 = array('langFrom' => $langFrom);
+
+			// LangTo
+			$langTo = array();
+			foreach (ArrayValues::langTo() as $number => $row){
+			    $langTo[] = array($number => $row);
+			}
+			$for4 = array('langTo' => $langTo);
+
+			// Countries
+			$countries = array();
+			foreach (ArrayValues::countries() as $number => $row){
+			    $countries[] = array($number => $row);
+			}
+			$for5 = array('countries' => $countries);
+
+			// // SchedulingType
+			// $schedulingType = array();
+			// foreach (ArrayValues::schedulingType() as $number => $row){
+			//     $schedulingType[] = array($number => $row);
+			// }
+			// $for6 = array('schedulingType' => $schedulingType);
+
+			// NeededFor
+			// $neededFor = array();
+			// foreach (ArrayValues::neededFor() as $number => $row){
+			//     $neededFor[] = array($number => $row);
+			// }
+			// $for7 = array('neededFor' => $neededFor);
+
+			// $result = array_merge($for1, $for2, $for3, $for4, $for5, $for6, $for7);
+			// return $response->json(array('data' =>$result));
+
+			$schedulingType = array(
+			'get_call' => 'Get Interpreters Call',
+			'conference_call' => 'Conference Call');
+			$type = array('schedulingType' => $schedulingType);
+
 			// Retrieve array values for populating scheduling form
-			$timezonesTop =  ArrayValues::timezonesTop();
-			$timezones =  ArrayValues::timezones();
-			$langFrom = ArrayValues::langFrom();
-			$langTo = ArrayValues::langTo();
-			$countries =  ArrayValues::countries();
-			$schedulingType = ArrayValues::schedulingType();
+			// $timezonesTop =  ArrayValues::timezonesTop();
+			// $timezones =  ArrayValues::timezones();
+			// $langFrom = ArrayValues::langFrom();
+			// $langTo = ArrayValues::langTo();
+			// $countries =  ArrayValues::countries();
+			// $schedulingType = ArrayValues::schedulingType();
 			$neededFor =  ArrayValues::neededFor();
-			// Merge all arrays into one
-			$result = array_merge($timezonesTop, $timezones, $langFrom, $langTo, $countries, $schedulingType, $neededFor);
-			// Format & return response
+
+			// // Merge all arrays into one
+			$result = array_merge($for1, $for2, $for3, $for4, $for5, $type, $neededFor);
+			return $response->json(array('data' => $result));
+			// $result = array_merge($timezonesTop, $timezones, $langFrom, $langTo, $countries, $schedulingType, $neededFor);
+			// // Format & return response
 	     	return $response->json(array('data' => $result));
 	    } else {
 	    	return $response->json($this->errorJson("No token provided"));
@@ -214,7 +275,8 @@ class ConferenceScheduleController extends Controller {
 			$service->validate($data['timeEnds'], 'Error: time ends not present.')->notNull();
 			$service->validate($data['langFrom'], 'Error: lang from not present.')->notNull();
 			$service->validate($data['langTo'], 'Error: lang to present.')->notNull();
-			$service->validate($data['country'], 'Error: country not present.')->notNull();
+			$service->validate($data['country'], 'Error: country not present.');
+			//TODO promotionalCode
 			$service->validate($data['schedulingType'], 'Error: scheduling type not present.')->notNull();
 			$service->validate($data['clients'], 'Error: clients not present.')->notNull();
 			$service->validate($data['neededFor'], 'Error: interpreting needed for not present.')->notNull();
