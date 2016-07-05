@@ -212,7 +212,7 @@ class CustLoginController extends Controller {
 		$server = $this->serverEnv();
 		if($server=="localhost"){
 			$sentMail = Mail::newPassEmail($data['email'], $customer->getValueEncoded('FName'), $pass);
-		} else if($server=="alliantranslate"){
+		} else if($server=="alliantranslate.com"){
 			$sentMail = Mail::newPassProduction($data['email'], $customer->getValueEncoded('FName'), $pass);
 		}
 		// Error if sending of email failed

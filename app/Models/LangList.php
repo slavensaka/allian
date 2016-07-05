@@ -59,6 +59,20 @@ class LangList extends DataObject {
 	    return $get;
 	}
 
+	function selectChinese() {
+		$con = Connect::con();
+	    $get = mysqli_query($con,"SELECT * FROM LangList where LangName like '%Chinese%' ");
+	    $lang = mysqli_fetch_array($get);
+	    return $lang;
+	}
+
+	function selectMandarin() {
+		$con = Connect::con();
+	    $get = mysqli_query($con,"SELECT * FROM LangList where LangName like '%Mandarin%' ");
+	    $lang = mysqli_fetch_array($get);
+	    return $lang;
+	}
+
 
 
 

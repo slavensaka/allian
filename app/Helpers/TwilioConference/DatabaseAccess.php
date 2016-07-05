@@ -100,7 +100,7 @@ class DatabaseAccess extends DatabaseConnection {
 	 */
 	public function expired_conf($today){
 		$result=array();
-		$query="SELECT  `user_code`, `interpreter_code`FROM `conference_shedule` WHERE `end_datetime`< '$today'";
+		$query="SELECT  `user_code`, `interpreter_code` FROM `conference_shedule` WHERE `end_datetime`< '$today'";
 		$stmt=$this->mysqli->prepare($query);
 		//$stmt->bind_param('ii',$code,$code);
 		$stmt->execute();

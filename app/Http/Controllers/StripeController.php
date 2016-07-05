@@ -192,6 +192,34 @@ class StripeController extends Controller {
 
 	/**
 	 *
+	 * Charge the customer with stripe token
+	 *
+	 */
+	public function preAuthCustomer($token){ // DONT CHANGE
+		$this->getStripeKey();
+		try {
+			// $return=shell_exec ('curl https://api.stripe.com/v1/charges  -u ' . getenv('STRIPE_KEY') . ' -d amount=3000 -d currency=usd  -d capture=false -d customer='.$token.' -d "description=Pre autherizing 30$"');
+	        $result = Charge::create(array("amount" => 3000, "capture" => false, "currency" => "usd", "customer" => $token, "description" => "Gauss:app, Pre autherizing 30$"));
+			if ($result->id) {
+				return $result->id;
+			} else {
+				throw new \Exception("Payment System Error! Your payment could NOT be processed (i.e., you have not been charged) because the payment system rejected the transaction. You can try again or use another card.");
+			}
+		} catch (\Stripe\Error\Card $e) {
+			return $e->getMessage();
+		} catch (\Stripe\Error\ApiConnection $e) {
+			throw new \Exception($e->getMessage());
+		} catch (\Stripe\Error\InvalidRequest $e) {
+			throw new \Exception($e->getMessage());
+		} catch (\Stripe\Error\Api $e) {
+			throw new \Exception($e->getMessage());
+		} catch (\Stripe\Error\Base $e) {
+			throw new \Exception($e->getMessage());
+		}
+	}
+
+	/**
+	 *
 	 * Create a new customer with stripe servers
 	 * & return customers token
 	 *

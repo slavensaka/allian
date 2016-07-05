@@ -11,6 +11,7 @@ use Allian\Http\Controllers\ConferenceScheduleController;
 use Allian\Http\Controllers\TwilioController;
 use Allian\Http\Controllers\LangListController;
 use Allian\Http\Controllers\OrderOnsiteInterpreterController;
+use Allian\Http\Controllers\HotlineController;
 use Allian\Models\CustLogin;
 
 $dotenv = new Dotenv\Dotenv(__DIR__);
@@ -92,11 +93,20 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('GET', '/langNames', array($langList, 'langNames'));
 
 	$twilio = new TwilioController();
-	$klein->respond('GET', '/twilioConference', array($twilio, 'twilioConference'));
-	$klein->respond('GET', '/addNewMember', array($twilio, 'addNewMember'));
+	$klein->respond('POST', '/twilioConference', array($twilio, 'twilioConference'));
+	$klein->respond('POST', '/twilioConf', array($twilio, 'twilioConf'));
+	$klein->respond('POST', '/addNewMember', array($twilio, 'addNewMember'));
 	$klein->respond('GET', '/incoming', array($twilio, 'incoming')); // TESTING
 	$klein->respond('POST', '/incomingInbound', array($twilio, 'incomingInbound')); // TESTING
-	$klein->respond('GET', '/twilioCall', array($twilio, 'twilioCall')); // TESTING
+	$klein->respond('POST', '/sendSms', array($twilio, 'sendSms')); // TESTING
+	$klein->respond('POST', '/twilioCall', array($twilio, 'twilioCall')); // TESTING
+	$klein->respond('POST', '/callbackUrl', array($twilio, 'callbackUrl')); // TESTING
+
+	$hotline = new HotlineController();
+	$klein->respond('POST', '/hotline', array($hotline, 'hotline'));
+	$klein->respond('POST', '/hotlineOut', array($hotline, 'hotlineOut'));
+	$klein->respond('POST', '/hotlineFallbackOut', array($hotline, 'hotlineFallbackOut'));
+	$klein->respond('POST', '/waitForInterpreter', array($hotline, 'waitForInterpreter'));
 
 	$translationOrders = new TranslationOrdersController();
 	$klein->respond('POST', '/orderSummary', array($translationOrders, 'orderSummary'));

@@ -118,7 +118,7 @@ class ConferenceFunctions{
 		$db = new DatabaseAccess();
 		$today=gmdate("Y-m-d H:i:s");
 		$logkey=$db->expired_conf($today);
-		print_r($logkey);
+		// print_r($logkey);
 
 		foreach ($logkey as $key => $value) {
 			foreach ($value as $key => $value) {
