@@ -162,6 +162,10 @@ class Mail {
 		}
 	}
 
+	public function sendStaffMail(){
+
+	}
+
 	/**
 	 * TODO SEND_NOTIFICATION da bude jedan localhost jedan za alliantranslate
 	 * PRavi za live production $to = "orders@alliancebizsolutions.com,cs@alliantranslate.com"

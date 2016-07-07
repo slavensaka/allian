@@ -43,192 +43,90 @@ class TwilioController extends Controller {
 		return $data;
 	}
 
-	/**
-	 *
-	 * Block comment
-	 *
-	 */
-	public function twilioConf($request, $response, $service, $app){
-		$service->render('./resources/views/twilio/conference/twilioConf.php');
-	}
-
-	/**
-     * NOVI BROJ TREBA ZA CLIENTA ZA APP KOJI NAZIVOM SE SPAJA NA conf_tag na kojem je već interperter
-     * @ApiDescription(section="TwilioConference", description="Join the twilio conference call.")
-     * @ApiMethod(type="get")
-     * @ApiRoute(name="/testgauss/twilioConference")
-     * @ApiBody(sample="{ 'data': ''}")
+	/**  NOVI BROJ TREBA ZA CLIENTA ZA APP KOJI NAZIVOM SE SPAJA NA conf_tag na kojem je već interperter
+     * @ApiDescription(section="Conference", description="Join the twilio scheduled session conference call.")
+     * @ApiMethod(type="post")
+     * @ApiRoute(name="/testgauss/conference")
+     * @ApiBody(sample="{'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ2MDE1MTUsImp0aSI6InAwaFpucWxqaUpqWStDdmdrb3c0MjJITTQ1TkYweFVobCtHU2lWZFwvUlN3PSIsImlzcyI6ImxvY2FsaG9zdCIsIm5iZiI6MTQ2NDYwMTUxNSwiZXhwIjoxNDY1ODExMTE1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.wwxlnjSCmInwNYinJ-LIyHMOys3oYTeoQem2MJTfgNREFZ8rcDB9uZ61Hw6vHIVMh_8BKzJUKS-_0nwhfrJVxQ'}")
+     @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
-     * @ApiReturn(type="object", sample="{'nesto': '', 'nesto': '' }")
+     * @ApiReturn(type="string", sample="{
+     *  'data': {
+	    'status': 1,
+	    'userMessage': 'Twilio token',
+	    'twilioToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZSI6InNjb3BlOmNsaWVudDpvdXRnb2luZz9hcHBTaWQ9QVBlMDAwOTk4ZjhiZGQ4MDhhNjA3NTllYjMyZjc5MmMxMiZhcHBQYXJhbXM9JmNsaWVudE5hbWU9NzQ3IHNjb3BlOmNsaWVudDppbmNvbWluZz9jbGllbnROYW1lPTc0NyIsImlzcyI6IkFDOTFjNDlkZjQ0MDZlNWMwOGE3NTQ2YWJhNDgwYTg5YjkiLCJleHAiOjE0Njc5Nzc4ODB9.hqimm091r4MnywuPzqq39uPyjleNUecgDn9XMwJuvjc'
+	  	}
+     * }")
      */
-	public function twilioConference($request, $response, $service, $app){
+	public function conference($request, $response, $service, $app){
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
-			// Decrypt data
-			// Validate CustomerId
+			// Decrypt input data
 			$data = $this->decryptValues($request->data);
+			// Validate input data
 			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
-			$service->validate($data['orderId'], 'Error: No order id is present.')->notNull()->isInt();
-			$service->validate($data['phoneNumber'], 'Error: No phoneNumber id is present.');
-
+			//Validate token in database
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
-			// If error validating token in database
 			if(!$validated){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
-	     		return $response->json(array('data' => $base64Encrypted));
+	     		$ret = $this->errorJson("Authentication problems present");
+	     		return $response->json(array('data' => $ret));
 			}
-
-			$conference = ConferenceSchedule::get_conference("TODO REMOVE", $data['orderId'], '*');
-
-			$sid = getenv('S_TWILIO_SID');
-			$token = getenv('S_TWILIO_TOKEN');
-			$version = '2010-04-01';
-			$http = new Services_Twilio_TinyHttp('https://api.twilio.com', array('curlopts' => array(CURLOPT_SSL_VERIFYPEER => false)));
-			$client = new Services_Twilio($sid, $token, $version, $http);
-
-			$appSid = getenv('S_TEST_TWILIO_APP_SID');
-			$capability = new Services_Twilio_Capability($sid, $token);
-			$capability->allowClientOutgoing($appSid);
-
-			if($data['phoneNumber']){
-				$urlBuild = array(
-			    	"CustomerID" => $data['CustomerID'],
-			    	"orderId" => $data['orderId'],
-			    	"phoneNumber" => $data['phoneNumber']
-				);
-			} else {
-				$urlBuild = array(
-			    	"CustomerID" => $data['CustomerID'],
-			    	'phoneNumber' => "+385919249906", // MOJ BROJ VERIFIED TESTING
-			    	"orderId" => $data['orderId']
-				);
-			}
-
-			$fallbackUrl = array(
-		    	"CustomerID" => $data['CustomerID'],
-		    	"orderId" => $data['orderId'],
-		    	"user_code" => $conference['user_code']
-			);
-
-			$server = $this->serverEnv();
-			$urlFirst = 'https://af3d0846.ngrok.io/';
-			if($server=="alliantranslate"){
-				$urlFirst = 'https://alliantranslate.com/';
-			}
-
-			$url = $urlFirst . 'testgauss/incomingInbound' . '?' . http_build_query($urlBuild, '', '&');
-			$fallbackUrl = $urlFirst . 'testgauss/fallbackUrl' . '?' . http_build_query($fallbackUrl, '', '&');
-
-			if($data['phoneNumber']){
-				$call  = $client->account->calls->create(
-					'+385919249906', $urlBuild['phoneNumber'], $url, array('StatusCallback' => $fallbackUrl));
-			} else {
-				$call = $client->account->calls->create(
-					'+385919249906', '+12014642721', $url, array('StatusCallback' => $fallbackUrl));
-			}
-			$base64Encrypted = $this->encryptValues($call);
-	     	return $response->json(array('data' => $base64Encrypted));
-		} else {
-			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
-     		return $response->json(array('data' => $base64Encrypted));
-		}
+			// Get a customer from the database based on the CustomerID
+			$customer = CustLogin::get_customer($data['CustomerID']);
+			// Generate a twilio capability token
+			$token = ConfFunc::generateCapabilityToken($data['CustomerID']);
+			// Return that Token
+	    	return $response->json(array('data' => array('status' => 1, 'userMessage' => 'Twilio token', 'twilioToken' => $token)));
+	    } else {
+     		$ret = $this->errorJson("No token provided in request");
+     		return $response->json(array('data' => $ret));
+     	}
 	}
 
 	/**
-	 Add na
-	 https://www.twilio.com/user/account/voice/dev-tools/twiml-apps/APe000998f8bdd808a60759eb32f792c12
-	 https://6b618a9f.ngrok.io/testgauss/incomingInbound
-
-	 https://8c01a10c.ngrok.io/testgauss/incomingInbound?poruka=Poruka
-	 */
-	public function incomingInbound($request, $response, $service, $app){
-
+     * @ApiDescription(section="ConferenceOut", description="When connected with twilioToken, generates the TwiML response.")
+     * @ApiMethod(type="post")
+     * @ApiRoute(name="/testgauss/conferenceOut")
+     * @ApiBody(sample="{ 'CustomerID': '800', 'orderId': '5265'}")
+     * @ApiParams(name="CustomerID", type="string", nullable=false, description="Customers id")
+     * @ApiParams(name="orderId", type="string", nullable=false, description="Order")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     * @ApiReturn(type="string", sample="{'data': { 'twiML': 'twiML code for enqueue for a session with linguist'} }")
+     */
+	public function conferenceOut($request, $response, $service, $app){
 		$service->validate($request->CustomerID, 'Error: No customer id is present.')->notNull()->isInt();
 		$service->validate($request->orderId, 'Error: No order id is present.')->notNull()->isInt();
+		$CallSid = $request->CallSid;
+
 		$customer = CustLogin::get_customer($request->CustomerID);
 		$order = OrderOnsiteInterpreter::get_interpret_order($request->orderId, '*');
 		$transOrder = TranslationOrders::getTranslationOrder($request->orderId, '*');
 		$conference = ConferenceSchedule::get_conference("TODO REMOVE", $request->orderId, '*');
 		$verified = ConfFunc::verify_caller($conference['user_code']);
-		$token = ConfFunc::generateCapabilityToken($request->CustomerID);
+
 		// $limit=ConfFunc::chech_limit($code,$count); // NE vidim $code
-		ConfFunc::set_pre_log($conference['user_code'], $request->CallSid);
-		// $service->token = $token; // NE TREBA
+
+		ConfFunc::set_pre_log($conference['user_code'], $CallSid);
 
 		$service->verified = $verified;
-		$service->CustomerID = $request->CustomerID; // NE treba
-		$service->orderId = $request->orderId; // NE treba
+		$service->CustomerID = $request->CustomerID;
+		$service->orderId = $request->orderId;
 		$service->poruka = $request->poruka;
-		$service->render('./resources/views/twilio/conference/incomingInbound.php');
-		// $service->render('./resources/views/twilio/conference/twilioConference.php');
+		$service->render('./resources/views/twilio/conference/conferenceOut.php');
 	}
 
-	public function callbackUrl($request, $response, $service, $app){
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	public function conferenceCallback($request, $response, $service, $app){
 		$user_code =  $request->user_code;
-		ConfFunc::set_pre_log($user_code, $request->CallSid);
+		ConfFunc::set_pre_log($user_code, $request->CallSid); // WHY is here
 		ConfFunc::set_post_log($_REQUEST['CallSid']);
 		ConfFunc::remove_expired_shedule();
 	}
-	/**
-	 *
-	 * Block comment
-	 *
-	 */
-	public function addNewMember($request, $response, $service, $app){
-		$conf_tag = $request->conference;
-	}
 
-	/**
-	 *
-	 * +385 91 924 9906 MOJ BROJ
-	 * Twilio tester Twiml poziv
-	 *
-	 */
-	public function incoming($request, $response, $service, $app){
-		$accountSid = getenv('S_TWILIO_SID');
-		$authToken  = getenv('S_TWILIO_TOKEN');
-		$appSid     = getenv('S_TEST_TWILIO_APP_SID');
-		$capability = new Services_Twilio_Capability($accountSid, $authToken);
-		$capability->allowClientOutgoing($appSid);
-		$capability->allowClientIncoming('jenny');
-		$token = ConfFunc::generateCapabilityToken('jenny');
-		$service->token = $token;
-		$service->render('./resources/views/twilio/conference/incoming.php');
-	}
-
-	/**
-	 *
-	 * Block comment
-	 *
-	 */
-	public function twilioCall($request, $response, $service, $app){
-		$http = new Services_Twilio_TinyHttp('https://api.twilio.com', array('curlopts' => array(CURLOPT_SSL_VERIFYPEER => false)));
-		$version = '2010-04-01';
-		$sid = getenv('S_TEST_TWILIO_SID');
-		$token = getenv('S_TEST_TWILIO_TOKEN');
-		$testPhone = getenv('S_TEST_TWILIO_NO_E_CONF_CALL');
-		$client = new Services_Twilio($sid, $token, $version, $http);
-		$twiml_url = 'https://alliantranslate.com/testgauss/twilioConference';
-		$call = $client->account->calls->create("+15005550006", "+14108675309", $twiml_url, array());
-		return $call;
-	}
-
-	public function sendSms(){
-
-		$http = new Services_Twilio_TinyHttp('https://api.twilio.com', array('curlopts' => array(CURLOPT_SSL_VERIFYPEER => false)));
-		$version = '2010-04-01';
-		$accountSid = getenv('S_TWILIO_SID');
-		$authToken  = getenv('S_TWILIO_TOKEN');
-		$appSid     = getenv('S_TEST_TWILIO_APP_SID');
-		$client = new Services_Twilio($accountSid, $authToken, $version, $http);
-		$client->account->messages->create(array(
-		    'To' => '+385919249906',
-		    'From' => '+12014642721',
-		    'Body' => "Hey Jenny! Good luck on the bar exam!",
-		));
-
-		// $service->render('./resources/views/twilio/conference/sendSms.php');
-	}
 }
 

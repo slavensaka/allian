@@ -34,10 +34,7 @@ if(empty($conference)){
 		</Dial>
 <?php
 		if($data['auto_start'] == "true" && empty($member)){
-?>
-	   		<Redirect>addNewMember.php?conference=<?php echo trim($data['conf_tag']); ?>
-	   		</Redirect>
-<?php
+			//<Redirect>addNewMember.php?conference=<?php echo trim($data['conf_tag']); </Redirect>
 		}
 ?>
 	</Response>

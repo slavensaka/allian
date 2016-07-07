@@ -15,14 +15,15 @@ class ConferenceFunctions{
 	 * Block comment
 	 *
 	 */
-	public static function generateCapabilityToken($name){
+	public static function generateCapabilityToken($customerID){
 		$accountSid = getenv('S_TWILIO_SID');
 		$authToken = getenv('S_TWILIO_TOKEN');
 		$appSid = getenv('S_TEST_TWILIO_APP_SID');
+		$customerID = $customerID;
 		$fullname = $name;
 		$capability = new Services_Twilio_Capability($accountSid, $authToken);
-		$capability->allowClientOutgoing($appSid, array(), $fullname);
-		$capability->allowClientIncoming($fullname);
+		$capability->allowClientOutgoing($appSid, array(), $customerID);
+		$capability->allowClientIncoming($customerID);
 		$token = $capability->generateToken(60*60*24);
 		return $token;
 	}
@@ -75,10 +76,9 @@ class ConferenceFunctions{
 	 *
 	 */
 	function set_pre_log($code,$call_sid){
-		$connect_datetime=gmdate("Y-m-d H:i:s");
+		$connect_datetime = gmdate("Y-m-d H:i:s");
 		$db = new DatabaseAccess();
-		$query="INSERT INTO `conference_log`(`secret_code`, `call_sid`,`connect_datetime`)
-		 VALUES ('$code','$call_sid','$connect_datetime')";
+		$query="INSERT INTO `conference_log`(`secret_code`, `call_sid`,`connect_datetime`) VALUES ('$code','$call_sid','$connect_datetime')";
 		$id=$db->db_insert($query);
 		return $id;
 	}

@@ -11,7 +11,7 @@ use Allian\Http\Controllers\ConferenceScheduleController;
 use Allian\Http\Controllers\TwilioController;
 use Allian\Http\Controllers\LangListController;
 use Allian\Http\Controllers\OrderOnsiteInterpreterController;
-use Allian\Http\Controllers\HotlineController;
+use Allian\Http\Controllers\ConnectNowController;
 use Allian\Models\CustLogin;
 
 $dotenv = new Dotenv\Dotenv(__DIR__);
@@ -93,20 +93,15 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('GET', '/langNames', array($langList, 'langNames'));
 
 	$twilio = new TwilioController();
-	$klein->respond('POST', '/twilioConference', array($twilio, 'twilioConference'));
-	$klein->respond('POST', '/twilioConf', array($twilio, 'twilioConf'));
-	$klein->respond('POST', '/addNewMember', array($twilio, 'addNewMember'));
-	$klein->respond('GET', '/incoming', array($twilio, 'incoming')); // TESTING
-	$klein->respond('POST', '/incomingInbound', array($twilio, 'incomingInbound')); // TESTING
-	$klein->respond('POST', '/sendSms', array($twilio, 'sendSms')); // TESTING
-	$klein->respond('POST', '/twilioCall', array($twilio, 'twilioCall')); // TESTING
-	$klein->respond('POST', '/callbackUrl', array($twilio, 'callbackUrl')); // TESTING
+	$klein->respond('POST', '/conference', array($twilio, 'conference'));
+	$klein->respond('POST', '/conferenceOut', array($twilio, 'conferenceOut'));
+	$klein->respond('POST', '/conferenceCallback', array($twilio, 'conferenceCallback'));
 
-	$hotline = new HotlineController();
-	$klein->respond('POST', '/hotline', array($hotline, 'hotline'));
-	$klein->respond('POST', '/hotlineOut', array($hotline, 'hotlineOut'));
-	$klein->respond('POST', '/hotlineFallbackOut', array($hotline, 'hotlineFallbackOut'));
-	$klein->respond('POST', '/waitForInterpreter', array($hotline, 'waitForInterpreter'));
+	$connectNow = new ConnectNowController();
+	$klein->respond('POST', '/connectNow', array($connectNow, 'connectNow'));
+	$klein->respond('POST', '/connectOut', array($connectNow, 'connectOut'));
+	$klein->respond('POST', '/waitForInterpreter', array($connectNow, 'waitForInterpreter'));
+	$klein->respond('POST', '/connectNowQueueCallback', array($connectNow, 'connectNowQueueCallback'));
 
 	$translationOrders = new TranslationOrdersController();
 	$klein->respond('POST', '/orderSummary', array($translationOrders, 'orderSummary'));
@@ -124,6 +119,9 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('POST', '/postTester', array($developer, 'postTester'));
 	$klein->respond('GET', '/getTester', array($developer, 'getTester'));
 	$klein->respond('GET', '/test', array($developer, 'test'));
+	$klein->respond('POST', '/sendSms', array($developer, 'sendSms'));
+	$klein->respond('POST', '/sendCall', array($developer, 'sendCall'));
+	$klein->respond('GET', '/incoming', array($developer, 'incoming'));
 
 });
 

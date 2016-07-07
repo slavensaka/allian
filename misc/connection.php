@@ -5,7 +5,6 @@
 // echo date('d M Y H:i:s Z',$timestamp);
 // echo date('c',$timestamp);
 // echo strtotime('2013-10-16T10:54:23Z');
-
 // CONSTANTS
 // echo __DIR__; C:\xampp\htdocs\testgauss
 // echo dirname(__FILE__);   C:\xampp\htdocs\testgauss
@@ -79,6 +78,64 @@
 		// $services = implode(":", $ar['services']);
 		// return $services;
 
+     	// $sid = getenv('S_TWILIO_SID');
+		// $token = getenv('S_TWILIO_TOKEN');
+		// $version = '2010-04-01';
+		// $http = new Services_Twilio_TinyHttp('https://api.twilio.com', array('curlopts' => array(CURLOPT_SSL_VERIFYPEER => false)));
+		// $client = new Services_Twilio($sid, $token, $version, $http);
+		// $capability = new Services_Twilio_Capability($sid, $token);
+		// $appSid = getenv('S_TEST_TWILIO_APP_SID');
+		// $capability->allowClientOutgoing($appSid);
+
+		// $formated = preg_replace("/[^0-9]/","", $customer['Phone']);
+		// $userPhone = $formated;
+		// if($formated[0] != '+') {
+		// 	$userPhone = '+' . $formated;
+		// }
+
+		// if($customer['Phone']){
+		// 	$urlBuild = array(
+		//     	"CustomerID" => $data['CustomerID'],
+		//     	"phoneNumber" => $userPhone,
+		//     	"lang" => $data['lang'],
+		//     	"translationTo" => $data['translationTo']
+		// 	);
+		// } else {
+		// 	$urlBuild = array(
+		//     	"CustomerID" => $data['CustomerID'],
+		//     	'phoneNumber' => "+385919249906", // MOJ BROJ VERIFIED TESTING
+		//     	"lang" => $data['lang'],
+		//     	"translationTo" => $data['translationTo']
+		// 	);
+		// }
+
+		// $fallbackUrl = array(
+	 //    	"CustomerID" => $data['CustomerID'],
+	 //    	"lang" => $data['lang'],
+	 //    	"translationTo" => $data['translationTo']
+	 //    );
+
+		// $url = $urlFirst . 'testgauss/connectOut' . '?' . http_build_query($urlBuild, '', '&');
+
+		// $fallbackUrl = $urlFirst . 'testgauss/hotlineFallbackOut' . '?' . http_build_query($fallbackUrl, '', '&'); // TODO
+
+		// if($customer['Phone']){
+		// 	$call  = $client->account->calls->create( // Moj twilio broj +12014642721
+		// 		'+385919249906', $urlBuild['phoneNumber'], $url, array('StatusCallback' => $fallbackUrl));
+		// } else {
+		// 	$call  = $client->account->calls->create(
+		// 		'+385919249906', '+12014642721', $url, array('StatusCallback' => $fallbackUrl));
+		// }
+
+		// return $call;
+
+
 $server = trim($_SERVER['HTTP_HOST']);
 $server=trim($server);
 echo $server;
+
+ // $server = $this->serverEnv();
+		// $urlFirst = 'https://af3d0846.ngrok.io/';
+		// if($server=="alliantranslate"){
+		// 	$urlFirst = 'https://alliantranslate.com/';
+		// }

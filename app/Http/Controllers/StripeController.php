@@ -196,7 +196,14 @@ class StripeController extends Controller {
 	 *
 	 */
 	public function preAuthCustomer($token){ // DONT CHANGE
-		$this->getStripeKey();
+		$server = trim($_SERVER['HTTP_HOST']);
+		$server=trim($server);
+		if($server=="localhost"){
+			Stripe::setApiKey(getenv('STRIPE_KEY'));
+		} else if($server=="alliantranslate.com"){
+			Stripe::setApiKey(getenv('STRIPE_KEY_ALLIAN_TEST'));
+		}
+
 		try {
 			// $return=shell_exec ('curl https://api.stripe.com/v1/charges  -u ' . getenv('STRIPE_KEY') . ' -d amount=3000 -d currency=usd  -d capture=false -d customer='.$token.' -d "description=Pre autherizing 30$"');
 	        $result = Charge::create(array("amount" => 3000, "capture" => false, "currency" => "usd", "customer" => $token, "description" => "Gauss:app, Pre autherizing 30$"));
