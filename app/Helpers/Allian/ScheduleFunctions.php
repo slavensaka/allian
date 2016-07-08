@@ -9,7 +9,7 @@ use Allian\Models\CustLogin;
 use Allian\Models\TranslationOrders;
 use Allian\Models\ConferenceSchedule;
 use Allian\Models\OrderOnsiteInterpreter;
-use Allian\Http\Controllers\TwilioController;
+use Allian\Http\Controllers\ConferenceController;
 
 class ScheduleFunctions {
 
@@ -216,7 +216,7 @@ class ScheduleFunctions {
 	            $conf_from = date_format($date, 'Y-m-d H:i');
 	            $date = date_create_from_format('U', $order['assg_to_timestamp']);
 	            $conf_to = date_format($date, 'Y-m-d H:i');
-	            $conf = TwilioController::shedule_conference($order_id, $conf_from, $conf_to);
+	            $conf = ConferenceController::shedule_conference($order_id, $conf_from, $conf_to);
 	            $conf_id = $conf['conf_id'];
 	            if ($conf_id > 0) {
 	                $conf['client_name'] = ucwords(TranslationOrders::getTranslationOrder($order_id, "name"));

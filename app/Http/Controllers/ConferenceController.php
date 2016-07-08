@@ -14,7 +14,7 @@ use Services_Twilio_TinyHttp;
 use Allian\Helpers\TwilioConference\DatabaseAccess;
 use Allian\Helpers\TwilioConference\ConferenceFunctions as ConfFunc;
 
-class TwilioController extends Controller {
+class ConferenceController extends Controller {
 
 	/**
 	 *
@@ -103,6 +103,7 @@ class TwilioController extends Controller {
 		$order = OrderOnsiteInterpreter::get_interpret_order($request->orderId, '*');
 		$transOrder = TranslationOrders::getTranslationOrder($request->orderId, '*');
 		$conference = ConferenceSchedule::get_conference("TODO REMOVE", $request->orderId, '*');
+		// Is client verified, by getting the customer by id and then checking it's orderId in the conference_schedule
 		$verified = ConfFunc::verify_caller($conference['user_code']);
 
 		// $limit=ConfFunc::chech_limit($code,$count); // NE vidim $code

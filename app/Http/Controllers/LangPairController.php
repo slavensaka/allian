@@ -4,6 +4,7 @@ namespace Allian\Http\Controllers;
 
 use Allian\Models\LangList;
 use Allian\Models\LangPair;
+use Allian\Models\LangRate;
 use Allian\Models\LangPairTrans;
 use Firebase\JWT\JWT;
 use \Dotenv\Dotenv;
@@ -54,6 +55,15 @@ class LangPairController extends Controller {
 			if(!$validated){
 	     		return $response->json(array('data' => $this->errorJson("Authentication problems. CustomerID doesn't match that with token.")));
 			}
+
+			///TUUTUTUT
+
+				list($translationTo) = LangRate::realLangPairTrans($p->getValueEncoded("L2"));
+
+			return $response->json(array("data" => $translationTo));
+			//TUUTUTU
+
+
 			// Retrieve all languages ASC order
 			list($listLanguages) = LangPairTrans::getLanguages();
 			// For every listed langauge retrieve there translationTo possible langauges.

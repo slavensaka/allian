@@ -8,12 +8,12 @@ use Allian\Http\Controllers\LangPairController;
 use Allian\Http\Controllers\StripeController;
 use Allian\Http\Controllers\DeveloperController;
 use Allian\Http\Controllers\ConferenceScheduleController;
-use Allian\Http\Controllers\TwilioController;
+use Allian\Http\Controllers\ConferenceController;
 use Allian\Http\Controllers\LangListController;
 use Allian\Http\Controllers\OrderOnsiteInterpreterController;
 use Allian\Http\Controllers\ConnectNowController;
 use Allian\Models\CustLogin;
-
+// TODO PoPRAVI langPairs popis jezika, pgledaj phoneapp/callrandom.php
 $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
 
@@ -92,17 +92,6 @@ $klein->with('/testgauss', function() use ($klein){
 	$langList = new LangListController();
 	$klein->respond('GET', '/langNames', array($langList, 'langNames'));
 
-	$twilio = new TwilioController();
-	$klein->respond('POST', '/conference', array($twilio, 'conference'));
-	$klein->respond('POST', '/conferenceOut', array($twilio, 'conferenceOut'));
-	$klein->respond('POST', '/conferenceCallback', array($twilio, 'conferenceCallback'));
-
-	$connectNow = new ConnectNowController();
-	$klein->respond('POST', '/connectNow', array($connectNow, 'connectNow'));
-	$klein->respond('POST', '/connectOut', array($connectNow, 'connectOut'));
-	$klein->respond('POST', '/waitForInterpreter', array($connectNow, 'waitForInterpreter'));
-	$klein->respond('POST', '/connectNowQueueCallback', array($connectNow, 'connectNowQueueCallback'));
-
 	$translationOrders = new TranslationOrdersController();
 	$klein->respond('POST', '/orderSummary', array($translationOrders, 'orderSummary'));
 	$klein->respond('POST', '/orderSummaryDetails', array($translationOrders, 'orderSummaryDetails'));
@@ -110,6 +99,17 @@ $klein->with('/testgauss', function() use ($klein){
 	$orderOnSiteInterpreter = new OrderOnsiteInterpreterController();
 	$klein->respond('POST', '/scheduledSessions', array($orderOnSiteInterpreter, 'scheduledSessions'));
 	$klein->respond('POST', '/scheduledSessionsDetails', array($orderOnSiteInterpreter, 'scheduledSessionsDetails'));
+
+	$conference = new ConferenceController();
+	$klein->respond('POST', '/conference', array($conference, 'conference'));
+	$klein->respond('POST', '/conferenceOut', array($conference, 'conferenceOut'));
+	$klein->respond('POST', '/conferenceCallback', array($conference, 'conferenceCallback'));
+
+	$connectNow = new ConnectNowController();
+	$klein->respond('POST', '/connectNow', array($connectNow, 'connectNow'));
+	$klein->respond('POST', '/connectOut', array($connectNow, 'connectOut'));
+	$klein->respond('POST', '/waitForInterpreter', array($connectNow, 'waitForInterpreter'));
+	$klein->respond('POST', '/connectNowQueueCallback', array($connectNow, 'connectNowQueueCallback'));
 
 	$developer = new DeveloperController();
 	$klein->respond('GET', '/renderdocs', array($developer, 'renderDocs'));

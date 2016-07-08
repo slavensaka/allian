@@ -17,7 +17,7 @@ use Allian\Models\TranslationOrders;
 use Firebase\JWT\BeforeValidException; // MAYBE NOT USED
 use Allian\Models\OrderOnsiteInterpreter;
 use Allian\Helpers\Allian\ScheduleFunctions;
-use Allian\Http\Controllers\TwilioController;
+use Allian\Http\Controllers\ConferenceController;
 
 class ConferenceScheduleController extends Controller {
 

@@ -126,7 +126,7 @@ class DeveloperController extends Controller {
 		    'From' => '+12014642721',
 		    'Body' => "Hey Jenny! Good luck on the bar exam!",
 		));
-		// $service->render('./resources/views/twilio/conference/sendSms.php');
+		// $service->render('./resources/views/twilio/test/sendSms.php');
 	}
 
 	/**
@@ -161,7 +161,7 @@ class DeveloperController extends Controller {
 		$capability->allowClientIncoming('jenny');
 		$token = ConfFunc::generateCapabilityToken('jenny');
 		$service->token = $token;
-		$service->render('./resources/views/twilio/conference/incoming.php');
+		$service->render('./resources/views/twilio/test/incoming.php');
 	}
 
 	/**

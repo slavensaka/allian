@@ -232,3 +232,5 @@ class ConnectNowController extends Controller {
 
 }
 
+// SELECT PairID FROM LangRate WHERE L1= '$l1' and L2='$l2
+// ZA jezik langrate

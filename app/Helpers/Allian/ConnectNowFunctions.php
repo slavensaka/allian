@@ -9,10 +9,11 @@ use Allian\Models\LangList;
 use Allian\Models\CustLogin;
 use Allian\Models\TranslationOrders;
 use Allian\Models\ConferenceSchedule;
+use Allian\Http\Controllers\Controller;
 use Allian\Models\OrderOnsiteInterpreter;
-use Allian\Http\Controllers\TwilioController;
+use Allian\Http\Controllers\ConferenceController;
 
-class ConnectNowFunctions {
+class ConnectNowFunctions extends Controller {
 
 	/**
 	 *
@@ -112,7 +113,10 @@ class ConnectNowFunctions {
 	    $headers = "From:" . $staff;
 	    $email = ($notify_at_orders) ? $orders : $ip;
 	    if ($mailtype == "staff_onetimecallfailed" || $mailtype == "staff_regcallfailed") {
-	        mail($callfailed1, $subject, $file, $headers); // TODO MAYBE FOR LOCAL TO WORK
+	    	$server = $this->serverEnv();
+			if($server=="alliantranslate"){
+				mail($callfailed1, $subject, $file, $headers); // TODO MAYBE FOR LOCAL TO WORK
+			}
 	    }
 	}
 

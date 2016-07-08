@@ -59,3 +59,5 @@ class LangPairTrans extends DataObject {
 	    }
   	}
 }
+
+// SELECT LangRate.L2, LangList.LangName FROM LangRate LEFT JOIN LangList ON LangRate.L2 = LangList.LangId WHERE LangRate.L1 = '$langId' ORDER BY LangList.LangName
