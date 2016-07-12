@@ -83,6 +83,7 @@ class ConnectNowController extends Controller {
 		$CustomerID = $request->CustomerID;
 		$lang = $request->lang;
 		$translationTo = $request->translationTo;
+		//Twilio customer request params
 		$sid = $request->CallSid;
 		// Make a flag for langauge order
 		$flag=0;
@@ -97,15 +98,11 @@ class ConnectNowController extends Controller {
 		$addtofile['From'] = $from;
 		$addtofile['lang'] = $lang;
 		$addtofile['translationTo'] = $translationTo;
-		// Store in a file on the server for debugging
-		ConnectNowFunctions::addtofile($sid, $addtofile); // TODO remove in prod
 
-		//
-		$sid = $request->CallSid;
+		// Add the customerID and Type to customertype by sid
 		$data['type'] = $customer['Type'];
 		$data['CustomerID'] = $customer['CustomerID'];
-		ConnectNowFunctions::addCustomerTypeSid($sid, $data);
-
+		ConnectNowFunctions::addCustomerIdType($sid, $data);
 		// Retrieve the id language by it's name
 		$l1 = LangList::langIdByName($lang);
 		$l2 = LangList::langIdByName($translationTo);
@@ -144,8 +141,16 @@ class ConnectNowController extends Controller {
 		}else if($flag == 2){
 			$row = mysqli_fetch_array($result1);
 			$queue = $row['PairID'];
+		} else if($flag == 0){
+			// TODO vrati da se nije mogao pronaći jezici
+			// $response = new Services_Twilio_Twiml;
+			// $response->say('The interpreting service is not available between the selected two language pairs at this time.');
+			// $response->hangup();
+			// print $response;
 		}
-		// Log into file the queue PairID for debugging purpuses. TODO remove in production
+		// TODO remove in prod Store in a file on the server for debugging
+		ConnectNowFunctions::addtofile($sid, $addtofile);
+		// TODO remove in production Log into file the queue PairID for debugging purpuses.
 		$addtofilePairQueue['queue'] = $queue;
 		ConnectNowFunctions::addtofilePairQueue($sid, $addtofilePairQueue);
 		// If customers type is 2(invoice), then get the TwiML, pass customer, queue, from info
@@ -171,8 +176,8 @@ class ConnectNowController extends Controller {
 				$service->from = $from;
 				$service->queue = $queue;
 				$service->render('./resources/views/twilio/connect/connectOut.php');
-			// Else get twiML that the card coult not be preauthorized
 			} else {
+				// Else get twiML that the card could not be preauthorized
 				$service->render('./resources/views/twilio/connect/cardNotAuth.php');
 			}
 		}
@@ -184,61 +189,52 @@ class ConnectNowController extends Controller {
 	 *
 	 */
 	public function connectNowQueueCallback($request, $response, $service, $app){
+		// Retrieve hardcoded parameters from request callback
 		$langpair = $request->id;
 		$CustomerID = $request->CustomerID;
 		$customerType = $request->customerType;
-		$from=$request->from;
+		$from = $request->from;
+		// If the first char is not +, add it
 		if($from[0]!='+'){
-			$number='+'.trim($from);
+			$number='+' . trim($from);
 		}else{
-			$number=trim($from);
+			$number = trim($from);
 		}
-		$queueresult=$request->QueueResult;
-		$queuetime=$request->QueueTime;
-		if($queuetime>55 && $queueresult=="hangup"){
-			$queueresult="Agent Unavailable";
-		}else if($queueresult=="hangup"){
-			$queueresult="Customer Hangup";
+		// Retrieve twilio parameters
+		$queueresult = $request->QueueResult;
+		$queuetime = $request->QueueTime;
+		// Find what happended
+		if($queuetime > 55 && $queueresult == "hangup"){
+			$queueresult = "Agent Unavailable";
+		}else if($queueresult == "hangup"){
+			$queueresult = "Customer Hangup";
 		}
+		// Select the languages for the pairID
 		$con = Connect::con();
 		$result = mysqli_query($con,"SELECT L1,L2 FROM LangRate WHERE PairId='$langpair'");
-		$time=date("m/d/y G.i:s", time());
-		$timestamp=time();
+		$time = date("m/d/y G.i:s", time());
+		$timestamp = time();
+		// Retrieve the languages names
 		if($row = mysqli_fetch_array($result)){
-		  	$lang1 = mysqli_fetch_array(mysqli_query($con,"SELECT LangName FROM LangList WHERE LangId=".$row['L1']));
-			$lang2 = mysqli_fetch_array(mysqli_query($con,"SELECT LangName FROM LangList WHERE LangId=".$row['L2']));
+		  	$lang1 = mysqli_fetch_array(mysqli_query($con,"SELECT LangName FROM LangList WHERE LangId=" . $row['L1']));
+			$lang2 = mysqli_fetch_array(mysqli_query($con,"SELECT LangName FROM LangList WHERE LangId=" . $row['L2']));
 			$pair = trim($lang1['LangName'])."-".trim($lang2['LangName']);
 			$pair = trim($pair);
 		}
-		if($queueresult!='bridged'){
-			$sid=$request->CallSid;
-			$type=0;
-		  	// if(file_exists("customertype/".$sid.".txt")){
-		  		// $data=getfromfile("customertype/".$sid);
+		if($queueresult != 'bridged'){
+			$sid = $request->CallSid;
 		    $type = $customerType;
-		  	// }
 		  	$con = Connect::con();
-		  	if($type == 0){
-		  		$query="SELECT CustomerID FROM CustLogin WHERE Phone = '$number'";
-		  		$result=mysqli_fetch_row(mysqli_query($con,$query));
-				$customerid = $result[0];
-				$mailcontent="A call from". $number . " failed in the queue of ".$pair." with reason ".$queueresult." on ".$time."\n\n-admin";
-		      	$param = $number.",".$pair.",".$queueresult.",".$time;
-			    ConnectNowFunctions::sendstaffmail("staff_onetimecallfailed", $param);
-		  	}else{
-		  		$customerid = $CustomerID;
-		  		$query="SELECT Email FROM CustLogin WHERE CustomerID = '$customerid'";
-		  		$result=mysqli_fetch_assoc(mysqli_query($con,$query));
-		  		$email=$result['Email'];
-		  		$mailcontent="A call from the user with mail id :".$email." (from".$number.") failed in the queue of ".$pair." with reason ".$queueresult." on ".$time."\n\n-admin";
-		    	$param=$number.",".$pair.",".$queueresult.",".$time.",".$email;
-	      		ConnectNowFunctions::sendstaffmail("staff_regcallfailed", $param);
-		  	}
-			mysqli_query($con,"INSERT INTO CallIdentify(Type,starttime,CustomerId,FromNumber,state,duration,PairId) values ('$type','$timestamp','$customerid','$number','$queueresult','0','$langpair')");
-			$sidfile="customertype/".$sid.".txt"; //TODO
-			if(file_exists($sidfile)){
-				unlink($sidfile);
-			}
+		  	$query = "SELECT Email FROM CustLogin WHERE CustomerID = '$CustomerID'";
+		  	$result = mysqli_fetch_assoc(mysqli_query($con,$query));
+		  	$email = $result['Email'];
+		  	$mailcontent="A call from the user with mail id :". $email . " (from" . $number . ") failed in the queue of " . $pair . " with reason " . $queueresult . " on " . $time . "\n\n-admin";
+		    $param = $number . "," . $pair . "," . $queueresult . "," . $time . "," . $email;
+	      	ConnectNowFunctions::sendstaffmail("staff_regcallfailed", $param);
+
+			mysqli_query($con,"INSERT INTO CallIdentify(Type, starttime, CustomerId, FromNumber, state, duration, PairId) values ('$type', '$timestamp', '$customerid', '$number', '$queueresult', '0', '$langpair')");
+
+			ConnectNowFunctions::removeCustomerIdType($sid);
 		}
 		$service->render('./resources/views/twilio/connect/connectNowQueueCallback.php');
 	}
@@ -254,6 +250,58 @@ class ConnectNowController extends Controller {
 		$service->render('./resources/views/twilio/connect/waitForInterpreter.php');
 	}
 
+		/**
+	 *
+	 * Block comment
+	 *
+	 */
+
+	// public function addMember($request, $response, $service, $app){
+		// 	$phones = $request->phones;
+		// 	$http = new Services_Twilio_TinyHttp('https://api.twilio.com', array('curlopts' => array(CURLOPT_SSL_VERIFYPEER => false)));
+		// 	$version = '2010-04-01';
+		// 	$sid = getenv('S_TEST_TWILIO_SID');
+		// 	$token = getenv('S_TEST_TWILIO_TOKEN');
+		// 	$testPhone = getenv('S_TEST_TWILIO_NO_E_CONF_CALL');
+		// 	$client = new Services_Twilio($sid, $token, $version, $http);
+		// 	$twiml_url = 'https://a5c13bf3.ngrok.io/testgauss/addMemberOut';
+		// 	$call = $client->account->calls->create("+15005550006", "+14108675309", $twiml_url, array());
+		// 	return $call;
+	// }
+
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	// public function gatherTest($request, $response, $service, $app) {
+		// 	$addPhone=$_REQUEST['Digits'];
+		// 	// $CustomerID = $request->CustomerID;
+		// 	// $from  = $request->from;
+		// 	// $queue = $request->id;
+		// 	$response = new Services_Twilio_Twiml;
+		// 	$response->say('The digits is' . $addPhone);
+		// 	return $response;
+		// 	// $customer = CustLogin::get_customer($CustomerID);
+		// 	// if(empty($addPhone)){
+		// 	// 	$response = new Services_Twilio_Twiml;
+		// 	// 	$response->say('Hello');
+		// 	// 	return $response;
+		// 	// } else {
+		// 	// 	$service->customer = $customer;
+		// 	// 	$service->from = $from;
+		// 	// 	$service->queue = $queue;
+		// 	// 	$service->render('./resources/views/twilio/connect/connectNowQueueCallback.php');
+		// 	// }
+	// }
+
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	// public function addMemberOut($request, $response, $service, $app){
+	// }
 }
 
 // SELECT PairID FROM LangRate WHERE L1= '$l1' and L2='$l2

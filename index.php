@@ -108,6 +108,9 @@ $klein->with('/testgauss', function() use ($klein){
 	$connectNow = new ConnectNowController();
 	$klein->respond('POST', '/connectNow', array($connectNow, 'connectNow'));
 	$klein->respond('POST', '/connectOut', array($connectNow, 'connectOut'));
+	// $klein->respond('POST', '/addMember', array($connectNow, 'addMember'));
+	// $klein->respond('POST', '/addMemberOut', array($connectNow, 'addMemberOut'));
+	// $klein->respond('POST', '/gatherTest', array($connectNow, 'gatherTest'));
 	$klein->respond('POST', '/waitForInterpreter', array($connectNow, 'waitForInterpreter'));
 	$klein->respond('POST', '/connectNowQueueCallback', array($connectNow, 'connectNowQueueCallback'));
 
@@ -122,6 +125,7 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('POST', '/sendSms', array($developer, 'sendSms'));
 	$klein->respond('POST', '/sendCall', array($developer, 'sendCall'));
 	$klein->respond('GET', '/incoming', array($developer, 'incoming'));
+	$klein->respond('POST', '/phoneFormat', array($developer, 'phoneFormat'));
 
 });
 

@@ -45,5 +45,13 @@ if($custType != 3 && $custType != 4){
 		<Hangup/>
 	</Response>
 <?php
+} else {
+?>
+	<Response>
+		<Say>
+			We have sent an e mail to your mail ID. Please visit the link in mail and fill out credit card details for using this service. Thank you for calling Alliance Business Solutions phone interpreting line. Good bye.
+		</Say>
+	</Response>
+<?php
 }
 ?>

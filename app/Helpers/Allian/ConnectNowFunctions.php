@@ -30,16 +30,37 @@ class ConnectNowFunctions extends Controller {
 	 * Block comment
 	 *
 	 */
-	function addCustomerTypeSid($sid, $data){
+	function addCustomerIdType($sid, $data){
 		$server = trim($_SERVER['HTTP_HOST']);
 		$server=trim($server);
 		if($server=="localhost"){
 			return file_put_contents("misc/customertype/". $sid . ".txt", json_encode($data));
 		} else if($server=="alliantranslate.com"){
-			return file_put_contents("linguist/phoneapp/customertype". $sid . ".txt", json_encode(array('test'=>'test', 'novi'=>'test')));
-			// return file_put_contents("linguist/phoneapp/customertype". $sid . ".txt", json_encode($data));
+			// TODO production
+			// return file_put_contents("../linguist/phoneapp/customertype/". $sid . ".txt", json_encode(array('test'=>'test', 'novi'=>'test')));
 		} else {
 			return file_put_contents("misc/customertype/". $sid . ".txt", json_encode($data));
+		}
+	}
+
+	function removeCustomerIdType($sid){
+		$server = trim($_SERVER['HTTP_HOST']);
+		$server=trim($server);
+		if($server=="localhost"){
+			$sidfile="misc/customertype/" . $sid . ".txt";
+			if(file_exists($sidfile)){
+				unlink($sidfile);
+			}
+		} else if($server=="alliantranslate.com"){
+			$sidfile="../linguist/phoneapp/customertype/" . $sid . ".txt";
+			if(file_exists($sidfile)){
+				unlink($sidfile);
+			}
+		} else {
+			$sidfile="misc/customertype/" . $sid . ".txt";
+			if(file_exists($sidfile)){
+				unlink($sidfile);
+			}
 		}
 	}
 
@@ -80,16 +101,12 @@ class ConnectNowFunctions extends Controller {
 	 *
 	 */
 	function sendstaffmail($text, $param) {
-		//require WEBROOT."fromids.php";
-	    // global $webroot, $con, $staff, $ip, $orders, $callfailed1, $callfailed2, $toadmin;
 	    $con = Connect::con();
 	    $ip="Project Desk - Alliance Business Solutions <projects@alliancebizsolutions.com>";
 	    $orders="HR - Alliance Business Solutions <orders@alliancebizsolutions.com>";
 		$client="Client Services - Alliance Business Solutions <cs@alliantranslate.com>" ;
 		$staff = "slavensakacic@gmail.com"; //TODO $staff="alen.brcic@alliancebizsolutions.com";
-		$toadmin = "slavensakacic@gmail.com"; //$toadmin="alen.brcic@alliancebizsolutions.com";
 		$callfailed1="slavensakacic@gmail.com"; //$callfailed1 = "orders@alliancebizsolutions.com";
-		$callfailed2="slavensakacic@gmail.com"; //$callfailed2="cs@alliantranslate.com";
 	    $link = "";
 	    $link2 = "";
 	    $number = "";
@@ -116,7 +133,7 @@ class ConnectNowFunctions extends Controller {
 	            $email = $arr[4];
 	            break;
 	        default:
-	            $link = URL_SECURE . "";
+	            $link = "";
 	            break;
 	    }
 	    $text = __DIR__ . '/' .  "emailTexts/" . $text . ".txt";
@@ -133,7 +150,9 @@ class ConnectNowFunctions extends Controller {
 	    if ($mailtype == "staff_onetimecallfailed" || $mailtype == "staff_regcallfailed") {
 	    	$server = $this->serverEnv();
 			if($server=="alliantranslate.com"){
-				mail($callfailed1, $subject, $file, $headers); // TODO MAYBE FOR LOCAL TO WORK
+				mail($callfailed1, $subject, $file, $headers);
+			} else if($server == 'localhost'){
+				mail($callfailed1, $subject, $file, $headers);
 			}
 	    }
 	}
