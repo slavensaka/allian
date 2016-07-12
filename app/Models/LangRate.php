@@ -13,6 +13,7 @@ class LangRate extends DataObject {
 	    "L1" => "",
 	    "L2" => "",
 	    "Rate" => "",
+	    'LangName' => "", // Dodano
 	);
 
 	function selectLangRate1($l1, $l2) {
@@ -29,6 +30,23 @@ class LangRate extends DataObject {
 	    return $lang;
 	}
 
+	public static function retrieveAllLangRates() {
+	    $conn = parent::connect();
+	     $sql = "SELECT * FROM " . getenv('TBL_LANG_RATE') . " ORDER BY L2 DESC";
+	    try {
+		      $st = $conn->prepare($sql);
+		      $st->execute();
+		      $langRate = array();
+		      foreach ($st->fetchAll() as $row) {
+		    	    $langRate[] = new LangRate($row);
+	      	}
+		      parent::disconnect($conn);
+		      return array($langRate);
+	    } catch (\PDOException $e) {
+		      parent::disconnect($conn);
+		      throw new \Exception("Failed to retrieve all languages rate from the database");
+	    }
+  	}
 
   	 public static function realLangPairTrans(){
   		$conn = parent::connect();

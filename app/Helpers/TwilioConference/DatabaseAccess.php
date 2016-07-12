@@ -21,7 +21,7 @@ class DatabaseAccess extends DatabaseConnection {
 	/**
 	 *
 	 * Can be interpreter or client
-	 *
+	 * TODO just use user_code
 	 */
 	public function codeused($code){
 		$query="SELECT  `user_code`, `interpreter_code` FROM `conference_shedule` WHERE `user_code`=? OR `interpreter_code`= ?";

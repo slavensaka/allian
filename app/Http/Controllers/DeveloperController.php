@@ -15,6 +15,7 @@ use Services_Twilio_TinyHttp;
 use Services_Twilio_Twiml;
 use Services_Twilio_Capability;
 use Allian\Helpers\TwilioConference\ConferenceFunctions as ConfFunc;
+use Allian\Helpers\Allian\ConnectNowFunctions;
 
 class DeveloperController extends Controller {
 
@@ -170,6 +171,7 @@ class DeveloperController extends Controller {
 	 *
 	 */
 	public function postTester($request, $response, $service, $app){
+		ConnectNowFunctions::addCustomerTypeSid($sid, $data);
 		$CustomerID = $request->CustomerID;
 		$service->CustomerID = $CustomerID;
 		$service->render('./resources/views/misc/foundCustomer.php');

@@ -58,9 +58,30 @@ class LangPairController extends Controller {
 
 			///TUUTUTUT
 
-				list($translationTo) = LangRate::realLangPairTrans($p->getValueEncoded("L2"));
+			// list($all) = LangRate::retrieveAllLangRates();
+			// $d = array();
+			// $f = array();
+			// $new = array();
+			// $ddd = array();
+			// foreach($all as $l){
+			// 	$d[] = $l->getValueEncoded('L1');
+			// 	$new[] = LangList::get_language_name(trim($l->getValueEncoded('L1')));
+			// 	if($l->getValueEncoded('L1') == '68'){
+			// 		$ne[] = LangList::get_language_name($l->getValueEncoded('L2'));
+			// 	} else {
+			// 	$ddd[] = LangList::get_language_name($l->getValueEncoded('L2'));
+			// 	}
+			// }
 
-			return $response->json(array("data" => $translationTo));
+			// // $dd = array();
+			// // $o = array();
+			// // foreach($all as $l){
+			// // 	$dd[] = $l->getValueEncoded('L2');
+			// // 	$o[] = LangList::get_language_name($l->getValueEncoded('L2'));
+			// // }
+			// return $response->json(array("data" => $new));
+			// list($translationTo) = LangRate::realLangPairTrans();
+			// return $response->json(array("data" => $translationTo));
 			//TUUTUTU
 
 

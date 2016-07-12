@@ -113,7 +113,7 @@ class ConferenceController extends Controller {
 		$service->verified = $verified;
 		$service->CustomerID = $request->CustomerID;
 		$service->orderId = $request->orderId;
-		$service->poruka = $request->poruka;
+
 		$service->render('./resources/views/twilio/conference/conferenceOut.php');
 	}
 

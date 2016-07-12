@@ -25,6 +25,8 @@ class StripeController extends Controller {
 			return Stripe::setApiKey(getenv('STRIPE_KEY'));
 		} else if($server=="alliantranslate.com"){
 			return Stripe::setApiKey(getenv('STRIPE_KEY_ALLIAN_TEST'));
+		} else {
+			return Stripe::setApiKey(getenv('STRIPE_KEY'));
 		}
 	}
 
@@ -202,6 +204,8 @@ class StripeController extends Controller {
 			Stripe::setApiKey(getenv('STRIPE_KEY'));
 		} else if($server=="alliantranslate.com"){
 			Stripe::setApiKey(getenv('STRIPE_KEY_ALLIAN_TEST'));
+		} else {
+			Stripe::setApiKey(getenv('STRIPE_KEY'));
 		}
 
 		try {

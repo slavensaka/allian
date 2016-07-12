@@ -30,6 +30,24 @@ class ConnectNowFunctions extends Controller {
 	 * Block comment
 	 *
 	 */
+	function addCustomerTypeSid($sid, $data){
+		$server = trim($_SERVER['HTTP_HOST']);
+		$server=trim($server);
+		if($server=="localhost"){
+			return file_put_contents("misc/customertype/". $sid . ".txt", json_encode($data));
+		} else if($server=="alliantranslate.com"){
+			return file_put_contents("linguist/phoneapp/customertype". $sid . ".txt", json_encode(array('test'=>'test', 'novi'=>'test')));
+			// return file_put_contents("linguist/phoneapp/customertype". $sid . ".txt", json_encode($data));
+		} else {
+			return file_put_contents("misc/customertype/". $sid . ".txt", json_encode($data));
+		}
+	}
+
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
 	function addtofilePrepayment($file, $data){
 		// For testing
 		return file_put_contents("misc/testReqs/Prepayment" . time(). ".txt", json_encode($data));
@@ -114,7 +132,7 @@ class ConnectNowFunctions extends Controller {
 	    $email = ($notify_at_orders) ? $orders : $ip;
 	    if ($mailtype == "staff_onetimecallfailed" || $mailtype == "staff_regcallfailed") {
 	    	$server = $this->serverEnv();
-			if($server=="alliantranslate"){
+			if($server=="alliantranslate.com"){
 				mail($callfailed1, $subject, $file, $headers); // TODO MAYBE FOR LOCAL TO WORK
 			}
 	    }

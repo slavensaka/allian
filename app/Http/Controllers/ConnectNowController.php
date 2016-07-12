@@ -79,75 +79,99 @@ class ConnectNowController extends Controller {
 		$service->validate($request->CustomerID, 'Error: No customer id is present.')->notNull()->isInt();
 		$service->validate($request->lang, 'Error: No lang is present.')->notNull();
 		$service->validate($request->translationTo, 'Error: No translationTo is present.')->notNull();
-
-		$customer = CustLogin::get_customer($request->CustomerID);
-
+		// Retrieve the request parameters
 		$CustomerID = $request->CustomerID;
 		$lang = $request->lang;
 		$translationTo = $request->translationTo;
 		$sid = $request->CallSid;
+		// Make a flag for langauge order
+		$flag=0;
+		//Format the request From number to fit the + convention of twilio
 		$from=$request->From;
 		$from=str_replace('+',"", $from);
-
-		// $addtofile['customer'] = $customer;
+		// Get the customer information in database by CustomerID
+		$customer = CustLogin::get_customer($CustomerID);
+		// Gather the information for the call and request
 		$addtofile['CallSid'] = $sid;
 		$addtofile['CustomerID'] = $CustomerID;
 		$addtofile['From'] = $from;
 		$addtofile['lang'] = $lang;
 		$addtofile['translationTo'] = $translationTo;
-
+		// Store in a file on the server for debugging
 		ConnectNowFunctions::addtofile($sid, $addtofile); // TODO remove in prod
 
+		//
+		$sid = $request->CallSid;
+		$data['type'] = $customer['Type'];
+		$data['CustomerID'] = $customer['CustomerID'];
+		ConnectNowFunctions::addCustomerTypeSid($sid, $data);
+
+		// Retrieve the id language by it's name
 		$l1 = LangList::langIdByName($lang);
 		$l2 = LangList::langIdByName($translationTo);
+		// Select chinese and mandarin languages ids in database
 		$chinese = LangList::selectChinese();
 		$mandarin=LangList::selectMandarin();
+		// If the first selected language is chinese change to mandarin as correct
 		$chid=$chinese["LangId"];
 		if($l1==$chid){
 			$l1=$mandarin["LangId"];
 		}
+		// If the second select language is chinese change to mandrinn as selected
 		if($l2==$chid){
 			$l2=$mandarin["LangId"];
 		}
-
+		// Select the amount rate for the L1 & L2 pair language from database
 		$con = Connect::con();
 		$result = mysqli_query($con,"SELECT * FROM LangRate WHERE L1= '$l1' and L2='$l2' ");
 		$numrows= mysqli_num_rows($result);
+		//If result rate for the pair language if found, set the flag to 1
 		if($numrows != 0){
 			$flag = 1;
 		}
+		// Select the amount rate for the L2 & L1 pair language from database
 		$result1 = mysqli_query($con,"SELECT * FROM LangRate WHERE L1= '$l2' and L2='$l1' ");
 		$numrows1= mysqli_num_rows ($result1);
+		//If result rate for the pair language if found, set the flag to 2
 		if($numrows1 != 0){
 			$flag = 2;
 		}
+		// If the flag=1 then the L1 & L2 rate is found. Retrieve the PairID from the database for the pair into $queue
 		if($flag == 1){
 			$row = mysqli_fetch_array($result);
 			$queue = $row['PairID'];
+		// Else If the flag=2 then the L2 & L1 rate is found. Retrieve the PairID from the database for the pair int $queue.
 		}else if($flag == 2){
 			$row = mysqli_fetch_array($result1);
 			$queue = $row['PairID'];
 		}
+		// Log into file the queue PairID for debugging purpuses. TODO remove in production
 		$addtofilePairQueue['queue'] = $queue;
-		ConnectNowFunctions::addtofilePairQueue($sid, $addtofilePairQueue); // TODO remove in prod
-
+		ConnectNowFunctions::addtofilePairQueue($sid, $addtofilePairQueue);
+		// If customers type is 2(invoice), then get the TwiML, pass customer, queue, from info
 		if($customer['Type'] == 2){ // Invoice
 			$service->customer = $customer;
 			$service->queue = $queue;
 			$service->from = $from;
 			$service->render('./resources/views/twilio/connect/connectOut.php');
+		// If customers type is 1(stripe), then preauth(Uncapture) the customer for 30$
 		} else if($customer['Type'] == 1){ // Stripe
+			// Get the customers stripe token
 			$token = $customer['token'];
-			// TODO STRIPE_KEY JE SADA NA MOJ PROMJENI NA ALEN
+			// Preauth the customer with stripe for 30$ (uncapture)
 			$id = StripeController::preAuthCustomer($token);
+			//Log the token that was preauth and the result of the operation of preauthing for debugging
 			$addtofilePrepayment['token'] = $token;
 			$addtofilePrepayment['id'] = $id;
-			ConnectNowFunctions::addtofilePrepayment($sid, $addtofilePrepayment); // TODO remove in prod
+			// TODO remove in production
+			ConnectNowFunctions::addtofilePrepayment($sid, $addtofilePrepayment);
+			// IF the stripe result if found, then get the twiml, pass customer, queue, from info
 			if(isset($id)){
 				$service->customer = $customer;
 				$service->from = $from;
 				$service->queue = $queue;
 				$service->render('./resources/views/twilio/connect/connectOut.php');
+			// Else get twiML that the card coult not be preauthorized
 			} else {
 				$service->render('./resources/views/twilio/connect/cardNotAuth.php');
 			}
@@ -198,7 +222,7 @@ class ConnectNowController extends Controller {
 		  		$query="SELECT CustomerID FROM CustLogin WHERE Phone = '$number'";
 		  		$result=mysqli_fetch_row(mysqli_query($con,$query));
 				$customerid = $result[0];
-				$mailcontent="A call from".$number." failed in the queue of ".$pair." with reason ".$queueresult." on ".$time."\n\n-admin";
+				$mailcontent="A call from". $number . " failed in the queue of ".$pair." with reason ".$queueresult." on ".$time."\n\n-admin";
 		      	$param = $number.",".$pair.",".$queueresult.",".$time;
 			    ConnectNowFunctions::sendstaffmail("staff_onetimecallfailed", $param);
 		  	}else{
