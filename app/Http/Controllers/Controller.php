@@ -89,8 +89,6 @@ class Controller {
     	return $jwt;
 	}
 
-
-
 	/**
 	 *
 	 * Error response json message

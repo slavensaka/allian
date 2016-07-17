@@ -1785,12 +1785,12 @@
             </div><!-- .tab-content -->
         </div>
     </div>
-</div><h2>SchedulePartOne</h2>
+</div><h2>CheckPromoCode</h2>
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion13" href="#collapseOne13"> /testgauss/schedulePartOne</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion13" href="#collapseOne13"> /testgauss/checkPromoCode</a>
         </h4>
     </div>
     <div id="collapseOne13" class="panel-collapse collapse">
@@ -1807,6 +1807,143 @@
             <div class="tab-content">
 
                 <div class="tab-pane active" id="info13">
+                    <div class="well">
+                    Check the validity of the promo code.
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+<tr>
+    <td>data</td>
+    <td>string</td>
+    <td>Yes</td>
+    <td>CustomerId.</td>
+</tr>
+
+<tr>
+    <td>token</td>
+    <td>string</td>
+    <td>Yes</td>
+    <td>Autentication token for users autentication.</td>
+</tr>
+    </tbody>
+</table>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body13">{ 'data': {
+	    'CustomerID': '800',
+	    'promoCode': 'idCode1',
+	    'totalPrice': '20'
+  		},
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUzODMxNjUsImp0aSI6IlJpRW16NzRHSGhGR043QzEzT1JpQ1FuWXRnOHJ4bk9YVHRRZ002NnBDN1E9IiwiaXNzIjoiYWxsaWFudHJhbnNsYXRlLmNvbSIsIm5iZiI6MTQ2NTM4MzE2NSwiZXhwIjoxNDY2NTkyNzY1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.DvPdwcIGybU3zs5NH4NRmldNbhrer8AgvSSwi9lBY6SwJ-WKegETMRQmXZvtLu5-qrAx5hwBkEKXqG80zTqByw'}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox13">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/checkPromoCode" method="post" name="form13" id="form13">
+    
+    Parameters
+    <hr/>
+    
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
+</div>
+
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
+</div>
+    <button type="submit" class="btn btn-success send" rel="13">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers13"></pre>
+                                <pre id="response13"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample13">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header13">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response13">{'data': {
+	     'status': 1,
+	    'response': '$5',
+	    'discount': 5,
+	    'type': '$',
+	    'userMessage': 'Promotional discount will be applied! The discount is 5$',
+	    'totalPrice': 25
+	  	}}</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
+</div><h2>SchedulePartOne</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion14" href="#collapseOne14"> /testgauss/schedulePartOne</a>
+        </h4>
+    </div>
+    <div id="collapseOne14" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab14">
+                <li class="active"><a href="#info14" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox14" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample14" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info14">
                     <div class="well">
                     Retrieve the first part of the payment after user selects end time.
                     </div>
@@ -1851,7 +1988,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body13">{ 'data': {
+                        <pre id="sample_post_body14">{ 'data': {
 			    'CustomerID': '800',
 			    'fromDate': '2016-06-07',
 			    'timeStarts': '3:00:00 AM',
@@ -1862,7 +1999,7 @@
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox13">
+                <div class="tab-pane" id="sandbox14">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -1874,7 +2011,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/schedulePartOne" method="post" name="form13" id="form13">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/schedulePartOne" method="post" name="form14" id="form14">
     
     Parameters
     <hr/>
@@ -1886,29 +2023,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
 </div>
-    <button type="submit" class="btn btn-success send" rel="13">Send</button>
+    <button type="submit" class="btn btn-success send" rel="14">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers13"></pre>
-                                <pre id="response13"></pre>
+                                <pre id="response_headers14"></pre>
+                                <pre id="response14"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample13">
+                <div class="tab-pane" id="sample14">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header13">HTTP 200 OK</pre>
+<pre id="sample_resp_header14">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response13">{'data': {
+<pre id="sample_response14">{'data': {
 	    'totalPrice': '30.00', 'status': 1,
 	    'daily': 'ATS - Short Notice Telephonic Scheduling ($3/Min) for 5 minutes',
 	    'minimumText': 'Minimum Short Notice telephonic scheduling price is $30'
@@ -1925,23 +2062,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion14" href="#collapseOne14"> /testgauss/schedulePartTwo</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion15" href="#collapseOne15"> /testgauss/schedulePartTwo</a>
         </h4>
     </div>
-    <div id="collapseOne14" class="panel-collapse collapse">
+    <div id="collapseOne15" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab14">
-                <li class="active"><a href="#info14" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox14" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample14" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab15">
+                <li class="active"><a href="#info15" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox15" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample15" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info14">
+                <div class="tab-pane active" id="info15">
                     <div class="well">
                     NOT USED. SKIPPED TO SchedulePartTwo. Retrieve the second part of the payment after user selects or diselects scheduling type.
                     </div>
@@ -1986,7 +2123,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body14">{ 'data': {
+                        <pre id="sample_post_body15">{ 'data': {
 	    'CustomerID': '800',
 	    'fromDate': '2016-06-07',
 	    'timeStarts': '3:00:00 AM',
@@ -1999,7 +2136,7 @@
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox14">
+                <div class="tab-pane" id="sandbox15">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -2011,7 +2148,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/schedulePartTwo" method="post" name="form14" id="form14">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/schedulePartTwo" method="post" name="form15" id="form15">
     
     Parameters
     <hr/>
@@ -2023,29 +2160,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
 </div>
-    <button type="submit" class="btn btn-success send" rel="14">Send</button>
+    <button type="submit" class="btn btn-success send" rel="15">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers14"></pre>
-                                <pre id="response14"></pre>
+                                <pre id="response_headers15"></pre>
+                                <pre id="response15"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample14">
+                <div class="tab-pane" id="sample15">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header14">HTTP 200 OK</pre>
+<pre id="sample_resp_header15">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response14">{'data': {
+<pre id="sample_response15">{'data': {
 	    'daily': 'ATS - Short Notice Telephonic Scheduling ($3/Min) for 5 minutes',
 	    'minimumText': 'Minimum Short Notice telephonic scheduling price is $30',
 	    'status': 1,
@@ -2064,23 +2201,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion15" href="#collapseOne15"> /testgauss/scheduleFinal</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion16" href="#collapseOne16"> /testgauss/scheduleFinal</a>
         </h4>
     </div>
-    <div id="collapseOne15" class="panel-collapse collapse">
+    <div id="collapseOne16" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab15">
-                <li class="active"><a href="#info15" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox15" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample15" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab16">
+                <li class="active"><a href="#info16" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox16" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample16" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info15">
+                <div class="tab-pane active" id="info16">
                     <div class="well">
                     Send everything in form. Store in database, schedule new conference, update...
                     </div>
@@ -2125,7 +2262,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body15">{ 'data': {
+                        <pre id="sample_post_body16">{ 'data': {
 	    'CustomerID': '800',
 	    'timezone': 'US/Central',
 	    'fromDate': '2016-06-07',
@@ -2138,6 +2275,7 @@
 	    'clients': [
 	      '+16757568578'
 	    ],
+	    'promoCode': 'idCode1',
 	    'neededFor': 'Court',
 	    'description': 'Opis zašto treba prijevod'
   		},
@@ -2146,7 +2284,7 @@
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox15">
+                <div class="tab-pane" id="sandbox16">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -2158,7 +2296,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/scheduleFinal" method="post" name="form15" id="form15">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/scheduleFinal" method="post" name="form16" id="form16">
     
     Parameters
     <hr/>
@@ -2170,29 +2308,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
 </div>
-    <button type="submit" class="btn btn-success send" rel="15">Send</button>
+    <button type="submit" class="btn btn-success send" rel="16">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers15"></pre>
-                                <pre id="response15"></pre>
+                                <pre id="response_headers16"></pre>
+                                <pre id="response16"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample15">
+                <div class="tab-pane" id="sample16">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header15">HTTP 200 OK</pre>
+<pre id="sample_resp_header16">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response15">{'data': {
+<pre id="sample_response16">{'data': {
 	    'timezone': 'US/Central',
 	    'status': 1,
 	    'confStarts': '2016-06-07 3:00:00 AM',
@@ -2212,23 +2350,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion16" href="#collapseOne16"> /testgauss/updateStripe</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion17" href="#collapseOne17"> /testgauss/updateStripe</a>
         </h4>
     </div>
-    <div id="collapseOne16" class="panel-collapse collapse">
+    <div id="collapseOne17" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab16">
-                <li class="active"><a href="#info16" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox16" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample16" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab17">
+                <li class="active"><a href="#info17" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox17" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample17" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info16">
+                <div class="tab-pane active" id="info17">
                     <div class="well">
                     Update customer information for card.
                     </div>
@@ -2273,7 +2411,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body16">{'data': {
+                        <pre id="sample_post_body17">{'data': {
 	    'CustomerID': '800',
 	    'sname': 'Pero Perić',
 	    'number': '4012888888881881',
@@ -2285,7 +2423,7 @@
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox16">
+                <div class="tab-pane" id="sandbox17">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -2297,7 +2435,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/updateStripe" method="post" name="form16" id="form16">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/updateStripe" method="post" name="form17" id="form17">
     
     Parameters
     <hr/>
@@ -2309,29 +2447,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
 </div>
-    <button type="submit" class="btn btn-success send" rel="16">Send</button>
+    <button type="submit" class="btn btn-success send" rel="17">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers16"></pre>
-                                <pre id="response16"></pre>
+                                <pre id="response_headers17"></pre>
+                                <pre id="response17"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample16">
+                <div class="tab-pane" id="sample17">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header16">HTTP 200 OK</pre>
+<pre id="sample_resp_header17">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response16">{
+<pre id="sample_response17">{
   'data': {
 	    'status': 1,
 	    'userMessage': 'Stripe information updated.'
@@ -2349,23 +2487,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion17" href="#collapseOne17"> /testgauss/viewStripe</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion18" href="#collapseOne18"> /testgauss/viewStripe</a>
         </h4>
     </div>
-    <div id="collapseOne17" class="panel-collapse collapse">
+    <div id="collapseOne18" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab17">
-                <li class="active"><a href="#info17" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox17" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample17" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab18">
+                <li class="active"><a href="#info18" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox18" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample18" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info17">
+                <div class="tab-pane active" id="info18">
                     <div class="well">
                     View stripe credit card information.
                     </div>
@@ -2410,7 +2548,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body17">{'data': {
+                        <pre id="sample_post_body18">{'data': {
     	'CustomerID': '800'
   		},
      'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUyODA1MDIsImp0aSI6IlVheUZlOUJTcEE5empHWUNneVpnNTJEVFYzRXZ4NFE5YXNKdTQ4MHdEY289IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY1MjgwNTAyLCJleHAiOjE0NjY0OTAxMDIsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.qkGUG0WdaW_Q1aysAgfaEC5300Hk4X9VFEZRGsTOxE4X-P27EdCEfAnDPY0SaXD_VfsHiVYaGwwKxO-Bz0N8Yg'}</pre>
@@ -2418,7 +2556,7 @@
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox17">
+                <div class="tab-pane" id="sandbox18">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -2430,7 +2568,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/viewStripe" method="post" name="form17" id="form17">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/viewStripe" method="post" name="form18" id="form18">
     
     Parameters
     <hr/>
@@ -2442,29 +2580,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
 </div>
-    <button type="submit" class="btn btn-success send" rel="17">Send</button>
+    <button type="submit" class="btn btn-success send" rel="18">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers17"></pre>
-                                <pre id="response17"></pre>
+                                <pre id="response_headers18"></pre>
+                                <pre id="response18"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample17">
+                <div class="tab-pane" id="sample18">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header17">HTTP 200 OK</pre>
+<pre id="sample_resp_header18">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response17">{
+<pre id="sample_response18">{
   'data': {
 	    'sname': 'Pero Perić',
 	    'exp': '5/18',
@@ -2486,23 +2624,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion18" href="#collapseOne18"> /testgauss/langNames</a>
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion19" href="#collapseOne19"> /testgauss/langNames</a>
         </h4>
     </div>
-    <div id="collapseOne18" class="panel-collapse collapse">
+    <div id="collapseOne19" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab18">
-                <li class="active"><a href="#info18" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox18" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample18" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab19">
+                <li class="active"><a href="#info19" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox19" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample19" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info18">
+                <div class="tab-pane active" id="info19">
                     <div class="well">
                     Retrieve json of list of langauges to translate.
                     </div>
@@ -2547,14 +2685,14 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body18">{ 'data': {
+                        <pre id="sample_post_body19">{ 'data': {
     	'CustomerID': '800'
   		}}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox18">
+                <div class="tab-pane" id="sandbox19">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -2566,7 +2704,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/langNames" method="get" name="form18" id="form18">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/langNames" method="get" name="form19" id="form19">
     
     Parameters
     <hr/>
@@ -2578,29 +2716,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
 </div>
-    <button type="submit" class="btn btn-success send" rel="18">Send</button>
+    <button type="submit" class="btn btn-success send" rel="19">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers18"></pre>
-                                <pre id="response18"></pre>
+                                <pre id="response_headers19"></pre>
+                                <pre id="response19"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample18">
+                <div class="tab-pane" id="sample19">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header18">HTTP 200 OK</pre>
+<pre id="sample_resp_header19">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response18">{'data': {
+<pre id="sample_response19">{'data': {
         'languages': [
             {
                 'langId': '10',
@@ -2625,23 +2763,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion19" href="#collapseOne19"> /testgauss/orderSummary</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion20" href="#collapseOne20"> /testgauss/orderSummary</a>
         </h4>
     </div>
-    <div id="collapseOne19" class="panel-collapse collapse">
+    <div id="collapseOne20" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab19">
-                <li class="active"><a href="#info19" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox19" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample19" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab20">
+                <li class="active"><a href="#info20" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox20" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample20" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info19">
+                <div class="tab-pane active" id="info20">
                     <div class="well">
                     Retrieve the orders summary json.
                     </div>
@@ -2686,7 +2824,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body19">{'data': {
+                        <pre id="sample_post_body20">{'data': {
 	    'CustomerID': '406'
 	  	},
      	'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjU1NDY1MjcsImp0aSI6IklGSTJTcmxlbWtQck1ncUZNSmV1RDZYYTlUTzRQbm02TmVGdThyK1VLV2c9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY1NTQ2NTI3LCJleHAiOjE1OTE2OTA1MjcsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.ff_JJqrXL1HLsTGRo7HA6q9YQJWiLaQRoVy0RcQYnDPpFQu-0HH1bYQ8PLHnyaOzSm3yYXkCle0gLd1O80vREg'}</pre>
@@ -2694,7 +2832,7 @@
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox19">
+                <div class="tab-pane" id="sandbox20">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -2706,7 +2844,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/orderSummary" method="post" name="form19" id="form19">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/orderSummary" method="post" name="form20" id="form20">
     
     Parameters
     <hr/>
@@ -2718,29 +2856,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
 </div>
-    <button type="submit" class="btn btn-success send" rel="19">Send</button>
+    <button type="submit" class="btn btn-success send" rel="20">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers19"></pre>
-                                <pre id="response19"></pre>
+                                <pre id="response_headers20"></pre>
+                                <pre id="response20"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample19">
+                <div class="tab-pane" id="sample20">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header19">HTTP 200 OK</pre>
+<pre id="sample_resp_header20">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response19">{
+<pre id="sample_response20">{
   'data': {
 	     'orderSummary': [
 	     {
@@ -2762,23 +2900,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion20" href="#collapseOne20"> /testgauss/orderSummaryDetails</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion21" href="#collapseOne21"> /testgauss/orderSummaryDetails</a>
         </h4>
     </div>
-    <div id="collapseOne20" class="panel-collapse collapse">
+    <div id="collapseOne21" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab20">
-                <li class="active"><a href="#info20" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox20" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample20" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab21">
+                <li class="active"><a href="#info21" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox21" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample21" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info20">
+                <div class="tab-pane active" id="info21">
                     <div class="well">
                     Retrieve the orders summaries details json.
                     </div>
@@ -2823,7 +2961,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body20">{'data': {
+                        <pre id="sample_post_body21">{'data': {
 	    'CustomerID': '406',
 	    'orderID': '3763'
 	  },
@@ -2832,7 +2970,7 @@
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox20">
+                <div class="tab-pane" id="sandbox21">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -2844,7 +2982,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/orderSummaryDetails" method="post" name="form20" id="form20">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/orderSummaryDetails" method="post" name="form21" id="form21">
     
     Parameters
     <hr/>
@@ -2856,29 +2994,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
 </div>
-    <button type="submit" class="btn btn-success send" rel="20">Send</button>
+    <button type="submit" class="btn btn-success send" rel="21">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers20"></pre>
-                                <pre id="response20"></pre>
+                                <pre id="response_headers21"></pre>
+                                <pre id="response21"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample20">
+                <div class="tab-pane" id="sample21">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header20">HTTP 200 OK</pre>
+<pre id="sample_resp_header21">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response20">{
+<pre id="sample_response21">{
   'data': {
         'projectDescription': 'TEST',
         'projectId': '3763',
@@ -2909,153 +3047,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion21" href="#collapseOne21"> /testgauss/scheduledSessions</a>
-        </h4>
-    </div>
-    <div id="collapseOne21" class="panel-collapse collapse">
-        <div class="panel-body">
-
-            <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab21">
-                <li class="active"><a href="#info21" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox21" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample21" data-toggle="tab">Sample output</a></li>
-            </ul>
-
-            <!-- Tab panes -->
-            <div class="tab-content">
-
-                <div class="tab-pane active" id="info21">
-                    <div class="well">
-                    Retrieve scheduled session.
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Headers</strong></div>
-                      <div class="panel-body">
-                        
-                      </div>
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Parameters</strong></div>
-                      <div class="panel-body">
-                        
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Required</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        
-<tr>
-    <td>token</td>
-    <td>string</td>
-    <td>Yes</td>
-    <td>Autentication token for users autentication.</td>
-</tr>
-
-<tr>
-    <td>data</td>
-    <td>string</td>
-    <td>Yes</td>
-    <td>Customer ID.</td>
-</tr>
-    </tbody>
-</table>
-                      </div>
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Body</strong></div>
-                      <div class="panel-body">
-                        <pre id="sample_post_body21">{'data': {
-    	'CustomerID': '800'
-  		}, 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTMzNjcsImp0aSI6IlJoOGpiMVhUZHFvUDVDVUVSQ29VY3pWR0dnSVFsQWJ1bFwvRFp1U2pcL050OD0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQ1OTMzNjcsImV4cCI6MTQ2NTgwMjk2NywiZGF0YSI6eyJTdWNjZXNzIjoiU3VjY2VzcyJ9fQ.JDwNdycstmqNC0dyrNgNuik_zXCYbx3PwbIkdTX7is3oDrQr6CKQ6mREUt-9tbOys361mcH1kyXaahn9Y2tTRg'}</pre>
-                      </div>
-                    </div>
-                </div><!-- #info -->
-
-                <div class="tab-pane" id="sandbox21">
-                    <div class="row">
-                        <div class="col-md-12">
-                        
-        <div class="col-md-6">
-    Headers
-    <hr/>
-    <div class="headers">
-    
-    </div>
-    </div>
-    <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/scheduledSessions" method="post" name="form21" id="form21">
-    
-    Parameters
-    <hr/>
-    
-<div class="form-group">
-    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
-</div>
-
-<div class="form-group">
-    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
-</div>
-    <button type="submit" class="btn btn-success send" rel="21">Send</button>
-</form></div>
-                        </div>
-                        <div class="col-md-12">
-                            Response
-                            <hr>
-                            <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers21"></pre>
-                                <pre id="response21"></pre>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- #sandbox -->
-
-                <div class="tab-pane" id="sample21">
-                    <div class="row">
-                        <div class="col-md-12">
-                            
-<pre id="sample_resp_header21">HTTP 200 OK</pre>
-                            
-
-<hr>
-<pre id="sample_response21">{ 'data': {
-	    'status': 1,
-	    'userMessage': 'Scheduled Sessions',
-	    'scheduledSessions': [
-	      {
-	        'date': '2015-05-24',
-	        'schedulingType': 'Conference Call',
-	        'upcoming': 'upcoming',
-	        'orderId': '5266'
-	      },
-
-	      {
-	        'date': '2015-05-13',
-	        'schedulingType': 'Interpreters call',
-	        'upcoming': 'completed',
-	        'orderId': '5267'
-	      }
-
-	    ]
-		} }</pre>
-                        </div>
-                    </div>
-                </div><!-- #sample -->
-
-            </div><!-- .tab-content -->
-        </div>
-    </div>
-</div><h2>ScheduledSessionsDetails</h2>
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion22" href="#collapseOne22"> /testgauss/scheduledSessionsDetails</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion22" href="#collapseOne22"> /testgauss/scheduledSessions</a>
         </h4>
     </div>
     <div id="collapseOne22" class="panel-collapse collapse">
@@ -3117,8 +3109,7 @@
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
                         <pre id="sample_post_body22">{'data': {
-    	'CustomerID': '800' ,
-    	'orderId' : '2345'
+    	'CustomerID': '800'
   		}, 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTMzNjcsImp0aSI6IlJoOGpiMVhUZHFvUDVDVUVSQ29VY3pWR0dnSVFsQWJ1bFwvRFp1U2pcL050OD0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQ1OTMzNjcsImV4cCI6MTQ2NTgwMjk2NywiZGF0YSI6eyJTdWNjZXNzIjoiU3VjY2VzcyJ9fQ.JDwNdycstmqNC0dyrNgNuik_zXCYbx3PwbIkdTX7is3oDrQr6CKQ6mREUt-9tbOys361mcH1kyXaahn9Y2tTRg'}</pre>
                       </div>
                     </div>
@@ -3136,7 +3127,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/scheduledSessionsDetails" method="post" name="form22" id="form22">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/scheduledSessions" method="post" name="form22" id="form22">
     
     Parameters
     <hr/>
@@ -3171,6 +3162,153 @@
 
 <hr>
 <pre id="sample_response22">{ 'data': {
+	    'status': 1,
+	    'userMessage': 'Scheduled Sessions',
+	    'scheduledSessions': [
+	      {
+	        'date': '2015-05-24',
+	        'schedulingType': 'Conference Call',
+	        'upcoming': 'upcoming',
+	        'orderId': '5266'
+	      },
+
+	      {
+	        'date': '2015-05-13',
+	        'schedulingType': 'Interpreters call',
+	        'upcoming': 'completed',
+	        'orderId': '5267'
+	      }
+
+	    ]
+		} }</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
+</div><h2>ScheduledSessionsDetails</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion23" href="#collapseOne23"> /testgauss/scheduledSessionsDetails</a>
+        </h4>
+    </div>
+    <div id="collapseOne23" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab23">
+                <li class="active"><a href="#info23" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox23" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample23" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info23">
+                    <div class="well">
+                    Retrieve scheduled session.
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+<tr>
+    <td>token</td>
+    <td>string</td>
+    <td>Yes</td>
+    <td>Autentication token for users autentication.</td>
+</tr>
+
+<tr>
+    <td>data</td>
+    <td>string</td>
+    <td>Yes</td>
+    <td>Customer ID.</td>
+</tr>
+    </tbody>
+</table>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body23">{'data': {
+    	'CustomerID': '800' ,
+    	'orderId' : '2345'
+  		}, 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTMzNjcsImp0aSI6IlJoOGpiMVhUZHFvUDVDVUVSQ29VY3pWR0dnSVFsQWJ1bFwvRFp1U2pcL050OD0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQ1OTMzNjcsImV4cCI6MTQ2NTgwMjk2NywiZGF0YSI6eyJTdWNjZXNzIjoiU3VjY2VzcyJ9fQ.JDwNdycstmqNC0dyrNgNuik_zXCYbx3PwbIkdTX7is3oDrQr6CKQ6mREUt-9tbOys361mcH1kyXaahn9Y2tTRg'}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox23">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/scheduledSessionsDetails" method="post" name="form23" id="form23">
+    
+    Parameters
+    <hr/>
+    
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
+</div>
+
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
+</div>
+    <button type="submit" class="btn btn-success send" rel="23">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers23"></pre>
+                                <pre id="response23"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample23">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header23">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response23">{ 'data': {
 	    'timezone': 'US/Central',
 	    'date': 'US/Central',
 	    'schedulingType': 'Interpreters Call',
@@ -3194,23 +3332,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion23" href="#collapseOne23"> /testgauss/connectNow</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion24" href="#collapseOne24"> /testgauss/connectNow</a>
         </h4>
     </div>
-    <div id="collapseOne23" class="panel-collapse collapse">
+    <div id="collapseOne24" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab23">
-                <li class="active"><a href="#info23" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox23" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample23" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab24">
+                <li class="active"><a href="#info24" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox24" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample24" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info23">
+                <div class="tab-pane active" id="info24">
                     <div class="well">
                     Generate the twilio token for connection to connectNow interpreting.
                     </div>
@@ -3248,12 +3386,12 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body23">{'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ2MDE1MTUsImp0aSI6InAwaFpucWxqaUpqWStDdmdrb3c0MjJITTQ1TkYweFVobCtHU2lWZFwvUlN3PSIsImlzcyI6ImxvY2FsaG9zdCIsIm5iZiI6MTQ2NDYwMTUxNSwiZXhwIjoxNDY1ODExMTE1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.wwxlnjSCmInwNYinJ-LIyHMOys3oYTeoQem2MJTfgNREFZ8rcDB9uZ61Hw6vHIVMh_8BKzJUKS-_0nwhfrJVxQ'}</pre>
+                        <pre id="sample_post_body24">{'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ2MDE1MTUsImp0aSI6InAwaFpucWxqaUpqWStDdmdrb3c0MjJITTQ1TkYweFVobCtHU2lWZFwvUlN3PSIsImlzcyI6ImxvY2FsaG9zdCIsIm5iZiI6MTQ2NDYwMTUxNSwiZXhwIjoxNDY1ODExMTE1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.wwxlnjSCmInwNYinJ-LIyHMOys3oYTeoQem2MJTfgNREFZ8rcDB9uZ61Hw6vHIVMh_8BKzJUKS-_0nwhfrJVxQ'}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox23">
+                <div class="tab-pane" id="sandbox24">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -3265,7 +3403,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/connectNow" method="post" name="form23" id="form23">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/connectNow" method="post" name="form24" id="form24">
     
     Parameters
     <hr/>
@@ -3273,29 +3411,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
 </div>
-    <button type="submit" class="btn btn-success send" rel="23">Send</button>
+    <button type="submit" class="btn btn-success send" rel="24">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers23"></pre>
-                                <pre id="response23"></pre>
+                                <pre id="response_headers24"></pre>
+                                <pre id="response24"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample23">
+                <div class="tab-pane" id="sample24">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header23">HTTP 200 OK</pre>
+<pre id="sample_resp_header24">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response23">{
+<pre id="sample_response24">{
   'data': {
 	    'status': 1,
 	    'userMessage': 'Twilio token',
@@ -3314,23 +3452,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion24" href="#collapseOne24"> /testgauss/connectOut</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion25" href="#collapseOne25"> /testgauss/connectOut</a>
         </h4>
     </div>
-    <div id="collapseOne24" class="panel-collapse collapse">
+    <div id="collapseOne25" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab24">
-                <li class="active"><a href="#info24" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox24" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample24" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab25">
+                <li class="active"><a href="#info25" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox25" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample25" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info24">
+                <div class="tab-pane active" id="info25">
                     <div class="well">
                     When connected with twilioToken, generates the TwiML response.
                     </div>
@@ -3382,12 +3520,12 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body24">{ 'CustomerID': '800', 'lang': 'English', 'translationTo': 'Arabic'}</pre>
+                        <pre id="sample_post_body25">{ 'CustomerID': '800', 'lang': 'English', 'translationTo': 'Arabic'}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox24">
+                <div class="tab-pane" id="sandbox25">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -3399,7 +3537,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/connectOut" method="post" name="form24" id="form24">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/connectOut" method="post" name="form25" id="form25">
     
     Parameters
     <hr/>
@@ -3415,29 +3553,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="translationTo" placeholder="translationTo" name="translationTo">
 </div>
-    <button type="submit" class="btn btn-success send" rel="24">Send</button>
+    <button type="submit" class="btn btn-success send" rel="25">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers24"></pre>
-                                <pre id="response24"></pre>
+                                <pre id="response_headers25"></pre>
+                                <pre id="response25"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample24">
+                <div class="tab-pane" id="sample25">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header24">HTTP 200 OK</pre>
+<pre id="sample_resp_header25">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response24">{'data': {
+<pre id="sample_response25">{'data': {
         'twiML': 'twiML code for enqueue for a session with linguist'} }</pre>
                         </div>
                     </div>
@@ -3451,23 +3589,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion25" href="#collapseOne25"> /testgauss/conference</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion26" href="#collapseOne26"> /testgauss/conference</a>
         </h4>
     </div>
-    <div id="collapseOne25" class="panel-collapse collapse">
+    <div id="collapseOne26" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab25">
-                <li class="active"><a href="#info25" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox25" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample25" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab26">
+                <li class="active"><a href="#info26" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox26" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample26" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info25">
+                <div class="tab-pane active" id="info26">
                     <div class="well">
                     Join the twilio scheduled session conference call.
                     </div>
@@ -3505,108 +3643,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body25">{'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ2MDE1MTUsImp0aSI6InAwaFpucWxqaUpqWStDdmdrb3c0MjJITTQ1TkYweFVobCtHU2lWZFwvUlN3PSIsImlzcyI6ImxvY2FsaG9zdCIsIm5iZiI6MTQ2NDYwMTUxNSwiZXhwIjoxNDY1ODExMTE1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.wwxlnjSCmInwNYinJ-LIyHMOys3oYTeoQem2MJTfgNREFZ8rcDB9uZ61Hw6vHIVMh_8BKzJUKS-_0nwhfrJVxQ'}</pre>
-                      </div>
-                    </div>
-                </div><!-- #info -->
-
-                <div class="tab-pane" id="sandbox25">
-                    <div class="row">
-                        <div class="col-md-12">
-                        
-        <div class="col-md-6">
-    Headers
-    <hr/>
-    <div class="headers">
-    
-    </div>
-    </div>
-    <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/conference" method="post" name="form25" id="form25">
-    
-    Parameters
-    <hr/>
-    
-<div class="form-group">
-    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
-</div>
-    <button type="submit" class="btn btn-success send" rel="25">Send</button>
-</form></div>
-                        </div>
-                        <div class="col-md-12">
-                            Response
-                            <hr>
-                            <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers25"></pre>
-                                <pre id="response25"></pre>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- #sandbox -->
-
-                <div class="tab-pane" id="sample25">
-                    <div class="row">
-                        <div class="col-md-12">
-                            
-<pre id="sample_resp_header25">HTTP 200 OK</pre>
-                            
-
-<hr>
-<pre id="sample_response25">{
-  'data': {
-	    'status': 1,
-	    'userMessage': 'Twilio token',
-	    'twilioToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZSI6InNjb3BlOmNsaWVudDpvdXRnb2luZz9hcHBTaWQ9QVBlMDAwOTk4ZjhiZGQ4MDhhNjA3NTllYjMyZjc5MmMxMiZhcHBQYXJhbXM9JmNsaWVudE5hbWU9NzQ3IHNjb3BlOmNsaWVudDppbmNvbWluZz9jbGllbnROYW1lPTc0NyIsImlzcyI6IkFDOTFjNDlkZjQ0MDZlNWMwOGE3NTQ2YWJhNDgwYTg5YjkiLCJleHAiOjE0Njc5Nzc4ODB9.hqimm091r4MnywuPzqq39uPyjleNUecgDn9XMwJuvjc'
-	  	}
- }</pre>
-                        </div>
-                    </div>
-                </div><!-- #sample -->
-
-            </div><!-- .tab-content -->
-        </div>
-    </div>
-</div><h2>DevGenerateAuthToken</h2>
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion26" href="#collapseOne26"> /testgauss/devGenerateAuthToken</a>
-        </h4>
-    </div>
-    <div id="collapseOne26" class="panel-collapse collapse">
-        <div class="panel-body">
-
-            <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab26">
-                <li class="active"><a href="#info26" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox26" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample26" data-toggle="tab">Sample output</a></li>
-            </ul>
-
-            <!-- Tab panes -->
-            <div class="tab-content">
-
-                <div class="tab-pane active" id="info26">
-                    <div class="well">
-                    Generate a jwt token, Not used anymore.
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Headers</strong></div>
-                      <div class="panel-body">
-                        
-                      </div>
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Parameters</strong></div>
-                      <div class="panel-body">
-                        
-                      </div>
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading"><strong>Body</strong></div>
-                      <div class="panel-body">
-                        <pre id="sample_post_body26">{ 'data': ''}</pre>
+                        <pre id="sample_post_body26">{'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ2MDE1MTUsImp0aSI6InAwaFpucWxqaUpqWStDdmdrb3c0MjJITTQ1TkYweFVobCtHU2lWZFwvUlN3PSIsImlzcyI6ImxvY2FsaG9zdCIsIm5iZiI6MTQ2NDYwMTUxNSwiZXhwIjoxNDY1ODExMTE1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.wwxlnjSCmInwNYinJ-LIyHMOys3oYTeoQem2MJTfgNREFZ8rcDB9uZ61Hw6vHIVMh_8BKzJUKS-_0nwhfrJVxQ'}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
@@ -3623,11 +3660,14 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devGenerateAuthToken" method="get" name="form26" id="form26">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/conference" method="post" name="form26" id="form26">
     
     Parameters
     <hr/>
     
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
+</div>
     <button type="submit" class="btn btn-success send" rel="26">Send</button>
 </form></div>
                         </div>
@@ -3650,7 +3690,13 @@
                             
 
 <hr>
-<pre id="sample_response26">{'jwtToken': '', 'tokenContent': '' }</pre>
+<pre id="sample_response26">{
+  'data': {
+	    'status': 1,
+	    'userMessage': 'Twilio token',
+	    'twilioToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZSI6InNjb3BlOmNsaWVudDpvdXRnb2luZz9hcHBTaWQ9QVBlMDAwOTk4ZjhiZGQ4MDhhNjA3NTllYjMyZjc5MmMxMiZhcHBQYXJhbXM9JmNsaWVudE5hbWU9NzQ3IHNjb3BlOmNsaWVudDppbmNvbWluZz9jbGllbnROYW1lPTc0NyIsImlzcyI6IkFDOTFjNDlkZjQ0MDZlNWMwOGE3NTQ2YWJhNDgwYTg5YjkiLCJleHAiOjE0Njc5Nzc4ODB9.hqimm091r4MnywuPzqq39uPyjleNUecgDn9XMwJuvjc'
+	  	}
+ }</pre>
                         </div>
                     </div>
                 </div><!-- #sample -->
@@ -3658,12 +3704,12 @@
             </div><!-- .tab-content -->
         </div>
     </div>
-</div><h2>DevEncryptJson</h2>
+</div><h2>ConferenceOut</h2>
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion27" href="#collapseOne27"> /testgauss/devEncryptJson</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion27" href="#collapseOne27"> /testgauss/conferenceOut</a>
         </h4>
     </div>
     <div id="collapseOne27" class="panel-collapse collapse">
@@ -3680,6 +3726,223 @@
             <div class="tab-content">
 
                 <div class="tab-pane active" id="info27">
+                    <div class="well">
+                    When connected with twilioToken, generates the TwiML response.
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+<tr>
+    <td>CustomerID</td>
+    <td>string</td>
+    <td>Yes</td>
+    <td>Customers id</td>
+</tr>
+
+<tr>
+    <td>orderId</td>
+    <td>string</td>
+    <td>Yes</td>
+    <td>Order</td>
+</tr>
+    </tbody>
+</table>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body27">{ 'CustomerID': '800', 'orderId': '5265'}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox27">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/conferenceOut" method="post" name="form27" id="form27">
+    
+    Parameters
+    <hr/>
+    
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="CustomerID" placeholder="CustomerID" name="CustomerID">
+</div>
+
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="orderId" placeholder="orderId" name="orderId">
+</div>
+    <button type="submit" class="btn btn-success send" rel="27">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers27"></pre>
+                                <pre id="response27"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample27">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header27">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response27">{'data': { 'twiML': 'twiML code for enqueue for a session with linguist'} }</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
+</div><h2>DevGenerateAuthToken</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion28" href="#collapseOne28"> /testgauss/devGenerateAuthToken</a>
+        </h4>
+    </div>
+    <div id="collapseOne28" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab28">
+                <li class="active"><a href="#info28" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox28" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample28" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info28">
+                    <div class="well">
+                    Generate a jwt token, Not used anymore.
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body28">{ 'data': ''}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox28">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devGenerateAuthToken" method="get" name="form28" id="form28">
+    
+    Parameters
+    <hr/>
+    
+    <button type="submit" class="btn btn-success send" rel="28">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers28"></pre>
+                                <pre id="response28"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample28">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header28">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response28">{'jwtToken': '', 'tokenContent': '' }</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
+</div><h2>DevEncryptJson</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion29" href="#collapseOne29"> /testgauss/devEncryptJson</a>
+        </h4>
+    </div>
+    <div id="collapseOne29" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab29">
+                <li class="active"><a href="#info29" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox29" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample29" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info29">
                     <div class="well">
                     Developer used route for easy encrypting json request data. Input json value into field in sandbox are retrieve a encrypted API used data string for development purposes.Example {'CustomerID': 720}
                     </div>
@@ -3717,14 +3980,14 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body27">{
+                        <pre id="sample_post_body29">{
     	'CustomerID': '800'
   		}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox27">
+                <div class="tab-pane" id="sandbox29">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -3736,7 +3999,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devEncryptJson" method="get" name="form27" id="form27">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devEncryptJson" method="get" name="form29" id="form29">
     
     Parameters
     <hr/>
@@ -3744,29 +4007,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
 </div>
-    <button type="submit" class="btn btn-success send" rel="27">Send</button>
+    <button type="submit" class="btn btn-success send" rel="29">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers27"></pre>
-                                <pre id="response27"></pre>
+                                <pre id="response_headers29"></pre>
+                                <pre id="response29"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample27">
+                <div class="tab-pane" id="sample29">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header27">HTTP 200 OK</pre>
+<pre id="sample_resp_header29">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response27">{
+<pre id="sample_response29">{
   		'json': {
     	'CustomerID': '800'
   		},
@@ -3784,23 +4047,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion28" href="#collapseOne28"> /testgauss/devDecryptJson</a>
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion30" href="#collapseOne30"> /testgauss/devDecryptJson</a>
         </h4>
     </div>
-    <div id="collapseOne28" class="panel-collapse collapse">
+    <div id="collapseOne30" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab28">
-                <li class="active"><a href="#info28" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox28" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample28" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab30">
+                <li class="active"><a href="#info30" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox30" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample30" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info28">
+                <div class="tab-pane active" id="info30">
                     <div class="well">
                     Decrypt the encrypted data into plaintext. So if json was encrypted, retrieve the json in the encrypted data. Used for development purposes.
                     </div>
@@ -3838,12 +4101,12 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body28">{ 'data': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc='}</pre>
+                        <pre id="sample_post_body30">{ 'data': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc='}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox28">
+                <div class="tab-pane" id="sandbox30">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -3855,7 +4118,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devDecryptJson" method="get" name="form28" id="form28">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devDecryptJson" method="get" name="form30" id="form30">
     
     Parameters
     <hr/>
@@ -3863,29 +4126,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
 </div>
-    <button type="submit" class="btn btn-success send" rel="28">Send</button>
+    <button type="submit" class="btn btn-success send" rel="30">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers28"></pre>
-                                <pre id="response28"></pre>
+                                <pre id="response_headers30"></pre>
+                                <pre id="response30"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample28">
+                <div class="tab-pane" id="sample30">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header28">HTTP 200 OK</pre>
+<pre id="sample_resp_header30">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response28">{
+<pre id="sample_response30">{
   		'data': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc=',
   		'decrypted': {
     	'CustomerID': '800'
@@ -3904,7 +4167,7 @@
 
         <div class="row mt0 footer">
             <div class="col-md-6" align="left">
-                Generated on 2016-07-07, 16:01:01
+                Generated on 2016-07-13, 12:38:09
             </div>
             <div class="col-md-6" align="right">
                 <a href="https://github.com/calinrada/php-apidoc" target="_blank">php-apidoc v 1.3.4</a>

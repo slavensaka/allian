@@ -117,6 +117,48 @@ class ScheduleFunctions {
 
 	/**
 	 *
+	 * TODO
+	 *
+	 */
+	function getOrderSummaryHtml(){
+		 $order_summary_html = "<tr><td colspan='2' ><h4 style='background-color:#f2f2f2; color:#333; padding:5px 5px; margin:10px 0;'> Price Summary </h4></td></tr>"; // DA
+        //$ret .= "<table cellspacing='2' >";
+        //$ret .= "<tr class='order_summary_added'><th><b>Daily Charges</b></th><th></th></tr>";
+        foreach ($price_det['daily'] as $line) {
+            $temp = explode("::", $line);
+            if ($temp[0] === "DAYS") {
+                $ret .= "<script>document.getElementById('total_price_head').innerHTML = 'Total Price for " . $temp[1] . "';</script>"; // NE
+            } elseif($temp[1] === ""){
+                $ret .= "<tr class='order_summary_added' >";
+                $ret .= "<td style='' colspan='2' class=' bold green'  >" . $temp[0] . "</td>";
+                $ret .= "</tr>"; // NE
+                $order_summary_html .= "<tr><td style='color:#111; font-weight:bold;  vertical-align:top; padding:5px 0;  font-size:11px; border-bottom: 1px dotted #ccc;'>" . $temp[0] . "</td><td style='color:#111; font-weight:bold;  vertical-align:top; padding:5px 0;  font-size:11px; border-bottom: 1px dotted #ccc;'>" . $temp[1] . "</td></tr>";
+
+            } else {
+                $ret .= "<tr class='order_summary_added' >";
+                $ret .= "<td class='first bold'  >" . $temp[0] . "</td><td class='bold'>" . $temp[1] . "</td>";
+                $ret .= "</tr>";
+                $order_summary_html .= "<tr><td style='color:#111; font-weight:bold;  vertical-align:top; padding:5px 0;  font-size:11px; border-bottom: 1px dotted #ccc;'>" . $temp[0] . "</td><td style='color:#111; font-weight:bold;  vertical-align:top; padding:5px 0;  font-size:11px; border-bottom: 1px dotted #ccc;'>" . $temp[1] . "</td></tr>";
+            }
+        }
+        $foot_td_style = "style='color: darkgreen; font-weight:bold; font-size:14px;   margin: 5px 0; border-bottom:2px solid #ccc; padding: 5px 0'";
+        $data['calculate_mode'] = '';
+        $price = calculate_price($data);
+        //$price = $_SESSION["amount"];
+        // $days = $data['headsets_needed']
+		if($data['scheduling_type'] == 'conference_call' || $data['scheduling_type'] == 'get_call' ){ // DA
+		        $order_summary_html .= "<tr style='background:#FFFFDD;'><td  $foot_td_style>" . ucwords("subtotal") . " </td><td  $foot_td_style>$$price</td></tr>";
+		}else{
+		        $order_summary_html .= "<tr style='background:#FFFFDD;'><td  $foot_td_style>" . ucwords("subtotal for " . $temp[1]) . " </td><td  $foot_td_style>$$price</td></tr>";
+		}
+		        $debug = "<table>";
+		        $debug .= $order_summary_html;
+		        $debug .= "</table>";
+		        //send_notification("Debugging $price", $debug."<br>".print_r($price_det,true), "goharulzaman@yahoo.com");
+	}
+
+	/**
+	 *
 	 * order_telephonic_notification function is responsible for sending notification to admin, to linguists and to
 	 * customer who placed telephonic interpreting orders.
 	 * @Param  $con: Required to create database connection. Required argument.
@@ -129,10 +171,14 @@ class ScheduleFunctions {
 	    $CustID = $CustomerID;
 	    $customer = CustLogin::getCustomer($CustID);
 	    // Get the discount calculated in a previous processing
-	    $Order_Discount = TranslationOrders::getTranslationOrder($order_id, "discount");
-	    $additional_fee = ($_SESSION["admin-order"] && isset($_SESSION['admin_logged']) && isset($_SESSION["Fee"])) ? $_SESSION["Fee"] : 0; // TODO DISCOUNT FOR ADMIN AND OTHERS additional fee added by admin, NE KORISTE
-	    $additional_fee_desc = ($_SESSION["admin-order"] && isset($_SESSION['admin_logged']) && isset($_SESSION["Fee_Desc"])) ? $_SESSION["Fee_Desc"] : ""; // TODO DISCOUNT FOR ADMIN AND OTHERS additional fee description NE KORISTE
+	    $Order_Discount = TranslationOrders::getTranslationOrder($order_id, "discount"); //TODO ŠTA SA OVIM
+	    // $additional_fee = ($_SESSION["admin-order"] && isset($_SESSION['admin_logged']) && isset($_SESSION["Fee"])) ? $_SESSION["Fee"] : 0; // TODO DISCOUNT FOR ADMIN AND OTHERS additional fee added by admin, NE KORISTE
+	    // $additional_fee_desc = ($_SESSION["admin-order"] && isset($_SESSION['admin_logged']) && isset($_SESSION["Fee_Desc"])) ? $_SESSION["Fee_Desc"] : ""; // TODO DISCOUNT FOR ADMIN AND OTHERS additional fee description NE KORISTE
 	    $order_summary_html = (isset($_SESSION["order_summary_html"])) ? mysqli_real_escape_string($con, $_SESSION["order_summary_html"]) : ""; // TODO
+
+	     	// self::getOrderSummaryHtml();
+
+
 	    $Interpreter_Discount = self::calc_interpreter_compensation($order_id, $Order_Discount); // TODO
 	    $additional_compensation = self::calc_interpreter_compensation($order_id, $additional_fee); // NE KORISTE
 	    $get_interpreter_query = "select * from order_onsite_interpreter where orderID='$order_id'";
@@ -175,7 +221,8 @@ class ScheduleFunctions {
 	        $sn = 0;
 	        $telephonic_linguist = "0";
 	        // Update onsite order id with current operating order ID
-	        $update_query = "UPDATE `order_onsite_interpreter` set  customer_id='$CustID',amount='(amount-$Order_Discount+$additional_fee)',additional_fee = '$additional_fee', additional_fee_desc = '$additional_fee_desc', order_summary_html='$order_summary_html',  interpreter_amt = (interpreter_amt-$Interpreter_Discount+$additional_compensation), overage_amt_per_30min='$overage_amt_per_30min' WHERE orderID='" . $order_id . "'";
+	        // Removed from query,amount='(amount-$Order_Discount+$additional_fee)'
+	        $update_query = "UPDATE `order_onsite_interpreter` set  customer_id='$CustID',additional_fee = '$additional_fee', additional_fee_desc = '$additional_fee_desc', order_summary_html='$order_summary_html',  interpreter_amt = (interpreter_amt-$Interpreter_Discount+$additional_compensation), overage_amt_per_30min='$overage_amt_per_30min' WHERE orderID='" . $order_id . "'";
 	        // Update the order_onsite_interpreter
 	        mysqli_query($con, $update_query);
 	        // Get all linguist that all for telephonic action

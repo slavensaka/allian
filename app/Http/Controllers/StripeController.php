@@ -6,6 +6,7 @@ use \Dotenv\Dotenv;
 use Stripe\Token;
 use Stripe\Stripe;
 use Stripe\Charge;
+use Stripe\Coupon;
 use Stripe\Customer;
 use Allian\Models\CustLogin;
 use Allian\Models\Stripe as StripeModel;
@@ -226,6 +227,33 @@ class StripeController extends Controller {
 			throw new \Exception($e->getMessage());
 		} catch (\Stripe\Error\Base $e) {
 			throw new \Exception($e->getMessage());
+		}
+	}
+
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	public function promoCode($coupon_code){
+		Stripe::setApiKey(getenv('STRIPE_KEY')); // TODO $this->getStripeKey(); SAD JE samo moj stripe za testiranje
+		try {
+	    	// retrieve the coupon from STRIPE System
+	    	$coupon = Coupon::retrieve($coupon_code);
+	    	if(is_null($coupon['amount_off'])){
+	     		// Calculate the discount percent
+	     		$discount_off = $coupon['percent_off'];
+	     		$discount_type = "%";
+	     		$response = $discount_off . "%";
+	 		}else{
+	         	$discount_off = $coupon['amount_off'] / 100;
+	         	$discount_type = "$";
+	         	$response = "$".$discount_off;
+			}
+			$r = array("status" => 1, "response" => $response, "discount" => $discount_off, "type" => $discount_type);
+	        return $r;
+    	} catch (Stripe_InvalidRequestError $e) {
+	        throw new \Exception($e->getMessage());
 		}
 	}
 

@@ -5,6 +5,8 @@ namespace Allian\Http\Controllers;
 use Allian\Models\OrderOnsiteInterpreter;
 use \Dotenv\Dotenv;
 use Allian\Models\LangList;
+use Allian\Helpers\Push\PushNotification;
+
 class OrderOnsiteInterpreterController extends Controller {
 
 	/**
@@ -156,5 +158,64 @@ class OrderOnsiteInterpreterController extends Controller {
 			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
      		return $response->json(array('data' => $base64Encrypted));
 		}
+	}
+
+	public function storeDeviceToken($request, $response, $service, $app){
+		if($request->token){
+			// Validate token if not expired, or tampered with
+			$this->validateToken($request->token);
+			// Decrypt data
+			$data = $this->decryptValues($request->data);
+			// Validate CustomerId
+			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+			$service->validate($data['deviceToken'], 'Error: No order id is present.')->notNull()->isInt();
+			// Validate token in database for customer stored
+			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
+			// If error validating token in database
+			if(!$validated){
+	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
+	     		return $response->json(array('data' => $base64Encrypted));
+			}
+
+			// Store in database deviceToken
+
+
+
+			$base64Encrypted = $this->encryptValues(json_encode($result));
+	     	return $response->json(array('data' => $base64Encrypted));
+
+		} else {
+			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+     		return $response->json(array('data' => $base64Encrypted));
+		}
+	}
+
+	public function deviceToken($request, $response, $service, $app){
+		if($request->token){
+			// Validate token if not expired, or tampered with
+			$this->validateToken($request->token);
+			// Decrypt data
+			$data = $this->decryptValues($request->data);
+			// Validate CustomerId
+			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+			$service->validate($data['deviceToken'], 'Error: No deviceToken is present.')->notNull();
+			// Validate token in database for customer stored
+			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
+			// If error validating token in database
+			if(!$validated){
+	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
+	     		return $response->json(array('data' => $base64Encrypted));
+			}
+
+			$result = PushNotification::push();
+			$base64Encrypted = $this->encryptValues(json_encode($result));
+	     	return $response->json(array('data' => $base64Encrypted));
+
+		} else {
+			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+     		return $response->json(array('data' => $base64Encrypted));
+		}
+
+
 	}
 }

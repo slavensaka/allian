@@ -35,7 +35,7 @@ class ConferenceFunctions{
 	 */
 	function verify_caller($code){
 		$db = new DatabaseAccess();
-		if($db->codeused($code)){ // TODO Check only if the number if from client, because only clients will do requet
+		if($db->codeused($code)){ // TODO Check only if the number if from client, because only clients will do request
 			$conf=$db->get_conf_data($code);
 			if($conf['interpreter_code']==$code){ // Uvijek će biti klijent u app-u
 				$data['auto_start']="true";
@@ -62,10 +62,10 @@ class ConferenceFunctions{
 	 * Block comment
 	 *
 	 */
-	function set_post_log($call_sid){
-		$date_time=gmdate("Y-m-d H:i:s");
-		$query="UPDATE `conference_log` SET `hangup_datetime`='$date_time',`is_disconnected`=1 WHERE `call_sid`='$call_sid'";
+	function set_pre_log($code,$call_sid){
+		$connect_datetime = gmdate("Y-m-d H:i:s");
 		$db = new DatabaseAccess();
+		$query="INSERT INTO `conference_log`(`secret_code`, `call_sid`,`connect_datetime`) VALUES ('$code','$call_sid','$connect_datetime')";
 		$id=$db->db_insert($query);
 		return $id;
 	}
@@ -75,10 +75,10 @@ class ConferenceFunctions{
 	 * Block comment
 	 *
 	 */
-	function set_pre_log($code,$call_sid){
-		$connect_datetime = gmdate("Y-m-d H:i:s");
+	function set_post_log($call_sid){
+		$date_time=gmdate("Y-m-d H:i:s");
+		$query="UPDATE `conference_log` SET `hangup_datetime`='$date_time',`is_disconnected`=1 WHERE `call_sid`='$call_sid'";
 		$db = new DatabaseAccess();
-		$query="INSERT INTO `conference_log`(`secret_code`, `call_sid`,`connect_datetime`) VALUES ('$code','$call_sid','$connect_datetime')";
 		$id=$db->db_insert($query);
 		return $id;
 	}

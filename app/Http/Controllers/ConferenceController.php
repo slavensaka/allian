@@ -99,22 +99,24 @@ class ConferenceController extends Controller {
 		$service->validate($request->orderId, 'Error: No order id is present.')->notNull()->isInt();
 		$CallSid = $request->CallSid;
 
-		$customer = CustLogin::get_customer($request->CustomerID);
-		$order = OrderOnsiteInterpreter::get_interpret_order($request->orderId, '*');
-		$transOrder = TranslationOrders::getTranslationOrder($request->orderId, '*');
+		// $customer = CustLogin::get_customer($request->CustomerID);
+		// $order = OrderOnsiteInterpreter::get_interpret_order($request->orderId, '*');
+		// $transOrder = TranslationOrders::getTranslationOrder($request->orderId, '*');
 		$conference = ConferenceSchedule::get_conference("TODO REMOVE", $request->orderId, '*');
 		// Is client verified, by getting the customer by id and then checking it's orderId in the conference_schedule
-		$verified = ConfFunc::verify_caller($conference['user_code']);
+		// $verified = ConfFunc::verify_caller($conference['user_code']);
 
 		// $limit=ConfFunc::chech_limit($code,$count); // NE vidim $code
 
-		ConfFunc::set_pre_log($conference['user_code'], $CallSid);
+		// ConfFunc::set_pre_log($conference['user_code'], $CallSid);
 
-		$service->verified = $verified;
-		$service->CustomerID = $request->CustomerID;
-		$service->orderId = $request->orderId;
+		// $service->verified = $verified;
+		// $service->CustomerID = $request->CustomerID;
+		// $service->orderId = $request->orderId;
+		$service->v_code = $conference['user_code'];
 
-		$service->render('./resources/views/twilio/conference/conferenceOut.php');
+		$service->render('./resources/views/twilio/conference/confOut.php');
+		// $service->render('./resources/views/twilio/conference/conferenceOut.php');
 	}
 
 	/**

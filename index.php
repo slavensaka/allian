@@ -83,6 +83,7 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('GET', '/getTimezones', array($conferenceSchedule, 'getTimezones'));
 	$klein->respond('POST', '/schedulePartOne', array($conferenceSchedule, 'schedulePartOne'));
 	$klein->respond('POST', '/schedulePartTwo', array($conferenceSchedule, 'schedulePartTwo'));
+	$klein->respond('POST', '/checkPromoCode', array($conferenceSchedule, 'checkPromoCode'));
 	$klein->respond('POST', '/scheduleFinal', array($conferenceSchedule, 'scheduleFinal'));
 
 	$stripe = new StripeController();
@@ -99,6 +100,8 @@ $klein->with('/testgauss', function() use ($klein){
 	$orderOnSiteInterpreter = new OrderOnsiteInterpreterController();
 	$klein->respond('POST', '/scheduledSessions', array($orderOnSiteInterpreter, 'scheduledSessions'));
 	$klein->respond('POST', '/scheduledSessionsDetails', array($orderOnSiteInterpreter, 'scheduledSessionsDetails'));
+	$klein->respond('POST', '/deviceToken', array($orderOnSiteInterpreter, 'deviceToken'));
+	$klein->respond('POST', '/storeDeviceToken', array($orderOnSiteInterpreter, 'storeDeviceToken'));
 
 	$conference = new ConferenceController();
 	$klein->respond('POST', '/conference', array($conference, 'conference'));

@@ -125,6 +125,62 @@ class ConferenceScheduleController extends Controller {
 	}
 
 	/**
+     * @ApiDescription(section="CheckPromoCode", description="Check the validity of the promo code.")
+     * @ApiMethod(type="post")
+     * @ApiRoute(name="/testgauss/checkPromoCode")
+     * @ApiBody(sample="{ 'data': {
+	    'CustomerID': '800',
+	    'promoCode': 'idCode1',
+	    'totalPrice': '20'
+  		},
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUzODMxNjUsImp0aSI6IlJpRW16NzRHSGhGR043QzEzT1JpQ1FuWXRnOHJ4bk9YVHRRZ002NnBDN1E9IiwiaXNzIjoiYWxsaWFudHJhbnNsYXRlLmNvbSIsIm5iZiI6MTQ2NTM4MzE2NSwiZXhwIjoxNDY2NTkyNzY1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.DvPdwcIGybU3zs5NH4NRmldNbhrer8AgvSSwi9lBY6SwJ-WKegETMRQmXZvtLu5-qrAx5hwBkEKXqG80zTqByw'}")
+     * @ApiParams(name="data", type="string", nullable=false, description="CustomerId.")
+     * @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     * @ApiReturn(type="string", sample="{'data': {
+	     'status': 1,
+	    'response': '$5',
+	    'discount': 5,
+	    'type': '$',
+	    'userMessage': 'Promotional discount will be applied! The discount is 5$',
+	    'totalPrice': 25
+	  	}}")
+     */
+	public function checkPromoCode($request, $response, $service, $app){
+		if($request->token){
+			// Validate token if not expired, or tampered with
+			$this->validateToken($request->token);
+			// Decrypt input data
+			$data = $this->decryptValues($request->data);
+			// Validate input data
+			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+			$service->validate($data['promoCode'], 'Error: Promotional code is not present.')->notNull();
+			$service->validate($data['totalPrice'], 'Error: Total price is not present.')->notNull();
+			//Validate the jwt token in the database
+			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
+			// If error validating token in database
+			if(!$validated){
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
+	     		return $response->json(array('data' => $base64Encrypted));
+			}
+			$stripe = new StripeController();
+			$result = $stripe->promoCode($data['promoCode']);
+			$discount = ($result['type'] === "%") ? (($result['discount'] / 100) * $data['totalPrice']) : $result['discount'];
+			$resp = array();
+			$result['userMessage'] = 'Promotional discount will be applied! The discount is ' . $discount . '$';
+			$result['discount'] = $discount;
+			$result['totalPrice'] = $data['totalPrice'] - $discount;
+
+			$base64Encrypted = $this->encryptValues(json_encode($result));
+			return $response->json(array('data' => $base64Encrypted));
+
+		} else {
+	    	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+     		return $response->json(array('data' => $base64Encrypted));
+		}
+	}
+
+	/**
      * @ApiDescription(section="SchedulePartOne", description="Retrieve the first part of the payment after user selects end time.")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/schedulePartOne")
@@ -245,6 +301,7 @@ class ConferenceScheduleController extends Controller {
 	    'clients': [
 	      '+16757568578'
 	    ],
+	    'promoCode': 'idCode1',
 	    'neededFor': 'Court',
 	    'description': 'Opis zašto treba prijevod'
   		},
@@ -281,6 +338,7 @@ class ConferenceScheduleController extends Controller {
 			$service->validate($data['clients'], 'Error: clients not present.')->notNull();
 			$service->validate($data['neededFor'], 'Error: interpreting needed for not present.')->notNull();
 			$service->validate($data['description'], 'Error: description not present.')->notNull();
+			// $service->validate($data['promoCode'], 'Error: description not present.');
 			// Validate token in database with customerID, added security
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
@@ -290,6 +348,7 @@ class ConferenceScheduleController extends Controller {
 			}
 			//Calculate the amount customer pays based on time specified
 			$amountArray = ScheduleFunctions::calculateAmountToPay($data);
+
 			// Assign to default name the total price calculated
 			$amount = $amountArray['totalPrice'];
 			// Format date with timeStarts with the timezone
@@ -325,6 +384,7 @@ class ConferenceScheduleController extends Controller {
 			$sArray['onsite_con_email'] = '';
 			$sArray['headsets_needed'] = 0;
 			$sArray['amount'] = $amount;
+
 			$sArray['interpreting_dur']= ScheduleFunctions::telephonic_duration($data['fromDate'].'T'.$sArray['assg_frm_st'], $data['fromDate'].'T'.$sArray['assg_frm_en']);
 			if ($data['schedulingType'] == 'conference_call') {
 				$sArray['onsite_con_phone'] = "";
@@ -338,6 +398,15 @@ class ConferenceScheduleController extends Controller {
 			}
 			// Get the customer whos scheduling the session by customer_id
 			$customer = CustLogin::getCustomer($sArray['customer_id']);
+
+			// TODO STRIPE DISCOUNT GOES HERE order-scripts/get_disount.php $amount-$dicount
+			if(!empty($data['promoCode'])){
+				$stripe = new StripeController();
+				$result = $stripe->promoCode($data['promoCode']);
+				$discount = ($result['type'] === "%") ? (($result['discount'] / 100) * $amount) : $result['discount'];
+				$sArray['amount'] = $amount - $discount;
+			}
+
 			// Inrst into order_onsite_interpreter values sArray-a
 			$onsiteAutoId = OrderOnsiteInterpreter::insertScheduleOrder($sArray);
 			if(!$onsiteAutoId){
@@ -356,11 +425,6 @@ class ConferenceScheduleController extends Controller {
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Problem with updating order_onsite_interpreter table. Contact Support!")));
 				return $response->json(array('data' => $base64Encrypted));
 			}
-
-
-			// TODO STRIPE DISCOUNT GOES HERE order-scripts/get_disount.php $amount-$dicount
-
-
 			// Charge the customer an amount
 			$stripe = new StripeController();
 			$stripe_id = $stripe->chargeCustomer($amount, $customer->getValueEncoded('token'), $customer->getValueEncoded('Email'));
