@@ -289,8 +289,6 @@ class CustLogin extends DataObject {
 	    }
   	}
 
-
-
   	/**
   	 *
   	 * Block comment
@@ -372,14 +370,14 @@ class CustLogin extends DataObject {
   	}
 
   	/*
-	get_customer function returns the whole record against Customer ID (cid) from CustLogin database table
-	@Param $con: Connection to database. Required Argument
-	@Param $cid: Customer ID against what the record is returned. Required Argument
-	Usage:
-	1: Please press Ctrl+Shift+f
-	2: A search Window asks to search specific function. You may search "get_interpret_order(" without double quotes and with opening parentheses.
-	3: choose directory to search within and press "Find" Button
-	4: The "Search Results" panel will search and display the pages where this functions has been used in the code.
+		get_customer function returns the whole record against Customer ID (cid) from CustLogin database table
+		@Param $con: Connection to database. Required Argument
+		@Param $cid: Customer ID against what the record is returned. Required Argument
+		Usage:
+		1: Please press Ctrl+Shift+f
+		2: A search Window asks to search specific function. You may search "get_interpret_order(" without double quotes and with opening parentheses.
+		3: choose directory to search within and press "Find" Button
+		4: The "Search Results" panel will search and display the pages where this functions has been used in the code.
 	*/
 	function get_customer($cid) {
 		$con = Connect::con();
@@ -478,5 +476,30 @@ class CustLogin extends DataObject {
   	 */
   	public function getFavoriteGenreString() { //NON
     	return ( $this->_genres[$this->data["favoriteGenre"]] );
+  	}
+
+  	/**
+  	 *
+  	 * Block comment
+  	 *
+  	 */
+  	public static function setDeviceToken($deviceToken, $CustomerID){
+  		$conn = parent::connect();
+		$sql = "UPDATE " . getenv('TBL_CUSTLOGIN') . " SET deviceToken = :deviceToken WHERE CustomerID= :CustomerID";
+		try {
+	    	$st = $conn->prepare($sql);
+  			$st->bindValue(":deviceToken", $deviceToken, \PDO::PARAM_STR);
+  			$st->bindValue(":CustomerID", $CustomerID, \PDO::PARAM_STR);
+  			$success = $st->execute();
+  			parent::disconnect($conn);
+  			if($success){
+  				return true;
+  			} else {
+  				return false;
+  			}
+	    } catch (\PDOException $e) {
+	      parent::disconnect($conn);
+	      return false;
+	    }
   	}
 }

@@ -17,12 +17,15 @@ class ConnectNowFunctions extends Controller {
 
 	/**
 	 *
-	 * Block comment
+	 * For testing
 	 *
 	 */
 	function addtofile($file, $data){
-		// For testing
-		return file_put_contents("misc/testReqs/FirstRequestFile" . time(). ".txt", json_encode($data));
+		$server = trim($_SERVER['HTTP_HOST']);
+		$server=trim($server);
+		if($server == "localhost"){
+			return file_put_contents("misc/testReqs/FirstRequestFile" . time(). ".txt", json_encode($data));
+		}
 	}
 
 	/**
@@ -33,26 +36,31 @@ class ConnectNowFunctions extends Controller {
 	function addCustomerIdType($sid, $data){
 		$server = trim($_SERVER['HTTP_HOST']);
 		$server=trim($server);
-		if($server=="localhost"){
+		if($server == "localhost"){
 			return file_put_contents("misc/customertype/". $sid . ".txt", json_encode($data));
-		} else if($server=="alliantranslate.com"){
-			// TODO production
-			// return file_put_contents("../linguist/phoneapp/customertype/". $sid . ".txt", json_encode(array('test'=>'test', 'novi'=>'test')));
+		} else if($server == "alliantranslate.com"){
+			// TODO PROD
+			// return file_put_contents("../linguist/phoneapp/customertype/". $sid . ".txt", json_encode($data));
 		} else {
 			return file_put_contents("misc/customertype/". $sid . ".txt", json_encode($data));
 		}
 	}
 
+	/**
+	 *
+	 * Remove customer id from the file_put_contents that's needed for retrievel for interpreter
+	 *
+	 */
 	function removeCustomerIdType($sid){
 		$server = trim($_SERVER['HTTP_HOST']);
 		$server=trim($server);
-		if($server=="localhost"){
+		if($server == "localhost"){
 			$sidfile="misc/customertype/" . $sid . ".txt";
 			if(file_exists($sidfile)){
 				unlink($sidfile);
 			}
-		} else if($server=="alliantranslate.com"){
-			$sidfile="../linguist/phoneapp/customertype/" . $sid . ".txt";
+		} else if($server == "alliantranslate.com"){
+			$sidfile = "../linguist/phoneapp/customertype/" . $sid . ".txt";
 			if(file_exists($sidfile)){
 				unlink($sidfile);
 			}
@@ -66,27 +74,34 @@ class ConnectNowFunctions extends Controller {
 
 	/**
 	 *
-	 * Block comment
+	 * For testing
 	 *
 	 */
 	function addtofilePrepayment($file, $data){
-		// For testing
-		return file_put_contents("misc/testReqs/Prepayment" . time(). ".txt", json_encode($data));
+		$server = trim($_SERVER['HTTP_HOST']);
+		$server=trim($server);
+		if($server == "localhost"){
+			return file_put_contents("misc/testReqs/Prepayment" . time(). ".txt", json_encode($data));
+		}
 	}
 
 	/**
 	 *
-	 * Block comment
+	 * For testing
 	 *
 	 */
 	function addtofilePairQueue($file, $data){
-		// For testing
-		return file_put_contents("misc/testReqs/PairIDQueue" . time(). ".txt", json_encode($data));
+		$server = trim($_SERVER['HTTP_HOST']);
+		$server=trim($server);
+		if($server == "localhost"){
+			return file_put_contents("misc/testReqs/PairIDQueue" . time(). ".txt", json_encode($data));
+		}
 	}
 
 	/**
 	 *
-	 * Block comment
+	 * Not used,
+	 	for testing
 	 *
 	 */
 	function getfromfile($file){
@@ -105,8 +120,10 @@ class ConnectNowFunctions extends Controller {
 	    $ip="Project Desk - Alliance Business Solutions <projects@alliancebizsolutions.com>";
 	    $orders="HR - Alliance Business Solutions <orders@alliancebizsolutions.com>";
 		$client="Client Services - Alliance Business Solutions <cs@alliantranslate.com>" ;
-		$staff = "slavensakacic@gmail.com"; //TODO $staff="alen.brcic@alliancebizsolutions.com";
-		$callfailed1="slavensakacic@gmail.com"; //$callfailed1 = "orders@alliancebizsolutions.com";
+		$staff = "slavensakacic@gmail.com";
+		//TODO PROD $staff="alen.brcic@alliancebizsolutions.com";
+		$callfailed1="slavensakacic@gmail.com";
+		//TODO PROD $callfailed1 = "orders@alliancebizsolutions.com";
 	    $link = "";
 	    $link2 = "";
 	    $number = "";

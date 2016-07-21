@@ -348,17 +348,19 @@ class ConferenceScheduleController extends Controller {
 			}
 			//Calculate the amount customer pays based on time specified
 			$amountArray = ScheduleFunctions::calculateAmountToPay($data);
-
+			$sArray = array();
 			// Assign to default name the total price calculated
 			$amount = $amountArray['totalPrice'];
 			// Format date with timeStarts with the timezone
 			$frmT = new \DateTime($data['fromDate'].' '.$data['timeStarts'],new \DateTimeZone($data['timezone']));
+
+			$sArray['assg_real_timestamp'] = $frmT->getTimestamp() + $frmT->getOffset(); // JA DODAO
+			$sArray['is_phone'] = 1;
 			$frmT->setTimezone(new \DateTimeZone('GMT'));
 			// Format date with timeEnds with the timezone
 		    $toT = new \DateTime($data['fromDate'].' '.$data['timeEnds'],new \DateTimeZone($data['timezone']));
 			$toT->setTimezone(new \DateTimeZone('GMT'));
 			// Create array with values to store in the database
-			$sArray = array();
 			$sArray['customer_id'] = $data['CustomerID'];
 			$sArray['assg_frm_date'] = $data['fromDate'];
 			$sArray['assg_frm_st'] = date("H:i:s",strtotime($data['timeStarts']));

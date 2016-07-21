@@ -17,10 +17,10 @@
 # $ php -f db-connect-test.php
 
 // PRODUCTION SERVER
-// $dbname = 'allian10_abs_linguist_portal';
-// $dbuser = 'allian10_alenb';
-// $dbpass = 'allian2016@';
-// $dbhost = 'vps9239.inmotionhosting.com';
+$dbname = 'allian10_abs_linguist_portal';
+$dbuser = 'allian10_alenb';
+$dbpass = 'allian2016@';
+$dbhost = 'vps9239.inmotionhosting.com';
 
 // STAGING SERVER
 // $dbname = 'alliantr_testgauss';
@@ -35,12 +35,12 @@
 // $dbhost="localhost";
 
 // // CONNECTION
-// $con = mysqli_connect("vps9239.inmotionhosting.com", "alliantr_gauss", "124L3lSFlM5Ngyk9", "alliantr_testgauss");
-// $langID = 1;
-// $query ="SELECT DISTINCT langpair_trans.Lang2 AS lang2, langlist.LangName AS langName FROM langpair_trans LEFT JOIN langlist ON langpair_trans.Lang2 = langlist.LangId WHERE langpair_trans.Lang1 = '$langID' AND Approved = 1 AND Lang2 IS NOT NULL AND Lang2 <> 'N/A' ORDER BY langlist.LangName";
-// while($row = mysqli_fetch_raray($con,$query)){
-// 	var_dump($result["langName"]);
-// }
+$con = mysqli_connect("vps9239.inmotionhosting.com", "allian10_alenb", "allian2016@", "vps9239.inmotionhosting.com");
+$langID = 1;
+$query ="SELECT DISTINCT langpair_trans.Lang2 AS lang2, langlist.LangName AS langName FROM langpair_trans LEFT JOIN langlist ON langpair_trans.Lang2 = langlist.LangId WHERE langpair_trans.Lang1 = '$langID' AND Approved = 1 AND Lang2 IS NOT NULL AND Lang2 <> 'N/A' ORDER BY langlist.LangName";
+while($row = mysqli_fetch_raray($con,$query)){
+	var_dump($result["langName"]);
+}
 
 // if (CRYPT_BLOWFISH == 1) {
 //     echo "Yes";
@@ -130,12 +130,25 @@
 		// return $call;
 
 
-$server = trim($_SERVER['HTTP_HOST']);
-$server=trim($server);
-echo $server;
+// $server = trim($_SERVER['HTTP_HOST']);
+// $server=trim($server);
+// echo $server;
 
  // $server = $this->serverEnv();
 		// $urlFirst = 'https://af3d0846.ngrok.io/';
 		// if($server=="alliantranslate"){
 		// 	$urlFirst = 'https://alliantranslate.com/';
 		// }
+
+
+// 1422910800 -> Mon, 02 Feb 2015 21:00:00 GMT
+		//Pacific/Midway 'Pacific/Midway' => "Midway Island (UTC -11:00) ",
+        //10:00:00 + 11:00 => 21:00 TOČNO
+    	//     "fromDate": "2016-06-07",
+    	// "timeStarts": "3:00:00 AM",
+		// "timezone": "US/Central",
+		$frmT = new \DateTime("2016-06-07".' '."3:00:00 AM",new \DateTimeZone("US/Central"));
+		print_r( $frmT);
+		$frmT->setTimezone(new \DateTimeZone('GMT'));
+		echo "<br>";
+		print_r( $frmT);

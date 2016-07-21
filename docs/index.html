@@ -3327,12 +3327,12 @@
             </div><!-- .tab-content -->
         </div>
     </div>
-</div><h2>ConnectNow</h2>
+</div><h2>StoreDeviceToken</h2>
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion24" href="#collapseOne24"> /testgauss/connectNow</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion24" href="#collapseOne24"> /testgauss/storeDeviceToken</a>
         </h4>
     </div>
     <div id="collapseOne24" class="panel-collapse collapse">
@@ -3350,7 +3350,7 @@
 
                 <div class="tab-pane active" id="info24">
                     <div class="well">
-                    Generate the twilio token for connection to connectNow interpreting.
+                    Store the devices token for the Customer identified by his ID.
                     </div>
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Headers</strong></div>
@@ -3379,6 +3379,13 @@
     <td>Yes</td>
     <td>Autentication token for users autentication.</td>
 </tr>
+
+<tr>
+    <td>data</td>
+    <td>string</td>
+    <td>Yes</td>
+    <td>Customer ID.</td>
+</tr>
     </tbody>
 </table>
                       </div>
@@ -3386,7 +3393,10 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body24">{'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ2MDE1MTUsImp0aSI6InAwaFpucWxqaUpqWStDdmdrb3c0MjJITTQ1TkYweFVobCtHU2lWZFwvUlN3PSIsImlzcyI6ImxvY2FsaG9zdCIsIm5iZiI6MTQ2NDYwMTUxNSwiZXhwIjoxNDY1ODExMTE1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.wwxlnjSCmInwNYinJ-LIyHMOys3oYTeoQem2MJTfgNREFZ8rcDB9uZ61Hw6vHIVMh_8BKzJUKS-_0nwhfrJVxQ'}</pre>
+                        <pre id="sample_post_body24">{'data': {
+    	'CustomerID': '800' ,
+    	'deviceToken' : '8d0ed95e5eb05864d270f11c196e7871d0d685162597ffa721aba50745e'
+  		}, 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTMzNjcsImp0aSI6IlJoOGpiMVhUZHFvUDVDVUVSQ29VY3pWR0dnSVFsQWJ1bFwvRFp1U2pcL050OD0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQ1OTMzNjcsImV4cCI6MTQ2NTgwMjk2NywiZGF0YSI6eyJTdWNjZXNzIjoiU3VjY2VzcyJ9fQ.JDwNdycstmqNC0dyrNgNuik_zXCYbx3PwbIkdTX7is3oDrQr6CKQ6mREUt-9tbOys361mcH1kyXaahn9Y2tTRg'}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
@@ -3403,13 +3413,17 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/connectNow" method="post" name="form24" id="form24">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/storeDeviceToken" method="post" name="form24" id="form24">
     
     Parameters
     <hr/>
     
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
+</div>
+
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
 </div>
     <button type="submit" class="btn btn-success send" rel="24">Send</button>
 </form></div>
@@ -3433,13 +3447,10 @@
                             
 
 <hr>
-<pre id="sample_response24">{
-  'data': {
-	    'status': 1,
-	    'userMessage': 'Twilio token',
-	    'twilioToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZSI6InNjb3BlOmNsaWVudDpvdXRnb2luZz9hcHBTaWQ9QVBlMDAwOTk4ZjhiZGQ4MDhhNjA3NTllYjMyZjc5MmMxMiZhcHBQYXJhbXM9JmNsaWVudE5hbWU9NzQ3IHNjb3BlOmNsaWVudDppbmNvbWluZz9jbGllbnROYW1lPTc0NyIsImlzcyI6IkFDOTFjNDlkZjQ0MDZlNWMwOGE3NTQ2YWJhNDgwYTg5YjkiLCJleHAiOjE0Njc5Nzc4ODB9.hqimm091r4MnywuPzqq39uPyjleNUecgDn9XMwJuvjc'
-	  	}
- }</pre>
+<pre id="sample_response24">{ 'data': {
+			'status': 1,
+    		'userMessage': 'Device token stored succesfully.'
+	  } }</pre>
                         </div>
                     </div>
                 </div><!-- #sample -->
@@ -3447,12 +3458,12 @@
             </div><!-- .tab-content -->
         </div>
     </div>
-</div><h2>ConnectOut</h2>
+</div><h2>TestDeviceToken</h2>
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion25" href="#collapseOne25"> /testgauss/connectOut</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion25" href="#collapseOne25"> /testgauss/testDeviceToken</a>
         </h4>
     </div>
     <div id="collapseOne25" class="panel-collapse collapse">
@@ -3470,7 +3481,7 @@
 
                 <div class="tab-pane active" id="info25">
                     <div class="well">
-                    When connected with twilioToken, generates the TwiML response.
+                    Test the push notification for the device token if it's working. By receiveing a push notification on your ios device based on the deviceToken stored in the database.
                     </div>
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Headers</strong></div>
@@ -3494,24 +3505,17 @@
     <tbody>
         
 <tr>
-    <td>CustomerID</td>
+    <td>token</td>
     <td>string</td>
     <td>Yes</td>
-    <td>Customers id</td>
+    <td>Autentication token for users autentication.</td>
 </tr>
 
 <tr>
-    <td>lang</td>
+    <td>data</td>
     <td>string</td>
     <td>Yes</td>
-    <td>language 1</td>
-</tr>
-
-<tr>
-    <td>translationTo</td>
-    <td>string</td>
-    <td>Yes</td>
-    <td>language 2</td>
+    <td>Customer ID.</td>
 </tr>
     </tbody>
 </table>
@@ -3520,7 +3524,9 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body25">{ 'CustomerID': '800', 'lang': 'English', 'translationTo': 'Arabic'}</pre>
+                        <pre id="sample_post_body25">{'data': {
+    	'CustomerID': '800'
+  		}, 'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ1OTMzNjcsImp0aSI6IlJoOGpiMVhUZHFvUDVDVUVSQ29VY3pWR0dnSVFsQWJ1bFwvRFp1U2pcL050OD0iLCJpc3MiOiJsb2NhbGhvc3QiLCJuYmYiOjE0NjQ1OTMzNjcsImV4cCI6MTQ2NTgwMjk2NywiZGF0YSI6eyJTdWNjZXNzIjoiU3VjY2VzcyJ9fQ.JDwNdycstmqNC0dyrNgNuik_zXCYbx3PwbIkdTX7is3oDrQr6CKQ6mREUt-9tbOys361mcH1kyXaahn9Y2tTRg'}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
@@ -3537,21 +3543,17 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/connectOut" method="post" name="form25" id="form25">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/testDeviceToken" method="post" name="form25" id="form25">
     
     Parameters
     <hr/>
     
 <div class="form-group">
-    <input type="text" class="form-control input-sm" id="CustomerID" placeholder="CustomerID" name="CustomerID">
+    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
 </div>
 
 <div class="form-group">
-    <input type="text" class="form-control input-sm" id="lang" placeholder="lang" name="lang">
-</div>
-
-<div class="form-group">
-    <input type="text" class="form-control input-sm" id="translationTo" placeholder="translationTo" name="translationTo">
+    <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
 </div>
     <button type="submit" class="btn btn-success send" rel="25">Send</button>
 </form></div>
@@ -3575,8 +3577,10 @@
                             
 
 <hr>
-<pre id="sample_response25">{'data': {
-        'twiML': 'twiML code for enqueue for a session with linguist'} }</pre>
+<pre id="sample_response25">{ 'data': {
+			'status': 1,
+    		'userMessage': 'Device token stored succesfully.'
+	  } }</pre>
                         </div>
                     </div>
                 </div><!-- #sample -->
@@ -3584,12 +3588,12 @@
             </div><!-- .tab-content -->
         </div>
     </div>
-</div><h2>Conference</h2>
+</div><h2>ConnectNow</h2>
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion26" href="#collapseOne26"> /testgauss/conference</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion26" href="#collapseOne26"> /testgauss/connectNow</a>
         </h4>
     </div>
     <div id="collapseOne26" class="panel-collapse collapse">
@@ -3607,7 +3611,7 @@
 
                 <div class="tab-pane active" id="info26">
                     <div class="well">
-                    Join the twilio scheduled session conference call.
+                    Generate the twilio token for connection to connectNow interpreting.
                     </div>
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Headers</strong></div>
@@ -3660,7 +3664,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/conference" method="post" name="form26" id="form26">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/connectNow" method="post" name="form26" id="form26">
     
     Parameters
     <hr/>
@@ -3704,12 +3708,12 @@
             </div><!-- .tab-content -->
         </div>
     </div>
-</div><h2>ConferenceOut</h2>
+</div><h2>ConnectOut</h2>
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion27" href="#collapseOne27"> /testgauss/conferenceOut</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion27" href="#collapseOne27"> /testgauss/connectOut</a>
         </h4>
     </div>
     <div id="collapseOne27" class="panel-collapse collapse">
@@ -3758,10 +3762,17 @@
 </tr>
 
 <tr>
-    <td>orderId</td>
+    <td>lang</td>
     <td>string</td>
     <td>Yes</td>
-    <td>Order</td>
+    <td>language 1</td>
+</tr>
+
+<tr>
+    <td>translationTo</td>
+    <td>string</td>
+    <td>Yes</td>
+    <td>language 2</td>
 </tr>
     </tbody>
 </table>
@@ -3770,7 +3781,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body27">{ 'CustomerID': '800', 'orderId': '5265'}</pre>
+                        <pre id="sample_post_body27">{ 'CustomerID': '800', 'lang': 'English', 'translationTo': 'Arabic'}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
@@ -3787,7 +3798,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/conferenceOut" method="post" name="form27" id="form27">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/connectOut" method="post" name="form27" id="form27">
     
     Parameters
     <hr/>
@@ -3797,7 +3808,11 @@
 </div>
 
 <div class="form-group">
-    <input type="text" class="form-control input-sm" id="orderId" placeholder="orderId" name="orderId">
+    <input type="text" class="form-control input-sm" id="lang" placeholder="lang" name="lang">
+</div>
+
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="translationTo" placeholder="translationTo" name="translationTo">
 </div>
     <button type="submit" class="btn btn-success send" rel="27">Send</button>
 </form></div>
@@ -3821,7 +3836,8 @@
                             
 
 <hr>
-<pre id="sample_response27">{'data': { 'twiML': 'twiML code for enqueue for a session with linguist'} }</pre>
+<pre id="sample_response27">{'data': {
+        'twiML': 'twiML code for enqueue for a session with linguist'} }</pre>
                         </div>
                     </div>
                 </div><!-- #sample -->
@@ -3829,12 +3845,12 @@
             </div><!-- .tab-content -->
         </div>
     </div>
-</div><h2>DevGenerateAuthToken</h2>
+</div><h2>Conference</h2>
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion28" href="#collapseOne28"> /testgauss/devGenerateAuthToken</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion28" href="#collapseOne28"> /testgauss/conference</a>
         </h4>
     </div>
     <div id="collapseOne28" class="panel-collapse collapse">
@@ -3852,7 +3868,7 @@
 
                 <div class="tab-pane active" id="info28">
                     <div class="well">
-                    Generate a jwt token, Not used anymore.
+                    Join the twilio scheduled session conference call.
                     </div>
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Headers</strong></div>
@@ -3864,12 +3880,31 @@
                       <div class="panel-heading"><strong>Parameters</strong></div>
                       <div class="panel-body">
                         
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+<tr>
+    <td>token</td>
+    <td>string</td>
+    <td>Yes</td>
+    <td>Autentication token for users autentication.</td>
+</tr>
+    </tbody>
+</table>
                       </div>
                     </div>
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body28">{ 'data': ''}</pre>
+                        <pre id="sample_post_body28">{'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ2MDE1MTUsImp0aSI6InAwaFpucWxqaUpqWStDdmdrb3c0MjJITTQ1TkYweFVobCtHU2lWZFwvUlN3PSIsImlzcyI6ImxvY2FsaG9zdCIsIm5iZiI6MTQ2NDYwMTUxNSwiZXhwIjoxNDY1ODExMTE1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.wwxlnjSCmInwNYinJ-LIyHMOys3oYTeoQem2MJTfgNREFZ8rcDB9uZ61Hw6vHIVMh_8BKzJUKS-_0nwhfrJVxQ'}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
@@ -3886,11 +3921,14 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devGenerateAuthToken" method="get" name="form28" id="form28">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/conference" method="post" name="form28" id="form28">
     
     Parameters
     <hr/>
     
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="token" placeholder="token" name="token">
+</div>
     <button type="submit" class="btn btn-success send" rel="28">Send</button>
 </form></div>
                         </div>
@@ -3913,7 +3951,13 @@
                             
 
 <hr>
-<pre id="sample_response28">{'jwtToken': '', 'tokenContent': '' }</pre>
+<pre id="sample_response28">{
+  'data': {
+	    'status': 1,
+	    'userMessage': 'Twilio token',
+	    'twilioToken': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZSI6InNjb3BlOmNsaWVudDpvdXRnb2luZz9hcHBTaWQ9QVBlMDAwOTk4ZjhiZGQ4MDhhNjA3NTllYjMyZjc5MmMxMiZhcHBQYXJhbXM9JmNsaWVudE5hbWU9NzQ3IHNjb3BlOmNsaWVudDppbmNvbWluZz9jbGllbnROYW1lPTc0NyIsImlzcyI6IkFDOTFjNDlkZjQ0MDZlNWMwOGE3NTQ2YWJhNDgwYTg5YjkiLCJleHAiOjE0Njc5Nzc4ODB9.hqimm091r4MnywuPzqq39uPyjleNUecgDn9XMwJuvjc'
+	  	}
+ }</pre>
                         </div>
                     </div>
                 </div><!-- #sample -->
@@ -3921,12 +3965,12 @@
             </div><!-- .tab-content -->
         </div>
     </div>
-</div><h2>DevEncryptJson</h2>
+</div><h2>ConferenceOut</h2>
 
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion29" href="#collapseOne29"> /testgauss/devEncryptJson</a>
+            <span class="label label-primary">POST</span> <a data-toggle="collapse" data-parent="#accordion29" href="#collapseOne29"> /testgauss/conferenceOut</a>
         </h4>
     </div>
     <div id="collapseOne29" class="panel-collapse collapse">
@@ -3943,6 +3987,223 @@
             <div class="tab-content">
 
                 <div class="tab-pane active" id="info29">
+                    <div class="well">
+                    When connected with twilioToken, generates the TwiML response.
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+<tr>
+    <td>CustomerID</td>
+    <td>string</td>
+    <td>Yes</td>
+    <td>Customers id</td>
+</tr>
+
+<tr>
+    <td>orderId</td>
+    <td>string</td>
+    <td>Yes</td>
+    <td>Order</td>
+</tr>
+    </tbody>
+</table>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body29">{ 'CustomerID': '800', 'orderId': '5265'}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox29">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/conferenceOut" method="post" name="form29" id="form29">
+    
+    Parameters
+    <hr/>
+    
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="CustomerID" placeholder="CustomerID" name="CustomerID">
+</div>
+
+<div class="form-group">
+    <input type="text" class="form-control input-sm" id="orderId" placeholder="orderId" name="orderId">
+</div>
+    <button type="submit" class="btn btn-success send" rel="29">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers29"></pre>
+                                <pre id="response29"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample29">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header29">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response29">{'data': { 'twiML': 'twiML code for enqueue for a session with linguist'} }</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
+</div><h2>DevGenerateAuthToken</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion30" href="#collapseOne30"> /testgauss/devGenerateAuthToken</a>
+        </h4>
+    </div>
+    <div id="collapseOne30" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab30">
+                <li class="active"><a href="#info30" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox30" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample30" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info30">
+                    <div class="well">
+                    Generate a jwt token, Not used anymore.
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Headers</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Parameters</strong></div>
+                      <div class="panel-body">
+                        
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading"><strong>Body</strong></div>
+                      <div class="panel-body">
+                        <pre id="sample_post_body30">{ 'data': ''}</pre>
+                      </div>
+                    </div>
+                </div><!-- #info -->
+
+                <div class="tab-pane" id="sandbox30">
+                    <div class="row">
+                        <div class="col-md-12">
+                        
+        <div class="col-md-6">
+    Headers
+    <hr/>
+    <div class="headers">
+    
+    </div>
+    </div>
+    <div class="col-md-6">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devGenerateAuthToken" method="get" name="form30" id="form30">
+    
+    Parameters
+    <hr/>
+    
+    <button type="submit" class="btn btn-success send" rel="30">Send</button>
+</form></div>
+                        </div>
+                        <div class="col-md-12">
+                            Response
+                            <hr>
+                            <div class="col-md-12" style="overflow-x:auto">
+                                <pre id="response_headers30"></pre>
+                                <pre id="response30"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- #sandbox -->
+
+                <div class="tab-pane" id="sample30">
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+<pre id="sample_resp_header30">HTTP 200 OK</pre>
+                            
+
+<hr>
+<pre id="sample_response30">{'jwtToken': '', 'tokenContent': '' }</pre>
+                        </div>
+                    </div>
+                </div><!-- #sample -->
+
+            </div><!-- .tab-content -->
+        </div>
+    </div>
+</div><h2>DevEncryptJson</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion31" href="#collapseOne31"> /testgauss/devEncryptJson</a>
+        </h4>
+    </div>
+    <div id="collapseOne31" class="panel-collapse collapse">
+        <div class="panel-body">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="php-apidoctab31">
+                <li class="active"><a href="#info31" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox31" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample31" data-toggle="tab">Sample output</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="info31">
                     <div class="well">
                     Developer used route for easy encrypting json request data. Input json value into field in sandbox are retrieve a encrypted API used data string for development purposes.Example {'CustomerID': 720}
                     </div>
@@ -3980,14 +4241,14 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body29">{
+                        <pre id="sample_post_body31">{
     	'CustomerID': '800'
   		}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox29">
+                <div class="tab-pane" id="sandbox31">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -3999,7 +4260,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devEncryptJson" method="get" name="form29" id="form29">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devEncryptJson" method="get" name="form31" id="form31">
     
     Parameters
     <hr/>
@@ -4007,29 +4268,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
 </div>
-    <button type="submit" class="btn btn-success send" rel="29">Send</button>
+    <button type="submit" class="btn btn-success send" rel="31">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers29"></pre>
-                                <pre id="response29"></pre>
+                                <pre id="response_headers31"></pre>
+                                <pre id="response31"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample29">
+                <div class="tab-pane" id="sample31">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header29">HTTP 200 OK</pre>
+<pre id="sample_resp_header31">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response29">{
+<pre id="sample_response31">{
   		'json': {
     	'CustomerID': '800'
   		},
@@ -4047,23 +4308,23 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion30" href="#collapseOne30"> /testgauss/devDecryptJson</a>
+            <span class="label label-success">GET</span> <a data-toggle="collapse" data-parent="#accordion32" href="#collapseOne32"> /testgauss/devDecryptJson</a>
         </h4>
     </div>
-    <div id="collapseOne30" class="panel-collapse collapse">
+    <div id="collapseOne32" class="panel-collapse collapse">
         <div class="panel-body">
 
             <!-- Nav tabs -->
-            <ul class="nav nav-tabs" id="php-apidoctab30">
-                <li class="active"><a href="#info30" data-toggle="tab">Info</a></li>
-                <li><a href="#sandbox30" data-toggle="tab">Sandbox</a></li>
-                <li><a href="#sample30" data-toggle="tab">Sample output</a></li>
+            <ul class="nav nav-tabs" id="php-apidoctab32">
+                <li class="active"><a href="#info32" data-toggle="tab">Info</a></li>
+                <li><a href="#sandbox32" data-toggle="tab">Sandbox</a></li>
+                <li><a href="#sample32" data-toggle="tab">Sample output</a></li>
             </ul>
 
             <!-- Tab panes -->
             <div class="tab-content">
 
-                <div class="tab-pane active" id="info30">
+                <div class="tab-pane active" id="info32">
                     <div class="well">
                     Decrypt the encrypted data into plaintext. So if json was encrypted, retrieve the json in the encrypted data. Used for development purposes.
                     </div>
@@ -4101,12 +4362,12 @@
                     <div class="panel panel-default">
                       <div class="panel-heading"><strong>Body</strong></div>
                       <div class="panel-body">
-                        <pre id="sample_post_body30">{ 'data': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc='}</pre>
+                        <pre id="sample_post_body32">{ 'data': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc='}</pre>
                       </div>
                     </div>
                 </div><!-- #info -->
 
-                <div class="tab-pane" id="sandbox30">
+                <div class="tab-pane" id="sandbox32">
                     <div class="row">
                         <div class="col-md-12">
                         
@@ -4118,7 +4379,7 @@
     </div>
     </div>
     <div class="col-md-6">
-<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devDecryptJson" method="get" name="form30" id="form30">
+<form enctype="application/x-www-form-urlencoded" role="form" action="/testgauss/devDecryptJson" method="get" name="form32" id="form32">
     
     Parameters
     <hr/>
@@ -4126,29 +4387,29 @@
 <div class="form-group">
     <input type="text" class="form-control input-sm" id="data" placeholder="data" name="data">
 </div>
-    <button type="submit" class="btn btn-success send" rel="30">Send</button>
+    <button type="submit" class="btn btn-success send" rel="32">Send</button>
 </form></div>
                         </div>
                         <div class="col-md-12">
                             Response
                             <hr>
                             <div class="col-md-12" style="overflow-x:auto">
-                                <pre id="response_headers30"></pre>
-                                <pre id="response30"></pre>
+                                <pre id="response_headers32"></pre>
+                                <pre id="response32"></pre>
                             </div>
                         </div>
                     </div>
                 </div><!-- #sandbox -->
 
-                <div class="tab-pane" id="sample30">
+                <div class="tab-pane" id="sample32">
                     <div class="row">
                         <div class="col-md-12">
                             
-<pre id="sample_resp_header30">HTTP 200 OK</pre>
+<pre id="sample_resp_header32">HTTP 200 OK</pre>
                             
 
 <hr>
-<pre id="sample_response30">{
+<pre id="sample_response32">{
   		'data': 'AwHiowfxnX8Hkr0two0lSmdI1epM4HfpGy3OBURIg4MuO1aqAVHfuQWoRUL0q4Eaio7BXrwsKmAAorWPF+JhSkcldsoiU4Xx8/BjrlRebbJKE2yz1yIFMSXdmloCH07ghLc=',
   		'decrypted': {
     	'CustomerID': '800'
@@ -4167,7 +4428,7 @@
 
         <div class="row mt0 footer">
             <div class="col-md-6" align="left">
-                Generated on 2016-07-13, 12:38:09
+                Generated on 2016-07-18, 10:14:10
             </div>
             <div class="col-md-6" align="right">
                 <a href="https://github.com/calinrada/php-apidoc" target="_blank">php-apidoc v 1.3.4</a>

@@ -121,7 +121,7 @@ class ScheduleFunctions {
 	 *
 	 */
 	function getOrderSummaryHtml(){
-		 $order_summary_html = "<tr><td colspan='2' ><h4 style='background-color:#f2f2f2; color:#333; padding:5px 5px; margin:10px 0;'> Price Summary </h4></td></tr>"; // DA
+		$order_summary_html = "<tr><td colspan='2' ><h4 style='background-color:#f2f2f2; color:#333; padding:5px 5px; margin:10px 0;'> Price Summary </h4></td></tr>"; // DA
         //$ret .= "<table cellspacing='2' >";
         //$ret .= "<tr class='order_summary_added'><th><b>Daily Charges</b></th><th></th></tr>";
         foreach ($price_det['daily'] as $line) {
