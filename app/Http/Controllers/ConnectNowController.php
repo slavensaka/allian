@@ -6,6 +6,7 @@ use Database\Connect;
 use \Dotenv\Dotenv;
 use Stripe\Stripe;
 use Services_Twilio;
+use Allian\Helpers\Mail;
 use Services_Twilio_Twiml;
 use Services_Twilio_Capability;
 use Allian\Models\CustLogin;
@@ -16,6 +17,7 @@ use Allian\Models\LangList;
 use Allian\Models\LangRate;
 use Services_Twilio_TinyHttp;
 use Allian\Http\Controllers\StripeController;
+use Allian\Http\Controllers\DeveloperController;
 use Allian\Helpers\TwilioConference\DatabaseAccess;
 use Allian\Helpers\Allian\ConnectNowFunctions;
 use Allian\Helpers\TwilioConference\ConferenceFunctions as ConfFunc;
@@ -23,11 +25,15 @@ use Allian\Helpers\TwilioConference\ConferenceFunctions as ConfFunc;
 class ConnectNowController extends Controller {
 
 	/**
-     * @ApiDescription(section="ConnectNow", description="Generate the twilio token for connection to connectNow interpreting.")
+     * @ApiDescription(section="ConnectNow", description="Retrieve the twilioToken. Note: it's not encrypted with RNCencryptor. Simple json. Generate the twilio token for connection to connectNow interpreting.")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/connectNow")
-     * @ApiBody(sample="{'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ2MDE1MTUsImp0aSI6InAwaFpucWxqaUpqWStDdmdrb3c0MjJITTQ1TkYweFVobCtHU2lWZFwvUlN3PSIsImlzcyI6ImxvY2FsaG9zdCIsIm5iZiI6MTQ2NDYwMTUxNSwiZXhwIjoxNDY1ODExMTE1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.wwxlnjSCmInwNYinJ-LIyHMOys3oYTeoQem2MJTfgNREFZ8rcDB9uZ61Hw6vHIVMh_8BKzJUKS-_0nwhfrJVxQ'}")
+     * @ApiBody(sample="{'data': {
+    	'CustomerID': '800'
+  		},
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUyODA1MDIsImp0aSI6IlVheUZlOUJTcEE5empHWUNneVpnNTJEVFYzRXZ4NFE5YXNKdTQ4MHdEY289IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY1MjgwNTAyLCJleHAiOjE0NjY0OTAxMDIsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.qkGUG0WdaW_Q1aysAgfaEC5300Hk4X9VFEZRGsTOxE4X-P27EdCEfAnDPY0SaXD_VfsHiVYaGwwKxO-Bz0N8Yg'}")
      @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
+     @ApiParams(name="data", type="string", nullable=false, description="Encrypted customers email & password as json used for authentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="string", sample="{
      *  'data': {
@@ -92,13 +98,6 @@ class ConnectNowController extends Controller {
 		$from=str_replace('+',"", $from);
 		// Get the customer information in database by CustomerID
 		$customer = CustLogin::get_customer($CustomerID);
-		// Gather the information for the call and request
-		$addtofile['CallSid'] = $sid;
-		$addtofile['CustomerID'] = $CustomerID;
-		$addtofile['From'] = $from;
-		$addtofile['lang'] = $lang;
-		$addtofile['translationTo'] = $translationTo;
-
 		// Add the customerID and Type to customertype by sid
 		$data['type'] = $customer['Type'];
 		$data['CustomerID'] = $customer['CustomerID'];
@@ -148,11 +147,6 @@ class ConnectNowController extends Controller {
 			// $response->hangup();
 			// print $response;
 		}
-		// TODO remove in prod Store in a file on the server for debugging
-		ConnectNowFunctions::addtofile($sid, $addtofile);
-		// TODO remove in production Log into file the queue PairID for debugging purpuses.
-		$addtofilePairQueue['queue'] = $queue;
-		ConnectNowFunctions::addtofilePairQueue($sid, $addtofilePairQueue);
 		// If customers type is 2(invoice), then get the TwiML, pass customer, queue, from info
 		if($customer['Type'] == 2){ // Invoice
 			$service->customer = $customer;
@@ -165,11 +159,40 @@ class ConnectNowController extends Controller {
 			$token = $customer['token'];
 			// Preauth the customer with stripe for 30$ (uncapture)
 			$id = StripeController::preAuthCustomer($token);
-			//Log the token that was preauth and the result of the operation of preauthing for debugging
-			$addtofilePrepayment['token'] = $token;
-			$addtofilePrepayment['id'] = $id;
-			// TODO remove in production
-			ConnectNowFunctions::addtofilePrepayment($sid, $addtofilePrepayment);
+			// Logging on localhost
+			$server = trim($_SERVER['HTTP_HOST']);
+			$server=trim($server);
+			if($server == "localhost"){
+				// Gather the information for the call and request
+				$addtofile['CallSid'] = $sid;
+				$addtofile['CustomerID'] = $CustomerID;
+				$addtofile['From'] = $from;
+				$addtofile['lang'] = $lang;
+				$addtofile['translationTo'] = $translationTo;
+				DeveloperController::addtofile($sid, $addtofile);
+				$addtofilePairQueue['queue'] = $queue;
+				DeveloperController::addtofilePairQueue($sid, $addtofilePairQueue);
+				//Log the token that was preauth and the result of the operation of preauthing for debugging
+				$addtofilePrepayment['token'] = $token;
+				$addtofilePrepayment['id'] = $id;
+				DeveloperController::addtofilePrepayment($sid, $addtofilePrepayment);
+			} elseif($server == "alliantranslate.com"){
+				// Nothing
+			} else{
+				// Gather the information for the call and request
+				$addtofile['CallSid'] = $sid;
+				$addtofile['CustomerID'] = $CustomerID;
+				$addtofile['From'] = $from;
+				$addtofile['lang'] = $lang;
+				$addtofile['translationTo'] = $translationTo;
+				DeveloperController::addtofile($sid, $addtofile);
+				$addtofilePairQueue['queue'] = $queue;
+				DeveloperController::addtofilePairQueue($sid, $addtofilePairQueue);
+				//Log the token that was preauth and the result of the operation of preauthing for debugging
+				$addtofilePrepayment['token'] = $token;
+				$addtofilePrepayment['id'] = $id;
+				DeveloperController::addtofilePrepayment($sid, $addtofilePrepayment);
+			}
 			// IF the stripe result if found, then get the twiml, pass customer, queue, from info
 			if(isset($id)){
 				$service->customer = $customer;
@@ -230,10 +253,17 @@ class ConnectNowController extends Controller {
 		  	$email = $result['Email'];
 		  	$mailcontent="A call from the user with mail id :". $email . " (from" . $number . ") failed in the queue of " . $pair . " with reason " . $queueresult . " on " . $time . "\n\n-admin";
 		    $param = $number . "," . $pair . "," . $queueresult . "," . $time . "," . $email;
-	      	ConnectNowFunctions::sendstaffmail("staff_regcallfailed", $param);
-
+		    // Send email to staff, regular failed
+		    $server = $this->serverEnv();
+			if($server=="localhost"){
+				$sendToEmail = "slavensakacic@gmail.com";
+				Mail::sendStaffMail($sendToEmail, "staffRegularFailed", $param);
+			} else if($server=="alliantranslate"){
+				$sendToEmail = "slavensakacic@gmail.com";
+				//TODO PROD $callfailed1 = "orders@alliancebizsolutions.com";
+				Mail::sendStaffMailProduction($sendToEmail, "staffRegularFailed", $param);
+			}
 			mysqli_query($con,"INSERT INTO CallIdentify(Type, starttime, CustomerId, FromNumber, state, duration, PairId) values ('$type', '$timestamp', '$customerid', '$number', '$queueresult', '0', '$langpair')");
-
 			ConnectNowFunctions::removeCustomerIdType($sid);
 		}
 		$service->render('./resources/views/twilio/connect/connectNowQueueCallback.php');
@@ -303,6 +333,3 @@ class ConnectNowController extends Controller {
 	// public function addMemberOut($request, $response, $service, $app){
 	// }
 }
-
-// SELECT PairID FROM LangRate WHERE L1= '$l1' and L2='$l2
-// ZA jezik langrate

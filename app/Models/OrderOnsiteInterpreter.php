@@ -73,6 +73,13 @@ class OrderOnsiteInterpreter extends DataObject {
 	    "project_submitted" => "",
 	);
 
+	/**
+	 *
+	 * Insert schedule session, for conference_call and get_call
+	 * Insert into order_onsite_interpreter all the values based on
+	 * scheduling type
+	 *
+	 */
 	public static function insertScheduleOrder($sArray){
 		$con = Connect::con();
 		foreach($sArray as $key=>$value){
@@ -94,6 +101,12 @@ class OrderOnsiteInterpreter extends DataObject {
 		}
 	}
 
+	/**
+	 *
+	 * Update orderID where the autoID is a random generated number, to the
+	 * new one created in that was automatecaly created in the translation_orders table.
+	 *
+	 */
 	public static function updateScheduleOrderID($orderID, $onsiteAutoId){
 		$con = Connect::con();
 		$update_query = "UPDATE `order_onsite_interpreter` set orderID = '$orderID' WHERE autoID='" . $onsiteAutoId."'";

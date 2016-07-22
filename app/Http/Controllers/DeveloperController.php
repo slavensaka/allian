@@ -167,6 +167,45 @@ class DeveloperController extends Controller {
 
 	/**
 	 *
+	 * For testing
+	 *
+	 */
+	function addtofile($file, $data){
+		$server = trim($_SERVER['HTTP_HOST']);
+		$server=trim($server);
+		if($server == "localhost"){
+			return file_put_contents("misc/testReqs/FirstRequestFile" . time(). ".txt", json_encode($data));
+		}
+	}
+
+	/**
+	 *
+	 * For testing
+	 *
+	 */
+	function addtofilePrepayment($file, $data){
+		$server = trim($_SERVER['HTTP_HOST']);
+		$server=trim($server);
+		if($server == "localhost"){
+			return file_put_contents("misc/testReqs/Prepayment" . time(). ".txt", json_encode($data));
+		}
+	}
+
+	/**
+	 *
+	 * For testing
+	 *
+	 */
+	function addtofilePairQueue($file, $data){
+		$server = trim($_SERVER['HTTP_HOST']);
+		$server=trim($server);
+		if($server == "localhost"){
+			return file_put_contents("misc/testReqs/PairIDQueue" . time(). ".txt", json_encode($data));
+		}
+	}
+
+	/**
+	 *
 	 * POST tester
 	 *
 	 */
@@ -206,6 +245,8 @@ class DeveloperController extends Controller {
 		$call = $client->account->calls->create("+15005550006", "+1410d8609", $twiml_url, array());
 		return $call;
 	}
+
+
 
 
 

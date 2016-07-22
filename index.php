@@ -13,15 +13,14 @@ use Allian\Http\Controllers\LangListController;
 use Allian\Http\Controllers\OrderOnsiteInterpreterController;
 use Allian\Http\Controllers\ConnectNowController;
 use Allian\Models\CustLogin;
-// TODO PoPRAVI langPairs popis jezika, pgledaj phoneapp/callrandom.php
+
 $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
 
 $klein = new \Klein\Klein();
-
 $klein->onHttpError(function ($code, $klein, $matched, $methods, $exception) {
+	// Find which method was the request ( GET or POST)
 	$type = $klein->request()->method();
-
 	if($type == 'GET'){
 		return $klein->response()->json(Controller::errorJson("Type of HTTP status code error: $code"));
 	} elseif($type == 'POST'){
@@ -108,7 +107,6 @@ $klein->with('/testgauss', function() use ($klein){
 	$conference = new ConferenceController();
 	$klein->respond('POST', '/conference', array($conference, 'conference'));
 	$klein->respond('POST', '/conferenceOut', array($conference, 'conferenceOut'));
-	$klein->respond('POST', '/conferenceCallback', array($conference, 'conferenceCallback'));
 
 	$connectNow = new ConnectNowController();
 	$klein->respond('POST', '/connectNow', array($connectNow, 'connectNow'));

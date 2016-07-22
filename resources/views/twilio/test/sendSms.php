@@ -4,6 +4,6 @@ header('Content-type: text/xml');
 ?>
 <Response>
 	<Sms>
-		Welcome to twilio SMS.
+		Twilio test sms message.
 	</Sms>
 </Response>

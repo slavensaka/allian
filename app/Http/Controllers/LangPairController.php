@@ -55,7 +55,6 @@ class LangPairController extends Controller {
 			if(!$validated){
 	     		return $response->json(array('data' => $this->errorJson("Authentication problems. CustomerID doesn't match that with token.")));
 			}
-
 			///TUUTUTUT
 
 			// list($all) = LangRate::retrieveAllLangRates();
@@ -83,7 +82,6 @@ class LangPairController extends Controller {
 			// list($translationTo) = LangRate::realLangPairTrans();
 			// return $response->json(array("data" => $translationTo));
 			//TUUTUTU
-
 
 			// Retrieve all languages ASC order
 			list($listLanguages) = LangPairTrans::getLanguages();

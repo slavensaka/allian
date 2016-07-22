@@ -5,50 +5,27 @@ namespace Allian\Http\Controllers;
 use \Dotenv\Dotenv;
 use Services_Twilio;
 use Services_Twilio_Twiml;
-use Services_Twilio_Capability;
 use Allian\Models\CustLogin;
-use Allian\Models\OrderOnsiteInterpreter;
-use Allian\Models\ConferenceSchedule;
-use Allian\Models\TranslationOrders;
 use Services_Twilio_TinyHttp;
+use Services_Twilio_Capability;
+use Allian\Models\TranslationOrders;
+use Allian\Models\ConferenceSchedule;
+use Allian\Models\OrderOnsiteInterpreter;
 use Allian\Helpers\TwilioConference\DatabaseAccess;
 use Allian\Helpers\TwilioConference\ConferenceFunctions as ConfFunc;
 
 class ConferenceController extends Controller {
 
 	/**
-	 *
-	 * Schedule conference
-	 *
-	 */
-	public function shedule_conference($order_id,$start_datetime,$end_datetime){
-		$date = new \DateTime($start_datetime);
-		$date->modify('-1 day');
-		$start_datetime = $date->format('Y-m-d H:i');
-		$date = new \DateTime($end_datetime);
-		$date->modify('+1 day');
-		$end_datetime = $date->format('Y-m-d H:i');
-		$interpreter_code = $this->create_secret_code();
-		$user_code = $this->create_secret_code();
-		$conf_tag = strval($user_code);
-		$conf_tag .= strval($interpreter_code);
-		$query="INSERT INTO `conference_shedule`(`orderID`, `conf_tag`, `user_code`, `interpreter_code`, `start_datetime`, `end_datetime`) VALUES ('$order_id','$conf_tag','$user_code','$interpreter_code','$start_datetime','$end_datetime')";
-		$db = new DatabaseAccess();
-		$id = $db->db_insert($query);
-	    $data['conf_id'] = $id;
-		$data['user_code'] = $user_code;
-		$data['interpreter_code'] = $interpreter_code;
-		$data['conf_starts'] = $start_datetime;
-		$data['conf_ends'] = $end_datetime;
-		return $data;
-	}
-
-	/**  NOVI BROJ TREBA ZA CLIENTA ZA APP KOJI NAZIVOM SE SPAJA NA conf_tag na kojem je već interperter
-     * @ApiDescription(section="Conference", description="Join the twilio scheduled session conference call.")
+     * @ApiDescription(section="Conference", description="Retrieve the twilioToken. Note: it's not encrypted with RNCencryptor. Simple json")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/conference")
-     * @ApiBody(sample="{'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ2MDE1MTUsImp0aSI6InAwaFpucWxqaUpqWStDdmdrb3c0MjJITTQ1TkYweFVobCtHU2lWZFwvUlN3PSIsImlzcyI6ImxvY2FsaG9zdCIsIm5iZiI6MTQ2NDYwMTUxNSwiZXhwIjoxNDY1ODExMTE1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.wwxlnjSCmInwNYinJ-LIyHMOys3oYTeoQem2MJTfgNREFZ8rcDB9uZ61Hw6vHIVMh_8BKzJUKS-_0nwhfrJVxQ'}")
+     * @ApiBody(sample="{'data': {
+    	'CustomerID': '800'
+  		},
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUyODA1MDIsImp0aSI6IlVheUZlOUJTcEE5empHWUNneVpnNTJEVFYzRXZ4NFE5YXNKdTQ4MHdEY289IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY1MjgwNTAyLCJleHAiOjE0NjY0OTAxMDIsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.qkGUG0WdaW_Q1aysAgfaEC5300Hk4X9VFEZRGsTOxE4X-P27EdCEfAnDPY0SaXD_VfsHiVYaGwwKxO-Bz0N8Yg'}")
      @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
+     @ApiParams(name="data", type="string", nullable=false, description="Encrypted customers email & password as json used for authentication.")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="string", sample="{
      *  'data': {
@@ -85,7 +62,7 @@ class ConferenceController extends Controller {
 	}
 
 	/**
-     * @ApiDescription(section="ConferenceOut", description="When connected with twilioToken, generates the TwiML response.")
+     * @ApiDescription(section="ConferenceOut", description="When connected with /conference twilioToken, generates the TwiML response. Not called directly. Twilio call this route to retrieve the Twiml code needed once the call is initilised.")
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/conferenceOut")
      * @ApiBody(sample="{ 'CustomerID': '800', 'orderId': '5265'}")
@@ -98,37 +75,20 @@ class ConferenceController extends Controller {
 		$service->validate($request->CustomerID, 'Error: No customer id is present.')->notNull()->isInt();
 		$service->validate($request->orderId, 'Error: No order id is present.')->notNull()->isInt();
 		$CallSid = $request->CallSid;
-
+		$conference = ConferenceSchedule::get_conference($request->orderId, '*');
 		// $customer = CustLogin::get_customer($request->CustomerID);
 		// $order = OrderOnsiteInterpreter::get_interpret_order($request->orderId, '*');
 		// $transOrder = TranslationOrders::getTranslationOrder($request->orderId, '*');
-		$conference = ConferenceSchedule::get_conference("TODO REMOVE", $request->orderId, '*');
 		// Is client verified, by getting the customer by id and then checking it's orderId in the conference_schedule
 		// $verified = ConfFunc::verify_caller($conference['user_code']);
-
 		// $limit=ConfFunc::chech_limit($code,$count); // NE vidim $code
-
 		// ConfFunc::set_pre_log($conference['user_code'], $CallSid);
-
 		// $service->verified = $verified;
 		// $service->CustomerID = $request->CustomerID;
 		// $service->orderId = $request->orderId;
 		$service->v_code = $conference['user_code'];
-
-		$service->render('./resources/views/twilio/conference/confOut.php');
-		// $service->render('./resources/views/twilio/conference/conferenceOut.php');
-	}
-
-	/**
-	 *
-	 * Block comment
-	 *
-	 */
-	public function conferenceCallback($request, $response, $service, $app){
-		$user_code =  $request->user_code;
-		ConfFunc::set_pre_log($user_code, $request->CallSid); // WHY is here
-		ConfFunc::set_post_log($_REQUEST['CallSid']);
-		ConfFunc::remove_expired_shedule();
+		$service->render('./resources/views/twilio/conference/confOut.php'); // TODO THE EASY WAY
+		// $service->render('./resources/views/twilio/conference/conferenceOut.php'); // THE HARD WAY
 	}
 
 }

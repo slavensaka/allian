@@ -10,19 +10,19 @@ use Allian\Helpers\TwilioConference\DatabaseAccess;
 class Controller {
 
 	/**
-	 *
-	 * Block comment
-	 *
+	 * Generate a token that's two weeks good
+	 * After two weeks it expires and can't be used anymore
+	 * @see CustLoginController::keepLoggedIn()
+	 * @param array $dataArray Additional data in token
+	 * @return string $jwt Token that conforms to the standards of jwt
 	 */
 	public function generateResponseToken($dataArray){
 		$secretKey = base64_decode(getenv('jwtKey'));
-
 		$tokenId    = base64_encode(mcrypt_create_iv(32));
 	    $issuedAt   = time();
 	    $notBefore  = $issuedAt;
 	    $expire     = $notBefore + 1209600; // 2 weeks working token
 	    $serverName = $_SERVER['SERVER_NAME'];
-
 	    $data = array(
 	        'iat'  => $issuedAt,         // Issued at: time when the token was generated
 	        'jti'  => $tokenId,          // Json Token Id: an unique identifier for the token
@@ -31,23 +31,26 @@ class Controller {
 	        'exp'  => $expire,           // Expire
 	        'data' => $dataArray
 	    );
-
 	    // Encode the new json payload data
 	    $jwt = JWT::encode($data, $secretKey, 'HS512');
 	    header('Content-type: application/json');
-
     	return $jwt;
 	}
 
+	/**
+	 * NOT USED, kept for legacy code
+	 * Generates an expired token, maybe used for logout
+	 *
+	 * @param array $dataArray Additional data in token
+	 * @return string $jwt Token that conforms to the standards of jwt
+	 */
 	public function generateExpiredToken($dataArray){
 		$secretKey = base64_decode(getenv('jwtKey'));
-
 		$tokenId    = base64_encode(mcrypt_create_iv(32));
 	    $issuedAt   = time();
 	    $notBefore  = $issuedAt;
 	    $expire     = $notBefore - 1209600; // Expire token
 	    $serverName = $_SERVER['SERVER_NAME'];
-
 	    $data = array(
 	        'iat'  => $issuedAt,         // Issued at: time when the token was generated
 	        'jti'  => $tokenId,          // Json Token Id: an unique identifier for the token
@@ -56,23 +59,25 @@ class Controller {
 	        'exp'  => $expire,           // Expire
 	        'data' => $dataArray
 	    );
-
-	    // Encode the new json payload data
 	    $jwt = JWT::encode($data, $secretKey, 'HS512');
 	    header('Content-type: application/json');
-
     	return $jwt;
 	}
 
+	/**
+	 * Generate an infinte token, used for keepMeLoggedIn option
+	 * Infinty is 4 years. User is logged in.
+	 *
+	 * @see CustLoginController::postLogin()
+	 * @see CustLoginController::keepLoggedIn()
+	 */
 	public function generateInfiniteToken($dataArray){
 		$secretKey = base64_decode(getenv('jwtKey'));
-
 		$tokenId    = base64_encode(mcrypt_create_iv(32));
 	    $issuedAt   = time();
 	    $notBefore  = $issuedAt;
 	    $expire     = $notBefore + 126144000; // 4 years working token
 	    $serverName = $_SERVER['SERVER_NAME'];
-
 	    $data = array(
 	        'iat'  => $issuedAt,         // Issued at: time when the token was generated
 	        'jti'  => $tokenId,          // Json Token Id: an unique identifier for the token
@@ -81,18 +86,17 @@ class Controller {
 	        'exp'  => $expire,           // Expire
 	        'data' => $dataArray
 	    );
-
 	    // Encode the new json payload data
 	    $jwt = JWT::encode($data, $secretKey, 'HS512');
 	    header('Content-type: application/json');
-
     	return $jwt;
 	}
 
 	/**
-	 *
 	 * Error response json message
 	 *
+	 * @param $userMessage The message to show the user
+	 * @return array The response status=0, userMessage.
 	 */
 	public static function errorJson($userMessage, $result = null){
 		$jsonArray = array();
@@ -105,9 +109,10 @@ class Controller {
 	}
 
 	/**
-	 *
 	 * Success response json message
 	 *
+	 * @param $userMessage The message to show the user
+	 * @return array The response status=1, userMessage.
 	 */
 	public static function successJson($userMessage){
 		$jsonArray = array();
@@ -117,9 +122,9 @@ class Controller {
 	}
 
 	/**
+	 * Generate a password for new email
 	 *
-	 * Block comment
-	 *
+	 * @return boolean
 	 */
 	public function generatePassword(){
 		$alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789";
@@ -132,9 +137,12 @@ class Controller {
 	    return implode($pass); //turn the array into a string
 	}
 
+	/**
+	 * Null the token in the database for the CustomerID
+	 * @param $CustomerID
+	 * @return boolean
+	 */
 	public function nullToken($CustomerID){
-		// $secretKey = base64_decode(getenv('jwtKey'));
-		// $token = JWT::decode($jwt, $secretKey, array('HS512'));
 		$stored = CustLogin::nullToken($CustomerID);
 		if(!$stored){
 			return false;
@@ -143,9 +151,11 @@ class Controller {
 	}
 
 	/**
+	 *	Store a new token in the database, where the CustomerID
 	 *
-	 * Block comment
-	 *
+	 * @param $jwt The token to store
+	 * @param $CustomerID
+	 * @return boolean
 	 */
 	public function storeToken($jwt, $CustomerID){
 		$secretKey = base64_decode(getenv('jwtKey'));
@@ -176,7 +186,8 @@ class Controller {
 
 	/**
 	 *
-	 * Block comment
+	 * Validate the token in the request, Check if expired token,
+	 * invalid_domain, or before_valid
 	 *
 	 */
 	public function validateToken($jwt){
@@ -194,7 +205,9 @@ class Controller {
 
 	/**
 	 *
-	 * Block comment
+	 * Validate the token in the database for the customerID
+	 * IF its the same token in the database,
+	 * This is additional security, very strong security
 	 *
 	 */
 	public function validateTokenInDatabase($jwt, $CustomerID){
@@ -220,6 +233,7 @@ class Controller {
 		$data = json_decode($plaintext, true);
 		return $data;
 	}
+
 	/**
 	 *
 	 * Encrypt values with RNCryptor for response data value
@@ -234,7 +248,7 @@ class Controller {
 
 	/**
 	 *
-	 * Block comment
+	 * Return values, Response for email recovery
 	 *
 	 */
 	public function emailValues($customer){
@@ -244,6 +258,13 @@ class Controller {
 		return $jsonArray;
 	}
 
+	/**
+	 *
+	 * Generate a random secret code for
+	 * the schedule session conference call
+	 * And after store the code in the database
+	 *
+	 */
 	public function create_secret_code(){
 		$code=rand(10000, 99999);
 		$db=new DatabaseAccess();
@@ -259,6 +280,12 @@ class Controller {
 		}while($n);
 	}
 
+
+	/**
+	 *
+	 * Check what is the enviorement
+	 *
+	 */
 	public function serverEnv(){
 		$server = trim($_SERVER['HTTP_HOST']);
 		$server=trim($server);
@@ -269,14 +296,17 @@ class Controller {
 		}
 	}
 
+	/**
+	 *
+	 * force the page to use ssl
+	 *
+	 */
 	public function load_https(){
-	//force the page to use ssl
-	if ($_SERVER["SERVER_PORT"] != 443) {
-	    $url = "Location: https://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
-	    return header($url);
-
+		if ($_SERVER["SERVER_PORT"] != 443) {
+		    $url = "Location: https://" . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+		    return header($url);
+		}
 	}
-}
 
 
 }

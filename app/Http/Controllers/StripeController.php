@@ -16,7 +16,7 @@ class StripeController extends Controller {
 
 	/**
 	 *
-	 * Block comment
+	 * Retrieve the stripe token based on the
 	 *
 	 */
 	public function getStripeKey(){
@@ -138,7 +138,6 @@ class StripeController extends Controller {
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
-
 			$this->getStripeKey();
 			// Get the customer from db
 			$customer = CustLogin::getCustomer($data['CustomerID']);
@@ -155,7 +154,6 @@ class StripeController extends Controller {
 			$rArray['brand']= $cu->sources->data[0]->brand;
 			$rArray['number'] =$cu->sources->data[0]->last4;
 			$rArray['status'] = 1;
-
 			// Format response
 			$base64Encrypted = $this->encryptValues(json_encode($rArray));
 	     	return $response->json(array('data' => $base64Encrypted));
@@ -171,10 +169,10 @@ class StripeController extends Controller {
 	 *
 	 */
 	public function chargeCustomer($amount, $token, $email){ // DONT CHANGE
-
+		// Check the host, and get the stripeKey based on that
 		$this->getStripeKey();
 		try {
-	        $charge = Charge::create(array("amount" => ($amount * 100), "currency" => "usd", "customer" => $token,"description" => "Gauss:app, Customer CHARGED with email $email"));
+	        $charge = Charge::create(array("amount" => ($amount * 100), "currency" => "usd", "customer" => $token, "description" => "Gauss:app, Customer CHARGED with email $email"));
 			if ($charge->paid == true) {
 				return $charge->id;
 			} else {
@@ -208,7 +206,6 @@ class StripeController extends Controller {
 		} else {
 			Stripe::setApiKey(getenv('STRIPE_KEY'));
 		}
-
 		try {
 			// $return=shell_exec ('curl https://api.stripe.com/v1/charges  -u ' . getenv('STRIPE_KEY') . ' -d amount=3000 -d currency=usd  -d capture=false -d customer='.$token.' -d "description=Pre autherizing 30$"');
 	        $result = Charge::create(array("amount" => 3000, "capture" => false, "currency" => "usd", "customer" => $token, "description" => "Gauss:app, Pre autherizing 30$"));
@@ -231,12 +228,26 @@ class StripeController extends Controller {
 	}
 
 	/**
+	 * Retrieve stripe coupon based on $coupon_code, check type of coupon
+	 * Calculate the discount and return response
 	 *
-	 * Block comment
-	 *
+	 * @param string $coupon_code
+	 * @return array Response
+	 *         status
+	 *         response
+	 *		   discount
+	 *         type
 	 */
 	public function promoCode($coupon_code){
-		Stripe::setApiKey(getenv('STRIPE_KEY')); // TODO $this->getStripeKey(); SAD JE samo moj stripe za testiranje
+		$server = trim($_SERVER['HTTP_HOST']);
+		$server=trim($server);
+		if($server=="localhost"){
+			Stripe::setApiKey(getenv('STRIPE_KEY'));
+		} else if($server=="alliantranslate.com"){
+			Stripe::setApiKey(getenv('STRIPE_KEY_ALLIAN_TEST'));
+		} else {
+			Stripe::setApiKey(getenv('STRIPE_KEY'));
+		}
 		try {
 	    	// retrieve the coupon from STRIPE System
 	    	$coupon = Coupon::retrieve($coupon_code);
@@ -259,26 +270,10 @@ class StripeController extends Controller {
 
 	/**
 	 *
-	 * Create a new customer with stripe servers
-	 * & return customers token
-	 *
-	 */
-	public function createToken($data){ // REMOVE MAYBE
-		$this->getStripeKey();
-		// Create a token for customer credit card details
-		$result = Token::create( array("card" => array( "name" => $data['sname'], "number" => $data['number'],
-			"exp_month" => $data['exp_month'], "exp_year" => $data['exp_year'], "cvc" => $data['cvc'] )));
-		// Return one time created stripe token
-		return $result['id'];
-	}
-
-	/**
-	 *
 	 * Create a new stripe token based on user's card info
 	 *
 	 */
 	public function createTokenNew($data, $exp_month, $exp_year){ // DONT CHANGE
-
 		$this->getStripeKey();
 		$result = Token::create( array("card" => array( "name" => $data['sname'], "number" => $data['number'],
 			"exp_month" => (int)$exp_month, "exp_year" => (int)$exp_year, "cvc" => $data['cvc'] )));
@@ -293,7 +288,7 @@ class StripeController extends Controller {
 	 *
 	 */
 	public function createCustomer($email, $token){ // DONT CHANGE
-		$customer = Customer::create(array( "description" => "Gauss:app, Customer CREATED with email $email", "source" => $token ));
+		$customer = Customer::create(array( "description" => "Gauss:app, Customer CREATED with email $email", "source" => $token));
   		return $customer['id'];
 	}
 }

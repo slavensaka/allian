@@ -153,7 +153,9 @@ class CustLoginController extends Controller {
 			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Internal error. Contact support")));
      		return $response->json(array('data' => $base64Encrypted));
 		}
-		// Format response
+	 /* ==========================================================================
+	   Response Array
+	   ========================================================================== */
 		$jsonArray = array();
 		$jsonArray['status'] = 1;
 		$jsonArray['CustomerID'] = $customer->getValueEncoded('CustomerID');
@@ -161,6 +163,9 @@ class CustLoginController extends Controller {
 		$lname = $customer->getValueEncoded('LName');
 		$jsonArray['userMessage'] = "Welcome $fname $lname.";
 		$jsonArray['userMessage1'] = "Registration Successfull.";
+	 /* ==========================================================================
+	   End Response Array
+	   ========================================================================== */
 		// Format data for encryption
 		$base64Encrypted = $this->encryptValues(json_encode($jsonArray));
 		// Make the response json
@@ -285,7 +290,9 @@ class CustLoginController extends Controller {
 				$errorJson = $this->encryptValues(json_encode($this->errorJson("No user found with supplied id.")));
 				return $response->json(array('data' => $errorJson));
 			}
-			// Format the json response
+		 /* ==========================================================================
+		   Response array
+		   ========================================================================== */
 			$values = array();
 			$values['fname'] = $customer->getValueEncoded('FName');
 			$values['status'] = 1;
@@ -296,6 +303,9 @@ class CustLoginController extends Controller {
 			$values['type'] = $customer->getValueEncoded('Type');
 			$values['email'] = $customer->getValueEncoded('Email');
 			$values['services'] = explode(":", $customer->getValueEncoded('Services'));
+		 /* ==========================================================================
+		   End Response array
+		   ========================================================================== */
 			// Format data for encryption
 			$base64Encrypted = $this->encryptValues(json_encode($values));
 			// Return response json
@@ -334,8 +344,7 @@ class CustLoginController extends Controller {
 		}")
      */
 	public function updateProfile($request, $response, $service, $app){ // DONT CHANGE
-
-		if($request->token){ //editmain.php i editmainadd.php
+		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
 			// Decrypt input data
@@ -353,7 +362,7 @@ class CustLoginController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token.")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
 			// Try to update customer with inputed data
@@ -363,10 +372,15 @@ class CustLoginController extends Controller {
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Profile not updated. Please, try Again. Please contact support if problem persists.")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
-			// Format response
+		 /* ==========================================================================
+		   Response array
+		   ========================================================================== */
 			$jsonArray = array();
 			$jsonArray['status'] = 1;
-			$jsonArray['userMessage'] = "Profile edited successfully";
+			$jsonArray['userMessage'] = "Profile edited successfully.";
+		 /* ==========================================================================
+		   End Response array
+		   ========================================================================== */
 			// Format data for encryption
 			$base64Encrypted = $this->encryptValues(json_encode($jsonArray));
 			// Return as json token and encrypted data
@@ -441,7 +455,7 @@ class CustLoginController extends Controller {
 			$jsonArray['status'] = 1;
 			$jsonArray['telephonicUserId'] = $customer->getValueEncoded('PhLoginId');
 			$jsonArray['telephonicPassword'] = $customer->getValueEncoded('PhPassword');
-			$jsonArray['registeredUserHotline'] = '1 855-733-6655'; //TODO NOT NEEDED REMOVE
+			// $jsonArray['registeredUserHotline'] = '1 855-733-6655';
 			// Encrypt fomrat json response
 			$result = array_merge($flags, $tel, $jsonArray);
 			// Encrypt the data
@@ -574,7 +588,7 @@ class CustLoginController extends Controller {
      * }")
      *
      */
-	public function support($request, $response, $service, $app){ // FIX
+	public function support($request, $response, $service, $app){
 		// $supportPhones = ArrayValues::supportPhones();
 		$flags = ArrayValues::supportFlags();
 		$supportTel = ArrayValues::supportTel();

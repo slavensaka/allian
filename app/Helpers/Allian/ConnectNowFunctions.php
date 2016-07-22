@@ -3,35 +3,19 @@
 namespace Allian\Helpers\Allian;
 
 use \Dotenv\Dotenv;
-use Database\Connect;
-use Allian\Helpers\Mail;
-use Allian\Models\LangList;
-use Allian\Models\CustLogin;
-use Allian\Models\TranslationOrders;
-use Allian\Models\ConferenceSchedule;
-use Allian\Http\Controllers\Controller;
-use Allian\Models\OrderOnsiteInterpreter;
-use Allian\Http\Controllers\ConferenceController;
 
 class ConnectNowFunctions extends Controller {
 
 	/**
+	 * Used to put CallSid.txt /customertype so the interpreter can
+	 * process the order at the end of the call. Interpreter script
+	 * collects the User's information and then payment to user and send email
 	 *
-	 * For testing
-	 *
-	 */
-	function addtofile($file, $data){
-		$server = trim($_SERVER['HTTP_HOST']);
-		$server=trim($server);
-		if($server == "localhost"){
-			return file_put_contents("misc/testReqs/FirstRequestFile" . time(). ".txt", json_encode($data));
-		}
-	}
-
-	/**
-	 *
-	 * Block comment
-	 *
+	 * @param string $sid Customer's CallSid
+	 * @param array $data
+	 *		CustomerID
+	 *		type
+	 * @return boolean isSuccess
 	 */
 	function addCustomerIdType($sid, $data){
 		$server = trim($_SERVER['HTTP_HOST']);
@@ -47,131 +31,35 @@ class ConnectNowFunctions extends Controller {
 	}
 
 	/**
+	 * Customer's script removes CustomerID by CallSid.txt from the
+	 * /customertype that's needed for interpreter script.
+	 * Unlink the call because the call is done and we don't need it anymore
 	 *
-	 * Remove customer id from the file_put_contents that's needed for retrievel for interpreter
-	 *
+	 *	@param string $sid Customer's CallSid
+	 *	@return null
 	 */
 	function removeCustomerIdType($sid){
 		$server = trim($_SERVER['HTTP_HOST']);
 		$server=trim($server);
+		// Check if localhost, unlink form a folder
 		if($server == "localhost"){
 			$sidfile="misc/customertype/" . $sid . ".txt";
 			if(file_exists($sidfile)){
 				unlink($sidfile);
 			}
+		// Unlink the file in the right live folder, if the CallSid.txt exists
 		} else if($server == "alliantranslate.com"){
 			$sidfile = "../linguist/phoneapp/customertype/" . $sid . ".txt";
 			if(file_exists($sidfile)){
 				unlink($sidfile);
 			}
+		// Used for ngrok.exe, when the server host is diffrent name
 		} else {
 			$sidfile="misc/customertype/" . $sid . ".txt";
 			if(file_exists($sidfile)){
 				unlink($sidfile);
 			}
 		}
-	}
-
-	/**
-	 *
-	 * For testing
-	 *
-	 */
-	function addtofilePrepayment($file, $data){
-		$server = trim($_SERVER['HTTP_HOST']);
-		$server=trim($server);
-		if($server == "localhost"){
-			return file_put_contents("misc/testReqs/Prepayment" . time(). ".txt", json_encode($data));
-		}
-	}
-
-	/**
-	 *
-	 * For testing
-	 *
-	 */
-	function addtofilePairQueue($file, $data){
-		$server = trim($_SERVER['HTTP_HOST']);
-		$server=trim($server);
-		if($server == "localhost"){
-			return file_put_contents("misc/testReqs/PairIDQueue" . time(). ".txt", json_encode($data));
-		}
-	}
-
-	/**
-	 *
-	 * Not used,
-	 	for testing
-	 *
-	 */
-	function getfromfile($file){
-		$abc=file_get_contents("testing_files/" . $file . ".txt");
-		$abc=json_decode($abc, TRUE);
-		return $abc;
-	}
-
-	/**
-	 *
-	 * Used to send email notification to staff and admins
-	 *
-	 */
-	function sendstaffmail($text, $param) {
-	    $con = Connect::con();
-	    $ip="Project Desk - Alliance Business Solutions <projects@alliancebizsolutions.com>";
-	    $orders="HR - Alliance Business Solutions <orders@alliancebizsolutions.com>";
-		$client="Client Services - Alliance Business Solutions <cs@alliantranslate.com>" ;
-		$staff = "slavensakacic@gmail.com";
-		//TODO PROD $staff="alen.brcic@alliancebizsolutions.com";
-		$callfailed1="slavensakacic@gmail.com";
-		//TODO PROD $callfailed1 = "orders@alliancebizsolutions.com";
-	    $link = "";
-	    $link2 = "";
-	    $number = "";
-	    $pair = "";
-	    $queueresult = "";
-	    $time = "";
-	    $email = "";
-	    $mailtype = $text;
-	    $notify_at_orders = false;
-	    switch ($text) {
-	        case "staff_onetimecallfailed":
-	            $arr = explode(",", $param);
-	            $number = $arr[0];
-	            $pair = $arr[1];
-	            $queueresult = $arr[2];
-	            $time = $arr[3];
-	            break;
-	        case "staff_regcallfailed":
-	            $arr = explode(",", $param);
-	            $number = $arr[0];
-	            $pair = $arr[1];
-	            $queueresult = $arr[2];
-	            $time = $arr[3];
-	            $email = $arr[4];
-	            break;
-	        default:
-	            $link = "";
-	            break;
-	    }
-	    $text = __DIR__ . '/' .  "emailTexts/" . $text . ".txt";
-	    $file = file($text);
-	    $subject = trim($file[0]);
-	    array_shift($file);
-	    $file = implode("", $file);
-	    $file = str_replace("[NUMBER]", $number, $file);
-	    $file = str_replace("[LANGPAIR]", $pair, $file);
-	    $file = str_replace("[REASON]", $queueresult, $file);
-	    $file = str_replace("[DATETIME]", $time, $file);
-	    $headers = "From:" . $staff;
-	    $email = ($notify_at_orders) ? $orders : $ip;
-	    if ($mailtype == "staff_onetimecallfailed" || $mailtype == "staff_regcallfailed") {
-	    	$server = $this->serverEnv();
-			if($server=="alliantranslate.com"){
-				mail($callfailed1, $subject, $file, $headers);
-			} else if($server == 'localhost'){
-				mail($callfailed1, $subject, $file, $headers);
-			}
-	    }
 	}
 
 }

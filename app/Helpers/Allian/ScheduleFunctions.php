@@ -10,18 +10,23 @@ use Allian\Models\TranslationOrders;
 use Allian\Models\ConferenceSchedule;
 use Allian\Models\OrderOnsiteInterpreter;
 use Allian\Http\Controllers\ConferenceController;
+use Allian\Helpers\TwilioConference\ConferenceFunctions;
 
 class ScheduleFunctions {
 
 	/**
-	 *
-	 * Block comment
-	 *
+	 * @param array data
+	 *			CustomerID
+	 * 			fromDate
+	 * 			timeStarts
+	 * 			timeEnds
+	 * 			schedulingType
+	 *	@return integer Indicates the number of items.
 	 */
 	public static function calculateAmountToPay($data){
 		$amount = 0;
 		$minimum_rate = 30;
-		$conference_fee = self::amt_format(5); // 5$ usd for creating a confrence call
+		$conference_fee = self::amt_format(5); // 5$ usd for creating a conference call
 
 		$frm_time = $data['fromDate'] . ' ' . $data['timeStarts'];
 		$to_time = $data['fromDate'] . ' ' . $data['timeEnds'];
@@ -80,7 +85,7 @@ class ScheduleFunctions {
 
 	/**
 	 *
-	 * Block comment
+	 * INtepr durati $data['fromDate'] . 'T' . $sArray['assg_frm_st'], $data['fromDate'] . 'T' . $sArray['assg_frm_en'])
 	 *
 	 */
 	function telephonic_duration($frm_time, $to_time) {
@@ -263,7 +268,7 @@ class ScheduleFunctions {
 	            $conf_from = date_format($date, 'Y-m-d H:i');
 	            $date = date_create_from_format('U', $order['assg_to_timestamp']);
 	            $conf_to = date_format($date, 'Y-m-d H:i');
-	            $conf = ConferenceController::shedule_conference($order_id, $conf_from, $conf_to);
+	            $conf = ConferenceFunctions::shedule_conference($order_id, $conf_from, $conf_to);
 	            $conf_id = $conf['conf_id'];
 	            if ($conf_id > 0) {
 	                $conf['client_name'] = ucwords(TranslationOrders::getTranslationOrder($order_id, "name"));
@@ -363,7 +368,7 @@ class ScheduleFunctions {
 		        $order = "On-Site";
 		    }
 	    	$order_detail = TranslationOrders::getTranslationOrder($order_id, "*");
-		    $conference = ConferenceSchedule::get_conference($con, $order_id, "*");
+		    $conference = ConferenceSchedule::get_conference($order_id, "*");
 		    $customer_id = $order_detail["user_id"];
 		    // TODO pay_overage.php, linguist\clientportal\clientportal.php 1018, 230 on edit_onsite_order_details.php
 		    $overage_charge = self::amt_format($interpret_order["overage_charge"]);

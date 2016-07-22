@@ -17,7 +17,7 @@ use RNCryptor\Decryptor;
 class LangListController extends Controller {
 
 	/**
-     * @ApiDescription(section="LangNames", description="Retrieve json of list of langauges to translate.")
+     * @ApiDescription(section="LangNames", description="NOT USED. Retrieve json of list of langauges to translate.")
      * @ApiMethod(type="get")
      * @ApiRoute(name="/testgauss/langNames")
      * @ApiBody(sample="{ 'data': {

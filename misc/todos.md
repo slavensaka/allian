@@ -3,3 +3,5 @@
 # TODO PhPassword also hash and old passwords
 
 # $disc_label = ($_SESSION["admin-order"]) ? "Enter Discount Amount in cents" : "Enter a Promotional or Offer Code:"; telephonic_order.php 1099
+
+# SELECT PairID FROM LangRate WHERE L1= '$l1' and L2='$l2 ZA jezik langrate

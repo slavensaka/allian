@@ -162,8 +162,103 @@ class Mail {
 		}
 	}
 
-	public function sendStaffMail(){
+	/**
+	 *
+	 * Used to send email notification to staff and admins
+	 *
+	 */
+	public function sendStaffMail($sendToEmail, $text, $param){
+		$client = "Client Services - Alliance Business Solutions <cs@alliantranslate.com>" ;
+	    $link = "";
+	    $link2 = "";
+	    $number = "";
+	    $pair = "";
+	    $queueresult = "";
+	    $time = "";
+	    $email = "";
+	    $mailtype = $text;
+	    $notify_at_orders = false;
+        $arr = explode(",", $param);
+        $number = $arr[0];
+        $pair = $arr[1];
+        $queueresult = $arr[2];
+        $time = $arr[3];
+        $email = $arr[4];
 
+	    date_default_timezone_set('Etc/UTC');
+
+		$message = file_get_contents('resources/views/emails/' . $text . '.php');
+		$message = str_replace('%MAIL%', $email, $message);
+		$message = str_replace('%NUMBER%', $number, $message);
+		$message = str_replace('%LANGPAIR%', $pair, $message);
+		$message = str_replace('%REASON%', $queueresult, $message);
+		$message = str_replace('%DATETIME%', $time, $message);
+
+		$mail = new PHPMailer;
+		$mail->isSMTP();
+		$mail->CharSet='UTF-8';
+		$mail->SMTPAuth = true;
+		$mail->Host = getenv('MAIL_HOST');
+		$mail->Port = getenv('MAIL_PORT');
+		$mail->SMTPSecure = getenv('MAIL_ENCRYPTION');
+		$mail->Username = getenv('MAIL_USERNAME');
+		$mail->Password = getenv('MAIL_PASSWORD');
+		$mail->setFrom($staff, "From: Client Services - Alliance Business Solutions<cs@alliantranslate.com>");
+		$mail->addReplyTo(getenv('MAIL_REPLY_TO'), "Client Services<cs@alliantranslate.com>");
+		$mail->addAddress($sendToEmail, "Order");
+		$mail->IsHTML(true);
+		$mail->Subject = 'POTENTIAL CLIENT CALL FAILED:';
+		$mail->MsgHTML($message);
+		if (!$mail->send()) {
+		   return false;
+		} else {
+		    return true;
+		}
+	}
+
+	public function sendStaffMailProduction($sendToEmail, $text, $param){
+		$mail = new PHPMailer;
+		$mail->From = "From: Client Services - Alliance Business Solutions<cs@alliantranslate.com>";
+		$mail->FromName = "ALLIAN";
+
+		date_default_timezone_set('Etc/UTC');
+
+		$client = "Client Services - Alliance Business Solutions <cs@alliantranslate.com>" ;
+	    $link = "";
+	    $link2 = "";
+	    $number = "";
+	    $pair = "";
+	    $queueresult = "";
+	    $time = "";
+	    $email = "";
+	    $mailtype = $text;
+	    $notify_at_orders = false;
+        $arr = explode(",", $param);
+        $number = $arr[0];
+        $pair = $arr[1];
+        $queueresult = $arr[2];
+        $time = $arr[3];
+        $email = $arr[4];
+
+	    date_default_timezone_set('Etc/UTC');
+
+		$message = file_get_contents('resources/views/emails/' . $text . '.php');
+		$message = str_replace('%MAIL%', $email, $message);
+		$message = str_replace('%NUMBER%', $number, $message);
+		$message = str_replace('%LANGPAIR%', $pair, $message);
+		$message = str_replace('%REASON%', $queueresult, $message);
+		$message = str_replace('%DATETIME%', $time, $message);
+
+		$mail->isHTML(true);
+		$mail->Subject = "Telephonic Access Session Credentials.";
+		$mail->MsgHTML($message);
+		$mail->addAddress($sendToEmail, "Order");
+
+		if (!$mail->send()) {
+		   return false;
+		} else {
+		    return true;
+		}
 	}
 
 	/**

@@ -4,17 +4,11 @@ namespace Allian\Http\Controllers;
 
 use \Dotenv\Dotenv;
 use Database\Connect;
-use Firebase\JWT\JWT; // MAYBE NOT USED
-use RNCryptor\Encryptor; // MAYBE NOT USED
-use RNCryptor\Decryptor; // MAYBE NOT USED
 use Allian\Helpers\Mail;
 use Allian\Models\LangList;
 use Allian\Models\CustLogin;
 use Allian\Helpers\ArrayValues;
-use Firebase\JWT\DomainException;
-use Firebase\JWT\ExpiredException;
 use Allian\Models\TranslationOrders;
-use Firebase\JWT\BeforeValidException; // MAYBE NOT USED
 use Allian\Models\OrderOnsiteInterpreter;
 use Allian\Helpers\Allian\ScheduleFunctions;
 use Allian\Http\Controllers\ConferenceController;
@@ -32,7 +26,7 @@ class ConferenceScheduleController extends Controller {
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      * @ApiReturn(type="string", sample="{'data': {'timezonesTop':'...', 'timezones':'...', 'langFrom': '...', 'langTo': '...', 'countries': '...', 'schedulingType': '...', 'neededFor': '...'}}")
      */
-	public function getTimezones($request, $response, $service, $app){ // FIX
+	public function getTimezones($request, $response, $service, $app){
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -46,7 +40,6 @@ class ConferenceScheduleController extends Controller {
 			if(!$validated){
 	     		return $response->json(array('data' => $this->errorJson("Authentication problems. CustomerID doesn't match that with token.")));
 			}
-
 			// TimezonesTop
 			$timezonesTop = array();
 			foreach (ArrayValues::timezonesTop() as $number => $row){
@@ -170,10 +163,8 @@ class ConferenceScheduleController extends Controller {
 			$result['userMessage'] = 'Promotional discount will be applied! The discount is ' . $discount . '$';
 			$result['discount'] = $discount;
 			$result['totalPrice'] = $data['totalPrice'] - $discount;
-
 			$base64Encrypted = $this->encryptValues(json_encode($result));
 			return $response->json(array('data' => $base64Encrypted));
-
 		} else {
 	    	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
      		return $response->json(array('data' => $base64Encrypted));
@@ -273,9 +264,7 @@ class ConferenceScheduleController extends Controller {
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token.")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
-
 			$amountArray = ScheduleFunctions::calculateAmountToPay($data);
-
 			$base64Encrypted = $this->encryptValues(json_encode($amountArray));
 			return $response->json(array('data' => $base64Encrypted));
 		} else {
@@ -333,7 +322,6 @@ class ConferenceScheduleController extends Controller {
 			$service->validate($data['langFrom'], 'Error: lang from not present.')->notNull();
 			$service->validate($data['langTo'], 'Error: lang to present.')->notNull();
 			$service->validate($data['country'], 'Error: country not present.');
-			//TODO promotionalCode
 			$service->validate($data['schedulingType'], 'Error: scheduling type not present.')->notNull();
 			$service->validate($data['clients'], 'Error: clients not present.')->notNull();
 			$service->validate($data['neededFor'], 'Error: interpreting needed for not present.')->notNull();
@@ -348,14 +336,13 @@ class ConferenceScheduleController extends Controller {
 			}
 			//Calculate the amount customer pays based on time specified
 			$amountArray = ScheduleFunctions::calculateAmountToPay($data);
-			$sArray = array();
 			// Assign to default name the total price calculated
 			$amount = $amountArray['totalPrice'];
 			// Format date with timeStarts with the timezone
-			$frmT = new \DateTime($data['fromDate'].' '.$data['timeStarts'],new \DateTimeZone($data['timezone']));
-
-			$sArray['assg_real_timestamp'] = $frmT->getTimestamp() + $frmT->getOffset(); // JA DODAO
-			$sArray['is_phone'] = 1;
+			$frmT = new \DateTime($data['fromDate'] . ' ' . $data['timeStarts'], new \DateTimeZone($data['timezone']));
+			$sArray = array();
+			$sArray['assg_real_timestamp'] = $frmT->getTimestamp() + $frmT->getOffset(); // TODO See if correct time is used for
+			$sArray['is_phone'] = 1; // GAUSS ADDED FOR PUSH NOTIF
 			$frmT->setTimezone(new \DateTimeZone('GMT'));
 			// Format date with timeEnds with the timezone
 		    $toT = new \DateTime($data['fromDate'].' '.$data['timeEnds'],new \DateTimeZone($data['timezone']));
@@ -386,33 +373,30 @@ class ConferenceScheduleController extends Controller {
 			$sArray['onsite_con_email'] = '';
 			$sArray['headsets_needed'] = 0;
 			$sArray['amount'] = $amount;
-
-			$sArray['interpreting_dur']= ScheduleFunctions::telephonic_duration($data['fromDate'].'T'.$sArray['assg_frm_st'], $data['fromDate'].'T'.$sArray['assg_frm_en']);
-			if ($data['schedulingType'] == 'conference_call') {
+			$sArray['interpreting_dur'] = ScheduleFunctions::telephonic_duration($data['fromDate'] . 'T' . $sArray['assg_frm_st'], $data['fromDate'] . 'T' . $sArray['assg_frm_en']);
+			if($data['schedulingType'] == 'conference_call') {
 				$sArray['onsite_con_phone'] = "";
 			} elseif($data['schedulingType'] == 'get_call'){
 				$sArray['onsite_con_phone'] = $data['clients'][0];
 			}
 			if($data['schedulingType'] == 'get_call'){
-				$sArray['interpreter_amt'] = (25/100) * $amount;  // caluculate_price() TODO
+				$sArray['interpreter_amt'] = (25/100) * $amount;
 			} elseif($data['schedulingType'] = 'conference_call'){
 				$sArray['interpreter_amt'] = (25/100) * ($amount - 5);
 			}
 			// Get the customer whos scheduling the session by customer_id
 			$customer = CustLogin::getCustomer($sArray['customer_id']);
-
-			// TODO STRIPE DISCOUNT GOES HERE order-scripts/get_disount.php $amount-$dicount
+			// If promoCode, calculate the discount, $data['amount'] decrease
 			if(!empty($data['promoCode'])){
 				$stripe = new StripeController();
 				$result = $stripe->promoCode($data['promoCode']);
 				$discount = ($result['type'] === "%") ? (($result['discount'] / 100) * $amount) : $result['discount'];
 				$sArray['amount'] = $amount - $discount;
 			}
-
-			// Inrst into order_onsite_interpreter values sArray-a
+			// Insert into order_onsite_interpreter values sArray-a
 			$onsiteAutoId = OrderOnsiteInterpreter::insertScheduleOrder($sArray);
 			if(!$onsiteAutoId){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Telephonic order not scheduled. Contact Support.")));
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Telephonic order not scheduled. Contact Support. EMAIL: " . getenv('SUPPORT_HOME'))));
 				return $response->json(array('data' => $base64Encrypted));
 			}
 			// Insert into translation_order values
@@ -427,22 +411,29 @@ class ConferenceScheduleController extends Controller {
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Problem with updating order_onsite_interpreter table. Contact Support!")));
 				return $response->json(array('data' => $base64Encrypted));
 			}
-			// Charge the customer an amount
-			$stripe = new StripeController();
-			$stripe_id = $stripe->chargeCustomer($amount, $customer->getValueEncoded('token'), $customer->getValueEncoded('Email'));
-			// If stripe error where charge token is not returned
-			if(!$stripe_id){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Customer stripe charge token not generated.")));
-	 			return $response->json(array('data' => $base64Encrypted));
+			if($customer->getValueEncoded('Type') == 1){ // Stripe
+				// Charge the customer an amount
+				$stripe = new StripeController();
+				$stripe_id = $stripe->chargeCustomer($amount, $customer->getValueEncoded('token'), $customer->getValueEncoded('Email'));
+				// If stripe error where charge token is not returned
+				if(!$stripe_id){
+					$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Customer stripe charge token not generated.")));
+		 			return $response->json(array('data' => $base64Encrypted));
+				}
+				//Get stripe id
+				$dArray['stripe_id'] = $stripe_id;
+				$dArray['order_id'] = $orderID;
+				// Update translation orders with new info, user paid & did or not had discount
+				$complete = TranslationOrders::updateTranslationOrdersSch($dArray);
+			} elseif($customer->getValueEncoded('Type') == 2){ // Invoice
+				$dArray['stripe_id'] = 'invoice';
+				$dArray['order_id'] = $orderID;
+				$complete = TranslationOrders::updateTranslationOrdersSch($dArray);
+			} else {
+				// non
 			}
-			//Get stripe id
-			$dArray['stripe_id'] = $stripe_id;
-			$dArray['order_id'] = $orderID;
-			// Update translation orders with new info, user paid & did or not had discount
-			$complete = TranslationOrders::updateTranslationOrdersSch($dArray);
 	    	if(!$complete){
-	    		// TODO, charged user but if error make better user message
-	    		$errorJson = $this->encryptValues(json_encode($this->errorJson("Problems with updating translation orders.")));
+	    		$errorJson = $this->encryptValues(json_encode($this->errorJson("We encountered problem while charging your account. Please contact support: " . getenv('SUPPORT_HOME'))));
 	 			return $response->json(array('data' => $errorJson));
 	    	}
 	    	// Main method with processing the order after inserting
@@ -452,7 +443,9 @@ class ConferenceScheduleController extends Controller {
 	    		$errorJson = $this->encryptValues(json_encode($this->errorJson("Couldn't find the order in our system. Contact support.")));
 	 			return $response->json(array('data' => $errorJson));
 	    	}
-	    	// Create the response array
+    	/* ==========================================================================
+    	   Response Array
+    	   ========================================================================== */
 			$retArray = array();
 			$retArray['timezone'] = $data['timezone'];
 			$retArray['status'] = 1;
@@ -463,8 +456,11 @@ class ConferenceScheduleController extends Controller {
 			} else if($data['schedulingType'] == 'get_call'){
 				$retArray['confCode'] = null;
 			}
-			// $retArray['confDialNumber'] = getenv('CONF_DIAL_NUMBER_LIVE'); // TODO FOR PRODUCTION
+			// TODO FOR PRODUCTION
 			$retArray['confDialNumber'] = getenv('S_TEST_TWILIO_NO_E_CONF_CALL');
+		/* ==========================================================================
+		   End Response Array
+		   ========================================================================== */
 			// Encrypt and return the values
 			$base64Encrypted = $this->encryptValues(json_encode($retArray));
 	 		return $response->json(array('data' => $base64Encrypted));

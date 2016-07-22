@@ -25,7 +25,7 @@ class ConferenceSchedule extends DataObject {
    	 @Param $get_value: The actual value that is returned from table.
 	 *
 	 */
-	function get_conference($con, $order_id, $get_value) {
+	function get_conference($order_id, $get_value) {
 		$con = Connect::con();
 		$get_order_info = mysqli_query($con, "SELECT $get_value FROM conference_shedule WHERE orderID =  '$order_id'");
 		$order = mysqli_fetch_array($get_order_info);
