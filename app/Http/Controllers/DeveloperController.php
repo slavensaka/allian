@@ -125,9 +125,8 @@ class DeveloperController extends Controller {
 		$client->account->messages->create(array(
 		    'To' => '+385919249906',
 		    'From' => '+12014642721',
-		    'Body' => "Hey Jenny! Good luck on the bar exam!",
+		    'Body' => "Hey, it was a success send!",
 		));
-		// $service->render('./resources/views/twilio/test/sendSms.php');
 	}
 
 	/**
@@ -232,6 +231,10 @@ class DeveloperController extends Controller {
 	 */
 	public function test($request, $response, $service, $app){
 		// $service->render('./resources/views/misc/telephones.html');
+		$response = new Services_Twilio_Twiml;
+			$response->say('The interpreting service is not available between the selected two language pairs at this time.');
+			$response->hangup();
+			return  $response;
 	}
 
 	public function phoneFormat($request, $response, $service, $app){

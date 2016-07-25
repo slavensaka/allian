@@ -3,18 +3,15 @@
 namespace Allian\Helpers\Push;
 
 use \Dotenv\Dotenv;
-use Database\Connect;
-use Allian\Helpers\Mail;
-use Allian\Models\LangList;
-use Allian\Models\CustLogin;
-use Allian\Models\TranslationOrders;
-use Allian\Models\ConferenceSchedule;
 use Allian\Http\Controllers\Controller;
-use Allian\Models\OrderOnsiteInterpreter;
-use Allian\Http\Controllers\ConferenceController;
 
 class PushNotification extends Controller {
 
+	/**
+	 *
+	 * Used to send push notifications
+	 *
+	 */
 	public static function push($deviceToken = null, $message, $production = false){
 		if($production){
 			$gateway = 'gateway.push.apple.com:2195';
@@ -24,24 +21,24 @@ class PushNotification extends Controller {
 		if($deviceToken == null){
 			exit();
 		}
-		// 1095b49dcdbc6632049888d598ee6a301c2175ca238569fb4b6cb2255310a527 Marko
-		// Put your private key's passphrase here:
+		// The private key's passphrase
 		$passphrase = getenv('PUSH_PASS_PHRASE');
 		// Put your alert message here:
-		////////////////////////////////////////////////////////////////////////////////
 		$ctx = stream_context_create();
-		stream_context_set_option($ctx, 'ssl', 'local_cert', 'allianpushcertfikat.pem');
+		if($production){
+			stream_context_set_option($ctx, 'ssl', 'local_cert', 'allianpushcertifikatprod.pem');
+		} else {
+			stream_context_set_option($ctx, 'ssl', 'local_cert', 'allianpushcertfikat.pem');
+		}
 		stream_context_set_option($ctx, 'ssl', 'passphrase', $passphrase);
 		// Open a connection to the APNS server
-		// $fp = stream_socket_client(
-		// 	'ssl://gateway.push.apple.com:2195', $err,
-		// 	$errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
 		$fp = stream_socket_client($gateway, $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
-		if (!$fp)
-			exit("Failed to connect: $err $errstr" . PHP_EOL);
-		// echo 'Connected to APNS' . PHP_EOL;
+		if(!$fp){
+			exit();
+			// exit("Failed to connect: $err $errstr" . PHP_EOL);
+		}
 		// Create the payload body
-		$body['aps'] = array('alert' => $message,'sound' => 'default','badge' => 1);
+		$body['aps'] = array('alert' => $message, 'sound' => 'default', 'badge' => 1);
 		// Encode the payload as JSON
 		$payload = json_encode($body);
 		// Build the binary notification
@@ -57,6 +54,11 @@ class PushNotification extends Controller {
 		}
 	}
 
+	/**
+	 *
+	 * Test the push notification to mobile
+	 *
+	 */
 	public static function testPush($deviceToken, $production = false){
 		if($production){
 			$gateway = 'gateway.push.apple.com:2195';
@@ -71,21 +73,12 @@ class PushNotification extends Controller {
 		$ctx = stream_context_create();
 		stream_context_set_option($ctx, 'ssl', 'local_cert', 'allianpushcertfikat.pem');
 		stream_context_set_option($ctx, 'ssl', 'passphrase', $passphrase);
-		// Open a connection to the APNS server
-		// $fp = stream_socket_client(
-		// 	'ssl://gateway.push.apple.com:2195', $err,
-		// 	$errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
 		$fp = stream_socket_client($gateway, $err,$errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
 		if(!$fp){
 			exit("Failed to connect: $err $errstr" . PHP_EOL);
 		}
-		// echo 'Connected to APNS' . PHP_EOL;
 		// Create the payload body
-		$body['aps'] = array(
-			'alert' => $message,
-			'sound' => 'default',
-		     'badge' => 1
-			);
+		$body['aps'] = array('alert' => $message, 'sound' => 'default', 'badge' => 1);
 		// Encode the payload as JSON
 		$payload = json_encode($body);
 		// Build the binary notification
@@ -94,10 +87,12 @@ class PushNotification extends Controller {
 		$result = fwrite($fp, $msg, strlen($msg));
 		// Close the connection to the server
 		fclose($fp);
-		if (!$result)
+		if (!$result) {
 			return false;
-		else
+		}
+		else{
 			return true;
+		}
 	}
 
 }

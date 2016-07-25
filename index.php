@@ -102,18 +102,17 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('POST', '/storeDeviceToken', array($orderOnSiteInterpreter, 'storeDeviceToken'));
 	$klein->respond('POST', '/testDeviceToken', array($orderOnSiteInterpreter, 'testDeviceToken'));
 	$klein->respond('POST', '/deviceToken', array($orderOnSiteInterpreter, 'deviceToken'));
-	$klein->respond('POST', '/scheduleCronJob', array($orderOnSiteInterpreter, 'scheduleCronJob'));
+	$klein->respond('POST', '/gaussAppScheduleCronJob', array($orderOnSiteInterpreter, 'gaussAppScheduleCronJob'));
 
 	$conference = new ConferenceController();
 	$klein->respond('POST', '/conference', array($conference, 'conference'));
 	$klein->respond('POST', '/conferenceOut', array($conference, 'conferenceOut'));
+	$klein->respond('POST', '/addNewMember', array($conference, 'addNewMember'));
+	$klein->respond('POST', '/addNewMemberOut', array($conference, 'addNewMemberOut'));
 
 	$connectNow = new ConnectNowController();
 	$klein->respond('POST', '/connectNow', array($connectNow, 'connectNow'));
 	$klein->respond('POST', '/connectOut', array($connectNow, 'connectOut'));
-	// $klein->respond('POST', '/addMember', array($connectNow, 'addMember'));
-	// $klein->respond('POST', '/addMemberOut', array($connectNow, 'addMemberOut'));
-	// $klein->respond('POST', '/gatherTest', array($connectNow, 'gatherTest'));
 	$klein->respond('POST', '/waitForInterpreter', array($connectNow, 'waitForInterpreter'));
 	$klein->respond('POST', '/connectNowQueueCallback', array($connectNow, 'connectNowQueueCallback'));
 

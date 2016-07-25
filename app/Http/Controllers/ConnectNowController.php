@@ -92,10 +92,10 @@ class ConnectNowController extends Controller {
 		//Twilio customer request params
 		$sid = $request->CallSid;
 		// Make a flag for langauge order
-		$flag=0;
+		$flag = 0;
 		//Format the request From number to fit the + convention of twilio
-		$from=$request->From;
-		$from=str_replace('+',"", $from);
+		$from = $request->From;
+		$from = str_replace('+',"", $from);
 		// Get the customer information in database by CustomerID
 		$customer = CustLogin::get_customer($CustomerID);
 		// Add the customerID and Type to customertype by sid
@@ -107,15 +107,15 @@ class ConnectNowController extends Controller {
 		$l2 = LangList::langIdByName($translationTo);
 		// Select chinese and mandarin languages ids in database
 		$chinese = LangList::selectChinese();
-		$mandarin=LangList::selectMandarin();
+		$mandarin = LangList::selectMandarin();
 		// If the first selected language is chinese change to mandarin as correct
-		$chid=$chinese["LangId"];
-		if($l1==$chid){
-			$l1=$mandarin["LangId"];
+		$chid = $chinese["LangId"];
+		if($l1 == $chid){
+			$l1 = $mandarin["LangId"];
 		}
-		// If the second select language is chinese change to mandrinn as selected
-		if($l2==$chid){
-			$l2=$mandarin["LangId"];
+		// If the second select language is chinese change to mandarin as selected
+		if($l2 == $chid){
+			$l2 = $mandarin["LangId"];
 		}
 		// Select the amount rate for the L1 & L2 pair language from database
 		$con = Connect::con();
@@ -141,11 +141,10 @@ class ConnectNowController extends Controller {
 			$row = mysqli_fetch_array($result1);
 			$queue = $row['PairID'];
 		} else if($flag == 0){
-			// TODO vrati da se nije mogao pronaći jezici
-			// $response = new Services_Twilio_Twiml;
-			// $response->say('The interpreting service is not available between the selected two language pairs at this time.');
-			// $response->hangup();
-			// print $response;
+			$response = new Services_Twilio_Twiml;
+			$response->say('The interpreting service is not available between the selected two language pairs at this time.');
+			$response->hangup();
+			return $response;
 		}
 		// If customers type is 2(invoice), then get the TwiML, pass customer, queue, from info
 		if($customer['Type'] == 2){ // Invoice
@@ -200,8 +199,11 @@ class ConnectNowController extends Controller {
 				$service->queue = $queue;
 				$service->render('./resources/views/twilio/connect/connectOut.php');
 			} else {
-				// Else get twiML that the card could not be preauthorized
-				$service->render('./resources/views/twilio/connect/cardNotAuth.php');
+				// Else return twiML that the card could not be preauthorized
+				$response = new Services_Twilio_Twiml;
+				$response->say('Your Credit Card could not be authorized. Please change your credit card information. Thank you for calling our phone interpreting line. Good bye.');
+				$response->hangup();
+				return $response;
 			}
 		}
 	}
@@ -218,15 +220,15 @@ class ConnectNowController extends Controller {
 		$customerType = $request->customerType;
 		$from = $request->from;
 		// If the first char is not +, add it
-		if($from[0]!='+'){
-			$number='+' . trim($from);
+		if($from[0] != '+'){
+			$number = '+' . trim($from);
 		}else{
 			$number = trim($from);
 		}
 		// Retrieve twilio parameters
 		$queueresult = $request->QueueResult;
-		$queuetime = $request->QueueTime;
-		// Find what happended
+		  $queuetime = $request->QueueTime;
+		// IF result is the user hangup in 55 sec
 		if($queuetime > 55 && $queueresult == "hangup"){
 			$queueresult = "Agent Unavailable";
 		}else if($queueresult == "hangup"){
@@ -234,7 +236,7 @@ class ConnectNowController extends Controller {
 		}
 		// Select the languages for the pairID
 		$con = Connect::con();
-		$result = mysqli_query($con,"SELECT L1,L2 FROM LangRate WHERE PairId='$langpair'");
+		$result = mysqli_query($con,"SELECT L1,L2 FROM LangRate WHERE PairId = '$langpair'");
 		$time = date("m/d/y G.i:s", time());
 		$timestamp = time();
 		// Retrieve the languages names
@@ -244,6 +246,7 @@ class ConnectNowController extends Controller {
 			$pair = trim($lang1['LangName'])."-".trim($lang2['LangName']);
 			$pair = trim($pair);
 		}
+		// If not successfull result, store in the database CallIdeintify
 		if($queueresult != 'bridged'){
 			$sid = $request->CallSid;
 		    $type = $customerType;
@@ -259,14 +262,17 @@ class ConnectNowController extends Controller {
 				$sendToEmail = "slavensakacic@gmail.com";
 				Mail::sendStaffMail($sendToEmail, "staffRegularFailed", $param);
 			} else if($server=="alliantranslate"){
+				//TODO FOR PRODUCTION
 				$sendToEmail = "slavensakacic@gmail.com";
-				//TODO PROD $callfailed1 = "orders@alliancebizsolutions.com";
+				//$sendToEmail = "orders@alliancebizsolutions.com";
 				Mail::sendStaffMailProduction($sendToEmail, "staffRegularFailed", $param);
 			}
-			mysqli_query($con,"INSERT INTO CallIdentify(Type, starttime, CustomerId, FromNumber, state, duration, PairId) values ('$type', '$timestamp', '$customerid', '$number', '$queueresult', '0', '$langpair')");
+			mysqli_query($con,"INSERT INTO CallIdentify(Type, starttime, CustomerId, FromNumber, state, duration, PairId) values ('$type', '$timestamp', '$CustomerID', '$number', '$queueresult', '0', '$langpair')");
 			ConnectNowFunctions::removeCustomerIdType($sid);
 		}
-		$service->render('./resources/views/twilio/connect/connectNowQueueCallback.php');
+		$response = new Services_Twilio_Twiml;
+		$response->hangup();
+		return $response;
 	}
 
 	/**
@@ -275,9 +281,12 @@ class ConnectNowController extends Controller {
 	 *
 	 */
 	public function waitForInterpreter($request, $response, $service, $app){
-		$pairid=$request->pairid;
-		$service->pairid = $pairid;
-		$service->render('./resources/views/twilio/connect/waitForInterpreter.php');
+		$pairid = $request->pairid;
+		$response = new Services_Twilio_Twiml;
+		$response->say("Please wait while we attempt to reach an interpreter for your call.");
+		$response->say("Please continue to wait while we find the first available interpreter.");
+		$response->redirect("https://alliantranslate.com/linguist/phoneapp/callout.php?pairid=$pairid");
+		return $response;
 	}
 
 		/**
@@ -286,50 +295,4 @@ class ConnectNowController extends Controller {
 	 *
 	 */
 
-	// public function addMember($request, $response, $service, $app){
-		// 	$phones = $request->phones;
-		// 	$http = new Services_Twilio_TinyHttp('https://api.twilio.com', array('curlopts' => array(CURLOPT_SSL_VERIFYPEER => false)));
-		// 	$version = '2010-04-01';
-		// 	$sid = getenv('S_TEST_TWILIO_SID');
-		// 	$token = getenv('S_TEST_TWILIO_TOKEN');
-		// 	$testPhone = getenv('S_TEST_TWILIO_NO_E_CONF_CALL');
-		// 	$client = new Services_Twilio($sid, $token, $version, $http);
-		// 	$twiml_url = 'https://a5c13bf3.ngrok.io/testgauss/addMemberOut';
-		// 	$call = $client->account->calls->create("+15005550006", "+14108675309", $twiml_url, array());
-		// 	return $call;
-	// }
-
-	/**
-	 *
-	 * Block comment
-	 *
-	 */
-	// public function gatherTest($request, $response, $service, $app) {
-		// 	$addPhone=$_REQUEST['Digits'];
-		// 	// $CustomerID = $request->CustomerID;
-		// 	// $from  = $request->from;
-		// 	// $queue = $request->id;
-		// 	$response = new Services_Twilio_Twiml;
-		// 	$response->say('The digits is' . $addPhone);
-		// 	return $response;
-		// 	// $customer = CustLogin::get_customer($CustomerID);
-		// 	// if(empty($addPhone)){
-		// 	// 	$response = new Services_Twilio_Twiml;
-		// 	// 	$response->say('Hello');
-		// 	// 	return $response;
-		// 	// } else {
-		// 	// 	$service->customer = $customer;
-		// 	// 	$service->from = $from;
-		// 	// 	$service->queue = $queue;
-		// 	// 	$service->render('./resources/views/twilio/connect/connectNowQueueCallback.php');
-		// 	// }
-	// }
-
-	/**
-	 *
-	 * Block comment
-	 *
-	 */
-	// public function addMemberOut($request, $response, $service, $app){
-	// }
 }

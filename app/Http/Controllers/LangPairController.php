@@ -2,17 +2,10 @@
 
 namespace Allian\Http\Controllers;
 
+use \Dotenv\Dotenv;
 use Allian\Models\LangList;
-use Allian\Models\LangPair;
 use Allian\Models\LangRate;
 use Allian\Models\LangPairTrans;
-use Firebase\JWT\JWT;
-use \Dotenv\Dotenv;
-use Firebase\JWT\ExpiredException;
-use Firebase\JWT\DomainException;
-use Firebase\JWT\BeforeValidException;
-use RNCryptor\Encryptor;
-use RNCryptor\Decryptor;
 
 class LangPairController extends Controller {
 
@@ -41,7 +34,7 @@ class LangPairController extends Controller {
         }
     	] }")
      */
-	public function langPairTrans($request, $response, $service, $app) { //CHECK
+	public function langPairTrans($request, $response, $service, $app) {
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -55,52 +48,41 @@ class LangPairController extends Controller {
 			if(!$validated){
 	     		return $response->json(array('data' => $this->errorJson("Authentication problems. CustomerID doesn't match that with token.")));
 			}
-			///TUUTUTUT
-
-			// list($all) = LangRate::retrieveAllLangRates();
-			// $d = array();
-			// $f = array();
-			// $new = array();
-			// $ddd = array();
-			// foreach($all as $l){
-			// 	$d[] = $l->getValueEncoded('L1');
-			// 	$new[] = LangList::get_language_name(trim($l->getValueEncoded('L1')));
-			// 	if($l->getValueEncoded('L1') == '68'){
-			// 		$ne[] = LangList::get_language_name($l->getValueEncoded('L2'));
-			// 	} else {
-			// 	$ddd[] = LangList::get_language_name($l->getValueEncoded('L2'));
-			// 	}
-			// }
-
-			// // $dd = array();
-			// // $o = array();
-			// // foreach($all as $l){
-			// // 	$dd[] = $l->getValueEncoded('L2');
-			// // 	$o[] = LangList::get_language_name($l->getValueEncoded('L2'));
-			// // }
-			// return $response->json(array("data" => $new));
-			// list($translationTo) = LangRate::realLangPairTrans();
-			// return $response->json(array("data" => $translationTo));
-			//TUUTUTU
-
-			// Retrieve all languages ASC order
-			list($listLanguages) = LangPairTrans::getLanguages();
-			// For every listed langauge retrieve there translationTo possible langauges.
-			$listing = array();
-			foreach($listLanguages as $p){
-				// Return a list of translationTo languages by the SELECT SQL value
-				list($translationTo) = LangPairTrans::retrieveLangPairTrans($p->getValueEncoded("LangId"));
-				// For every translationTo string, store the LangName gotten from SELECT SQL
-				// into a new array for creating a valid json response array.
-				$novi = array();
-				foreach($translationTo as $l){
-					// Retrieve the LangName's of all gotten languages translationTo, that lang supports
-					$novi[] = trim($l->getValueEncoded("LangName"));
+			list($language1) = LangRate::retrieveLangRateL1();
+			$transTo= array();
+			$returnArray = array();
+			foreach($language1 as $lang1){
+				list($language2) = LangRate::retrieveLangRateL2($lang1->getValueEncoded('L1'));
+				$transTo = array();
+				foreach($language2 as $lang2){
+					$transTo[] = trim(LangList::get_language_name($lang2->getValueEncoded('L2'), 'LangName'));
 				}
-				//Create a valid, and dev requested type of json response
-				$listing[] = array("lang" => trim($p->getValueEncoded("LangName")), "translationTo" => $novi);
+				$returnArray[] = array("lang" => trim($lang1->getValueEncoded('LangName')), "translationTo" => $transTo);
 			}
-			return $response->json(array("data" => $listing));
+			return $response->json(array("data" => $returnArray));
+		/* ==========================================================================
+		   OLD CODE
+		   ========================================================================== */
+			// // Retrieve all languages ASC order
+			// list($listLanguages) = LangPairTrans::getLanguages();
+			// // For every listed langauge retrieve there translationTo possible langauges.
+			// $listing = array();
+			// foreach($listLanguages as $p){
+			// 	// Return a list of translationTo languages by the SELECT SQL value
+			// 	list($translationTo) = LangPairTrans::retrieveLangPairTrans($p->getValueEncoded("LangId"));
+			// 	// For every translationTo string, store the LangName gotten from SELECT SQL into a new array for creating a valid json response array.
+			// 	$novi = array();
+			// 	foreach($translationTo as $l){
+			// 		// Retrieve the LangName's of all gotten languages translationTo, that lang supports
+			// 		$novi[] = trim($l->getValueEncoded("LangName"));
+			// 	}
+			// 	// Create a valid, and dev requested type of json response
+			// 	$listing[] = array("lang" => trim($p->getValueEncoded("LangName")), "translationTo" => $novi);
+			// }
+		 //   return $response->json(array("data" => $listing));
+		/* ==========================================================================
+		   END OF OLD CODE
+		   ========================================================================== */
 		} else {
 			return $response->json("No token provided.");
 		}

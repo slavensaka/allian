@@ -103,7 +103,6 @@ class TranslationOrders extends DataObject {
 	    	if(!$complete){
 	    		return false;
 	    	}
-
 	    	return $complete;
     	} catch(\Exception $e){
     		throw new \Exception("Problem with inserting order into translation order. Contact support.");

@@ -6,11 +6,6 @@ use Database\Connect;
 
 class ArrayValues {
 
-	/**
-	 *
-	 * Block comment
-	 *
-	 */
 	public static function timezonesTop(){
 		$timezones_array_top = array(
 			'US/Pacific' => "Pacific Time (UTC -8:00)",

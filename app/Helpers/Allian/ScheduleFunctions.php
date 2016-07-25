@@ -75,7 +75,7 @@ class ScheduleFunctions {
 
 	/**
 	 *
-	 * Block comment
+	 * Format the number from 30 to 30.00
 	 *
 	 */
 	public function amt_format($amt, $decimels = "2", $decimel_point = ".", $thousand_sep = "") {
@@ -85,7 +85,7 @@ class ScheduleFunctions {
 
 	/**
 	 *
-	 * INtepr durati $data['fromDate'] . 'T' . $sArray['assg_frm_st'], $data['fromDate'] . 'T' . $sArray['assg_frm_en'])
+	 * Interpreter duration $data['fromDate'] . 'T' . $sArray['assg_frm_st'], $data['fromDate'] . 'T' . $sArray['assg_frm_en'])
 	 *
 	 */
 	function telephonic_duration($frm_time, $to_time) {
@@ -99,7 +99,7 @@ class ScheduleFunctions {
 
 	/**
 	 *
-	 * Block comment
+	 * Get the assignment time
 	 *
 	 */
 	function get_assignment_time($actual_starting_time, $actual_ending_time = "") {
@@ -122,48 +122,6 @@ class ScheduleFunctions {
 
 	/**
 	 *
-	 * TODO
-	 *
-	 */
-	function getOrderSummaryHtml(){
-		$order_summary_html = "<tr><td colspan='2' ><h4 style='background-color:#f2f2f2; color:#333; padding:5px 5px; margin:10px 0;'> Price Summary </h4></td></tr>"; // DA
-        //$ret .= "<table cellspacing='2' >";
-        //$ret .= "<tr class='order_summary_added'><th><b>Daily Charges</b></th><th></th></tr>";
-        foreach ($price_det['daily'] as $line) {
-            $temp = explode("::", $line);
-            if ($temp[0] === "DAYS") {
-                $ret .= "<script>document.getElementById('total_price_head').innerHTML = 'Total Price for " . $temp[1] . "';</script>"; // NE
-            } elseif($temp[1] === ""){
-                $ret .= "<tr class='order_summary_added' >";
-                $ret .= "<td style='' colspan='2' class=' bold green'  >" . $temp[0] . "</td>";
-                $ret .= "</tr>"; // NE
-                $order_summary_html .= "<tr><td style='color:#111; font-weight:bold;  vertical-align:top; padding:5px 0;  font-size:11px; border-bottom: 1px dotted #ccc;'>" . $temp[0] . "</td><td style='color:#111; font-weight:bold;  vertical-align:top; padding:5px 0;  font-size:11px; border-bottom: 1px dotted #ccc;'>" . $temp[1] . "</td></tr>";
-
-            } else {
-                $ret .= "<tr class='order_summary_added' >";
-                $ret .= "<td class='first bold'  >" . $temp[0] . "</td><td class='bold'>" . $temp[1] . "</td>";
-                $ret .= "</tr>";
-                $order_summary_html .= "<tr><td style='color:#111; font-weight:bold;  vertical-align:top; padding:5px 0;  font-size:11px; border-bottom: 1px dotted #ccc;'>" . $temp[0] . "</td><td style='color:#111; font-weight:bold;  vertical-align:top; padding:5px 0;  font-size:11px; border-bottom: 1px dotted #ccc;'>" . $temp[1] . "</td></tr>";
-            }
-        }
-        $foot_td_style = "style='color: darkgreen; font-weight:bold; font-size:14px;   margin: 5px 0; border-bottom:2px solid #ccc; padding: 5px 0'";
-        $data['calculate_mode'] = '';
-        $price = calculate_price($data);
-        //$price = $_SESSION["amount"];
-        // $days = $data['headsets_needed']
-		if($data['scheduling_type'] == 'conference_call' || $data['scheduling_type'] == 'get_call' ){ // DA
-		        $order_summary_html .= "<tr style='background:#FFFFDD;'><td  $foot_td_style>" . ucwords("subtotal") . " </td><td  $foot_td_style>$$price</td></tr>";
-		}else{
-		        $order_summary_html .= "<tr style='background:#FFFFDD;'><td  $foot_td_style>" . ucwords("subtotal for " . $temp[1]) . " </td><td  $foot_td_style>$$price</td></tr>";
-		}
-		        $debug = "<table>";
-		        $debug .= $order_summary_html;
-		        $debug .= "</table>";
-		        //send_notification("Debugging $price", $debug."<br>".print_r($price_det,true), "goharulzaman@yahoo.com");
-	}
-
-	/**
-	 *
 	 * order_telephonic_notification function is responsible for sending notification to admin, to linguists and to
 	 * customer who placed telephonic interpreting orders.
 	 * @Param  $con: Required to create database connection. Required argument.
@@ -176,15 +134,11 @@ class ScheduleFunctions {
 	    $CustID = $CustomerID;
 	    $customer = CustLogin::getCustomer($CustID);
 	    // Get the discount calculated in a previous processing
-	    $Order_Discount = TranslationOrders::getTranslationOrder($order_id, "discount"); //TODO ŠTA SA OVIM
-	    // $additional_fee = ($_SESSION["admin-order"] && isset($_SESSION['admin_logged']) && isset($_SESSION["Fee"])) ? $_SESSION["Fee"] : 0; // TODO DISCOUNT FOR ADMIN AND OTHERS additional fee added by admin, NE KORISTE
-	    // $additional_fee_desc = ($_SESSION["admin-order"] && isset($_SESSION['admin_logged']) && isset($_SESSION["Fee_Desc"])) ? $_SESSION["Fee_Desc"] : ""; // TODO DISCOUNT FOR ADMIN AND OTHERS additional fee description NE KORISTE
-	    $order_summary_html = (isset($_SESSION["order_summary_html"])) ? mysqli_real_escape_string($con, $_SESSION["order_summary_html"]) : ""; // TODO
-
-	     	// self::getOrderSummaryHtml();
-
-
-	    $Interpreter_Discount = self::calc_interpreter_compensation($order_id, $Order_Discount); // TODO
+	    $Order_Discount = TranslationOrders::getTranslationOrder($order_id, "discount");
+	    // $additional_fee = ($_SESSION["admin-order"] && isset($_SESSION['admin_logged']) && isset($_SESSION["Fee"])) ? $_SESSION["Fee"] : 0; //  DISCOUNT FOR ADMIN AND OTHERS additional fee added by admin, NE KORISTE
+	    // $additional_fee_desc = ($_SESSION["admin-order"] && isset($_SESSION['admin_logged']) && isset($_SESSION["Fee_Desc"])) ? $_SESSION["Fee_Desc"] : ""; //  DISCOUNT FOR ADMIN AND OTHERS additional fee description NE KORISTE
+	    $order_summary_html = (isset($_SESSION["order_summary_html"])) ? mysqli_real_escape_string($con, $_SESSION["order_summary_html"]) : ""; //
+	    $Interpreter_Discount = self::calc_interpreter_compensation($order_id, $Order_Discount);
 	    $additional_compensation = self::calc_interpreter_compensation($order_id, $additional_fee); // NE KORISTE
 	    $get_interpreter_query = "select * from order_onsite_interpreter where orderID='$order_id'";
 	    $result = mysqli_query($con, $get_interpreter_query);
@@ -295,24 +249,25 @@ class ScheduleFunctions {
 	        }
 	        // TODO FOR PRODUCTION
 	        // $to = "lalbescu@alliancebizsolutions.com,alen.brcic@alliancebizsolutions.com,ialbescu@alliancebizsolutions.com";
-	        // FOR LOCALHOST
         	$to = "slavensakacic@gmail.com";
 	        Mail::send_notification("Resources for Project ($fromDate / Telephonic)", $interpreter_details, $to);
 	        $email = $CustEmail;
 	        $email_body = self::order_onsite_template($order_id, "login");
-	        // TODO FOR PRODUCTION
-        	// Mail::send_notification("Receipt for Telephonic Interpreter ID $order_id", $email_body, $email);
-        	// FOR LOCALHOST
-        	Mail::send_notification("Receipt for Telephonic Interpreter ID $order_id", $email_body, "slavensakacic@gmail.com");
+	        if($email_body){
+	        	// TODO FOR PRODUCTION
+        		// Mail::send_notification("Receipt for Telephonic Interpreter ID $order_id", $email_body, $email);
+        		Mail::send_notification("Receipt for Telephonic Interpreter ID $order_id", $email_body, "slavensakacic@gmail.com");
+	        }
 	        $email_body_admin = self::order_onsite_template($order_id, "admin");
-	        $name = $customer->getValueEncoded('FName') . ' ' .  $customer->getValueEncoded('LName');
-	        $from = $name . "<orders@alliancebizsolutions.com>";
-	        $reply_to = $email;
-	        // TODO FOR PROCUTION
-	        // $to = "orders@alliancebizsolutions.com,iorders@alliancebizsolutions.com,support@alliancebizsolutions.com,support2@alliancebizsolutions.com";
-	        // FOR LOCALHOST
-	        $to = "slavensakacic@gmail.com";
-	        Mail::send_notification("ORDER - Telephonic Interpreter (PAID)", $email_body_admin, $to, $from, $reply_to);
+	        if($email_body_admin){
+		        $name = $customer->getValueEncoded('FName') . ' ' .  $customer->getValueEncoded('LName');
+		        $from = $name . "<orders@alliancebizsolutions.com>";
+		        $reply_to = $email;
+		        // TODO FOR PROCUTION
+		        // $to = "orders@alliancebizsolutions.com,iorders@alliancebizsolutions.com,support@alliancebizsolutions.com,support2@alliancebizsolutions.com";
+		        $to = "slavensakacic@gmail.com";
+		        Mail::send_notification("ORDER - Telephonic Interpreter (PAID)", $email_body_admin, $to, $from, $reply_to);
+		    }
 	        if ($order["scheduling_type"] == "conference_call") {
        			return $conf['user_code'];
        		} elseif ($order["scheduling_type"] == "get_call"){
@@ -370,7 +325,6 @@ class ScheduleFunctions {
 	    	$order_detail = TranslationOrders::getTranslationOrder($order_id, "*");
 		    $conference = ConferenceSchedule::get_conference($order_id, "*");
 		    $customer_id = $order_detail["user_id"];
-		    // TODO pay_overage.php, linguist\clientportal\clientportal.php 1018, 230 on edit_onsite_order_details.php
 		    $overage_charge = self::amt_format($interpret_order["overage_charge"]);
 		    $overage_status = $interpret_order["overage_status"]; // UVIJEK JE UNPAID?
 		    $overage_payment_id = $interpret_order["overage_payment_id"];
@@ -396,7 +350,6 @@ class ScheduleFunctions {
 		    $total_units = $row["total_units"];
 		    $total_price = $row["total_price"];
 		    $stripe_id = $row["stripe_id"];
-		    // TODO  Invoice se postavi na website-u, pa treba provjerit prije svega ovog jel account invoice
 		    $is_invoiced = ($stripe_id === "invoice") ? true : false;
 		    $status = $row["status"];
 		    switch ($status) {
@@ -683,7 +636,7 @@ class ScheduleFunctions {
 	    	return $body;
 	    } else{ // order_id was greater than 0 or not equal to "0"
 	        // if order_id was zero then do not display email contents
-	        return "Order not found.";// TODO return false;
+	        return false;
 	    }
 	}
 

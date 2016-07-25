@@ -140,6 +140,12 @@ class OrderOnsiteInterpreter extends DataObject {
 	    }
   	}
 
+  	/**
+  	 *
+  	 * Get a specific order and specific value or all(*),
+  	 * where orderID is.
+  	 *
+  	 */
   	function get_interpret_order($order_id, $get_value) {
   		$con = Connect::con();
 	    $get_values = (is_array($get_value)) ? implode(",", $get_value) : $get_value;
@@ -152,7 +158,12 @@ class OrderOnsiteInterpreter extends DataObject {
 	    }
 	}
 
-	public static function getOrderOnsiteInterpreters($CustomerID){ // Limit where scheduling_type = getcall ili conferenceCall
+	/**
+	 *
+	 * Get orders by CustomerID only that are get_call or conference_call
+	 *
+	 */
+	public static function getOrderOnsiteInterpreters($CustomerID){
 		$con = Connect::con();
 		$project_query =  "SELECT * FROM " . getenv("TBL_ORDER_ONSITE_INTERPRETER") . " WHERE customer_id='$CustomerID' AND  (`scheduling_type` = 'get_call' OR  `scheduling_type` =  'conference_call') ORDER BY `orderID` DESC";
 		$result = mysqli_query($con, $project_query);

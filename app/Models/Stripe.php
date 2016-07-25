@@ -21,8 +21,7 @@ class Stripe extends DataObject {
   				return false;
   			}
 	    } catch (\PDOException $e) {
-	      parent::disconnect( $conn );
-	      // return $e->getMessage();
+	      parent::disconnect($conn);
 	      return false;
 	      exit;
 	    }

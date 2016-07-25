@@ -4,7 +4,7 @@ namespace Allian\Helpers\Allian;
 
 use \Dotenv\Dotenv;
 
-class ConnectNowFunctions extends Controller {
+class ConnectNowFunctions {
 
 	/**
 	 * Used to put CallSid.txt /customertype so the interpreter can

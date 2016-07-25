@@ -11,25 +11,23 @@ class LogEntry extends DataObject {
     "lastAccess" => ""
   );
 
-  public static function getLogEntries( $memberId ) {
+  public static function getLogEntries($memberId) {
     $conn = parent::connect();
     $sql = "SELECT * FROM " . TBL_ACCESS_LOG . " WHERE memberId = :memberId ORDER BY lastAccess DESC";
 
     try {
-      $st = $conn->prepare( $sql );
-      $st->bindValue( ":memberId", $memberId, PDO::PARAM_INT );
+      $st = $conn->prepare($sql);
+      $st->bindValue(":memberId", $memberId, PDO::PARAM_INT);
       $st->execute();
       $logEntries = array();
-      foreach ( $st->fetchAll() as $row ) {
-        $logEntries[] = new LogEntry( $row );
+      foreach ($st->fetchAll() as $row){
+        $logEntries[] = new LogEntry($row);
       }
-      parent::disconnect( $conn );
+      parent::disconnect($conn);
       return $logEntries;
-    } catch ( PDOException $e ) {
-      parent::disconnect( $conn );
-      die( "Query failed: " . $e->getMessage() );
+    } catch (PDOException$e){
+      parent::disconnect($conn);
+      die("Query failed: " . $e->getMessage());
     }
   }
 }
-
-?>

@@ -453,11 +453,13 @@ class ConferenceScheduleController extends Controller {
 			$retArray['confEnds'] = $data['fromDate'] . ' ' . $data['timeEnds'];
 			if($data['schedulingType'] == 'conference_call'){
 				$retArray['confCode'] = "$user_code";
+				// TODO FOR PRODUCTION
+				$retArray['confDialNumber'] = getenv('S_TEST_TWILIO_NO_E_CONF_CALL');
 			} else if($data['schedulingType'] == 'get_call'){
 				$retArray['confCode'] = null;
+				$retArray['confDialNumber'] = $sArray['onsite_con_phone']; // Broj korisnika koji je unio
 			}
-			// TODO FOR PRODUCTION
-			$retArray['confDialNumber'] = getenv('S_TEST_TWILIO_NO_E_CONF_CALL');
+
 		/* ==========================================================================
 		   End Response Array
 		   ========================================================================== */

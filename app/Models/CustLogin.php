@@ -480,7 +480,7 @@ class CustLogin extends DataObject {
 
   	/**
   	 *
-  	 * Block comment
+  	 * Store the deviceToken in the database
   	 *
   	 */
   	public static function setDeviceToken($deviceToken, $CustomerID){
