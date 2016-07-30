@@ -33,6 +33,9 @@ $dbnameDev = "allian10_abs_linguist_portal";
 // }
 
 
+
+$payload = json_encode($body);
+echo $payload;
 /* FORMAT PHONE */
 // $formated = preg_replace("/[^0-9]/","", $customer['Phone']);
 // $userPhone = $formated;

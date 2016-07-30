@@ -355,7 +355,7 @@ class CustLoginController extends Controller {
 			$service->validate($data['lname'], 'Error: no last name is present.')->isLen(3,200);
 			$service->validate($data['email'], 'Invalid email address.')->isLen(3,200)->isEmail();
 			$service->validate($data['phone'], 'Invalid phone number.')->isLen(3,200);
-			$service->validate($data['password'], 'Error: no password present.')->isLen(3,200);
+			// $service->validate($data['password'], 'Error: no password present.')->isLen(3,200);
 			$service->validate($data['phonePassword'], 'Error: no phone password present.')->isLen(3,200)->isInt();
 			$service->validate($data['services'], 'Error: no service present.');
 			// Validate token in database for customer stored
@@ -685,7 +685,7 @@ class CustLoginController extends Controller {
 			// Error if validation of jwt token
 			if(!$validated){
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
-	     		return $response->json(array('data' => $base64Encrypted));
+	 		 	return $response->json(array('data' => $base64Encrypted));
 			}
 			// If flag 1, user wants to be logged in forever
 			if($data['keepLoggedIn']){
@@ -726,6 +726,8 @@ class CustLoginController extends Controller {
 				$base64Encrypted = $this->encryptValues(json_encode($jsonArray));
 				return $response->json(array('token' => $genToken, 'data' => $base64Encrypted));
 			}
+
+
 		} else {
 			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
      		return $response->json(array('data' => $base64Encrypted));

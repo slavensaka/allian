@@ -12,11 +12,11 @@ class PushNotification extends Controller {
 	 * Used to send push notifications
 	 *
 	 */
-	public static function push($deviceToken = null, $message, $production = false){
+	public static function push($deviceToken = null, $message, $orderID, $production = false){
 		if($production){
-			$gateway = 'gateway.push.apple.com:2195';
+			$gateway = 'ssl://gateway.push.apple.com:2195';
 		} else {
-			$gateway = 'gateway.sandbox.push.apple.com:2195';
+			$gateway = 'ssl://gateway.sandbox.push.apple.com:2195';
 		}
 		if($deviceToken == null){
 			exit();
@@ -26,19 +26,18 @@ class PushNotification extends Controller {
 		// Put your alert message here:
 		$ctx = stream_context_create();
 		if($production){
-			stream_context_set_option($ctx, 'ssl', 'local_cert', 'allianpushcertifikatprod.pem');
+			stream_context_set_option($ctx, 'ssl', 'local_cert', 'app/Http/Controllers/allianpushcertifikatprod.pem');
 		} else {
-			stream_context_set_option($ctx, 'ssl', 'local_cert', 'allianpushcertfikat.pem');
+			stream_context_set_option($ctx, 'ssl', 'local_cert', 'app/Http/Controllers/allianpushcertfikat.pem');
 		}
 		stream_context_set_option($ctx, 'ssl', 'passphrase', $passphrase);
 		// Open a connection to the APNS server
 		$fp = stream_socket_client($gateway, $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
 		if(!$fp){
 			exit();
-			// exit("Failed to connect: $err $errstr" . PHP_EOL);
 		}
 		// Create the payload body
-		$body['aps'] = array('alert' => $message, 'sound' => 'default', 'badge' => 1);
+		$body = array('aps' => array('alert' => $message, 'sound' => 'default', 'badge' => 1 ), 'orderID' => $orderID);
 		// Encode the payload as JSON
 		$payload = json_encode($body);
 		// Build the binary notification
@@ -59,26 +58,32 @@ class PushNotification extends Controller {
 	 * Test the push notification to mobile
 	 *
 	 */
-	public static function testPush($deviceToken, $production = false){
+	public static function testPush($production = false){
 		if($production){
-			$gateway = 'gateway.push.apple.com:2195';
+			$gateway = 'ssl://gateway.push.apple.com:2195';
 		} else {
 			$gateway = 'gateway.sandbox.push.apple.com:2195';
 		}
 		// Put your private key's passphrase here:
 		$passphrase = getenv('PUSH_PASS_PHRASE');
 		// Put your alert message here:
-		$message = 'Push notifikacija za Allian Translate, slat će se preko server cronjob-a, 10 minuta prije nego je dano od scheduled session od korisnika ap-a nepočne, kao upozorenje korisniku da se pripremi.';
+		$message = 'JAVIT MI AKO RADI Push notifikacija za Allian Translate,TESTER.';
+		$orderID = '5153';
+		$deviceToken = 'e7eb3a21d06a275337a45d367cd367b519fca6483c2168a5a8b201a5db91345e';
 		////////////////////////////////////////////////////////////////////////////////
 		$ctx = stream_context_create();
-		stream_context_set_option($ctx, 'ssl', 'local_cert', 'allianpushcertfikat.pem');
+
+				stream_context_set_option($ctx, 'ssl', 'local_cert', $_SERVER['DOCUMENT_ROOT'] . 'testgauss/app/Helpers/Push/allianpushcertfikat.pem');
 		stream_context_set_option($ctx, 'ssl', 'passphrase', $passphrase);
-		$fp = stream_socket_client($gateway, $err,$errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
+		stream_context_set_option($ctx, 'ssl', 'cafile', 'aps_development.cer');
+		$fp = stream_socket_client('sslv2://gateway.sandbox.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
+		// $fp = stream_socket_client($gateway, $err,$errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
 		if(!$fp){
 			exit("Failed to connect: $err $errstr" . PHP_EOL);
 		}
 		// Create the payload body
-		$body['aps'] = array('alert' => $message, 'sound' => 'default', 'badge' => 1);
+		// $body['aps'] = array('alert' => $message, 'sound' => 'default', 'badge' => 1);
+		$body = array('aps' => array('alert' => $message, 'sound' => 'default', 'badge' => 1 ), 'orderID' => $orderID);
 		// Encode the payload as JSON
 		$payload = json_encode($body);
 		// Build the binary notification

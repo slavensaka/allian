@@ -112,7 +112,8 @@ class OrderOnsiteInterpreterController extends Controller {
 	    'langFrom': 'Spanish',
 	    'langTo': 'English',
 	    'status': '1',
-	    'orderId': '5267'
+	    'orderId': '5267',
+	    'userMessage': 'Scheduled Session'
 	  } }")
      */
 	public function scheduledSessionsDetails($request, $response, $service, $app) { // DONT CHANGE
@@ -242,11 +243,16 @@ class OrderOnsiteInterpreterController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
-	     		return $response->json(array('data' => $base64Encrypted));
+		 	 	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
+		 	   	return $response->json(array('data' => $base64Encrypted));
 			}
-			$customer = CustLogin::get_customer($data['CustomerID']);
-			$result = PushNotification::testPush($customer['deviceToken']);
+			/*======  Seeds  ======*/
+			// $deviceToken = '1095b49dcdbc6632049888d598ee6a301c2175ca238569fb4b6cb2255310a527';
+			$deviceToken = '1095b49dcdbc66320';
+			$message = "AKO DOBIJEŠ OVO PORUKU MOLIM TE SAMO MI JAVI NA GAUSS CHAT-U. HVALA! SLAVEN. Your scheduled conference call is about to start in 5 minutes. Translation: English <> Arabic. On date: 31.12.2017. Cost: 100$.";
+			$orderID = "5153";
+			/*=====  End of Seeds  ======*/
+			$result = PushNotification::push($deviceToken, $message, $orderID, false);
 			if(!$result){
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Problem sending push notification to device.")));
 	     		return $response->json(array('data' => $base64Encrypted));
@@ -271,13 +277,13 @@ class OrderOnsiteInterpreterController extends Controller {
 
      */
 	public function gaussAppScheduleCronJob($request, $response, $service, $app){
-		$query = "SELECT orderID, scheduling_type, frm_lang, to_lang, customer_id, amount, onsite_con_phone, assg_frm_date, assg_frm_st, timezone FROM `order_onsite_interpreter` WHERE scheduling_type IN ('conference_call', 'get_call') AND push_notification_sent = 0 AND is_phone = 1 AND DATE_FORMAT(FROM_UNIXTIME(assg_frm_timestamp), '%Y-%c-%d %T:%f') BETWEEN TIMESTAMP(DATE_SUB(NOW(), INTERVAL 50 MINUTE)) AND TIMESTAMP(NOW())";
+		$query = "SELECT orderID, scheduling_type, frm_lang, to_lang, customer_id, amount, onsite_con_phone, assg_frm_date, assg_frm_st, timezone FROM `order_onsite_interpreter` WHERE scheduling_type IN ('conference_call', 'get_call') AND push_notification_sent =0 AND is_phone =1 AND DATE_SUB(CONVERT_TZ(DATE_FORMAT(FROM_UNIXTIME(assg_frm_timestamp), '%Y-%c-%d %T:%f'), '+7:00', '-0:00'),INTERVAL 5 MINUTE) BETWEEN CONVERT_TZ(DATE_SUB(NOW(), INTERVAL 5 MINUTE), '-7:00', '-0:00') AND CONVERT_TZ(NOW(), '-7:00', '-0:00')";
 
 		$con = Connect::con();
 		$query_result = mysqli_query($con, $query);
 
 		while ($rows = mysqli_fetch_assoc($query_result)) {
-			$orderID = $rows["orderID"];
+			return $orderID = $rows["orderID"];
 		    $scheduling_type = $rows["scheduling_type"];
 		    $frm_lang = LangList::get_language_name($rows['frm_lang'], 'LangName');
 		    $to_lang = LangList::get_language_name($rows['to_lang'], 'LangName');
@@ -294,8 +300,8 @@ class OrderOnsiteInterpreterController extends Controller {
 			}
 		    $customer = CustLogin::get_customer($CustomerID);
 		    mysqli_query($con, "UPDATE `order_onsite_interpreter` SET push_notification_sent = 1 WHERE orderID = $orderID");
-		    PushNotification::push($customer['deviceToken'], $message, false);
-		    // PushNotification::push($customer['deviceToken'], $message, true); //TODO FOR PRODUCTION
+		    PushNotification::push($customer['deviceToken'], $message, $orderID, false);
+		    // PushNotification::push($customer['deviceToken'], $message, $orderID, true); //TODO FOR PRODUCTION
 		}
 	}
 

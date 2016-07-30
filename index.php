@@ -115,6 +115,7 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('POST', '/connectOut', array($connectNow, 'connectOut'));
 	$klein->respond('POST', '/waitForInterpreter', array($connectNow, 'waitForInterpreter'));
 	$klein->respond('POST', '/connectNowQueueCallback', array($connectNow, 'connectNowQueueCallback'));
+	$klein->respond('POST', '/addNewMemberConnectNow', array($connectNow, 'addNewMemberConnectNow'));
 
 	$developer = new DeveloperController();
 	$klein->respond('GET', '/renderdocs', array($developer, 'renderDocs'));

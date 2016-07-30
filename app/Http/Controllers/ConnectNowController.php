@@ -276,6 +276,62 @@ class ConnectNowController extends Controller {
 	}
 
 	/**
+     * @ApiDescription(section="AddNewMemberConnectNow", description="Add new member when a ina connect now call.")
+     * @ApiMethod(type="post")
+     * @ApiRoute(name="/testgauss/addNewMemberConnectNow")
+     * @ApiBody(sample="{'data': {
+    	'CustomerID': '800',
+    	 'phones': ['+123456788', '+5454534534']
+  		},
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUyODA1MDIsImp0aSI6IlVheUZlOUJTcEE5empHWUNneVpnNTJEVFYzRXZ4NFE5YXNKdTQ4MHdEY289IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY1MjgwNTAyLCJleHAiOjE0NjY0OTAxMDIsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.qkGUG0WdaW_Q1aysAgfaEC5300Hk4X9VFEZRGsTOxE4X-P27EdCEfAnDPY0SaXD_VfsHiVYaGwwKxO-Bz0N8Yg'}")
+     @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
+     @ApiParams(name="data", type="string", nullable=false, description="Encrypted customers email & password as json used for authentication.")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     * @ApiReturn(type="string", sample="{
+     *  'data': {
+	    'status': 1,
+	    'userMessage': 'Added New Member.'
+
+	  	}
+     * }")
+     */
+	public function addNewMemberConnectNow($request, $response, $service, $app){
+		// Todo dodati column za restrikciju
+		// Decrypt data
+		$data = $this->decryptValues($request->data);
+		// Validate CustomerId
+		$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+		$service->validate($data['phones'], 'Error: No phones array is present.')->notNull();
+
+		$customer_id = $data['CustomerID'];
+		$phones = $data['phones'];
+		$query = "SELECT orderID FROM `order_onsite_interpreter` WHERE assg_frm_date = CURDATE() AND customer_id = $customer_id ORDER BY autoID DESC LIMIT 1";
+		$con = Connect::con();
+		$query_result = mysqli_query($con, $query);
+		$row = mysqli_fetch_array($query_result);
+		$conf_queue = $row['orderID'];
+
+		$queue = ConferenceSchedule::get_conference($conf_queue, 'user_code');
+
+		$http = new Services_Twilio_TinyHttp('https://api.twilio.com', array('curlopts' => array(CURLOPT_SSL_VERIFYPEER => false)));
+		$version = '2010-04-01';
+		$sid = getenv('S_TEST_TWILIO_SID');
+		$token = getenv('S_TEST_TWILIO_TOKEN');
+		$client = new Services_Twilio($sid, $token, $version, $http);
+		$url = "https://254ce9ba.ngrok.io/testgauss/addNewMemberOut?vcode=$queue";
+		foreach($phones as $phone){
+			// TODO FOR PRODUCTION
+			// $call = $client->account->calls->create("+15005550006", $phone, $url, array());
+			$call = $client->account->calls->create("+15005550006", "+14108675309", $url, array());
+		}
+		$rArray['status'] = 1;
+		$rArray['userMessage'] = 'Added new Member';
+		$base64Encrypted = $this->encryptValues(json_encode($rArray));
+     	return $response->json(array('data' => $base64Encrypted));
+	}
+
+
+	/**
 	 *
 	 * Block comment
 	 *

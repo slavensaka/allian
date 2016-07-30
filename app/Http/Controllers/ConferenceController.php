@@ -121,6 +121,7 @@ class ConferenceController extends Controller {
      * }")
      */
 	public function addNewMember($request, $response, $service, $app){
+			// Todo dodati column za restrikciju
 			// Decrypt data
 			$data = $this->decryptValues($request->data);
 			// Validate CustomerId
