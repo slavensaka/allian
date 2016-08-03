@@ -12,32 +12,32 @@ class PushNotification extends Controller {
 	 * Used to send push notifications
 	 *
 	 */
-	public static function push($deviceToken = null, $message, $orderID, $production = false){
-		if($production){
-			$gateway = 'ssl://gateway.push.apple.com:2195';
-		} else {
-			$gateway = 'ssl://gateway.sandbox.push.apple.com:2195';
-		}
+	public static function push($deviceToken = null, $message, $orderID, $twilioToken, $production = false){
+		// if($production){
+		// 	$gateway = 'ssl://gateway.push.apple.com:2195';
+		// } else {
+		// 	$gateway = '';
+		// }
 		if($deviceToken == null){
 			exit();
 		}
 		// The private key's passphrase
-		$passphrase = getenv('PUSH_PASS_PHRASE');
+		$passphrase = 'at123';
 		// Put your alert message here:
 		$ctx = stream_context_create();
-		if($production){
-			stream_context_set_option($ctx, 'ssl', 'local_cert', 'app/Http/Controllers/allianpushcertifikatprod.pem');
-		} else {
-			stream_context_set_option($ctx, 'ssl', 'local_cert', 'app/Http/Controllers/allianpushcertfikat.pem');
-		}
+		// if($production){
+		// 	stream_context_set_option($ctx, 'ssl', 'local_cert', 'app/Helpers/Push/allianpushcertifikatprod.pem');
+		// } else {
+			stream_context_set_option($ctx, 'ssl', 'local_cert', 'app/Helpers/Push/allianpushcertfikat.pem');
+		// }
 		stream_context_set_option($ctx, 'ssl', 'passphrase', $passphrase);
 		// Open a connection to the APNS server
-		$fp = stream_socket_client($gateway, $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
+		$fp = stream_socket_client('ssl://gateway.sandbox.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
 		if(!$fp){
 			exit();
 		}
 		// Create the payload body
-		$body = array('aps' => array('alert' => $message, 'sound' => 'default', 'badge' => 1 ), 'orderID' => $orderID);
+		$body = array('aps' => array('alert' => $message, 'sound' => 'default', 'badge' => 1 ), 'orderID' => $orderID, 'twilioToken' => $twilioToken);
 		// Encode the payload as JSON
 		$payload = json_encode($body);
 		// Build the binary notification

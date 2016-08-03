@@ -341,7 +341,7 @@ class ConferenceScheduleController extends Controller {
 			// Format date with timeStarts with the timezone
 			$frmT = new \DateTime($data['fromDate'] . ' ' . $data['timeStarts'], new \DateTimeZone($data['timezone']));
 			$sArray = array();
-			$sArray['assg_real_timestamp'] = $frmT->getTimestamp() + $frmT->getOffset(); // TODO See if correct time is used for
+			// $sArray['assg_real_timestamp'] = $frmT->getTimestamp() + $frmT->getOffset();
 			$sArray['is_phone'] = 1; // GAUSS ADDED FOR PUSH NOTIF
 			$frmT->setTimezone(new \DateTimeZone('GMT'));
 			// Format date with timeEnds with the timezone
@@ -394,9 +394,10 @@ class ConferenceScheduleController extends Controller {
 				$sArray['amount'] = $amount - $discount;
 			}
 			// Insert into order_onsite_interpreter values sArray-a
-			$onsiteAutoId = OrderOnsiteInterpreter::insertScheduleOrder($sArray);
+			 $onsiteAutoId = OrderOnsiteInterpreter::insertScheduleOrder($sArray);
+			 // return $response->json($onsiteAutoId);
 			if(!$onsiteAutoId){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Telephonic order not scheduled. Contact Support. EMAIL: " . getenv('SUPPORT_HOME'))));
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Telephonic order not scheduled. Contact Support. EMAIL: " . getenv('CS_EMAIL'))));
 				return $response->json(array('data' => $base64Encrypted));
 			}
 			// Insert into translation_order values
@@ -433,7 +434,7 @@ class ConferenceScheduleController extends Controller {
 				// non
 			}
 	    	if(!$complete){
-	    		$errorJson = $this->encryptValues(json_encode($this->errorJson("We encountered problem while charging your account. Please contact support: " . getenv('SUPPORT_HOME'))));
+	    		$errorJson = $this->encryptValues(json_encode($this->errorJson("We encountered problem while charging your account. Please contact support: " . getenv('CS_EMAIL'))));
 	 			return $response->json(array('data' => $errorJson));
 	    	}
 	    	// Main method with processing the order after inserting
@@ -453,8 +454,8 @@ class ConferenceScheduleController extends Controller {
 			$retArray['confEnds'] = $data['fromDate'] . ' ' . $data['timeEnds'];
 			if($data['schedulingType'] == 'conference_call'){
 				$retArray['confCode'] = "$user_code";
-				// TODO FOR PRODUCTION
-				$retArray['confDialNumber'] = getenv('S_TEST_TWILIO_NO_E_CONF_CALL');
+				// TODO FOR PRODUCTION DONE OVAJ BROJ NIJE KORISTAN BRISAT
+				$retArray['confDialNumber'] = getenv('CONFERENECE_OUT');
 			} else if($data['schedulingType'] == 'get_call'){
 				$retArray['confCode'] = null;
 				$retArray['confDialNumber'] = $sArray['onsite_con_phone']; // Broj korisnika koji je unio

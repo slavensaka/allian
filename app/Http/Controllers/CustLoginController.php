@@ -36,7 +36,7 @@ class CustLoginController extends Controller {
   			}
 		}")
     */
-	public function postLogin($request, $response, $service, $app) { // DONT CHANGE
+	public function postLogin($request, $response, $service, $app) {
 		//Decrypt input data
 		$data = $this->decryptValues($request->data);
 		// Validate input data

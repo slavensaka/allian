@@ -8,6 +8,7 @@ use Database\Connect;
 use Allian\Models\LangList;
 use Allian\Models\CustLogin;
 use Allian\Helpers\Push\PushNotification;
+use Allian\Helpers\TwilioConference\ConferenceFunctions;
 
 class OrderOnsiteInterpreterController extends Controller {
 
@@ -42,30 +43,31 @@ class OrderOnsiteInterpreterController extends Controller {
 	    ]
 		} }")
      */
-	public function scheduledSessions($request, $response, $service, $app) { // DONT CHANGE
-		if($request->token){
-			// Validate token if not expired, or tampered with
-			$this->validateToken($request->token);
-			// Decrypt data
+	public function scheduledSessions($request, $response, $service, $app) {
+		// if($request->token){
+		// 	// Validate token if not expired, or tampered with
+		// 	$this->validateToken($request->token);
+		// 	// Decrypt data
 			$data = $this->decryptValues($request->data);
-			// Validate CustomerId
-			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
-			// Validate token in database for customer stored
-			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
-			// If error validating token in database
-			if(!$validated){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
-	     		return $response->json(array('data' => $base64Encrypted));
-			}
+		// 	// Validate CustomerId
+		// 	$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+		// 	// Validate token in database for customer stored
+		// 	$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
+		// 	// If error validating token in database
+		// 	if(!$validated){
+		// 		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
+	 //     		return $response->json(array('data' => $base64Encrypted));
+		// 	}
 			$result = OrderOnsiteInterpreter::getOrderOnsiteInterpreters($data['CustomerID']);
+
 			$arr = array();
 			while ($row = mysqli_fetch_array($result)) {
 				if($row['scheduling_type'] == 'get_call'){
-					$date = date("j F Y", strtotime($row['assg_frm_date']));
+					$date = date('m.d.Y', strtotime($row['assg_frm_date']));
 					$schedulingType = 'Interpreters call';
 					$orderId = $row['orderID'];
 				} elseif($row['scheduling_type'] == 'conference_call'){
-					$date = date("j F Y", strtotime($row['assg_frm_date']));
+					$date = date('m.d.Y', strtotime($row['assg_frm_date']));
 					$schedulingType = 'Conference Call';
 					$orderId = $row['orderID'];
 				} else {
@@ -82,13 +84,14 @@ class OrderOnsiteInterpreterController extends Controller {
 				$arr[] = array('date' => $date, 'schedulingType' => $schedulingType, 'upcoming' => $upcoming, 'orderId' => $orderId);
 			}
 			$new = array('userMessage' => 'Scheduled Sessions', 'status' => 1, 'scheduledSessions' => $arr);
+			return $response->json($new);
 			// Encrypt format json response
 			$base64Encrypted = $this->encryptValues(json_encode($new));
 	     	return $response->json(array('data' => $base64Encrypted));
-		} else {
-			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
-     		return $response->json(array('data' => $base64Encrypted));
-		}
+		// } else {
+		// 	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+  //    		return $response->json(array('data' => $base64Encrypted));
+		// }
 	}
 
 	/**
@@ -116,7 +119,7 @@ class OrderOnsiteInterpreterController extends Controller {
 	    'userMessage': 'Scheduled Session'
 	  } }")
      */
-	public function scheduledSessionsDetails($request, $response, $service, $app) { // DONT CHANGE
+	public function scheduledSessionsDetails($request, $response, $service, $app) {
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -232,39 +235,41 @@ class OrderOnsiteInterpreterController extends Controller {
 	  } }")
      */
 	public function testDeviceToken($request, $response, $service, $app){
-		if($request->token){
-			// Validate token if not expired, or tampered with
-			$this->validateToken($request->token);
+		// if($request->token){
+		// 	// Validate token if not expired, or tampered with
+		// 	$this->validateToken($request->token);
 			// Decrypt data
-			$data = $this->decryptValues($request->data);
+			// $data = $this->decryptValues($request->data);
 			// Validate CustomerId
-			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
-			// Validate token in database for customer stored
-			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
-			// If error validating token in database
-			if(!$validated){
-		 	 	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
-		 	   	return $response->json(array('data' => $base64Encrypted));
-			}
+			// $service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+			// // Validate token in database for customer stored
+			// $validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
+			// // If error validating token in database
+			// if(!$validated){
+		 // 	 	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
+		 // 	   	return $response->json(array('data' => $base64Encrypted));
+			// }
 			/*======  Seeds  ======*/
-			// $deviceToken = '1095b49dcdbc6632049888d598ee6a301c2175ca238569fb4b6cb2255310a527';
-			$deviceToken = '1095b49dcdbc66320';
-			$message = "AKO DOBIJEŠ OVO PORUKU MOLIM TE SAMO MI JAVI NA GAUSS CHAT-U. HVALA! SLAVEN. Your scheduled conference call is about to start in 5 minutes. Translation: English <> Arabic. On date: 31.12.2017. Cost: 100$.";
+			$deviceToken = 'c585419b29a7bd1a94c7d3b220ad7b6e6de5cdffa6366d70f83c07681587d238';
+			// $deviceToken = '1095b49dcdbc66320';
+			$message = "Your scheduled conference call is about to start in 5 minutes. Translation: English <> Arabic. On date: 31.12.2017. Cost: 100$.";
+			$twilioToken = ConferenceFunctions::generateCapabilityToken('784');
 			$orderID = "5153";
 			/*=====  End of Seeds  ======*/
-			$result = PushNotification::push($deviceToken, $message, $orderID, false);
+			$result = PushNotification::push($deviceToken, $message, $orderID, $twilioToken, false);
 			if(!$result){
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Problem sending push notification to device.")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
 			$rArray['status'] = 1;
 			$rArray['userMessage'] = 'Test completed successfully';
-			$base64Encrypted = $this->encryptValues(json_encode($rArray));
-	     	return $response->json(array('data' => $base64Encrypted));
-		} else {
-			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
-     		return $response->json(array('data' => $base64Encrypted));
-		}
+			return $response->json($rArray['userMessage']);
+			// $base64Encrypted = $this->encryptValues(json_encode($rArray));
+	     	// return $response->json(array('data' => $base64Encrypted));
+		// } else {
+		// 	$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+  		//    		return $response->json(array('data' => $base64Encrypted));
+		// }
 	}
 
 	/**
@@ -273,21 +278,18 @@ class OrderOnsiteInterpreterController extends Controller {
      * @ApiMethod(type="post")
      * @ApiRoute(name="/testgauss/gaussAppScheduleCronJob")
      *
-
-
      */
 	public function gaussAppScheduleCronJob($request, $response, $service, $app){
-		$query = "SELECT orderID, scheduling_type, frm_lang, to_lang, customer_id, amount, onsite_con_phone, assg_frm_date, assg_frm_st, timezone FROM `order_onsite_interpreter` WHERE scheduling_type IN ('conference_call', 'get_call') AND push_notification_sent =0 AND is_phone =1 AND DATE_SUB(CONVERT_TZ(DATE_FORMAT(FROM_UNIXTIME(assg_frm_timestamp), '%Y-%c-%d %T:%f'), '+7:00', '-0:00'),INTERVAL 5 MINUTE) BETWEEN CONVERT_TZ(DATE_SUB(NOW(), INTERVAL 5 MINUTE), '-7:00', '-0:00') AND CONVERT_TZ(NOW(), '-7:00', '-0:00')";
-
+		$query = "SELECT orderID, scheduling_type, frm_lang, to_lang, customer_id, amount, onsite_con_phone, assg_frm_date, assg_frm_st, timezone FROM `order_onsite_interpreter` WHERE scheduling_type IN ('conference_call', 'get_call') AND push_notification_sent =0 AND is_phone =1 AND DATE_SUB(CONVERT_TZ(DATE_FORMAT(FROM_UNIXTIME(assg_frm_timestamp), '%Y-%c-%d %T:%f'), '-7:00', '-0:00'),INTERVAL 5 MINUTE) BETWEEN CONVERT_TZ(DATE_SUB(NOW(), INTERVAL 5 MINUTE), '-7:00', '-0:00') AND CONVERT_TZ(NOW(), '-7:00', '-0:00')";
 		$con = Connect::con();
 		$query_result = mysqli_query($con, $query);
-
 		while ($rows = mysqli_fetch_assoc($query_result)) {
-			return $orderID = $rows["orderID"];
+			$orderID = $rows['orderID'];
 		    $scheduling_type = $rows["scheduling_type"];
 		    $frm_lang = LangList::get_language_name($rows['frm_lang'], 'LangName');
 		    $to_lang = LangList::get_language_name($rows['to_lang'], 'LangName');
 		    $CustomerID = $rows['customer_id'];
+		    $twilioToken = ConferenceFunctions::generateCapabilityToken($CustomerID);
 		    $amount = $rows['amount'];
 		    $date = $rows['assg_frm_st'] ." ". date('l', strtotime($$rows['assg_frm_date'])) . ' '. $rows['assg_frm_date'] . ' ' . $rows['timezone'];
 		    if($scheduling_type == 'conference_call'){
@@ -300,7 +302,7 @@ class OrderOnsiteInterpreterController extends Controller {
 			}
 		    $customer = CustLogin::get_customer($CustomerID);
 		    mysqli_query($con, "UPDATE `order_onsite_interpreter` SET push_notification_sent = 1 WHERE orderID = $orderID");
-		    PushNotification::push($customer['deviceToken'], $message, $orderID, false);
+		    PushNotification::push($customer['deviceToken'], $message, $orderID, $twilioToken, false);
 		    // PushNotification::push($customer['deviceToken'], $message, $orderID, true); //TODO FOR PRODUCTION
 		}
 	}

@@ -243,11 +243,11 @@ class Mail {
 	}
 
 	/**
-	 * TODO SEND_NOTIFICATION da bude jedan localhost jedan za alliantranslate
-	 * PRavi za live production $to = "orders@alliancebizsolutions.com,cs@alliantranslate.com"
+	 * TODO SEND_NOTIFICATION DONE
+	 * Pravi za live production $to = "orders@alliancebizsolutions.com,cs@alliantranslate.com"
 	 *
 	 */
-	public function send_notification($subject = "", $body = "", $to = "slavensakacic@gmail.com", $from = "Alliance Business Solutions LLC Client Services <cs@alliantranslate.com>", $reply_to = "cs@alliantranslate.com", $attachment = ""){
+	public function send_notification($subject = "", $body = "", $to = "alen.brcic@alliancebizsolutions.com", $from = "Alliance Business Solutions LLC Client Services <cs@alliantranslate.com>", $reply_to = "cs@alliantranslate.com", $attachment = ""){
 
 		date_default_timezone_set('Etc/UTC');
 

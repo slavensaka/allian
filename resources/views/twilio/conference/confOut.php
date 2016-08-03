@@ -7,6 +7,6 @@ $v_code = $this->v_code;
 <Response>
 	<Say voice="woman">Welcome to Allian interpreter conference service.</Say>
 	<Redirect method="POST">
-		https://alliantranslate.com/linguist/twilio-conf-enhanced/conference.php?vcode=<?php echo $v_code; ?>
+		http://alliantranslate.com/linguist/twilio-conf-enhanced/conference.php?Digits=1&vcode=<?php echo trim($v_code); ?>
 	</Redirect>
 </Response>

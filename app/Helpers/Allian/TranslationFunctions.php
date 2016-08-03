@@ -40,9 +40,9 @@ class TranslationFunctions {
 		    $project_langs = LangList::get_language_name($interpret_order["frm_lang"]) . " <> " . LangList::get_language_name($interpret_order["to_lang"]);
 		    $project_timezone = $interpret_order["timezone"];
 		    $project_date_from = $interpret_order["assg_frm_date"];
-		    $project_date_from .= " " . date('l', strtotime($project_date_from));
+		    $project_date_from = date('m.d.Y', strtotime($project_date_from));
 		    $project_date_to = $interpret_order["assg_to_date"];
-		    $project_date_to .= " " . date('l', strtotime($project_date_to));
+		    $project_date_to = date('m.d.Y', strtotime($project_date_to));
 		    $project_start_time = date('h:i A', strtotime($interpret_order["assg_frm_st"]));
 		    $project_end_time = date('h:i A', strtotime($interpret_order["assg_frm_en"]));
 		    $telephonic_duration = self::get_assignment_time($project_start_time, $project_end_time);
@@ -73,9 +73,9 @@ class TranslationFunctions {
 			$rArray['userMessage'] = "Order summary";
 			// $rArray['daily'] = "$scheduling_type Telephonic Scheduling ($$rate_per_min/Min) for $actual_minutes minutes";
 			if($interpret_order["scheduling_type"] == 'conference_call'){
-				// TODO FOR PRODUCTION
+				// TODO FOR PRODUCTION DONE NOT NEEDED REMOVE IT
 				// $rArray['conferenceDialNumber'] = getenv('CONF_DIAL_NUMBER_LIVE');
-				$rArray['conferenceDialNumber'] = getenv('S_TEST_TWILIO_NO_E_CONF_CALL');
+				$rArray['conferenceDialNumber'] = getenv('CONF_DIAL_ALLIAN_LIVE');
 			} else if($interpret_order["scheduling_type"] == 'get_call'){
 				$rArray['conferenceDialNumber'] = $interpret_order['onsite_con_phone'];
 			}

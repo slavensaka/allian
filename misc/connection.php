@@ -13,24 +13,24 @@ $dbpassProd = 'allian2016@';
 $dbnameProd = 'allian10_abs_linguist_portal';
 
 /* STAGING SERVER */
-$dbhostStag = 'vps9239.inmotionhosting.com';
-$dbuserStag = 'alliantr_gauss';
-$dbpassStag = '124L3lSFlM5Ngyk9';
-$dbnameStag = 'alliantr_testgauss';
+// $dbhostStag = 'vps9239.inmotionhosting.com';
+// $dbuserStag = 'alliantr_gauss';
+// $dbpassStag = '124L3lSFlM5Ngyk9';
+// $dbnameStag = 'alliantr_testgauss';
 
 /* DEVELOPMENT SERVER */
-$dbhostDev = "localhost";
-$dbuserDev = "root";
-$dbpassDev = "";
-$dbnameDev = "allian10_abs_linguist_portal";
+// $dbhostDev = "localhost";
+// $dbuserDev = "root";
+// $dbpassDev = "";
+// $dbnameDev = "allian10_abs_linguist_portal";
 
 
 /* MYSQLI CONNECT */
-// $con = mysqli_connect("$dbhostProd", "$dbuserProd", "$dbpassProd", "$dbnameProd");
-//$query ="SELECT L2 FROM LangRate";
-// while($row = mysqli_fetch_array($con, $query)){
-	// print_r($row["L2"]);
-// }
+$con = mysqli_connect("$dbhostProd", "$dbuserProd", "$dbpassProd", "$dbnameProd");
+$query ="SELECT L2 FROM LangRate";
+while($row = mysqli_fetch_array($con, $query)){
+	print_r($row["L2"]);
+}
 
 
 

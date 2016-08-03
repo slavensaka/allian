@@ -69,7 +69,7 @@ class CallIdentify extends DataObject {
 	    }
   	}
 
-  	public function getByCustomerID(){ //OVO
+  	public function getByCustomerID(){
   		$call_query = "SELECT * FROM CallIdentify WHERE CustomerID='$CustomerID' AND state='Success' AND (Billed > 0 OR Charged > 0) ORDER BY `UnqID` DESC";
 
   	}

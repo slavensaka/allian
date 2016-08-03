@@ -273,7 +273,7 @@ class StripeController extends Controller {
 	 * Create a new stripe token based on user's card info
 	 *
 	 */
-	public function createTokenNew($data, $exp_month, $exp_year){ // DONT CHANGE
+	public function createTokenNew($data, $exp_month, $exp_year){
 		$this->getStripeKey();
 		$result = Token::create( array("card" => array( "name" => $data['sname'], "number" => $data['number'],
 			"exp_month" => (int)$exp_month, "exp_year" => (int)$exp_year, "cvc" => $data['cvc'] )));

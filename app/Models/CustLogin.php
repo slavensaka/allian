@@ -258,7 +258,6 @@ class CustLogin extends DataObject {
   			}
 	    } catch ( \PDOException $e ) {
 	      parent::disconnect( $conn );
-	      // return $e->getMessage();
 	      return false;
 	      exit;
 	    }
@@ -437,7 +436,7 @@ class CustLogin extends DataObject {
   	 * Block comment
   	 *
   	 */
-  	public static function getMembers( $startRow, $numRows, $order ) { //NON
+  	public static function getMembers( $startRow, $numRows, $order ) {
 	    $conn = parent::connect();
 	    $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM " . getenv('TBL_CUSTLOGIN') . " ORDER BY $order LIMIT :startRow, :numRows";
 
@@ -465,7 +464,7 @@ class CustLogin extends DataObject {
   	 * Block comment
   	 *
   	 */
-  	public function getGenderString() { //NON
+  	public function getGenderString() {
     	return ( $this->data["gender"] == "f" ) ? "Female" : "Male";
   	}
 
@@ -474,7 +473,7 @@ class CustLogin extends DataObject {
   	 * Block comment
   	 *
   	 */
-  	public function getFavoriteGenreString() { //NON
+  	public function getFavoriteGenreString() {
     	return ( $this->_genres[$this->data["favoriteGenre"]] );
   	}
 

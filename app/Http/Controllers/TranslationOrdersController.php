@@ -35,7 +35,7 @@ class TranslationOrdersController extends Controller {
 	  	}
      * }")
      */
-	public function orderSummary($request, $response, $service, $app) { // DONT CHANGE
+	public function orderSummary($request, $response, $service, $app) {
 		if($request->token){
 			// 	Validate token if not expired, or tampered with
 			$this->validateToken($request->token);

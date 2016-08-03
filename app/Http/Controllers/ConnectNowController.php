@@ -60,7 +60,7 @@ class ConnectNowController extends Controller {
 			// Get a customer from the database based on the CustomerID
 			$customer = CustLogin::get_customer($data['CustomerID']);
 			// Generate a twilio capability token
-			$token = ConfFunc::generateCapabilityToken($data['CustomerID']);
+			$token = ConfFunc::generateCapabilityTokenConnectNow($data['CustomerID']);
 			// Return that Token
 	    	return $response->json(array('data' => array('status' => 1, 'userMessage' => 'Twilio token', 'twilioToken' => $token)));
 	    } else {
@@ -262,8 +262,8 @@ class ConnectNowController extends Controller {
 				$sendToEmail = "slavensakacic@gmail.com";
 				Mail::sendStaffMail($sendToEmail, "staffRegularFailed", $param);
 			} else if($server=="alliantranslate"){
-				//TODO FOR PRODUCTION
-				$sendToEmail = "slavensakacic@gmail.com";
+				//TODO FOR PRODUCTION DONE
+				$sendToEmail = getenv('ALEN_EMAIL');
 				//$sendToEmail = "orders@alliancebizsolutions.com";
 				Mail::sendStaffMailProduction($sendToEmail, "staffRegularFailed", $param);
 			}
@@ -318,18 +318,17 @@ class ConnectNowController extends Controller {
 		$sid = getenv('S_TEST_TWILIO_SID');
 		$token = getenv('S_TEST_TWILIO_TOKEN');
 		$client = new Services_Twilio($sid, $token, $version, $http);
-		$url = "https://254ce9ba.ngrok.io/testgauss/addNewMemberOut?vcode=$queue";
+		$url = "localhost/testgauss/addNewMemberOut?vcode=$queue";
 		foreach($phones as $phone){
-			// TODO FOR PRODUCTION
-			// $call = $client->account->calls->create("+15005550006", $phone, $url, array());
-			$call = $client->account->calls->create("+15005550006", "+14108675309", $url, array());
+			// TODO FOR PRODUCTION DONE
+			$call = $client->account->calls->create(getenv('TWILIO_CONF_OB_NUMBER'), $phone, $url, array());
+			// $call = $client->account->calls->create("+15005550006", "+14108675309", $url, array());
 		}
 		$rArray['status'] = 1;
 		$rArray['userMessage'] = 'Added new Member';
 		$base64Encrypted = $this->encryptValues(json_encode($rArray));
      	return $response->json(array('data' => $base64Encrypted));
 	}
-
 
 	/**
 	 *
@@ -344,11 +343,5 @@ class ConnectNowController extends Controller {
 		$response->redirect("https://alliantranslate.com/linguist/phoneapp/callout.php?pairid=$pairid");
 		return $response;
 	}
-
-		/**
-	 *
-	 * Block comment
-	 *
-	 */
 
 }

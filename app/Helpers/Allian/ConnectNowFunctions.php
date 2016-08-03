@@ -23,8 +23,8 @@ class ConnectNowFunctions {
 		if($server == "localhost"){
 			return file_put_contents("misc/customertype/". $sid . ".txt", json_encode($data));
 		} else if($server == "alliantranslate.com"){
-			// TODO PROD
-			// return file_put_contents("../linguist/phoneapp/customertype/". $sid . ".txt", json_encode($data));
+			// TODO PROD DONE
+			return file_put_contents("../linguist/phoneapp/customertype/". $sid . ".txt", json_encode($data));
 		} else {
 			return file_put_contents("misc/customertype/". $sid . ".txt", json_encode($data));
 		}

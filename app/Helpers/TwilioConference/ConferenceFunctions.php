@@ -43,11 +43,22 @@ class ConferenceFunctions{
 	 *
 	 */
 	public static function generateCapabilityToken($customerID){
-		$accountSid = getenv('S_TWILIO_SID');
-		$authToken = getenv('S_TWILIO_TOKEN');
-		$appSid = getenv('S_TEST_TWILIO_APP_SID');
+		$accountSid = getenv('LIVE_TWILIO_ALLIAN_SID');
+		$authToken = getenv('LIVE_TWILIO_ALLIAN_TOKEN');
+		$appSid = getenv('LIVE_TWILIO_ALLIAN_APP_CONF'); // UZ OVO JE POVEZAN BROJ +18448306412
 		$customerID = $customerID;
-		$fullname = $name;
+		$capability = new Services_Twilio_Capability($accountSid, $authToken);
+		$capability->allowClientOutgoing($appSid, array(), $customerID);
+		$capability->allowClientIncoming($customerID);
+		$token = $capability->generateToken(60*60*24);
+		return $token;
+	}
+
+	public static function generateCapabilityTokenConnectNow($customerID){
+		$accountSid = getenv('LIVE_TWILIO_ALLIAN_SID');
+		$authToken = getenv('LIVE_TWILIO_ALLIAN_TOKEN');
+		$appSid = getenv('LIVE_TWILIO_ALLIAN_APP_CONNECT');
+		$customerID = $customerID;
 		$capability = new Services_Twilio_Capability($accountSid, $authToken);
 		$capability->allowClientOutgoing($appSid, array(), $customerID);
 		$capability->allowClientIncoming($customerID);
