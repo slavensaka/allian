@@ -100,9 +100,6 @@ $klein->with('/testgauss', function() use ($klein){
 	$klein->respond('POST', '/scheduledSessions', array($orderOnSiteInterpreter, 'scheduledSessions'));
 	$klein->respond('POST', '/scheduledSessionsDetails', array($orderOnSiteInterpreter, 'scheduledSessionsDetails'));
 	$klein->respond('POST', '/storeDeviceToken', array($orderOnSiteInterpreter, 'storeDeviceToken'));
-	$klein->respond('POST', '/testDeviceToken', array($orderOnSiteInterpreter, 'testDeviceToken'));
-	$klein->respond('POST', '/deviceToken', array($orderOnSiteInterpreter, 'deviceToken'));
-	$klein->respond('POST', '/gaussAppScheduleCronJob', array($orderOnSiteInterpreter, 'gaussAppScheduleCronJob'));
 
 	$conference = new ConferenceController();
 	$klein->respond('POST', '/conference', array($conference, 'conference'));

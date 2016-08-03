@@ -1,29 +1,35 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT']. "/testgauss/vendor/twilio/sdk/Services/Twilio/Capability.php";
 
-$query = "SELECT orderID, scheduling_type, frm_lang, to_lang, customer_id, amount, onsite_con_phone, assg_frm_date, assg_frm_st, timezone FROM `order_onsite_interpreter` WHERE scheduling_type IN ('conference_call', 'get_call') AND push_notification_sent =0 AND is_phone =1 AND DATE_SUB(CONVERT_TZ(DATE_FORMAT(FROM_UNIXTIME(assg_frm_timestamp), '%Y-%c-%d %T:%f'), '-7:00', '-0:00'),INTERVAL 5 MINUTE) BETWEEN CONVERT_TZ(DATE_SUB(NOW(), INTERVAL 5 MINUTE), '-7:00', '-0:00') AND CONVERT_TZ(NOW(), '-7:00', '-0:00')";
+$server = trim($_SERVER['HTTP_HOST']);
+$server=trim($server);
+if($server == "localhost"){
+	//LOCALHOST
+	$host = "localhost";
+	$db_username = "root";
+	$db_password = "";
+	$db_name = "allian10_abs_linguist_portal";
 
-//PRODUCTION
-$host = "vps9239.inmotionhosting.com";
-$db_username = "allian10_alenb";
-$db_password = "allian2016@";
-$db_name = "allian10_abs_linguist_portal";
+	$query = "SELECT orderID, scheduling_type, frm_lang, to_lang, customer_id, amount, onsite_con_phone, assg_frm_date, assg_frm_st, timezone FROM `order_onsite_interpreter` WHERE scheduling_type IN ('conference_call', 'get_call') AND push_notification_sent =0 AND is_phone =1 AND DATE_SUB(CONVERT_TZ(DATE_FORMAT(FROM_UNIXTIME(assg_frm_timestamp), '%Y-%c-%d %T:%f'), '+2:00', '-0:00'),INTERVAL 5 MINUTE) BETWEEN CONVERT_TZ(DATE_SUB(NOW(), INTERVAL 5 MINUTE), '+2:00', '-0:00') AND CONVERT_TZ(NOW(), '+2:00', '-0:00')";
+} else if($server == "alliantranslate.com"){
+	//PRODUCTION
+	// $host = "vps9239.inmotionhosting.com";
+	// $db_username = "allian10_alenb";
+	// $db_password = "allian2016@";
+	// $db_name = "allian10_abs_linguist_portal";
 
-//STAGING
-// $host = "vps9239.inmotionhosting.com";
-// $db_username = "alliantr_gauss";
-// $db_password = "124L3lSFlM5Ngyk9";
-// $db_name = "alliantr_testgauss";
+	//STAGING
+	// $host = "vps9239.inmotionhosting.com";
+	// $db_username = "alliantr_gauss";
+	// $db_password = "124L3lSFlM5Ngyk9";
+	// $db_name = "alliantr_testgauss";
 
-//LOCALHOST
-// $host = "localhost";
-// $db_username = "root";
-// $db_password = "";
-// $db_name = "allian10_abs_linguist_portal";
+	$query = "SELECT orderID, scheduling_type, frm_lang, to_lang, customer_id, amount, onsite_con_phone, assg_frm_date, assg_frm_st, timezone FROM `order_onsite_interpreter` WHERE scheduling_type IN ('conference_call', 'get_call') AND push_notification_sent =0 AND is_phone =1 AND DATE_SUB(CONVERT_TZ(DATE_FORMAT(FROM_UNIXTIME(assg_frm_timestamp), '%Y-%c-%d %T:%f'), '-7:00', '-0:00'),INTERVAL 5 MINUTE) BETWEEN CONVERT_TZ(DATE_SUB(NOW(), INTERVAL 5 MINUTE), '-7:00', '-0:00') AND CONVERT_TZ(NOW(), '-7:00', '-0:00')";
+}
 
 $con = mysqli_connect("$host", "$db_username", "$db_password", "$db_name");
-$query_result = mysqli_query($con, $query);
-while ($rows = mysqli_fetch_assoc($query_result)) {
+$queryResult = mysqli_query($con, $query);
+while ($rows = mysqli_fetch_assoc($queryResult)) {
 	$orderID = $rows['orderID'];
     $scheduling_type = $rows["scheduling_type"];
 
