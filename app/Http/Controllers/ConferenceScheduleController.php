@@ -301,13 +301,14 @@ class ConferenceScheduleController extends Controller {
      * @ApiReturn(type="string", sample="{'data': {
 	    'timezone': 'US/Central',
 	    'status': 1,
+	    'userMessage' : 'Successfully created the session!',
 	    'confStarts': '2016-06-07 3:00:00 AM',
 	    'confEnds': '2016-06-07 3:05:00 AM',
 	    'confCode': '12345',
 	    'confDialNumber': '+18555129043'
 	  	}}")
      */
-	public function scheduleFinal($request, $response, $service, $app){ // DONT CHANGE
+	public function scheduleFinal($request, $response, $service, $app){
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -450,12 +451,13 @@ class ConferenceScheduleController extends Controller {
 			$retArray = array();
 			$retArray['timezone'] = $data['timezone'];
 			$retArray['status'] = 1;
+			$retArray['userMessage'] = 'Successfully created the session!';
 			$retArray['confStarts'] = $data['fromDate'] . ' ' . $data['timeStarts'];
 			$retArray['confEnds'] = $data['fromDate'] . ' ' . $data['timeEnds'];
 			if($data['schedulingType'] == 'conference_call'){
 				$retArray['confCode'] = "$user_code";
 				// TODO FOR PRODUCTION DONE OVAJ BROJ NIJE KORISTAN BRISAT
-				$retArray['confDialNumber'] = getenv('CONFERENECE_OUT');
+				$retArray['confDialNumber'] = getenv('CONF_DIAL_ALLIAN_LIVE');
 			} else if($data['schedulingType'] == 'get_call'){
 				$retArray['confCode'] = null;
 				$retArray['confDialNumber'] = $sArray['onsite_con_phone']; // Broj korisnika koji je unio

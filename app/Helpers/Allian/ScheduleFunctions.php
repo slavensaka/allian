@@ -489,8 +489,7 @@ class ScheduleFunctions {
 	        	$project_detail .= "<tr><td $head_td_style >Headsets Needed:</td><td $td_style >$project_headsets_needed</td></tr> ";
 	    	}
 	    	if ($isTelephonic && $interpret_order["scheduling_type"] == "conference_call" && $view_type !== "overage") {
-	    		// $client_dial = getenv('CONF_DIAL_NUMBER_LIVE'); // TODO FOR PRODUCTION DONE
-	        	$client_dial = getenv('CONF_DIAL_ALLIAN_LIVE'); // Not needed should be removed
+	        	$client_dial = getenv('CONF_DIAL_ALLIAN_LIVE');
 	        	$project_detail .= "<tr style='background:lemonchiffon'><td $head_td_style ><span  style='color:red;font-size:14px'>Conference Dial Number:</span></td><td $head_td_style ><span  style='color:red;font-size:14px'>$client_dial</span></td></tr> ";
 	        	$project_detail .= "<tr style='background:lemonchiffon'><td $head_td_style ><span  style='color:red;font-size:14px'>Conference Secret Code:</span></td><td $head_td_style ><span  style='color:red;font-size:14px'>{$conference['user_code']}</span></td></tr> ";
 	    	}

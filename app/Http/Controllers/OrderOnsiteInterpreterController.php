@@ -84,7 +84,6 @@ class OrderOnsiteInterpreterController extends Controller {
 				$arr[] = array('date' => $date, 'schedulingType' => $schedulingType, 'upcoming' => $upcoming, 'orderId' => $orderId);
 			}
 			$new = array('userMessage' => 'Scheduled Sessions', 'status' => 1, 'scheduledSessions' => $arr);
-			return $response->json($new);
 			// Encrypt format json response
 			$base64Encrypted = $this->encryptValues(json_encode($new));
 	     	return $response->json(array('data' => $base64Encrypted));

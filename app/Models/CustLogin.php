@@ -35,17 +35,8 @@ class CustLogin extends DataObject {
 	    "totalbilled" => "",
 	    "Saved" => "",
 	    "jwt_token",
+	    "deviceToken",
 	);
-
-  	private $_genres = array(
-	    "crime" => "Crime",
-	    "horror" => "Horror",
-	    "thriller" => "Thriller",
-	    "romance" => "Romance",
-	    "sciFi" => "Sci-Fi",
-	    "adventure" => "Adventure",
-	    "nonFiction" => "Non-Fiction"
-  	);
 
   	/**
   	 *
@@ -202,7 +193,7 @@ class CustLogin extends DataObject {
   		$conn = parent::connect();
 		$sql = "UPDATE " . getenv('TBL_CUSTLOGIN') . " SET jwt_token = :jwt_token WHERE CustomerID= :CustomerID";
 		try {
-	    	$st = $conn->prepare( $sql );
+	    	$st = $conn->prepare($sql);
   			$st->bindValue(":jwt_token", $jwt_token, \PDO::PARAM_STR);
   			$st->bindValue(":CustomerID", $CustomerID, \PDO::PARAM_STR);
   			$success = $st->execute();
@@ -212,8 +203,8 @@ class CustLogin extends DataObject {
   			} else {
   				return false;
   			}
-	    } catch ( \PDOException $e ) {
-	      parent::disconnect( $conn );
+	    } catch (\PDOException $e) {
+	      parent::disconnect($conn);
 	      return false;
 	    }
   	}
@@ -457,24 +448,6 @@ class CustLogin extends DataObject {
 		      parent::disconnect( $conn );
 		      die( "Query failed: " . $e->getMessage() );
 	    }
-  	}
-
-  	/**
-  	 *
-  	 * Block comment
-  	 *
-  	 */
-  	public function getGenderString() {
-    	return ( $this->data["gender"] == "f" ) ? "Female" : "Male";
-  	}
-
-  	/**
-  	 *
-  	 * Block comment
-  	 *
-  	 */
-  	public function getFavoriteGenreString() {
-    	return ( $this->_genres[$this->data["favoriteGenre"]] );
   	}
 
   	/**

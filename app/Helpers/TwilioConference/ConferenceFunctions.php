@@ -54,18 +54,6 @@ class ConferenceFunctions{
 		return $token;
 	}
 
-	public static function generateCapabilityTokenConnectNow($customerID){
-		$accountSid = getenv('LIVE_TWILIO_ALLIAN_SID');
-		$authToken = getenv('LIVE_TWILIO_ALLIAN_TOKEN');
-		$appSid = getenv('LIVE_TWILIO_ALLIAN_APP_CONNECT');
-		$customerID = $customerID;
-		$capability = new Services_Twilio_Capability($accountSid, $authToken);
-		$capability->allowClientOutgoing($appSid, array(), $customerID);
-		$capability->allowClientIncoming($customerID);
-		$token = $capability->generateToken(60*60*24);
-		return $token;
-	}
-
 	/**
 	 *
 	 * Block comment

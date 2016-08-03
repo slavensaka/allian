@@ -8,7 +8,7 @@ $dotenv->load();
 $server = trim($_SERVER['HTTP_HOST']);
 $server=trim($server);
 
-echo $host = getenv('DB_HOST');
+$host = getenv('DB_HOST');
 $db_username = getenv("DB_USERNAME");
 $db_password = getenv("DB_PASSWORD");
 $db_name = getenv("DB_NAME");

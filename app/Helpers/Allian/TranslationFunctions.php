@@ -37,7 +37,7 @@ class TranslationFunctions {
 		    $order_type = $row["order_type"];
 		    $conference = self::get_conference($order_id, "*");
 		    $total_price = $row["total_price"];
-		    $project_langs = LangList::get_language_name($interpret_order["frm_lang"]) . " <> " . LangList::get_language_name($interpret_order["to_lang"]);
+		    $project_langs = trim(LangList::get_language_name($interpret_order["frm_lang"])) . " <> " . trim(LangList::get_language_name($interpret_order["to_lang"]));
 		    $project_timezone = $interpret_order["timezone"];
 		    $project_date_from = $interpret_order["assg_frm_date"];
 		    $project_date_from = date('m.d.Y', strtotime($project_date_from));

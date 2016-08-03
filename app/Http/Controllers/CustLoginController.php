@@ -100,7 +100,7 @@ class CustLoginController extends Controller {
 	  },
 	     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjQ0ODcxODMsImp0aSI6IitFWmtsOGt4bUh1S29vd0JXVHJER1pLbGloVlRYWmM2TTlpZWRlK1lBbEk9IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY0NDg3MTgzLCJleHAiOjE0NjU2OTY3ODMsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.IkCI0SUiNZpOOFR1gXMEW8xqDsd4KqPjGXTWNfutosjU0R_Z_qvuUJ3Z6257agQMp8jbCH8sLVhb7NNPaqY4Dw' }")
      */
-	public function postRegister($request, $response, $service, $app) { // DONT CHANGE
+	public function postRegister($request, $response, $service, $app) {
 		//Decrypt input data
 		$data = $this->decryptValues($request->data);
 		// Validate input data
@@ -192,7 +192,7 @@ class CustLoginController extends Controller {
  		 }
      * }")
      */
-	public function postForgot($request, $response, $service, $app) { // DONT CHANGE
+	public function postForgot($request, $response, $service, $app) {
 		//Decrypt input data
 		$data = $this->decryptValues($request->data);
 		// Validate input data
@@ -268,7 +268,7 @@ class CustLoginController extends Controller {
 	  }
      * }")
      */
-	public function viewProfile($request, $response, $service, $app){ // DONT CHANGE
+	public function viewProfile($request, $response, $service, $app){
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -343,7 +343,7 @@ class CustLoginController extends Controller {
 	  	}
 		}")
      */
-	public function updateProfile($request, $response, $service, $app){ // DONT CHANGE
+	public function updateProfile($request, $response, $service, $app){
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -424,7 +424,7 @@ class CustLoginController extends Controller {
      * }")
      *
      */
-	public function telephonicAccess($request, $response, $service, $app){ // DONT CHANGE
+	public function telephonicAccess($request, $response, $service, $app){
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -488,7 +488,7 @@ class CustLoginController extends Controller {
      * }")
      *
      */
-	public function telephonicAccessEmail($request, $response, $service, $app){ // DONT CHANGE
+	public function telephonicAccessEmail($request, $response, $service, $app){
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -542,7 +542,7 @@ class CustLoginController extends Controller {
      * @ApiRoute(name="/testgauss/terms")
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      */
-	public function getTerms($request, $response, $service, $app){ // DONT CHANGE
+	public function getTerms($request, $response, $service, $app){
 		// Render a view with the terms and conditions
 		$service->render('./resources/views/terms.html');
 	}
@@ -618,7 +618,7 @@ class CustLoginController extends Controller {
      * }")
      *
      */
-	public function logout($request, $response, $service, $app){ // DONT CHANGE
+	public function logout($request, $response, $service, $app){
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -671,7 +671,7 @@ class CustLoginController extends Controller {
      * }")
      *
      */
-	public function keepLoggedIn($request, $response, $service, $app){ // DONT CHANGE
+	public function keepLoggedIn($request, $response, $service, $app){
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);

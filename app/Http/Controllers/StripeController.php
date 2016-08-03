@@ -287,7 +287,7 @@ class StripeController extends Controller {
 	 * 	in createTokenNew()
 	 *
 	 */
-	public function createCustomer($email, $token){ // DONT CHANGE
+	public function createCustomer($email, $token){
 		$customer = Customer::create(array( "description" => "Gauss:app, Customer CREATED with email $email", "source" => $token));
   		return $customer['id'];
 	}

@@ -20,7 +20,6 @@ use Allian\Http\Controllers\StripeController;
 use Allian\Http\Controllers\DeveloperController;
 use Allian\Helpers\TwilioConference\DatabaseAccess;
 use Allian\Helpers\Allian\ConnectNowFunctions;
-use Allian\Helpers\TwilioConference\ConferenceFunctions as ConfFunc;
 
 class ConnectNowController extends Controller {
 
@@ -60,7 +59,7 @@ class ConnectNowController extends Controller {
 			// Get a customer from the database based on the CustomerID
 			$customer = CustLogin::get_customer($data['CustomerID']);
 			// Generate a twilio capability token
-			$token = ConfFunc::generateCapabilityTokenConnectNow($data['CustomerID']);
+			$token = ConnectNowFunctions::generateCapabilityTokenConnectNow($data['CustomerID']);
 			// Return that Token
 	    	return $response->json(array('data' => array('status' => 1, 'userMessage' => 'Twilio token', 'twilioToken' => $token)));
 	    } else {
@@ -227,7 +226,7 @@ class ConnectNowController extends Controller {
 		}
 		// Retrieve twilio parameters
 		$queueresult = $request->QueueResult;
-		  $queuetime = $request->QueueTime;
+		$queuetime = $request->QueueTime;
 		// IF result is the user hangup in 55 sec
 		if($queuetime > 55 && $queueresult == "hangup"){
 			$queueresult = "Agent Unavailable";

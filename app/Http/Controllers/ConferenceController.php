@@ -54,7 +54,7 @@ class ConferenceController extends Controller {
 			// Get a customer from the database based on the CustomerID
 			$customer = CustLogin::get_customer($data['CustomerID']);
 			// Generate a twilio capability token
-			$token = ConfFunc::generateCapabilityTokenConnectNow($data['CustomerID']);
+			$token = ConfFunc::generateCapabilityToken($data['CustomerID']);
 			// Return that Token
 	    	return $response->json(array('data' => array('status' => 1, 'userMessage' => 'Twilio token', 'twilioToken' => $token)));
 	    } else {
@@ -152,10 +152,12 @@ class ConferenceController extends Controller {
 	}
 
 	/**
-	 *
-	 * Block comment
-	 *
-	 */
+     * @ApiDescription(section="AddNewMemberOut", description="Used for twilio to add new member when a schedule sesion is a conference_call.")
+     * @ApiMethod(type="post")
+     * @ApiRoute(name="/testgauss/addNewMemberOut")
+     *	@ApiParams(name="vcode", type="string", nullable=false, description="Name of the conference.")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     */
 	public function addNewMemberOut($request, $response, $service, $app){
 		$service->v_code = $request->vcode;
 		$service->render('./resources/views/twilio/conference/addNewMemberOut.php');
