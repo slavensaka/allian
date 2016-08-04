@@ -335,6 +335,10 @@ class ConnectNowController extends Controller {
 	 *
 	 */
 	public function waitForInterpreter($request, $response, $service, $app){
+		//TODO
+		// $pairid=$_REQUEST['pairid'];
+		// $sid=$_REQUEST['CallSid'];
+		// unlink("userdata/".$sid.".txt");
 		$pairid = $request->pairid;
 		$response = new Services_Twilio_Twiml;
 		$response->say("Please wait while we attempt to reach an interpreter for your call.");

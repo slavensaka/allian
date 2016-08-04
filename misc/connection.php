@@ -26,22 +26,31 @@ $dbnameProd = 'allian10_abs_linguist_portal';
 
 
 /* MYSQLI CONNECT */
-$conn = new mysqli($dbhostProd, $dbuserProd, $dbpassProd, $dbnameProd);
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+// $conn = new mysqli($dbhostProd, $dbuserProd, $dbpassProd, $dbnameProd);
+// if ($conn->connect_error) {
+//     die("Connection failed: " . $conn->connect_error);
+// }
+// $sql = "SELECT CustomerID, Type FROM CustLogin";
+// $result = $conn->query($sql);
+// if ($result->num_rows > 0) {
+//     // output data of each row
+//     while($row = $result->fetch_assoc()) {
+//         echo "Customer ID: " . $row["CustomerID"]. " - Type: " . $row["Type"] . "<br>";
+//     }
+// } else {
+//     echo "0 results";
+// }
+// $conn->close();
+echo getcurrenthour();
+function getcurrenthour(){
+	 date_default_timezone_set('GMT');
+	 $daydigit= date("w");
+	 $dayhour=24*$daydigit;
+	$hour = date('G');
+	 $currenthour=$dayhour+$hour;
+	 $currenthour=$currenthour%168;
+	return $currenthour;
 }
-$sql = "SELECT CustomerID, Type FROM CustLogin";
-$result = $conn->query($sql);
-if ($result->num_rows > 0) {
-    // output data of each row
-    while($row = $result->fetch_assoc()) {
-        echo "Customer ID: " . $row["CustomerID"]. " - Type: " . $row["Type"] . "<br>";
-    }
-} else {
-    echo "0 results";
-}
-$conn->close();
-
 
 
 // $payload = json_encode($body);

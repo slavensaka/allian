@@ -22,6 +22,7 @@ if($server == "localhost"){
 $con = mysqli_connect("$host", "$db_username", "$db_password", "$db_name");
 $queryResult = mysqli_query($con, $query);
 while ($rows = mysqli_fetch_assoc($queryResult)) {
+
 	$orderID = $rows['orderID'];
     $scheduling_type = $rows["scheduling_type"];
 
@@ -32,13 +33,14 @@ while ($rows = mysqli_fetch_assoc($queryResult)) {
     $amount = $rows['amount'];
     $date = $rows['assg_frm_st'] ." ". date('l', strtotime($$rows['assg_frm_date'])) . ' '. $rows['assg_frm_date'] . ' ' . $rows['timezone'];
     if($scheduling_type == 'conference_call'){
-    	$message = "Your scheduled conference call is about to start in 5 minutes. Translation: $frm_lang <> $to_lang. On date: $date. Cost: $amount.";
+    	$message = "Your scheduled conference call is about to start in 5 minutes. Translation: $frm_lang <> $to_lang. On date: $date. Cost: $amount $.";
     } elseif($scheduling_type == 'get_call'){
     	$onsite_con_phone = $rows['onsite_con_phone'];
-    	$message = "Your scheduled interpreter\'s call is about to start in 5 minutes. Translation: $frm_lang <> $to_lang. On date: $date. Cost: $amount. Call will be to $onsite_con_phone.";
+    	$message = "Your scheduled interpreter\'s call is about to start in 5 minutes. Translation: $frm_lang <> $to_lang. On date: $date. Cost: $amount $. Call will be to $onsite_con_phone.";
 	} else{
 		exit();
 	}
+	mail('slavensakacic@gmail.com',"Cron job fire success!", $message);
     $customer = get_customer($con ,$CustomerID);
     mysqli_query($con, "UPDATE `order_onsite_interpreter` SET push_notification_sent = 1 WHERE orderID = $orderID");
     $deviceToken = $customer['deviceToken'];
