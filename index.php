@@ -60,72 +60,78 @@ $klein->respond(function ($request, $response, $service, $app) use ($klein) {
     });
 });
 
+// if(is_callable(array($custLogin, 'testing'))) echo "JE"; else echo "Nije";
 $klein->with('/testgauss', function() use ($klein){
-	// if(is_callable(array($custLogin, 'testing'))) echo "JE"; else echo "Nije";
+
 	$custLogin = new CustLoginController();
-	$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
-	$klein->respond('POST', '/register', array($custLogin, 'postRegister'));
-	$klein->respond('POST', '/forgot', array($custLogin, 'postForgot'));
-	$klein->respond('POST', '/viewProfile', array($custLogin, 'viewProfile'));
-	$klein->respond('POST', '/updateProfile', array($custLogin, 'updateProfile'));
-	$klein->respond('POST', '/telephonicAccess', array($custLogin, 'telephonicAccess'));
-	$klein->respond('POST', '/telephonicAccessEmail', array($custLogin, 'telephonicAccessEmail'));
-	$klein->respond('GET', '/terms', array($custLogin, 'getTerms'));
-	$klein->respond('POST', '/logout', array($custLogin, 'logout'));
-	$klein->respond('POST', '/keepLoggedIn', array($custLogin, 'keepLoggedIn'));
-	$klein->respond('GET', '/support', array($custLogin, 'support'));
+		$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
+		$klein->respond('POST', '/register', array($custLogin, 'postRegister'));
+		$klein->respond('POST', '/forgot', array($custLogin, 'postForgot'));
+		$klein->respond('POST', '/viewProfile', array($custLogin, 'viewProfile'));
+		$klein->respond('POST', '/updateProfile', array($custLogin, 'updateProfile'));
+		$klein->respond('POST', '/telephonicAccess', array($custLogin, 'telephonicAccess'));
+		$klein->respond('POST', '/telephonicAccessEmail', array($custLogin, 'telephonicAccessEmail'));
+		$klein->respond('GET', '/terms', array($custLogin, 'getTerms'));
+		$klein->respond('POST', '/logout', array($custLogin, 'logout'));
+		$klein->respond('POST', '/keepLoggedIn', array($custLogin, 'keepLoggedIn'));
+		$klein->respond('GET', '/support', array($custLogin, 'support'));
 
 	$langPair = new LangPairController();
-	$klein->respond('GET', '/langPairTrans', array($langPair, 'langPairTrans'));
+		$klein->respond('GET', '/langPairTrans', array($langPair, 'langPairTrans'));
 
 	$conferenceSchedule = new ConferenceScheduleController();
-	$klein->respond('GET', '/getTimezones', array($conferenceSchedule, 'getTimezones'));
-	$klein->respond('POST', '/schedulePartOne', array($conferenceSchedule, 'schedulePartOne'));
-	$klein->respond('POST', '/schedulePartTwo', array($conferenceSchedule, 'schedulePartTwo'));
-	$klein->respond('POST', '/checkPromoCode', array($conferenceSchedule, 'checkPromoCode'));
-	$klein->respond('POST', '/scheduleFinal', array($conferenceSchedule, 'scheduleFinal'));
+		$klein->respond('GET', '/getTimezones', array($conferenceSchedule, 'getTimezones'));
+		$klein->respond('POST', '/schedulePartOne', array($conferenceSchedule, 'schedulePartOne'));
+		$klein->respond('POST', '/schedulePartTwo', array($conferenceSchedule, 'schedulePartTwo'));
+		$klein->respond('POST', '/checkPromoCode', array($conferenceSchedule, 'checkPromoCode'));
+		$klein->respond('POST', '/scheduleFinal', array($conferenceSchedule, 'scheduleFinal'));
 
 	$stripe = new StripeController();
-	$klein->respond('POST', '/updateStripe', array($stripe, 'updateStripe'));
-	$klein->respond('POST', '/viewStripe', array($stripe, 'viewStripe'));
+		$klein->respond('POST', '/updateStripe', array($stripe, 'updateStripe'));
+		$klein->respond('POST', '/viewStripe', array($stripe, 'viewStripe'));
 
 	$langList = new LangListController();
-	$klein->respond('GET', '/langNames', array($langList, 'langNames'));
+		$klein->respond('GET', '/langNames', array($langList, 'langNames'));
 
 	$translationOrders = new TranslationOrdersController();
-	$klein->respond('POST', '/orderSummary', array($translationOrders, 'orderSummary'));
-	$klein->respond('POST', '/orderSummaryDetails', array($translationOrders, 'orderSummaryDetails'));
+		$klein->respond('POST', '/orderSummary', array($translationOrders, 'orderSummary'));
+		$klein->respond('POST', '/orderSummaryDetails', array($translationOrders, 'orderSummaryDetails'));
 
 	$orderOnSiteInterpreter = new OrderOnsiteInterpreterController();
-	$klein->respond('POST', '/scheduledSessions', array($orderOnSiteInterpreter, 'scheduledSessions'));
-	$klein->respond('POST', '/scheduledSessionsDetails', array($orderOnSiteInterpreter, 'scheduledSessionsDetails'));
-	$klein->respond('POST', '/storeDeviceToken', array($orderOnSiteInterpreter, 'storeDeviceToken'));
+		$klein->respond('POST', '/scheduledSessions', array($orderOnSiteInterpreter, 'scheduledSessions'));
+		$klein->respond('POST', '/scheduledSessionsDetails', array($orderOnSiteInterpreter, 'scheduledSessionsDetails'));
+		$klein->respond('POST', '/storeDeviceToken', array($orderOnSiteInterpreter, 'storeDeviceToken'));
+		$klein->respond('GET', '/gaussAppScheduleCronJob', array($orderOnSiteInterpreter, 'gaussAppScheduleCronJob'));
 
 	$conference = new ConferenceController();
-	$klein->respond('POST', '/conference', array($conference, 'conference'));
-	$klein->respond('POST', '/conferenceOut', array($conference, 'conferenceOut'));
-	$klein->respond('POST', '/addNewMember', array($conference, 'addNewMember'));
-	$klein->respond('POST', '/addNewMemberOut', array($conference, 'addNewMemberOut'));
+		$klein->respond('POST', '/conference', array($conference, 'conference'));
+		$klein->respond('POST', '/conferenceOut', array($conference, 'conferenceOut'));
+		$klein->respond('POST', '/addNewMember', array($conference, 'addNewMember'));
+		$klein->respond('POST', '/addNewMemberOut', array($conference, 'addNewMemberOut'));
 
 	$connectNow = new ConnectNowController();
-	$klein->respond('POST', '/connectNow', array($connectNow, 'connectNow'));
-	$klein->respond('POST', '/connectOut', array($connectNow, 'connectOut'));
-	$klein->respond('POST', '/waitForInterpreter', array($connectNow, 'waitForInterpreter'));
-	$klein->respond('POST', '/connectNowQueueCallback', array($connectNow, 'connectNowQueueCallback'));
-	$klein->respond('POST', '/addNewMemberConnectNow', array($connectNow, 'addNewMemberConnectNow'));
+		$klein->respond('POST', '/connectNow', array($connectNow, 'connectNow'));
+		$klein->respond('POST', '/connectOut', array($connectNow, 'connectOut'));
+		$klein->respond('POST', '/waitForInterpreter', array($connectNow, 'waitForInterpreter'));
+		$klein->respond('POST', '/callRandomHandle', array($connectNow, 'callRandomHandle'));
+		$klein->respond('POST', '/interpreter', array($connectNow, 'interpreter'));
+		$klein->respond('POST', '/redirectConference', array($connectNow, 'redirectConference'));
+		$klein->respond('POST', '/connectNowConference', array($connectNow, 'connectNowConference'));
+		$klein->respond('POST', '/connectNowQueueCallback', array($connectNow, 'connectNowQueueCallback'));
+		$klein->respond('POST', '/addNewMemberConnectNow', array($connectNow, 'addNewMemberConnectNow'));
 
 	$developer = new DeveloperController();
-	$klein->respond('GET', '/renderdocs', array($developer, 'renderDocs'));
-	$klein->respond('GET', '/devEncryptJson', array($developer, 'devEncryptJson'));
-	$klein->respond('GET', '/devDecryptJson', array($developer, 'devDecryptJson'));
-	$klein->respond('GET', '/devGenerateAuthToken', array($developer, 'devGenerateAuthToken'));
-	$klein->respond('POST', '/postTester', array($developer, 'postTester'));
-	$klein->respond('GET', '/getTester', array($developer, 'getTester'));
-	$klein->respond('GET', '/test', array($developer, 'test'));
-	$klein->respond('POST', '/sendSms', array($developer, 'sendSms'));
-	$klein->respond('POST', '/sendCall', array($developer, 'sendCall'));
-	$klein->respond('GET', '/incoming', array($developer, 'incoming'));
-	$klein->respond('POST', '/phoneFormat', array($developer, 'phoneFormat'));
+		$klein->respond('GET', '/renderdocs', array($developer, 'renderDocs'));
+		$klein->respond('GET', '/devEncryptJson', array($developer, 'devEncryptJson'));
+		$klein->respond('GET', '/devDecryptJson', array($developer, 'devDecryptJson'));
+		$klein->respond('GET', '/devGenerateAuthToken', array($developer, 'devGenerateAuthToken'));
+		$klein->respond('POST', '/postTester', array($developer, 'postTester'));
+		$klein->respond('GET', '/getTester', array($developer, 'getTester'));
+		$klein->respond('GET', '/test', array($developer, 'test'));
+		$klein->respond('POST', '/sendSms', array($developer, 'sendSms'));
+		$klein->respond('POST', '/sendCall', array($developer, 'sendCall'));
+		$klein->respond('GET', '/incoming', array($developer, 'incoming'));
+		$klein->respond('POST', '/phoneFormat', array($developer, 'phoneFormat'));
 
 });
 

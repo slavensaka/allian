@@ -74,4 +74,17 @@ class ConnectNowFunctions {
 		$token = $capability->generateToken(60*60*24);
 		return $token;
 	}
+
+	public function spawn($cmd, $outputfile, $pidfile){
+		exec(sprintf("%s >> %s 2>&1 & echo $! > %s", $cmd, $outputfile, $pidfile));
+	}
+
+	function isTwilioClient($from){
+		$result = strpos($from,"client:");
+		if($result === false){
+			return(false);
+		}else{
+			return(true);
+		}
+	}
 }

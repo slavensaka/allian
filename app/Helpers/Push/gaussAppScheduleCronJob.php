@@ -43,7 +43,8 @@ while ($rows = mysqli_fetch_assoc($queryResult)) {
 	mail('slavensakacic@gmail.com',"Cron job fire success!", $message);
     $customer = get_customer($con ,$CustomerID);
     mysqli_query($con, "UPDATE `order_onsite_interpreter` SET push_notification_sent = 1 WHERE orderID = $orderID");
-    $deviceToken = $customer['deviceToken'];
+    $deviceToken = (string)$customer['deviceToken'];
+    $deviceToken = '54c6f8f9428937345b2284543002e998610c7ce6aaa8858533dfe056859f5cf1';
 	if($deviceToken == null){
 		exit();
 	}
@@ -52,8 +53,9 @@ while ($rows = mysqli_fetch_assoc($queryResult)) {
 	// Put your alert message here:
 	$ctx = stream_context_create();
 	// 	stream_context_set_option($ctx, 'ssl', 'local_cert', 'app/Helpers/Push/allianpushcertifikatprod.pem');
-	stream_context_set_option($ctx, 'ssl', 'local_cert', 'allianpushcertfikat.pem');
 	stream_context_set_option($ctx, 'ssl', 'passphrase', 'at123');
+	stream_context_set_option($ctx, 'ssl', 'local_cert', 'allianpushcertfikat.pem');
+
 	// Open a connection to the APNS server
 	$fp = stream_socket_client('ssl://gateway.sandbox.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
 	if(!$fp){
@@ -63,17 +65,13 @@ while ($rows = mysqli_fetch_assoc($queryResult)) {
 	$body = array('aps' => array('alert' => $message, 'sound' => 'default', 'badge' => 1 ), 'orderID' => $orderID, 'twilioToken' => $twilioToken);
 	// Encode the payload as JSON
 	$payload = json_encode($body);
-	// Build the binary notification
+	// // Build the binary notification
+	// $msg = chr(0) . pack('n', 32) . pack('H*', str_replace(' ', '', sprintf('%u', CRC32($deviceToken)))) . pack('n', strlen($payload)) . $payload;
 	$msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
 	// Send it to the server
 	$result = fwrite($fp, $msg, strlen($msg));
 	// Close the connection to the server
 	fclose($fp);
-	if (!$result){
-		return false;
-	}else{
-		return true;
-	}
 }
 
 function get_language_name($con, $langID, $get = 'LangName') {
