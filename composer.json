@@ -13,7 +13,8 @@
 		"firebase/php-jwt": "^3.0",
 		"stripe/stripe-php": "3.13",
 		"rncryptor/rncryptor": "3.0.4",
-		"twilio/sdk": "4.9.2"
+		"twilio/sdk": "4.9.2",
+		"duccio/apns-php": "^1.0"
     },
     "maintainers": [
 	    {

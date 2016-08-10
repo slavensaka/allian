@@ -1,6 +1,8 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
+// include 'vendor/duccio/apns-php/ApnsPHP/Autoload.php';
+
 use Allian\Http\Controllers\Controller;
 use Allian\Http\Controllers\CustLoginController;
 use Allian\Http\Controllers\TranslationOrdersController;
@@ -115,7 +117,7 @@ $klein->with('/testgauss', function() use ($klein){
 		$klein->respond('POST', '/waitForInterpreter', array($connectNow, 'waitForInterpreter'));
 		$klein->respond('POST', '/callRandomHandle', array($connectNow, 'callRandomHandle'));
 		$klein->respond('POST', '/interpreter', array($connectNow, 'interpreter'));
-		$klein->respond('POST', '/redirectConference', array($connectNow, 'redirectConference'));
+		$klein->respond('POST', '/redirectToConference', array($connectNow, 'redirectToConference'));
 		$klein->respond('POST', '/connectNowConference', array($connectNow, 'connectNowConference'));
 		$klein->respond('POST', '/connectNowQueueCallback', array($connectNow, 'connectNowQueueCallback'));
 		$klein->respond('POST', '/addNewMemberConnectNow', array($connectNow, 'addNewMemberConnectNow'));

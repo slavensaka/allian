@@ -11,8 +11,8 @@
 <body>
 	ACTION REQUIRED:
 
-A call from the user with mail id :%MAIL% (from %NUMBER%) failed in the queue of %LANGPAIR% with reason %REASON% on %DATETIME%.  <br><br>Please call the customer at the number above and assist.
-
+A call from the user with mail id: %MAIL% (from %NUMBER%) failed in the queue of %LANGPAIR% with reason %REASON% on %DATETIME%.  <br><br>Please call the customer at the number above and assist.
+<br>
 System Message
 </body>
 </html>

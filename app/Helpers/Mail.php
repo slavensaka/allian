@@ -242,6 +242,71 @@ class Mail {
 		}
 	}
 
+	public function sendClientCallWaitingProduction($email, $param){
+		$arr = explode(",", $param);
+	    $pair = $arr[0];
+	    $time = $arr[1];
+	    $server = trim($_SERVER['HTTP_HOST']);
+		$server = trim($server);
+		if($server == "localhost"){
+			date_default_timezone_set('Etc/UTC');
+		    $footer = self::footer_signature();
+			$message = file_get_contents('resources/views/emails/clientCallWaiting.php');
+			$message = str_replace('%QUEUE%', $pair, $message);
+			$message = str_replace('%DATETIME%', $time, $message);
+			$message = str_replace('%FOOTER%', $footer, $message);
+
+		    $mail = new PHPMailer;
+			$mail->isSMTP();
+			$mail->CharSet='UTF-8';
+			$mail->SMTPAuth = true;
+			$mail->Host = getenv('MAIL_HOST');
+			$mail->Port = getenv('MAIL_PORT');
+			$mail->SMTPSecure = getenv('MAIL_ENCRYPTION');
+			$mail->Username = getenv('MAIL_USERNAME');
+			$mail->Password = getenv('MAIL_PASSWORD');
+			$mail->setFrom("From:" .  "Projects Desk - Alliance Business Solutions <projects@alliancebizsolutions.com>");
+			$mail->addReplyTo(getenv('MAIL_REPLY_TO'), "Client Services<cs@alliantranslate.com>");
+			$mail->addAddress('slavensakacic@gmail.com', "Order");
+			$mail->IsHTML(true);
+			$mail->Subject = "A call is waiting for agents in " . $pair . " queue.\nTime (In GMT):" . $time . "\n-Admin";
+			$mail->MsgHTML($message);
+			if (!$mail->send()) {
+			   return false;
+			} else {
+			    return true;
+			}
+		} else if($server == "alliantranslate.com"){
+			$mail = new PHPMailer;
+			$mail->From = "From:" .  "Projects Desk - Alliance Business Solutions <projects@alliancebizsolutions.com>";
+			$mail->FromName = "ALLIAN";
+			date_default_timezone_set('Etc/UTC');
+			$message = file_get_contents('resources/views/emails/clientCallWaiting.php');
+			$message = str_replace('%QUEUE%', $pair, $message);
+			$message = str_replace('%DATETIME%', $time, $message);
+			$message = str_replace('%FOOTER%', $footer, $message);
+			$mail->isHTML(true);
+			$mail->Subject = "A call is waiting for agents in " . $pair . " queue.\nTime (In GMT):" . $time . "\n-Admin";
+			$mail->MsgHTML($message);
+			// $mail->addAddress($email, "Order"); // TODO FOR PRODUCTION
+			$mail->addAddress('slavensakacic@gmail.com', "Order");
+			if (!$mail->send()) {
+			   return false;
+			} else {
+			    return true;
+			}
+		}
+	    // mail($email, $subject, $file, $headers);
+	}
+
+	public function footer_signature(){
+	    $service = "Project Desk";
+	    $email = "projects@alliancebizsolutions.com";
+		$footer = "<p>If you have any questions, please email us at any time.</p>
+		<br><p><span style='font-family: Arial; font-size: 12px; font-style: normal;'><strong>Alliance Business Solutions<br /></strong><em>-- $service </em><strong><br />Email:</strong> $email <br /><strong>Fax:</strong> 1.615.472.7924<br /></span><a href='" . getenv('HOME_SECURE') . "' target='_blank'>Translate</a><span style='font-family: Arial; font-size: 12px; font-style: normal;'>. | </span><a href='" . getenv('INTERPRETING_HOME_SECURE') . "/' target='_blank'>Interpret</a><span style='font-family: Arial; font-size: 12px; font-style: normal;'>. | </span><a href='" . getenv('TRANSCRIPTION_HOME_SECURE') . "' target='_blank'>Transcribe</a><span style='font-family: Arial; font-size: 12px; font-style: normal;'>.<br /></span><img style='font-family: Arial; font-size: 12px; font-style: normal;' src='" . getenv('HOME') . "logos/alliancebizsolutions_logo.png' alt='' width='150' height='58' /></p>";
+	    return $footer;
+	}
+
 	/**
 	 * TODO SEND_NOTIFICATION DONE
 	 * Pravi za live production $to = "orders@alliancebizsolutions.com,cs@alliantranslate.com"

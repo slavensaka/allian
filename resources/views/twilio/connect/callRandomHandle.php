@@ -4,12 +4,13 @@ header('Content-type: text/xml');
 $PairID = $this->PairID;
 $real_queue = $this->real_queue;
 $Pairname = $this->Pairname;
+$IPID = $this->IPID;
 ?>
 
 <Response>
 	<Gather
 		timeout="10"
-		action="http://alliantranslate.com/testgauss/interpreter?PairID=<?php echo $PairID;?>&amp;real_queue=<?php echo $real_queue ?>"
+		action="http://alliantranslate.com/testgauss/interpreter?PairID=<?php echo $PairID;?>&amp;real_queue=<?php echo $real_queue; ?>"
 		numDigits="1"
 	>
 		<Say>

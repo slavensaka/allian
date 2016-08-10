@@ -119,7 +119,7 @@ class ConnectNowController extends Controller {
 		// Select the amount rate for the L1 & L2 pair language from database
 		$con = Connect::con();
 		$result = mysqli_query($con,"SELECT * FROM LangRate WHERE L1= '$l1' and L2='$l2' ");
-		$numrows= mysqli_num_rows($result);
+		$numrows = mysqli_num_rows($result);
 		//If result rate for the pair language if found, set the flag to 1
 		if($numrows != 0){
 			$flag = 1;
@@ -134,7 +134,7 @@ class ConnectNowController extends Controller {
 		// If the flag=1 then the L1 & L2 rate is found. Retrieve the PairID from the database for the pair into $queue
 		if($flag == 1){
 			$row = mysqli_fetch_array($result);
-			$queue = $row['PairID'] . $row['L1'] . $row['L2'];
+			$queue = $row['PairID'];
 			$real_queue = $row['PairID'] . $row['L1'] . $row['L2'];
 		// Else If the flag=2 then the L2 & L1 rate is found. Retrieve the PairID from the database for the pair int $queue.
 		}else if($flag == 2){
@@ -150,8 +150,8 @@ class ConnectNowController extends Controller {
 		// If customers type is 2(invoice), then get the TwiML, pass customer, queue, from info
 		if($customer['Type'] == 2){ // Invoice
 			$service->customer = $customer;
-			$service->queue = $queue;
-			$service->real_queue = $real_queue;
+			$service->queue = $queue; // 73
+			$service->real_queue = $real_queue; //738268
 			$service->from = $from;
 			$service->render('./resources/views/twilio/connect/connectOut.php');
 		// If customers type is 1(stripe), then preauth(Uncapture) the customer for 30$
@@ -212,82 +212,22 @@ class ConnectNowController extends Controller {
 	}
 
 	/**
-     * @ApiDescription(section="AddNewMemberConnectNow", description="Add new member when a ina connect now call.")
-     * @ApiMethod(type="post")
-     * @ApiRoute(name="/testgauss/addNewMemberConnectNow")
-     * @ApiBody(sample="{'data': {
-    	'CustomerID': '800',
-    	 'phones': ['+123456788', '+5454534534']
-  		},
-     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUyODA1MDIsImp0aSI6IlVheUZlOUJTcEE5empHWUNneVpnNTJEVFYzRXZ4NFE5YXNKdTQ4MHdEY289IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY1MjgwNTAyLCJleHAiOjE0NjY0OTAxMDIsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.qkGUG0WdaW_Q1aysAgfaEC5300Hk4X9VFEZRGsTOxE4X-P27EdCEfAnDPY0SaXD_VfsHiVYaGwwKxO-Bz0N8Yg'}")
-     @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
-     @ApiParams(name="data", type="string", nullable=false, description="Encrypted customers email & password as json used for authentication.")
-     * @ApiReturnHeaders(sample="HTTP 200 OK")
-     * @ApiReturn(type="string", sample="{
-     *  'data': {
-	    'status': 1,
-	    'userMessage': 'Added New Member.'
-
-	  	}
-     * }")
-     */
-	public function addNewMemberConnectNow($request, $response, $service, $app){
-		// Todo dodati column za restrikciju
-		// Decrypt data
-		$data = $this->decryptValues($request->data);
-		// Validate CustomerId
-		$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
-		$service->validate($data['phones'], 'Error: No phones array is present.')->notNull();
-
-		$customer_id = $data['CustomerID'];
-		$phones = $data['phones'];
-		$query = "SELECT orderID FROM `order_onsite_interpreter` WHERE assg_frm_date = CURDATE() AND customer_id = $customer_id ORDER BY autoID DESC LIMIT 1";
-		$con = Connect::con();
-		$query_result = mysqli_query($con, $query);
-		$row = mysqli_fetch_array($query_result);
-		$conf_queue = $row['orderID'];
-
-		$queue = ConferenceSchedule::get_conference($conf_queue, 'user_code');
-
-		$http = new Services_Twilio_TinyHttp('https://api.twilio.com', array('curlopts' => array(CURLOPT_SSL_VERIFYPEER => false)));
-		$version = '2010-04-01';
-		$sid = getenv('S_TEST_TWILIO_SID'); // TODO
-		$token = getenv('S_TEST_TWILIO_TOKEN');
-		$client = new Services_Twilio($sid, $token, $version, $http);
-		$url = "localhost/testgauss/addNewMemberOut?vcode=$queue";
-		foreach($phones as $phone){
-			// TODO FOR PRODUCTION DONE
-			$call = $client->account->calls->create(getenv('TWILIO_CONF_OB_NUMBER'), $phone, $url, array());
-			// $call = $client->account->calls->create("+15005550006", "+14108675309", $url, array());
-		}
-		$rArray['status'] = 1;
-		$rArray['userMessage'] = 'Added new Member';
-		$base64Encrypted = $this->encryptValues(json_encode($rArray));
-     	return $response->json(array('data' => $base64Encrypted));
-	}
-
-	/**
 	 *
 	 * Block comment
 	 *
 	 */
 	public function waitForInterpreter($request, $response, $service, $app){
-		//TODO
-		// $pairid=$_REQUEST['pairid'];
-		// $sid=$_REQUEST['CallSid'];
-		// unlink("userdata/".$sid.".txt");
-
 		// $pairid = $request->pairid;
 		// $response = new Services_Twilio_Twiml;
 		// $response->say("Please wait while we attempt to reach an interpreter for your call.");
 		// $response->say("Please continue to wait while we find the first available interpreter.");
 		// $response->redirect("https://alliantranslate.com/linguist/phoneapp/callout.php?pairid=$pairid");
 		// return $response;
+
 		$PairID = $request->pairid;
 		$real_queue = $request->real_queue;
-		$command = "php" . " app/Helpers/TwilioConnectNow/CallRandom.php $PairID $real_queue";
+		$command = "php" . " app/Helpers/TwilioConnectNow/CallRandom.php $PairID $real_queue"; // callout.php
 		ConnectNowFunctions::spawn($command, "app/Helpers/TwilioConnectNow/NotifyLog.txt", "pid");
-
 		$response = new Services_Twilio_Twiml;
 		$response->play('app/Helpers/TwilioConnectNow/twilioaudio.mp3', array("loop" => 5));
 		$response->say('Sorry, All of our agents are busy right now. Our customer service will be in touch with you shortly. Thank you for calling our phone interpreter services. Good bye.');
@@ -295,9 +235,15 @@ class ConnectNowController extends Controller {
 		return $response;
 	}
 
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
 	public function callRandomHandle($request, $response, $service, $app){
 		$con = Connect::con();
 		$PairID = $request->PairID;
+		$IPID = $request->IPID;
 		$real_queue = $request->real_queue;
 		if(isset($PairID)){
 			$result1 = mysqli_query($con,"SELECT L1,L2,PairID FROM LangRate WHERE PairID='$PairID'");
@@ -309,9 +255,15 @@ class ConnectNowController extends Controller {
 		$service->PairID = $PairID;
 		$service->real_queue = $real_queue;
 		$service->Pairname = $Pairname;
+		$service->IPID = $IPID;
 		$service->render('./resources/views/twilio/connect/callRandomHandle.php');
 	}
 
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
 	public function interpreter($request, $response, $service, $app){
 		$con = Connect::con();
 		$PairID = $request->PairID;
@@ -319,7 +271,7 @@ class ConnectNowController extends Controller {
 		if($request->Direction == "outbound-api"){
 		 	$from = $request->To;
 		}else{
-		 	$from = $request->From;
+		    $from = $request->From;
 		}
 		if($from == null){
 			$response = new Services_Twilio_Twiml;
@@ -327,21 +279,18 @@ class ConnectNowController extends Controller {
  			$response->hangup();
  			return $response;
 		}
-
-		if(ConnnectNowFunctions::isTwilioClient($from)){
+		$IPID = false;
+		if(ConnectNowFunctions::isTwilioClient($from)){
  			$IPID = str_replace("client:", "", $from);
  		}else{
 	 		$from = substr($from, 1);
 	 		$result = mysqli_query($con, "SELECT IPID FROM Login WHERE Phone= '$from'");
 	 		if(mysqli_num_rows($result)>0){
 	 			$row = mysqli_fetch_assoc($result);
-	 			$IPID=$row['IPID'];
+	 			$IPID = $row['IPID'];
  			}
  		}
 
- 		$query="UPDATE Login SET CallSID='" . $request->CallSid . "',starttime='" . time() . "',state='2' WHERE Phone= '$from'";
- 		mysqli_query($con,$query);
- 		$result = mysqli_query($con,"SELECT IPID FROM Login WHERE Phone= '$from'"); // Not used?
  		if($IPID){
  			$query = mysqli_query($con,"SELECT * FROM LangPair WHERE IPID=".$IPID);
  			if(mysqli_num_rows($query)<1){
@@ -353,7 +302,6 @@ class ConnectNowController extends Controller {
  				$row1 = mysqli_fetch_array($query);
 	    		$pair1 = $row1['PairID'];
 	    		$array = $pair1;
-
 	    		$service->PairID = $PairID;
 				$service->real_queue = $real_queue;
 				$service->IPID = $IPID;
@@ -365,7 +313,7 @@ class ConnectNowController extends Controller {
 		    	$pair1= $row1['PairID'];
 		    	$array=$pair1.",";
 		    	while($row1 = mysqli_fetch_array($query)){
-	    			$array.=$row1['PairID'].",";
+	    			$array.=$row1['PairID'].","; // 12, 73
 	    		}
 	        	if(isset($request->PairID)){
 	        		$pair1 = $request->PairID;
@@ -386,24 +334,39 @@ class ConnectNowController extends Controller {
 		}
 	}
 
-	public function redirectConference($request, $response, $service, $app){
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	public function redirectToConference($request, $response, $service, $app){
 		$PairID = $request->PairID;
 		$real_queue = $request->real_queue;
 		$IPID = $request->IPID;
 		$array = $request->array;
 		$pair1 = $request->pair1;
 		$response = new Services_Twilio_Twiml;
-		$response->redirect("connectNowConference.php?real_queue=$real_queue");
+		$response->redirect("connectNowConference.php?real_queue=$real_queue&amp;IPID=$IPID&amp;array=$array&amp;pair1=$pair1");
 		return $response;
 
 	}
 
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
 	public function connectNowConference($request, $response, $service, $app){
-		$PairID = $request->PairID;// Look at he connectNowQueueCallback
+		// $PairID = $request->PairID;// Look at he connectNowQueueCallback
 		$real_queue = $request->real_queue;
 		$IPID = $request->IPID;
 		$array = $request->array;
 		$pair1 = $request->pair1;
+
+		$service->real_queue = $real_queue;
+		$service->IPID = $IPID;
+		$service->array = $request->array;
+		$service->pair1 = $pair1;
 		$service->render('./resources/views/twilio/connect/connectNowConference.php');
 	}
 
@@ -474,6 +437,59 @@ class ConnectNowController extends Controller {
 		return $response;
 	}
 
+	/**
+     * @ApiDescription(section="AddNewMemberConnectNow", description="Add new member when a ina connect now call.")
+     * @ApiMethod(type="post")
+     * @ApiRoute(name="/testgauss/addNewMemberConnectNow")
+     * @ApiBody(sample="{'data': {
+    	'CustomerID': '800',
+    	 'phones': ['+123456788', '+5454534534']
+  		},
+     'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUyODA1MDIsImp0aSI6IlVheUZlOUJTcEE5empHWUNneVpnNTJEVFYzRXZ4NFE5YXNKdTQ4MHdEY289IiwiaXNzIjoibG9jYWxob3N0IiwibmJmIjoxNDY1MjgwNTAyLCJleHAiOjE0NjY0OTAxMDIsImRhdGEiOnsiU3VjY2VzcyI6IlN1Y2Nlc3MifX0.qkGUG0WdaW_Q1aysAgfaEC5300Hk4X9VFEZRGsTOxE4X-P27EdCEfAnDPY0SaXD_VfsHiVYaGwwKxO-Bz0N8Yg'}")
+     @ApiParams(name="token", type="string", nullable=false, description="Autentication token for users autentication.")
+     @ApiParams(name="data", type="string", nullable=false, description="Encrypted customers email & password as json used for authentication.")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     * @ApiReturn(type="string", sample="{
+     *  'data': {
+	    'status': 1,
+	    'userMessage': 'Added New Member.'
 
+	  	}
+     * }")
+     */
+	public function addNewMemberConnectNow($request, $response, $service, $app){
+		// Todo dodati column za restrikciju
+		// Decrypt data
+		$data = $this->decryptValues($request->data);
+		// Validate CustomerId
+		$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+		$service->validate($data['phones'], 'Error: No phones array is present.')->notNull();
+
+		$customer_id = $data['CustomerID'];
+		$phones = $data['phones'];
+		$query = "SELECT orderID FROM `order_onsite_interpreter` WHERE assg_frm_date = CURDATE() AND customer_id = $customer_id ORDER BY autoID DESC LIMIT 1";
+		$con = Connect::con();
+		$query_result = mysqli_query($con, $query);
+		$row = mysqli_fetch_array($query_result);
+		$conf_queue = $row['orderID'];
+
+		$queue = ConferenceSchedule::get_conference($conf_queue, 'user_code');
+
+		$http = new Services_Twilio_TinyHttp('https://api.twilio.com', array('curlopts' => array(CURLOPT_SSL_VERIFYPEER => false)));
+		$version = '2010-04-01';
+		$sid = getenv('S_TEST_TWILIO_SID'); // TODO
+		$token = getenv('S_TEST_TWILIO_TOKEN');
+		$client = new Services_Twilio($sid, $token, $version, $http);
+		$url = "localhost/testgauss/addNewMemberOut?vcode=$queue";
+		foreach($phones as $phone){
+			// TODO FOR PRODUCTION DONE
+			$call = $client->account->calls->create(getenv('TWILIO_CONF_OB_NUMBER'), $phone, $url, array());
+			// $call = $client->account->calls->create("+15005550006", "+14108675309", $url, array());
+		}
+		$rArray['status'] = 1;
+		$rArray['userMessage'] = 'Added new Member';
+		$base64Encrypted = $this->encryptValues(json_encode($rArray));
+     	return $response->json(array('data' => $base64Encrypted));
+	}
 
 }

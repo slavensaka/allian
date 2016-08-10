@@ -80,7 +80,7 @@ class ConnectNowFunctions {
 	}
 
 	function isTwilioClient($from){
-		$result = strpos($from,"client:");
+		$result = strpos($from, "client:");
 		if($result === false){
 			return(false);
 		}else{
