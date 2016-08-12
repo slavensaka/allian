@@ -12,7 +12,7 @@
 	<strong>Interpretation Between:</strong> %QUEUE%<br><br>
 	If you are available for this project RIGHT NOW, please call in:
 	<br><br>
-	<strong>Number:</strong> +1 615-209-9121 TODO <br>
+	<strong>Number:</strong> %TWILIO_CONF_OB_NUMBER% <br>
 	<strong>Time (In GMT):</strong> RIGHT NOW - %DATETIME% <br><br>
 	If you are immediately available for this TELEPHONIC project please call in  the number above.  You will be directly connected to the client per the ITS (Instant Telephonic System) rules as discussed during your interview and orientation.
 	<br><br><strong>IMPORTANT FACTS BEFORE ACCEPTING A PROJECT:</strong><br>

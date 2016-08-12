@@ -242,19 +242,19 @@ class Mail {
 		}
 	}
 
-	public function sendClientCallWaitingProduction($email, $param){
+	public static function sendClientCallWaitingProduction($email, $param){
 		$arr = explode(",", $param);
 	    $pair = $arr[0];
 	    $time = $arr[1];
-	    $server = trim($_SERVER['HTTP_HOST']);
-		$server = trim($server);
-		if($server == "localhost"){
+
+		if(getenv('APP_MODE') == 'dev'){
 			date_default_timezone_set('Etc/UTC');
 		    $footer = self::footer_signature();
 			$message = file_get_contents('resources/views/emails/clientCallWaiting.php');
 			$message = str_replace('%QUEUE%', $pair, $message);
 			$message = str_replace('%DATETIME%', $time, $message);
 			$message = str_replace('%FOOTER%', $footer, $message);
+			$message = str_replace('%TWILIO_CONF_OB_NUMBER%', getenv('TWILIO_CONF_OB_NUMBER'), $message);
 
 		    $mail = new PHPMailer;
 			$mail->isSMTP();
@@ -271,12 +271,17 @@ class Mail {
 			$mail->IsHTML(true);
 			$mail->Subject = "A call is waiting for agents in " . $pair . " queue.\nTime (In GMT):" . $time . "\n-Admin";
 			$mail->MsgHTML($message);
-			if (!$mail->send()) {
-			   return false;
+			if($email == 'nethramllc@gmail.com' || $email == 'goharulzaman@gmail.com' || $email == 'missridikas@gmail.com'){
+
 			} else {
-			    return true;
+				if (!$mail->send()) {
+				   return false;
+				} else {
+				    return true;
+				}
 			}
-		} else if($server == "alliantranslate.com"){
+		} else if(getenv('APP_MODE') == 'prod'){
+			$footer = self::footer_signature();
 			$mail = new PHPMailer;
 			$mail->From = "From:" .  "Projects Desk - Alliance Business Solutions <projects@alliancebizsolutions.com>";
 			$mail->FromName = "ALLIAN";
@@ -285,21 +290,26 @@ class Mail {
 			$message = str_replace('%QUEUE%', $pair, $message);
 			$message = str_replace('%DATETIME%', $time, $message);
 			$message = str_replace('%FOOTER%', $footer, $message);
+			$message = str_replace('%TWILIO_CONF_OB_NUMBER%', getenv('TWILIO_CONF_OB_NUMBER'), $message);
 			$mail->isHTML(true);
 			$mail->Subject = "A call is waiting for agents in " . $pair . " queue.\nTime (In GMT):" . $time . "\n-Admin";
 			$mail->MsgHTML($message);
 			// $mail->addAddress($email, "Order"); // TODO FOR PRODUCTION
 			$mail->addAddress('slavensakacic@gmail.com', "Order");
-			if (!$mail->send()) {
-			   return false;
+			if($email == 'nethramllc@gmail.com' || $email == 'goharulzaman@gmail.com' || $email == 'missridikas@gmail.com'){
+
 			} else {
-			    return true;
+				if (!$mail->send()) {
+				   return false;
+				} else {
+				    return true;
+				}
 			}
 		}
 	    // mail($email, $subject, $file, $headers);
 	}
 
-	public function footer_signature(){
+	public static function footer_signature(){
 	    $service = "Project Desk";
 	    $email = "projects@alliancebizsolutions.com";
 		$footer = "<p>If you have any questions, please email us at any time.</p>

@@ -5,13 +5,17 @@ $real_queue = $this->real_queue;
 $IPID = $this->IPID;
 $array = $this->array;
 $pair1 = $this->pair1;
+//Dodaj u action na live http://alliantranslate.com/linguist/phoneapp/
 ?>
 <Response>
-	<Dial hangupOnStar="true" >
+	<Say>
+		Your being connected to a new conference.
+	</Say>
+	<Dial hangupOnStar="true"
+		action='handlepayment.php?IPID=<?php echo $IPID ; ?>&amp;pairarray=<?php echo $array;?>&amp;times=60&amp;Previous=<?php echo $pair1 ; ?>'
+	>
 		<Conference
 			waitUrl="http://twimlets.com/holdmusic?Bucket=com.twilio.music.classical"
-			statusCallback="connectNowQueueCallback?"
-			action='http://alliantranslate.com/linguist/phoneapp/handlepayment.php?IPID=<?php echo $IPID ; ?>&amp;pairarray=<?php echo $array;?>&amp;times=60&amp;Previous=<?php echo $pair1 ;?>'
 		>
 			<?php echo $real_queue; ?>
 		</Conference>

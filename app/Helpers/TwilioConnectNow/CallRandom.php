@@ -19,26 +19,29 @@ function selectIP($PairID, $real_queue, $istest=1){ // TODO FOR PRODUCTION $iste
 	$query = "SELECT LangPair.IPID FROM LangPair INNER JOIN IPTimings ON LangPair.IPID=IPTimings.IPID INNER JOIN Login ON IPTimings.IPID=Login.IPID WHERE IPTimings.TimeID='$TimeID' AND LangPair.PairID='$PairID' AND LangPair.Approved='1' AND Login.Active='1' AND Login.Telephonic='2' ORDER BY RAND() LIMIT 10";
 	$result = mysqli_query($con, $query);
 	while($row = mysqli_fetch_array($result)){
-		if($Phone = mysqli_fetch_array(mysqli_query($con,"SELECT Phone FROM Login WHERE IPID=" . $row['IPID']))){
-			if($istest == 0){
-				try{
-					$urlCallback = "http://alliantranslate.com/testgauss/callRandomHandle?
-										PairID=" . $PairID . "&" .
-										"real_queue=" . $real_queue . "&" .
-										"IPID=" . $row['IPID'];
+		if($Phone = mysqli_fetch_array(mysqli_query($con, "SELECT Phone FROM Login WHERE IPID=" . $row['IPID']))){
+			if($Phone['Phone'] == '13024404084' || $Phone['Phone'] == '19175459853' || $Phone['Phone'] == '16153967919'){ // TODO REMOVE IN PRODUCTION
+			} else {
+				if($istest == 0){
+					try{
+						$urlCallback = "callRandomHandle?
+											PairID=" . $PairID . "&" .
+											"real_queue=" . $real_queue . "&" .
+											"IPID=" . $row['IPID'];
 
-					$client = new Services_Twilio($sid, $token);
-					$call = $client->account->calls->create(
-						getenv('TWILIO_CONF_OB_NUMBER'), // BIO $outboundnum = TWILIO_CONF_OB_NUMBER
-						"+" . $Phone['Phone'],
-						$urlCallback
-					);
-					mail("slavensakacic@gmail.com", "callRandom.php", "call created REST API" . getenv('TWILIO_CONF_OB_NUMBER') . " ". $Phone['Phone'] . $urlCallback);
-				}catch(\Exception $e){
-					 print_r($e);
+						$client = new Services_Twilio($sid, $token);
+						$call = $client->account->calls->create(
+							getenv('TWILIO_CONF_OB_NUMBER'), // BIO $outboundnum = TWILIO_CONF_OB_NUMBER
+							"+" . $Phone['Phone'],
+							$urlCallback
+						);
+						mail("slavensakacic@gmail.com", "callRandomHandle.php", "call created with REST API" . getenv('TWILIO_CONF_OB_NUMBER') . " ". $Phone['Phone'] . $urlCallback);
+					}catch(\Exception $e){
+						 print_r($e);
+					}
+				}else{
+					echo "In call ". $Phone['Phone'] . "<br>";
 				}
-			}else{
-				echo "In call ". $Phone['Phone'] . "<br>";
 			}
 		}
 	}
@@ -52,12 +55,14 @@ function selectIP($PairID, $real_queue, $istest=1){ // TODO FOR PRODUCTION $iste
 		  	$lang1 = mysqli_fetch_array(mysqli_query($con,"SELECT LangName FROM LangList WHERE LangId=" . $row1['L1']));
 			$lang2 = mysqli_fetch_array(mysqli_query($con,"SELECT LangName FROM LangList WHERE LangId=" . $row1['L2']));
 			$Pairname = trim($lang1['LangName']) . "-" . trim($lang2['LangName']);
-			if($istest == 0){
-				mailagents($Email['Email'], $Pairname);
-			}else{
-				echo "In mail " . $Email['Email'] . " " . $Pairname . "<br>";
-				mailagents($Email['Email'], $Pairname);
-			}
+
+				if($istest == 0){
+					mailagents($Email['Email'], $Pairname);
+				}else{
+					echo "In mail " . $Email['Email'] . " " . $Pairname . "<br>";
+					mailagents($Email['Email'], $Pairname);
+				}
+
 		}
 	}
 }

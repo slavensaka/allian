@@ -7,10 +7,10 @@ echo substr(__DIR__, strlen($_SERVER['DOCUMENT_ROOT'])) . '<br>';
 echo $_SERVER['DOCUMENT_ROOT'] . '<br>';
 
 /* PRODUCTION SERVER */
-$dbhostProd = 'vps9239.inmotionhosting.com';
-$dbuserProd = 'allian10_alenb';
-$dbpassProd = 'allian2016@';
-$dbnameProd = 'allian10_abs_linguist_portal';
+// $dbhostProd = 'vps9239.inmotionhosting.com';
+// $dbuserProd = 'allian10_alenb';
+// $dbpassProd = 'allian2016@';
+// $dbnameProd = 'allian10_abs_linguist_portal';
 
 /* STAGING SERVER */
 // $dbhostStag = 'vps9239.inmotionhosting.com';
@@ -41,16 +41,6 @@ $dbnameProd = 'allian10_abs_linguist_portal';
 //     echo "0 results";
 // }
 // $conn->close();
-echo getcurrenthour();
-function getcurrenthour(){
-	 date_default_timezone_set('GMT');
-	 $daydigit= date("w");
-	 $dayhour=24*$daydigit;
-	$hour = date('G');
-	 $currenthour=$dayhour+$hour;
-	 $currenthour=$currenthour%168;
-	return $currenthour;
-}
 
 
 // $payload = json_encode($body);

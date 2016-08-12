@@ -456,14 +456,12 @@ class CustLoginController extends Controller {
 			$jsonArray['status'] = 1;
 			$jsonArray['telephonicUserId'] = $customer->getValueEncoded('PhLoginId');
 			$jsonArray['telephonicPassword'] = $customer->getValueEncoded('PhPassword');
-			// $jsonArray['registeredUserHotline'] = '1 855-733-6655';
 			// Encrypt fomrat json response
 			$result = array_merge($flags, $tel, $jsonArray);
 			// Encrypt the data
 			$base64Encrypted = $this->encryptValues(json_encode($result));
 	     	return $response->json(array('data' => $base64Encrypted));
      	} else {
-     		// $base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
      		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. Customer id doesn't match that with token.")));
 	     		return $response->json(array('data' => $base64Encrypted));
      	}

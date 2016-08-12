@@ -15,7 +15,6 @@ use Services_Twilio_TinyHttp;
 use Services_Twilio_Twiml;
 use Services_Twilio_Capability;
 use Allian\Helpers\TwilioConference\ConferenceFunctions as ConfFunc;
-use Allian\Helpers\Allian\ConnectNowFunctions;
 
 class DeveloperController extends Controller {
 
@@ -118,8 +117,8 @@ class DeveloperController extends Controller {
 	public function sendSms(){
 		$http = new Services_Twilio_TinyHttp('https://api.twilio.com', array('curlopts' => array(CURLOPT_SSL_VERIFYPEER => false)));
 		$version = '2010-04-01';
-		$accountSid = getenv('S_TWILIO_SID');
-		$authToken  = getenv('S_TWILIO_TOKEN');
+		$accountSid = getenv('S_TEST_TWILIO_SID');
+		$authToken  = getenv('S_TEST_TWILIO_TOKEN');
 		$appSid     = getenv('S_TEST_TWILIO_APP_SID');
 		$client = new Services_Twilio($accountSid, $authToken, $version, $http);
 		$client->account->messages->create(array(
@@ -139,7 +138,7 @@ class DeveloperController extends Controller {
 		$version = '2010-04-01';
 		$sid = getenv('S_TEST_TWILIO_SID');
 		$token = getenv('S_TEST_TWILIO_TOKEN');
-		$testPhone = getenv('S_TEST_TWILIO_NO_E_CONF_CALL');
+		$testPhone = getenv('S_TEST_TWILIO');
 		$client = new Services_Twilio($sid, $token, $version, $http);
 		$twiml_url = 'https://alliantranslate.com/testgauss/twilioConference';
 		$call = $client->account->calls->create("+15005550006", "+14108675309", $twiml_url, array());
@@ -153,8 +152,8 @@ class DeveloperController extends Controller {
 	 *
 	 */
 	public function incoming($request, $response, $service, $app){
-		$accountSid = getenv('S_TWILIO_SID');
-		$authToken  = getenv('S_TWILIO_TOKEN');
+		$accountSid = getenv('S_TEST_TWILIO_SID');
+		$authToken  = getenv('S_TEST_TWILIO_TOKEN');
 		$appSid     = getenv('S_TEST_TWILIO_APP_SID');
 		$capability = new Services_Twilio_Capability($accountSid, $authToken);
 		$capability->allowClientOutgoing($appSid);
@@ -209,10 +208,6 @@ class DeveloperController extends Controller {
 	 *
 	 */
 	public function postTester($request, $response, $service, $app){
-		ConnectNowFunctions::addToFile($sid, $data);
-		$CustomerID = $request->CustomerID;
-		$service->CustomerID = $CustomerID;
-		$service->render('./resources/views/misc/foundCustomer.php');
 	}
 
 	/**
@@ -242,7 +237,7 @@ class DeveloperController extends Controller {
 		$version = '2010-04-01';
 		$sid = getenv('S_TEST_TWILIO_SID');
 		$token = getenv('S_TEST_TWILIO_TOKEN');
-		$testPhone = getenv('S_TEST_TWILIO_NO_E_CONF_CALL');
+		$testPhone = getenv('S_TEST_TWILIO');
 		$client = new Services_Twilio($sid, $token, $version, $http);
 		$twiml_url = 'https://alliantranslate.com/testgauss/twilioConference';
 		$call = $client->account->calls->create("+15005550006", "+1410d8609", $twiml_url, array());

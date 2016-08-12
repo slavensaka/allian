@@ -1,6 +1,6 @@
 <?php
 
-namespace Allian\Helpers\Allian;
+namespace Allian\Helpers\TwilioConnectNow;
 
 use \Dotenv\Dotenv;
 use Services_Twilio_Capability;

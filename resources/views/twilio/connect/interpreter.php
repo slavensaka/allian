@@ -11,14 +11,18 @@ $pair1 = $this->pair1;
 	<Say>
 		You are now being connected to the client.
 	</Say>
-		<Dial
-			timeout="60"
-			action='http://alliantranslate.com/linguist/phoneapp/handlepayment.php?IPID=<?php echo $IPID ; ?>&amp;pairarray=<?php echo $array;?>&amp;times=60&amp;Previous=<?php echo $pair1 ;?>'
+	<Dial timeout="60">
+		<Queue
+			url = 'redirectToConference?IPID=<?php echo $IPID; ?>&amp;pairarray=<?php echo $array; ?>&amp;times=60&amp;Previous=<?php echo $pair1; ?>&amp;PairID=<?php echo $PairID; ?> &amp;real_queue=<?php echo $real_queue; ?> &amp;'
 		>
-			<!-- // DONT USE action, USE THE CONF CALLBACK, REVERT TO queue INSTEAD OF real_queue, ITS NEEDED ONLY ON CONF -->
-    		<Queue url='redirectToConference?IPID=<?php echo $IPID ; ?>&amp;pairarray=<?php echo $array;?>&amp;times=60&amp;Previous=<?php echo $pair1 ;?>'>
-				<?php echo $real_queue ?>
-    		</Queue>
-		</Dial>
+			<?php
+				if(isset($PairID)){
+					echo $PairID;
+				} else {
+					echo $pair1;
+				}
+			?>
+		</Queue>
+	</Dial>
 	<Hangup/>
 </Response>

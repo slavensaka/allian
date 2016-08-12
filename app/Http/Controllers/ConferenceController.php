@@ -39,7 +39,6 @@ class ConferenceController extends Controller {
 	public function conference($request, $response, $service, $app){
 		if($request->token){
 			// Validate token if not expired, or tampered with
-			$rele = "Ovo je test git";
 			$this->validateToken($request->token);
 			// Decrypt input data
 			$data = $this->decryptValues($request->data);
@@ -76,9 +75,14 @@ class ConferenceController extends Controller {
 	public function conferenceOut($request, $response, $service, $app){
 		$service->validate($request->CustomerID, 'Error: No customer id is present.')->notNull()->isInt();
 		$service->validate($request->orderId, 'Error: No order id is present.')->notNull()->isInt();
-		// $CallSid = $request->CallSid;
 		$conference = ConferenceSchedule::get_conference($request->orderId, '*');
 		$conf_queue = $conference['user_code'];
+
+		$response = new Services_Twilio_Twiml;
+		$response->say("Welcome to Allian interpreter conference service.");
+		$response->redirect("http://alliantranslate.com/linguist/twilio-conf-enhanced/conference.php?Digits=1&vcode=" . trim($conf_queue));// TODO THE EASY WAY
+		return $response;
+		// $CallSid = $request->CallSid;
 		// $customer = CustLogin::get_customer($request->CustomerID);
 		// $order = OrderOnsiteInterpreter::get_interpret_order($request->orderId, '*');
 		// $transOrder = TranslationOrders::getTranslationOrder($request->orderId, '*');
@@ -89,14 +93,10 @@ class ConferenceController extends Controller {
 		// $service->verified = $verified;
 		// $service->CustomerID = $request->CustomerID;
 		// $service->orderId = $request->orderId;
-
 		// Set the conf_queue on the user
 		// $query = "UPDATE `order_onsite_interpreter` set conf_queue='$conf_queue' WHERE orderID='" . $request->orderId . "'";
 		// $con = Connect::con();
 		// $query_result = mysqli_query($con, $query);
-
-		$service->v_code = $conf_queue;
-		$service->render('./resources/views/twilio/conference/confOut.php'); // TODO THE EASY WAY
 		// $service->render('./resources/views/twilio/conference/conferenceOut.php'); // THE HARD WAY
 	}
 
@@ -121,12 +121,13 @@ class ConferenceController extends Controller {
      * }")
      */
 	public function addNewMember($request, $response, $service, $app){
-		// TODO dodati column za restrikciju, jel se može orderID poslat u ovom requestu
 		// Decrypt data
 		$data = $this->decryptValues($request->data);
 		// Validate CustomerId
 		$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
 		$service->validate($data['phones'], 'Error: No phones array is present.')->notNull();
+		// TODO dodati column za restrikciju,orderID treba poslat u ovom requestu
+		// $service->validate($data['orderId'], 'Error: No orderId is present.')->notNull();
 		$customer_id = $data['CustomerID'];
 		$phones = $data['phones'];
 		$query = "SELECT orderID FROM `order_onsite_interpreter` WHERE assg_frm_date = CURDATE() AND customer_id = $customer_id ORDER BY autoID DESC LIMIT 1";
@@ -139,14 +140,14 @@ class ConferenceController extends Controller {
 		$sid = getenv('LIVE_TWILIO_ALLIAN_SID');
 		$token = getenv('LIVE_TWILIO_ALLIAN_TOKEN');
 		$client = new Services_Twilio($sid, $token, '2010-04-01', $http);
-		$url = "https://alliantranslate.com/testgauss/addNewMemberOut?vcode=$queue";
+		$url = "addNewMemberOut?vcode=$queue";
 		foreach($phones as $phone){
 			// TODO FOR PRODUCTION DONE
-			$call = $client->account->calls->create(getenv('TWILIO_CONF_OB_NUMBER'), $phone, $url, array());
+			$call = $client->account->calls->create(getenv('ADD_NEW_MEMBER'), $phone, $url, array());
 			// $call = $client->account->calls->create("+15005550006", "+14108675309", $url, array());
 		}
 		$rArray['status'] = 1;
-		$rArray['userMessage'] = 'Added new Member.';
+		$rArray['userMessage'] = 'Added new member.';
 		$base64Encrypted = $this->encryptValues(json_encode($rArray));
      	return $response->json(array('data' => $base64Encrypted));
 	}
@@ -159,7 +160,7 @@ class ConferenceController extends Controller {
      * @ApiReturnHeaders(sample="HTTP 200 OK")
      */
 	public function addNewMemberOut($request, $response, $service, $app){
-		$service->v_code = $request->vcode;
+		$service->vcode = $request->vcode;
 		$service->render('./resources/views/twilio/conference/addNewMemberOut.php');
 	}
 
