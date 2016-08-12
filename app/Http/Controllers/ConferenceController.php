@@ -38,6 +38,7 @@ class ConferenceController extends Controller {
      */
 	public function conference($request, $response, $service, $app){
 		if($request->token){
+			$string = "OOO";
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
 			// Decrypt input data
