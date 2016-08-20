@@ -1,8 +1,6 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
-// include 'vendor/duccio/apns-php/ApnsPHP/Autoload.php';
-
 use Allian\Http\Controllers\Controller;
 use Allian\Http\Controllers\CustLoginController;
 use Allian\Http\Controllers\TranslationOrdersController;

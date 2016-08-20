@@ -282,31 +282,27 @@ class Mail {
 			}
 		} else if(getenv('APP_MODE') == 'prod'){
 			$footer = self::footer_signature();
-			$mail = new PHPMailer;
-			$mail->From = "From:" .  "Projects Desk - Alliance Business Solutions <projects@alliancebizsolutions.com>";
-			$mail->FromName = "ALLIAN";
-			date_default_timezone_set('Etc/UTC');
 			$message = file_get_contents('resources/views/emails/clientCallWaiting.php');
 			$message = str_replace('%QUEUE%', $pair, $message);
 			$message = str_replace('%DATETIME%', $time, $message);
 			$message = str_replace('%FOOTER%', $footer, $message);
 			$message = str_replace('%TWILIO_CONF_OB_NUMBER%', getenv('TWILIO_CONF_OB_NUMBER'), $message);
-			$mail->isHTML(true);
-			$mail->Subject = "A call is waiting for agents in " . $pair . " queue.\nTime (In GMT):" . $time . "\n-Admin";
-			$mail->MsgHTML($message);
-			// $mail->addAddress($email, "Order"); // TODO FOR PRODUCTION
-			$mail->addAddress('slavensakacic@gmail.com', "Order");
+			$subject = "A call is waiting for agents in " . $pair . " queue.\nTime (In GMT):" . $time . "\n-Admin";
+			$headers = "From:" .  "Projects Desk - Alliance Business Solutions <projects@alliancebizsolutions.com>" . "\r\n";
+    		$headers .= "MIME-Version: 1.0" . "\r\n";
+    		$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 			if($email == 'nethramllc@gmail.com' || $email == 'goharulzaman@gmail.com' || $email == 'missridikas@gmail.com'){
 
 			} else {
-				if (!$mail->send()) {
+				// if (!mail("slavensakacic@gmail.com", $subject, $message, $headers)) {
+				if (!mail($email, $subject, $message, $headers)) { // TODO PRODUCTION
 				   return false;
 				} else {
 				    return true;
 				}
 			}
 		}
-	    // mail($email, $subject, $file, $headers);
+
 	}
 
 	public static function footer_signature(){

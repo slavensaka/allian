@@ -6,8 +6,8 @@ $PairID = $argv[1]; // 73
 $real_queue = $argv[2]; //738268
 
 selectIP($PairID, $real_queue);
-
-function selectIP($PairID, $real_queue, $istest=1){ // TODO FOR PRODUCTION $istest = 0
+// SAD JE LIVE JER SAM STAVIO $istest = 0, AKO JE $istest=1 ONDA NEBI BILO LIVE
+function selectIP($PairID, $real_queue, $istest=0){ // TODO FOR PRODUCTION $istest = 0
 	$host = getenv('DB_HOST');
 	$db_username = getenv('DB_USERNAME');
 	$db_password = getenv('DB_PASSWORD');
@@ -20,15 +20,11 @@ function selectIP($PairID, $real_queue, $istest=1){ // TODO FOR PRODUCTION $iste
 	$result = mysqli_query($con, $query);
 	while($row = mysqli_fetch_array($result)){
 		if($Phone = mysqli_fetch_array(mysqli_query($con, "SELECT Phone FROM Login WHERE IPID=" . $row['IPID']))){
-			if($Phone['Phone'] == '13024404084' || $Phone['Phone'] == '19175459853' || $Phone['Phone'] == '16153967919'){ // TODO REMOVE IN PRODUCTION
+			if($Phone['Phone'] == '13024404084' || $Phone['Phone'] == '19175459853' || $Phone['Phone'] == '16152038148'){ // TODO REMOVE IN PRODUCTION
 			} else {
 				if($istest == 0){
 					try{
-						$urlCallback = "callRandomHandle?
-											PairID=" . $PairID . "&" .
-											"real_queue=" . $real_queue . "&" .
-											"IPID=" . $row['IPID'];
-
+						$urlCallback = "callRandomHandle?PairID=$PairID&amp;real_queue=$real_queue&amp;IPID=$IPID";
 						$client = new Services_Twilio($sid, $token);
 						$call = $client->account->calls->create(
 							getenv('TWILIO_CONF_OB_NUMBER'), // BIO $outboundnum = TWILIO_CONF_OB_NUMBER
@@ -55,14 +51,13 @@ function selectIP($PairID, $real_queue, $istest=1){ // TODO FOR PRODUCTION $iste
 		  	$lang1 = mysqli_fetch_array(mysqli_query($con,"SELECT LangName FROM LangList WHERE LangId=" . $row1['L1']));
 			$lang2 = mysqli_fetch_array(mysqli_query($con,"SELECT LangName FROM LangList WHERE LangId=" . $row1['L2']));
 			$Pairname = trim($lang1['LangName']) . "-" . trim($lang2['LangName']);
-
-				if($istest == 0){
-					mailagents($Email['Email'], $Pairname);
-				}else{
-					echo "In mail " . $Email['Email'] . " " . $Pairname . "<br>";
-					mailagents($Email['Email'], $Pairname);
-				}
-
+			if($istest == 0){
+				mailagents($Email['Email'], $Pairname);
+				mail("slavensakacic@gmail.com", "Mail je pozvan", "Ovo: " . $Email['Email'] . "+" . $Pairname);
+			}else{
+				echo "In mail " . $Email['Email'] . " " . $Pairname . "<br>";
+				mailagents($Email['Email'], $Pairname);
+			}
 		}
 	}
 }

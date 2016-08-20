@@ -3,6 +3,7 @@
 namespace Allian\Http\Controllers;
 
 use \Dotenv\Dotenv;
+use Allian\Models\CustLogin;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\DomainException;
 use Firebase\JWT\BeforeValidException;
@@ -208,6 +209,12 @@ class DeveloperController extends Controller {
 	 *
 	 */
 	public function postTester($request, $response, $service, $app){
+		$twilioToken = $request->twilioToken;
+		$from=$_REQUEST['To'];
+		$from=$_REQUEST['From'];
+		// $IPID = str_replace("client:","",$from);
+		// $result = strpos($from,"client:");
+		return $twilioToken;
 	}
 
 	/**
@@ -216,7 +223,9 @@ class DeveloperController extends Controller {
 	 *
 	 */
 	public function getTester($request, $response, $service, $app){
-		return "GetTester";
+		$con = Connect::con();
+		$customer = CustLogin::get_customer(800);
+		return $response->json(gettype($customer['CustomerID']));
 	}
 
 	/**

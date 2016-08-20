@@ -228,7 +228,8 @@ class ConnectNowController extends Controller {
 
 		$PairID = $request->pairid;
 		$real_queue = $request->real_queue;
-		$command = "php" . " app/Helpers/TwilioConnectNow/CallRandom.php $PairID $real_queue"; // callout.php
+		$php_path= getenv('PHP_PATH');
+		$command = $php_path . " app/Helpers/TwilioConnectNow/CallRandom.php $PairID $real_queue"; // callout.php
 		ConnectNowFunctions::spawn($command, "app/Helpers/TwilioConnectNow/NotifyLog.txt", "pid");
 		$response = new Services_Twilio_Twiml;
 		$response->play('app/Helpers/TwilioConnectNow/twilioaudio.mp3', array("loop" => 5));
@@ -483,7 +484,7 @@ class ConnectNowController extends Controller {
      * }")
      */
 	public function addNewMemberConnectNow($request, $response, $service, $app){
-		// TODO dodati column za restrikciju, jel se može orderID poslat u ovom requestu
+		// TODO dodati column za restrikciju, jel se može lang i translationTo poslat u ovom requestu
 		$data = $this->decryptValues($request->data);
 		$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
 		$service->validate($data['phones'], 'Error: No phones array is present.')->notNull();
@@ -495,37 +496,37 @@ class ConnectNowController extends Controller {
 		// $translationTo = $data['translationTo'];
 
 
-		// $l1 = LangList::langIdByName($lang);
-		// $l2 = LangList::langIdByName($translationTo);
-		// $chinese = LangList::selectChinese();
-		// $mandarin = LangList::selectMandarin();
-		// $chid = $chinese["LangId"];
-		// if($l1 == $chid){
-		// 	$l1 = $mandarin["LangId"];
-		// }
-		// if($l2 == $chid){
-		// 	$l2 = $mandarin["LangId"];
-		// }
-		// $con = Connect::con();
-		// $result = mysqli_query($con,"SELECT * FROM LangRate WHERE L1= '$l1' and L2='$l2' ");
-		// $numrows = mysqli_num_rows($result);
-		// if($numrows != 0){
-		// 	$flag = 1;
-		// }
-		// $result1 = mysqli_query($con,"SELECT * FROM LangRate WHERE L1= '$l2' and L2='$l1' ");
-		// $numrows1= mysqli_num_rows ($result1);
-		// if($numrows1 != 0){
-		// 	$flag = 2;
-		// }
-		// if($flag == 1){
-		// 	$row = mysqli_fetch_array($result);
-		// 	$queue = $row['PairID'];
-		// 	$real_queue = $row['PairID'] . $row['L1'] . $row['L2'];
-		// }else if($flag == 2){
-		// 	$row = mysqli_fetch_array($result1);
-		// 	$queue = $row['PairID'];
-		// 	$real_queue = $row['PairID'] . $row['L1'] . $row['L2'];
-		// }
+		$l1 = LangList::langIdByName($lang);
+		$l2 = LangList::langIdByName($translationTo);
+		$chinese = LangList::selectChinese();
+		$mandarin = LangList::selectMandarin();
+		$chid = $chinese["LangId"];
+		if($l1 == $chid){
+			$l1 = $mandarin["LangId"];
+		}
+		if($l2 == $chid){
+			$l2 = $mandarin["LangId"];
+		}
+		$con = Connect::con();
+		$result = mysqli_query($con,"SELECT * FROM LangRate WHERE L1= '$l1' and L2='$l2' ");
+		$numrows = mysqli_num_rows($result);
+		if($numrows != 0){
+			$flag = 1;
+		}
+		$result1 = mysqli_query($con,"SELECT * FROM LangRate WHERE L1= '$l2' and L2='$l1' ");
+		$numrows1= mysqli_num_rows ($result1);
+		if($numrows1 != 0){
+			$flag = 2;
+		}
+		if($flag == 1){
+			$row = mysqli_fetch_array($result);
+			$queue = $row['PairID'];
+			$real_queue = $row['PairID'] . $row['L1'] . $row['L2'];
+		}else if($flag == 2){
+			$row = mysqli_fetch_array($result1);
+			$queue = $row['PairID'];
+			$real_queue = $row['PairID'] . $row['L1'] . $row['L2'];
+		}
 
 
 		$http = new Services_Twilio_TinyHttp('https://api.twilio.com', array('curlopts' => array(CURLOPT_SSL_VERIFYPEER => false)));

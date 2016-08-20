@@ -38,7 +38,6 @@ class ConferenceController extends Controller {
      */
 	public function conference($request, $response, $service, $app){
 		if($request->token){
-			$string = "OOO";
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
 			// Decrypt input data
@@ -141,7 +140,7 @@ class ConferenceController extends Controller {
 		$sid = getenv('LIVE_TWILIO_ALLIAN_SID');
 		$token = getenv('LIVE_TWILIO_ALLIAN_TOKEN');
 		$client = new Services_Twilio($sid, $token, '2010-04-01', $http);
-		$url = "addNewMemberOut?vcode=$queue";
+		$url = "http://alliantranslate.com/testgauss/addNewMemberOut?vcode=$queue";
 		foreach($phones as $phone){
 			// TODO FOR PRODUCTION DONE
 			$call = $client->account->calls->create(getenv('ADD_NEW_MEMBER'), $phone, $url, array());
