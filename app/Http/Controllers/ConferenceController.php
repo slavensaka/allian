@@ -43,7 +43,7 @@ class ConferenceController extends Controller {
 			// Decrypt input data
 			$data = $this->decryptValues($request->data);
 			// Validate input data
-			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+			$service->validate($data['CustomeIrD'], 'Error: No customer id is present.')->notNull()->isInt();
 			//Validate token in database
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			if(!$validated){
@@ -126,6 +126,7 @@ class ConferenceController extends Controller {
 		// Validate CustomerId
 		$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
 		$service->validate($data['phones'], 'Error: No phones array is present.')->notNull();
+		// Twiliotoken
 		// TODO dodati column za restrikciju,orderID treba poslat u ovom requestu
 		// $service->validate($data['orderId'], 'Error: No orderId is present.')->notNull();
 		$customer_id = $data['CustomerID'];

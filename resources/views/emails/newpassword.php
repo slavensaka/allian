@@ -14,7 +14,7 @@ define('PATH', __DIR__);
 Hello %FName%, <br><br>
 Your new password is: <b>%LoginPassword%</b> <br><br>
 
-Please login by clicking on the following link below <br>
+We have successfully changed your password. You can now login with the new password.<br>
 <a href="https://alliantranslate.com/linguist/clientportal/loginform.php">https://alliantranslate.com/linguist/clientportal/loginform.php</a><br><br>
 
 If you have any questions, please email us at any time. <br><br>

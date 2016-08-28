@@ -66,6 +66,7 @@ $klein->with('/testgauss', function() use ($klein){
 	$custLogin = new CustLoginController();
 		$klein->respond('POST', '/login', array($custLogin, 'postLogin'));
 		$klein->respond('POST', '/register', array($custLogin, 'postRegister'));
+		$klein->respond('POST', '/updatePassword', array($custLogin, 'updatePassword'));
 		$klein->respond('POST', '/forgot', array($custLogin, 'postForgot'));
 		$klein->respond('POST', '/viewProfile', array($custLogin, 'viewProfile'));
 		$klein->respond('POST', '/updateProfile', array($custLogin, 'updateProfile'));

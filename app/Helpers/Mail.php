@@ -294,8 +294,10 @@ class Mail {
 			if($email == 'nethramllc@gmail.com' || $email == 'goharulzaman@gmail.com' || $email == 'missridikas@gmail.com'){
 
 			} else {
-				// if (!mail("slavensakacic@gmail.com", $subject, $message, $headers)) {
-				if (!mail($email, $subject, $message, $headers)) { // TODO PRODUCTION
+				// $sent = mail($email, $subject, $message, $headers);
+				$sent = mail("alen.brcic@alliancebizsolutions.com", $subject, $message, $headers); // TODO PRODUCTION
+				$sent = mail("lalbescu@alliancebizsolutions.com", $subject, $message, $headers); // TODO PRODUCTION
+				if (!$sent) {
 				   return false;
 				} else {
 				    return true;

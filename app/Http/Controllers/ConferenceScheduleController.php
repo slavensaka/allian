@@ -460,6 +460,7 @@ class ConferenceScheduleController extends Controller {
 				$retArray['confDialNumber'] = getenv('CONF_DIAL_ALLIAN_LIVE');
 			} else if($data['schedulingType'] == 'get_call'){
 				$retArray['confCode'] = null;
+				$retArray['country'] = $sArray['country'];
 				$retArray['confDialNumber'] = $sArray['onsite_con_phone']; // Broj korisnika koji je unio
 			}
 

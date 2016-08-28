@@ -248,14 +248,20 @@ class ConnectNowController extends Controller {
 		$real_queue = $request->real_queue;
 		$IPID = $request->IPID;
 
-		if(isset($PairID)){
+
+		// if(isset($PairID)){
+
 			$con = Connect::con();
 			$result1 = mysqli_query($con,"SELECT L1,L2,PairID FROM LangRate WHERE PairID='$PairID'");
+
 			$row1 = mysqli_fetch_array($result1);
 			$lang1 = mysqli_fetch_array(mysqli_query($con,"SELECT LangName FROM LangList WHERE LangId=".$row1['L1']));
 			$lang2 = mysqli_fetch_array(mysqli_query($con,"SELECT LangName FROM LangList WHERE LangId=".$row1['L2']));
+
 			$Pairname = trim($lang1['LangName'])."  to  ".trim($lang2['LangName']);
-		}
+			mail('slavensakacic@gmail.com', 'Dolazi iz random handle', "$PairID, $real_queue, $IPID, $PairName");
+		// }
+
 		$service->PairID = $PairID;
 		$service->real_queue = $real_queue;
 		$service->Pairname = $Pairname;
@@ -269,12 +275,12 @@ class ConnectNowController extends Controller {
 	 *
 	 */
 	public function interpreter($request, $response, $service, $app){
-		if(isset($request->PairID)){
+		// if(isset($request->PairID)){
 			$PairID = $request->PairID;
-		}
-		if(isset($request->real_queue)){
+		// }
+		// if(isset($request->real_queue)){
 			$real_queue = $request->real_queue;
-		}
+		// }
 		// $fromi = $request->Fromi; // OVO
 		if($request->Direction == "outbound-api"){
 		 	$from = $request->To;
@@ -290,18 +296,19 @@ class ConnectNowController extends Controller {
 
 		$IPID = false;
 		$con = Connect::con();
-		if(ConnectNowFunctions::isTwilioClient($from)){
- 			$IPID = str_replace("client:", "", $from); // U from je stavljen IPID, twilio_app\auth_client.php
- 		}else{
+		// if(ConnectNowFunctions::isTwilioClient($from)){
+ 	// 		$IPID = str_replace("client:", "", $from); // U from je stavljen IPID, twilio_app\auth_client.php
+ 	// 	}else{
 	 		$from = substr($from, 1);
 	 		// $result = mysqli_query($con, "SELECT IPID FROM Login WHERE Phone= '$fromi'");
-	 		$result = mysqli_query($con, "SELECT IPID FROM Login WHERE Phone= '$from'");
-	 		if(mysqli_num_rows($result)>0){
-	 			$row = mysqli_fetch_assoc($result);
-	 			$IPID = $row['IPID'];
- 			}
- 		}
-
+	 		// $result = mysqli_query($con, "SELECT IPID FROM Login WHERE Phone= '$from'");
+	 		// if(mysqli_num_rows($result)>0){
+	 		// 	$row = mysqli_fetch_assoc($result);
+	 		// 	$IPID = $row['IPID'];
+ 			// }
+ 		// }
+	 	$IPID = $request->IPID;
+	 	mail("slavensakacic@gmail.com", "interpreter.php", "Interpreter" . "ovo je pair: $PairID, ovo je real_queue: $real_queue, ovo je $from, ovo je IPID: $IPID");
  		if($IPID){
 
  			$query = mysqli_query($con,"SELECT * FROM LangPair WHERE IPID=".$IPID);
@@ -323,22 +330,31 @@ class ConnectNowController extends Controller {
 				$service->pair1 = $pair1;
 	    		$service->render('./resources/views/twilio/connect/interpreter.php');
  			}else if(mysqli_num_rows($query)>1){
+	    			$row1 = mysqli_fetch_array($query);
+		    		$pair1 = $row1['PairID'];
+		    		$array = $pair1;
 
- 				$row1 = mysqli_fetch_array($query);
-		    	$pair1= $row1['PairID'];
-		    	$array=$pair1.",";
-		    	while($row1 = mysqli_fetch_array($query)){
-	    			$array.=$row1['PairID'].","; // 12, 73
-	    		}
-	        	if(isset($request->PairID)){
-	        		$pair1 = $request->PairID;
-	        	}
-	   			$service->PairID = $PairID;
-				$service->real_queue = $real_queue;
-				$service->IPID = $IPID;
-				$service->array = $array;
-				$service->pair1 = $pair1;
-	        	$service->render('./resources/views/twilio/connect/nextCustomer.php');
+		   			$service->PairID = $PairID;
+					$service->real_queue = $real_queue;
+					$service->IPID = $IPID;
+					$service->array = $array;
+					$service->pair1 = $pair1;
+		    		$service->render('./resources/views/twilio/connect/interpreter.php');
+ 			// 	$row1 = mysqli_fetch_array($query);
+		  //   	$pair1= $row1['PairID'];
+		  //   	$array=$pair1.",";
+		  //   	while($row1 = mysqli_fetch_array($query)){
+	   //  			$array.=$row1['PairID'].","; // 12, 73
+	   //  		}
+	   //      	if(isset($request->PairID)){
+	   //      		$pair1 = $request->PairID;
+	   //      	}
+	   // 			$service->PairID = $PairID;
+				// $service->real_queue = $real_queue;
+				// $service->IPID = $IPID;
+				// $service->array = $array;
+				// $service->pair1 = $pair1;
+	   //      	$service->render('./resources/views/twilio/connect/nextCustomer.php');
 	       	}
 
 	    }else {
@@ -373,7 +389,10 @@ class ConnectNowController extends Controller {
 		}
 
 		$response = new Services_Twilio_Twiml;
-		$response->redirect("connectNowConference?real_queue=$real_queue&amp;IPID=$IPID&amp;array=$array&amp;pair1=$pair1");
+		$query_string = array( 'real_queue' => $real_queue, 'IPID' => $IPID , 'array' => $array, 'pair1' => $pair1);
+						$urlCallback =  'http://alliantranslate.com/testgauss/connectNowConference' . '?' . http_build_query($query_string, '', '&');
+		// $response->redirect("connectNowConference?real_queue=$real_queue&amp;IPID=$IPID&amp;array=$array&amp;pair1=$pair1");
+		$response->redirect($urlCallback);
 		return $response;
 	}
 
@@ -488,13 +507,15 @@ class ConnectNowController extends Controller {
 		$data = $this->decryptValues($request->data);
 		$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
 		$service->validate($data['phones'], 'Error: No phones array is present.')->notNull();
+		// TwilioTOken ce biti dodan
 		// $service->validate($data['lang'], 'Error: No lang is present.')->notNull(); // TODO Dodati novo
 		// $service->validate($data['translationTo'], 'Error: No translationTo is present.')->notNull(); // TODO Dodati novo
 
 		$phones = $data['phones'];
 		// $lang = $data['lang'];
 		// $translationTo = $data['translationTo'];
-
+		$lang = 'TEST';
+		$translationTo ='English';
 
 		$l1 = LangList::langIdByName($lang);
 		$l2 = LangList::langIdByName($translationTo);

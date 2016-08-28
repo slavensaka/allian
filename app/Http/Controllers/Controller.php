@@ -177,10 +177,19 @@ class Controller {
 		$email = $customer->getValueEncoded('Email');
 		$phonePassword  = $customer->getValueEncoded('PhPassword');
 		$jsonArray['CustomerID'] = $customer->getValueEncoded('CustomerID');
+		$type = $customer->getValueEncoded('Type');
+		if($type == 1){
+			$accountType = false;
+		} else if($type == 2){
+			$accountType = true;
+		} else {
+			$accountType = false;
+		}
 		$jsonArray['status'] = 1;
 		$jsonArray['email'] = $email;
 		$jsonArray['phonePassword'] = $phonePassword;
 		$jsonArray['userMessage'] = "Welcome.";
+		$jsonArray['isInvoice'] = $accountType;
 		return $jsonArray;
 	}
 

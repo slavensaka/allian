@@ -9,6 +9,8 @@ use Allian\Models\LangList;
 use Allian\Models\CustLogin;
 use Allian\Helpers\Push\PushNotification;
 use Allian\Helpers\TwilioConference\ConferenceFunctions;
+use Allian\Helpers\TwilioConference\ConferenceFunctions as ConfFunc;
+
 
 class OrderOnsiteInterpreterController extends Controller {
 
@@ -156,6 +158,7 @@ class OrderOnsiteInterpreterController extends Controller {
 			$rArray['timeEnds'] = date('h:i A', strtotime($result["assg_frm_en"]));
 			$rArray['langFrom'] = trim(LangList::get_language_name($result["frm_lang"]));
 			$rArray['langTo'] = trim(LangList::get_language_name($result["to_lang"]));
+			$rArray['twilioToken'] = ConfFunc::generateCapabilityToken($data['CustomerID']);
 			$rArray['status'] = 1;
 			$rArray['userMessage'] = 'Scheduled Session';
 		/* ==========================================================================

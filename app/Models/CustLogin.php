@@ -69,6 +69,27 @@ class CustLogin extends DataObject {
 	    }
   	}
 
+  	public static function updatePassword($data){
+  		$conn = parent::connect();
+		$sql = "UPDATE " . getenv('TBL_CUSTLOGIN') . " SET LoginPassword = :LoginPassword WHERE CustomerID = :CustomerID";
+		try{
+			$st = $conn->prepare($sql);
+			$st->bindValue(":LoginPassword", PassHash::hash($data['LoginPassword']), \PDO::PARAM_STR);
+			$st->bindValue(":CustomerID", $data['CustomerID'], \PDO::PARAM_STR);
+			$success = $st->execute();
+			parent::disconnect($conn);
+  			if($success){
+  				return true;
+  			} else {
+  				return false;
+  			}
+		} catch (\PDOException $e) {
+	    	parent::disconnect($conn);
+	    	throw new \Exception("Internal error occurred.");
+	    }
+
+  	}
+
   	/**
   	 *
   	 * Block comment

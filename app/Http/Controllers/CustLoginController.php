@@ -63,9 +63,61 @@ class CustLoginController extends Controller {
 		// Format data for encryption
 		$base64Encrypted = $this->encryptValues(json_encode($this->loginValues($customer)));
 		// Make the response json
+
+
 		$resp = array('token' => $genToken, 'data' => $base64Encrypted);
 		// Return as json token and encrypted data
      	return $response->json($resp);
+	}
+
+	/**
+     * @ApiDescription(section="UpdatePassword", description="Update the users password")
+     * @ApiMethod(type="post")
+     * @ApiRoute(name="/testgauss/updatePassword")
+     * @ApiBody(sample="{ 'data': {
+	    'CustomerID': '760',
+	    'password': '12345'
+  		}}")
+     * @ApiParams(name="data", type="string", nullable=false, description="Password and the customerID.")
+     * @ApiReturnHeaders(sample="HTTP 200 OK")
+     * @ApiReturn(type="string", sample="{'data': {
+	    'status': '1',
+	    'userMessage': 'Succesfully updated your password.'
+  			}
+		}")
+    */
+	public function updatePassword($request, $response, $service, $app){
+		if($request->token){
+			// Validate token if not expired, or tampered with
+			$this->validateToken($request->token);
+			// Decrypt data
+			$data = $this->decryptValues($request->data);
+			// Validate input data
+			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
+			$service->validate($data['password'], 'Error: No password is present.')->notNull();
+			//Validate the jwt token in the database
+			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
+			// If error validating token in database
+			if(!$validated){
+	     		return $response->json(array('data' => $this->errorJson("Authentication problems present")));
+			}
+			$data['LoginPassword'] = $data['password'];
+			$updatedPassword = CustLogin::updatePassword($data);
+			// Error if no email was found in the database
+			if(!$updatedPassword){
+				$errorJson = $this->encryptValues(json_encode($this->errorJson("Error while updating your password.")));
+				return $response->json(array('data' => $errorJson));
+			}
+
+			$ret = array();
+			$ret['userMessage'] = 'Succesfully updated your password';
+			$ret['status'] = 1;
+			$base64Encrypted = $this->encryptValues(json_encode($ret));
+	     	return $response->json(array('data' => $base64Encrypted));
+		} else {
+			$base64Encrypted = $this->errorJson("No token provided in request");
+     		return $response->json(array('data' => $base64Encrypted));
+		}
 	}
 
 	/**
@@ -153,11 +205,23 @@ class CustLoginController extends Controller {
 			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Internal error. Contact support")));
      		return $response->json(array('data' => $base64Encrypted));
 		}
+
+		$type = $customer->getValueEncoded('Type');
+		if($type == 1){
+			$accountType = false;
+		} else if($type == 2){
+			$accountType = true;
+		} else {
+			$accountType = false;
+		}
+
+
 	 /* ==========================================================================
 	   Response Array
 	   ========================================================================== */
 		$jsonArray = array();
 		$jsonArray['status'] = 1;
+		$jsonArray['isInvoice'] = $accountType;
 		$jsonArray['CustomerID'] = $customer->getValueEncoded('CustomerID');
 		$fname = $customer->getValueEncoded('FName');
 		$lname = $customer->getValueEncoded('LName');
