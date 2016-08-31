@@ -269,7 +269,7 @@ class Mail {
 			$mail->addReplyTo(getenv('MAIL_REPLY_TO'), "Client Services<cs@alliantranslate.com>");
 			$mail->addAddress('slavensakacic@gmail.com', "Order");
 			$mail->IsHTML(true);
-			$mail->Subject = "A call is waiting for agents in " . $pair . " queue.\nTime (In GMT):" . $time . "\n-Admin";
+			$mail->Subject = "NEW INTERPRETING PROJECT - TELEPHONIC - " . $pair;;
 			$mail->MsgHTML($message);
 			if($email == 'nethramllc@gmail.com' || $email == 'goharulzaman@gmail.com' || $email == 'missridikas@gmail.com'){
 
@@ -287,7 +287,7 @@ class Mail {
 			$message = str_replace('%DATETIME%', $time, $message);
 			$message = str_replace('%FOOTER%', $footer, $message);
 			$message = str_replace('%TWILIO_CONF_OB_NUMBER%', getenv('TWILIO_CONF_OB_NUMBER'), $message);
-			$subject = "A call is waiting for agents in " . $pair . " queue.\nTime (In GMT):" . $time . "\n-Admin";
+			$subject = "NEW INTERPRETING PROJECT - TELEPHONIC - " . $pair;
 			$headers = "From:" .  "Projects Desk - Alliance Business Solutions <projects@alliancebizsolutions.com>" . "\r\n";
     		$headers .= "MIME-Version: 1.0" . "\r\n";
     		$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
@@ -295,8 +295,8 @@ class Mail {
 
 			} else {
 				// $sent = mail($email, $subject, $message, $headers);
-				$sent = mail("alen.brcic@alliancebizsolutions.com", $subject, $message, $headers); // TODO PRODUCTION
-				$sent = mail("lalbescu@alliancebizsolutions.com", $subject, $message, $headers); // TODO PRODUCTION
+				// $sent = mail("alen.brcic@alliancebizsolutions.com", $subject, $message, $headers); // TODO PRODUCTION
+				// $sent = mail("lalbescu@alliancebizsolutions.com", $subject, $message, $headers); // TODO PRODUCTION
 				if (!$sent) {
 				   return false;
 				} else {
@@ -337,6 +337,64 @@ class Mail {
 		$mail->setFrom($from, 'Allian Translate');
 		$mail->addReplyTo($reply_to, 'Allian Translate');
 		$mail->addAddress($to, $to);
+		$mail->IsHTML(true);
+		$mail->Subject = $subject;
+		$mail->MsgHTML($body);
+		if (!$mail->send()) {
+		   return false;
+		} else {
+		    return true;
+		}
+	}
+
+	/**
+	 * TODO SEND_NOTIFICATION DONE
+	 * Pravi za live production $to = "orders@alliancebizsolutions.com,cs@alliantranslate.com"
+	 *
+	 */
+	public function send_notification_handle_payment($subject = "", $body = "", $to = "slavensakacic@gmail.com", $from = "Alliance Business Solutions LLC Client Services <cs@alliantranslate.com>", $reply_to = "cs@alliantranslate.com", $attachment = ""){
+
+		date_default_timezone_set('Etc/UTC');
+
+		$mail = new PHPMailer;
+		$mail->isSMTP();
+		$mail->CharSet='UTF-8';
+		$mail->SMTPAuth = true;
+
+		$mail->Host = getenv('MAIL_HOST');
+		$mail->Port = getenv('MAIL_PORT');
+		$mail->SMTPSecure = getenv('MAIL_ENCRYPTION');
+		$mail->Username = getenv('MAIL_USERNAME');
+		$mail->Password = getenv('MAIL_PASSWORD');
+		$mail->setFrom($from, 'Allian Translate');
+		$mail->addReplyTo($reply_to, 'Allian Translate');
+		$mail->addAddress($to, $to);
+		$mail->IsHTML(true);
+		$mail->Subject = $subject;
+		$mail->MsgHTML($body);
+		if (!$mail->send()) {
+		   return false;
+		} else {
+		    return true;
+		}
+	}
+
+	public function simpleLocalMail($subject = "", $body = ""){
+
+		date_default_timezone_set('Etc/UTC');
+
+		$mail = new PHPMailer;
+		$mail->isSMTP();
+		$mail->CharSet='UTF-8';
+		$mail->SMTPAuth = true;
+
+		$mail->Host = getenv('MAIL_HOST');
+		$mail->Port = getenv('MAIL_PORT');
+		$mail->SMTPSecure = getenv('MAIL_ENCRYPTION');
+		$mail->Username = getenv('MAIL_USERNAME');
+		$mail->Password = getenv('MAIL_PASSWORD');
+		$mail->setFrom("slaven", 'Test local');
+		$mail->addAddress("slavensakacic@gmail.com");
 		$mail->IsHTML(true);
 		$mail->Subject = $subject;
 		$mail->MsgHTML($body);

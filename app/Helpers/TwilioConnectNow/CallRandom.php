@@ -4,9 +4,10 @@ use Allian\Helpers\Mail;
 
 $PairID = $argv[1]; // 73
 $real_queue = $argv[2]; //738268
-// mail('slavensakacic@gmail.com', "Cron job", "$PairID i $real_queue");
+
 selectIP($PairID, $real_queue);
-// SAD JE LIVE JER SAM STAVIO $istest = 0, AKO JE $istest=1 ONDA NEBI BILO LIVE
+// SAD JE LIVE JER SAM STAVIO $istest = 0,
+// AKO JE $istest=1 ONDA NIJE LIVE
 function selectIP($PairID, $real_queue, $istest=0){ // TODO FOR PRODUCTION $istest = 0
 	$host = getenv('DB_HOST');
 	$db_username = getenv('DB_USERNAME');
@@ -20,20 +21,19 @@ function selectIP($PairID, $real_queue, $istest=0){ // TODO FOR PRODUCTION $iste
 	$result = mysqli_query($con, $query);
 	while($row = mysqli_fetch_array($result)){
 		if($Phone = mysqli_fetch_array(mysqli_query($con, "SELECT Phone FROM Login WHERE IPID=" . $row['IPID']))){
-			if($Phone['Phone'] == '13024404084' || $Phone['Phone'] == '19175459853' || $Phone['Phone'] == '16152038148'){ // TODO REMOVE IN PRODUCTION
+			if($Phone['Phone'] == '13024404084' || $Phone['Phone'] == '19175459853' || $Phone['Phone'] == '16152038148'){ // TODO remove production
 			} else {
 				if($istest == 0){
 					try{
 						$query_string = array('PairID' => $PairID, 'real_queue' => $real_queue, 'IPID' => $row['IPID']);
 						$urlCallback =  'http://alliantranslate.com/testgauss/callRandomHandle' . '?' . http_build_query($query_string, '', '&');
-						$client = new Services_Twilio($sid, $datoken);
-						$call = $client->account->calls->create(
-							getenv('TWILIO_CONF_OB_NUMBER'), // BIO $outboundnum = TWILIO_CONF_OB_NUMBER
-							"+" . "16153967919", // Alen broj
-							// "+" . "385919249906", // Alen broj
+						$client = new Services_Twilio($sid, $token);
+						$call = $client->account->calls->create(getenv('TWILIO_CONF_OB_NUMBER'),
+							// "+" . $Phone['Phone'], // TODO production
+							// "+" . "16153967919", // Alen broj
+							"+" . "385919249906", // Slaven broj
 							$urlCallback
 						);
-						// mail("slavensakacic@gmail.com", "callRandomHandle.php", $urlCallback);
 					}catch(\Exception $e){
 						 print_r($e);
 					}
@@ -46,9 +46,9 @@ function selectIP($PairID, $real_queue, $istest=0){ // TODO FOR PRODUCTION $iste
 
 	// Also send 50 emails
 	$result = mysqli_query($con,"SELECT LangPair.IPID FROM LangPair INNER JOIN IPTimings ON LangPair.IPID=IPTimings.IPID INNER JOIN Login ON IPTimings.IPID=Login.IPID WHERE IPTimings.TimeID='$TimeID' AND LangPair.PairID='$PairID' AND LangPair.Approved='1' AND Login.Active='1' AND Login.Telephonic='2' ORDER BY RAND() LIMIT 50");
-	$i = 0;
+	$i = 0; // TODO remove production
 	while($row = mysqli_fetch_array($result)){
-		if(!$i){
+		if(!$i){ // TODO remove production
 			if($Email = mysqli_fetch_array(mysqli_query($con,"SELECT Email FROM Login WHERE IPID=" . $row['IPID'])))
 				$result1 = mysqli_query($con,"SELECT L1,L2,PairID FROM LangRate WHERE PairID='$PairID'");
 			while($row1 = mysqli_fetch_array($result1)){
@@ -56,14 +56,14 @@ function selectIP($PairID, $real_queue, $istest=0){ // TODO FOR PRODUCTION $iste
 				$lang2 = mysqli_fetch_array(mysqli_query($con,"SELECT LangName FROM LangList WHERE LangId=" . $row1['L2']));
 				$Pairname = trim($lang1['LangName']) . "-" . trim($lang2['LangName']);
 				if($istest == 0){
-					// mailagents($Email['Email'], $Pairname);
-					// mail("slavensakacic@gmail.com", "Mail je pozvan", "Ovo: " . $Email['Email'] . "+" . $Pairname);
+					// mailagents($Email['Email'], $Pairname); // TODO production
+					// mailagents(getenv('ALEN_EMAIL'), $Pairname);
+					mailagents('slavensakacic@gmail.com', $Pairname);
 				}else{
 					echo "In mail " . $Email['Email'] . " " . $Pairname . "<br>";
-					// mailagents($Email['Email'], $Pairname);
 				}
 			}
-		$i=1;
+		$i=1; // TODO remove production
 		}
 	}
 }

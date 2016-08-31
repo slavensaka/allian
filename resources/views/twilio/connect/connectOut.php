@@ -12,9 +12,6 @@ if($custType != 3 && $custType != 4){
 	if($custType == 2){ // Invoice
 ?>
 		<Response>
-			<Say voice="woman">
-				Welcome back to Alliance Business Solutions phone interpreting line.
-			</Say>
 		  	<Enqueue
 		  		action='connectNowQueueCallback?<?php echo "id=" . $queue . "&amp;" . "from=" . $from . "&amp;". "customerType=" . $custType . "&amp;". "CustomerID=" . $CustomerID; ?>'
 		  		waitUrl='waitForInterpreter?<?php echo "pairid=" . $queue . "&amp;". "real_queue=" . $real_queue; ?>'
@@ -26,9 +23,6 @@ if($custType != 3 && $custType != 4){
 	} else if($custType == 1){ //PAYPAL
 ?>
 		<Response>
-			<Say voice="woman">
-				Welcome back to Alliance Business Solutions phone interpreting line.
-			</Say>
 		  	<Enqueue
 		  		action='connectNowQueueCallback?<?php echo "id=" . $queue . "&amp;" . "from=" . $from . "&amp;". "customerType=" . $custType . "&amp;". "CustomerID=" . $CustomerID; ?>'
 		  		waitUrl='waitForInterpreter?<?php echo "pairid=" . $queue . "&amp;". "real_queue=" . $real_queue; ?>'
@@ -41,18 +35,14 @@ if($custType != 3 && $custType != 4){
 } else if($custType == 3){
 ?>
 	<Response>
-		<Say>
-			Your account is not yet verified by the admin... Please wait for the confirmation message. Thank you for calling Alliance Business Solutions phone interpreting line. Good bye.
-		</Say>
+		<Say>Your account is not yet verified by the admin... Please wait for the confirmation message. Thank you for calling Alliance Business Solutions phone interpreting line. Good bye.</Say>
 		<Hangup/>
 	</Response>
 <?php
 } else {
 ?>
 	<Response>
-		<Say>
-			Incorrect customer Type. Good bye.
-		</Say>
+		<Say>Incorrect customer Type. Good bye.</Say>
 		<Hangup/>
 	</Response>
 <?php

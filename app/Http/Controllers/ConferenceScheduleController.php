@@ -179,7 +179,8 @@ class ConferenceScheduleController extends Controller {
 			    'CustomerID': '800',
 			    'fromDate': '2016-06-07',
 			    'timeStarts': '3:00:00 AM',
-			    'timeEnds': '3:05:00 AM'
+			    'timeEnds': '3:05:00 AM',
+			    'timezone': 'US/Central'
 			  },
      'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE0NjUzODMxNjUsImp0aSI6IlJpRW16NzRHSGhGR043QzEzT1JpQ1FuWXRnOHJ4bk9YVHRRZ002NnBDN1E9IiwiaXNzIjoiYWxsaWFudHJhbnNsYXRlLmNvbSIsIm5iZiI6MTQ2NTM4MzE2NSwiZXhwIjoxNDY2NTkyNzY1LCJkYXRhIjp7IlN1Y2Nlc3MiOiJTdWNjZXNzIn19.DvPdwcIGybU3zs5NH4NRmldNbhrer8AgvSSwi9lBY6SwJ-WKegETMRQmXZvtLu5-qrAx5hwBkEKXqG80zTqByw'}")
      * @ApiParams(name="data", type="string", nullable=false, description="Data")
@@ -202,6 +203,7 @@ class ConferenceScheduleController extends Controller {
 			$service->validate($data['fromDate'], 'Error: from date not present.')->notNull();
 			$service->validate($data['timeStarts'], 'Error: timeStarts not present.')->notNull();
 			$service->validate($data['timeEnds'], 'Error: timeEnds not present.')->notNull();
+			$service->validate($data['timezone'], 'Error: timezone not present.')->notNull();
 			//Validate the jwt token in the database
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
@@ -209,6 +211,34 @@ class ConferenceScheduleController extends Controller {
 				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token..")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
+			$TimeToStart = date("H:i:s",strtotime($data['TimeToStart']));
+
+			$frmT = new \DateTime($data['fromDate'] . ' ' . $TimeToStart, new \DateTimeZone($data['timezone']));
+			$n = $frmT->getTimestamp();
+
+			$timeStartDate = date('H:i:s', $timeStart);
+			$timeStartDateTimestamp = strtotime($timeStartDate);
+			$timeEndsDate = date('H:i:s', $timeEnds);
+			$timeEndsTimestamp = strtotime($timeEndsDate);
+
+			if(($timeStartDateTimestamp - $timeEndsTimestamp) < 600){
+				$valja = 'Valja';
+			} else {
+				$valja = 'Nevalja';
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Date is expired. timestarts > timeEnds")));
+     			return $response->json(array('data' => $base64Encrypted));
+			}
+
+			//check if it has expired
+			if ((time() - $n) < 600){
+				$upcoming = 'upcoming';
+			}else{
+				$upcoming = 'completed';
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Date is expired. Timezone dio")));
+     			return $response->json(array('data' => $base64Encrypted));
+			}
+
+			// return $response->json(array('Timestarts' => $new, 'Now' => $no, 'RealTiemstarts' => $data['timeStarts']));
 			// Calculate the amount for customer to pay
 			$amountArray = ScheduleFunctions::calculateAmountToPay($data);
 			// Encrypt the values

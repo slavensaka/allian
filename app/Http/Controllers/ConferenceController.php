@@ -43,7 +43,7 @@ class ConferenceController extends Controller {
 			// Decrypt input data
 			$data = $this->decryptValues($request->data);
 			// Validate input data
-			$service->validate($data['CustomeIrD'], 'Error: No customer id is present.')->notNull()->isInt();
+			$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
 			//Validate token in database
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			if(!$validated){
@@ -52,8 +52,19 @@ class ConferenceController extends Controller {
 			}
 			// Get a customer from the database based on the CustomerID
 			$customer = CustLogin::get_customer($data['CustomerID']);
+			$CustomerID = $data['CustomerID'];
+			$connectNowDate = gmdate("Y-m-d H:i:s", time());
 			// Generate a twilio capability token
 			$token = ConfFunc::generateCapabilityToken($data['CustomerID']);
+
+			$con = Connect::con();
+			$result = mysqli_query($con,"SELECT * FROM `schedule_log` WHERE CustomerID = $CustomerID");
+			$numrows = mysqli_num_rows($result);
+			if($numrows != 0){// If record found
+				mysqli_query($con, "UPDATE `schedule_log` SET CustomerID = $CustomerID, twilioToken = $token, connectNowDate = $connectNowDate WHERE CustomerID = $CustomerID");
+			} else {
+				mysqli_query($con, "INSERT INTO `schedule_log`(`CustomerID`, `twilioToken`, `connectNowDate`) VALUES ('$CustomerID','$token','$connectNowDate')");
+			}
 			// Return that Token
 	    	return $response->json(array('data' => array('status' => 1, 'userMessage' => 'Twilio token', 'twilioToken' => $token)));
 	    } else {
@@ -77,6 +88,10 @@ class ConferenceController extends Controller {
 		$service->validate($request->orderId, 'Error: No order id is present.')->notNull()->isInt();
 		$conference = ConferenceSchedule::get_conference($request->orderId, '*');
 		$conf_queue = $conference['user_code'];
+		$orderID = $request->orderId;
+		$CustomerID = $request->CustomerID;
+		$con = Connect::con();
+		mysqli_query($con, "UPDATE `schedule_log` SET orderID = $orderID WHERE CustomerID = $CustomerID");
 
 		$response = new Services_Twilio_Twiml;
 		$response->say("Welcome to Allian interpreter conference service.");
@@ -126,17 +141,22 @@ class ConferenceController extends Controller {
 		// Validate CustomerId
 		$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
 		$service->validate($data['phones'], 'Error: No phones array is present.')->notNull();
-		// Twiliotoken
+		$service->validate($request->twilioToken, 'Error: No twilioToken is present.')->notNull();
 		// TODO dodati column za restrikciju,orderID treba poslat u ovom requestu
 		// $service->validate($data['orderId'], 'Error: No orderId is present.')->notNull();
 		$customer_id = $data['CustomerID'];
+		$customer = CustLogin::get_customer($customer_id);
+		$fullname = $customer['FName'] . ' ' . $customer['LName'];
+		$twilioToken = $request->twilioToken;
 		$phones = $data['phones'];
-		$query = "SELECT orderID FROM `order_onsite_interpreter` WHERE assg_frm_date = CURDATE() AND customer_id = $customer_id ORDER BY autoID DESC LIMIT 1";
+
 		$con = Connect::con();
-		$query_result = mysqli_query($con, $query);
-		$row = mysqli_fetch_array($query_result);
-		$orderID = $row['orderID'];
-		$queue = ConferenceSchedule::get_conference($orderID, 'conf_tag');
+		$get = mysqli_query($con, "SELECT orderID FROM `schedule_log` WHERE CustomerID = $customer_id AND twilioToken = '$twilioToken'");
+		if(!$get){
+			return $this->encryptValues(json_encode($this->errorJson("No order in table was found for that CustomerID.")));
+		}
+		$cnl = mysqli_fetch_array($get);
+		$queue = ConferenceSchedule::get_conference($cnl['orderID'], 'conf_tag');
 		$http = new Services_Twilio_TinyHttp('https://api.twilio.com', array('curlopts' => array(CURLOPT_SSL_VERIFYPEER => false)));
 		$sid = getenv('LIVE_TWILIO_ALLIAN_SID');
 		$token = getenv('LIVE_TWILIO_ALLIAN_TOKEN');

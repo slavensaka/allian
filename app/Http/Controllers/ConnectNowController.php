@@ -15,6 +15,7 @@ use Allian\Models\ConferenceSchedule;
 use Allian\Models\TranslationOrders;
 use Allian\Models\LangList;
 use Allian\Models\LangRate;
+use Allian\Helpers\Allian\ScheduleFunctions;
 use Services_Twilio_TinyHttp;
 use Allian\Http\Controllers\StripeController;
 use Allian\Http\Controllers\DeveloperController;
@@ -57,9 +58,20 @@ class ConnectNowController extends Controller {
 	     		return $response->json(array('data' => $ret));
 			}
 			// Get a customer from the database based on the CustomerID
+			$CustomerID = $data['CustomerID'];
+			$connectNowDate = gmdate("Y-m-d H:i:s", time());
 			$customer = CustLogin::get_customer($data['CustomerID']);
 			// Generate a twilio capability token
 			$token = ConnectNowFunctions::generateCapabilityTokenConnectNow($data['CustomerID']);
+
+			$con = Connect::con();
+			$result = mysqli_query($con,"SELECT * FROM `connect_now_log` WHERE CustomerID = $CustomerID");
+			$numrows = mysqli_num_rows($result);
+			if($numrows != 0){// If record found
+				mysqli_query($con, "UPDATE `connect_now_log` SET CustomerID = $CustomerID, twilioToken = $token, connectNowDate = $connectNowDate WHERE CustomerID = $CustomerID");
+			} else {
+				mysqli_query($con, "INSERT INTO `connect_now_log`(`CustomerID`, `twilioToken`, `connectNowDate`) VALUES ('$CustomerID','$token','$connectNowDate')");
+			}
 			// Return that Token
 	    	return $response->json(array('data' => array('status' => 1, 'userMessage' => 'Twilio token', 'twilioToken' => $token)));
 	    } else {
@@ -95,7 +107,6 @@ class ConnectNowController extends Controller {
 		//Format the request From number to fit the + convention of twilio
 		$from = $request->From;
 		$from = str_replace('+',"", $from);
-
 		// Get the customer information in database by CustomerID
 		$customer = CustLogin::get_customer($CustomerID);
 		// Add the customerID and Type to customertype by sid
@@ -148,6 +159,9 @@ class ConnectNowController extends Controller {
 			$response->hangup();
 			return $response;
 		}
+		$con = Connect::con();
+		mysqli_query($con, "UPDATE `connect_now_log` SET lang = $l1, translationTo = $l2, queue = $queue, real_queue = $real_queue WHERE CustomerID = $CustomerID");
+
 		// If customers type is 2(invoice), then get the TwiML, pass customer, queue, from info
 		if($customer['Type'] == 2){ // Invoice
 			$service->customer = $customer;
@@ -201,7 +215,6 @@ class ConnectNowController extends Controller {
 				$service->from = $from;
 				$service->queue = $queue;
 				$service->real_queue = $real_queue;
-
 				$service->render('./resources/views/twilio/connect/connectOut.php');
 			} else {
 				// Else return twiML that the card could not be preauthorized
@@ -219,19 +232,16 @@ class ConnectNowController extends Controller {
 	 *
 	 */
 	public function waitForInterpreter($request, $response, $service, $app){
-		// $pairid = $request->pairid;
-		// $response = new Services_Twilio_Twiml;
-		// $response->say("Please wait while we attempt to reach an interpreter for your call.");
-		// $response->say("Please continue to wait while we find the first available interpreter.");
-		// $response->redirect("https://alliantranslate.com/linguist/phoneapp/callout.php?pairid=$pairid");
-		// return $response;
-
 		$PairID = $request->pairid;
 		$real_queue = $request->real_queue;
 		$php_path= getenv('PHP_PATH');
-		$command = $php_path . " app/Helpers/TwilioConnectNow/CallRandom.php $PairID $real_queue"; // callout.php
+		$command = $php_path . " app/Helpers/TwilioConnectNow/CallRandom.php $PairID $real_queue";
 		ConnectNowFunctions::spawn($command, "app/Helpers/TwilioConnectNow/NotifyLog.txt", "pid");
 		$response = new Services_Twilio_Twiml;
+		// $response->say("Please wait while we attempt to reach an interpreter for your call.");
+		// $response->say("Please continue to wait while we find the first available interpreter.");
+		$response->say("Welcome back to ALLIAN phone interpreting line.");
+		$response->say("Please wait while we connect you to the first available interpreter.");
 		$response->play('app/Helpers/TwilioConnectNow/twilioaudio.mp3', array("loop" => 5));
 		$response->say('Sorry, All of our agents are busy right now. Our customer service will be in touch with you shortly. Thank you for calling our phone interpreter services. Good bye.');
 		$response->hangup();
@@ -244,23 +254,18 @@ class ConnectNowController extends Controller {
 	 *
 	 */
 	public function callRandomHandle($request, $response, $service, $app){
-		$PairID = $request->PairID; //73 iz LangPair.PairID
+		$PairID = $request->PairID;
 		$real_queue = $request->real_queue;
 		$IPID = $request->IPID;
 
+		$con = Connect::con();
+		$result1 = mysqli_query($con,"SELECT L1,L2,PairID FROM LangRate WHERE PairID='$PairID'");
 
-		// if(isset($PairID)){
+		$row1 = mysqli_fetch_array($result1);
+		$lang1 = mysqli_fetch_array(mysqli_query($con,"SELECT LangName FROM LangList WHERE LangId=".$row1['L1']));
+		$lang2 = mysqli_fetch_array(mysqli_query($con,"SELECT LangName FROM LangList WHERE LangId=".$row1['L2']));
 
-			$con = Connect::con();
-			$result1 = mysqli_query($con,"SELECT L1,L2,PairID FROM LangRate WHERE PairID='$PairID'");
-
-			$row1 = mysqli_fetch_array($result1);
-			$lang1 = mysqli_fetch_array(mysqli_query($con,"SELECT LangName FROM LangList WHERE LangId=".$row1['L1']));
-			$lang2 = mysqli_fetch_array(mysqli_query($con,"SELECT LangName FROM LangList WHERE LangId=".$row1['L2']));
-
-			$Pairname = trim($lang1['LangName'])."  to  ".trim($lang2['LangName']);
-			mail('slavensakacic@gmail.com', 'Dolazi iz random handle', "$PairID, $real_queue, $IPID, $PairName");
-		// }
+		$Pairname = trim($lang1['LangName'])."  to  ".trim($lang2['LangName']);
 
 		$service->PairID = $PairID;
 		$service->real_queue = $real_queue;
@@ -275,54 +280,54 @@ class ConnectNowController extends Controller {
 	 *
 	 */
 	public function interpreter($request, $response, $service, $app){
-		// if(isset($request->PairID)){
-			$PairID = $request->PairID;
-		// }
-		// if(isset($request->real_queue)){
-			$real_queue = $request->real_queue;
-		// }
-		// $fromi = $request->Fromi; // OVO
 		if($request->Direction == "outbound-api"){
 		 	$from = $request->To;
+
 		}else{
 		    $from = $request->From;
 		}
+
 		if($from == null){
 			$response = new Services_Twilio_Twiml;
 			$response->say('Dear Interpreter, we are sorry the phone number that you are calling from does not match the phone number that is registered in our system. To be able to accept calls you must call from the number that you have registered with. Please call again from the phone number that you registered in the system or update your number in the linguist portal.');
  			$response->hangup();
  			return $response;
 		}
-
 		$IPID = false;
 		$con = Connect::con();
-		// if(ConnectNowFunctions::isTwilioClient($from)){
- 	// 		$IPID = str_replace("client:", "", $from); // U from je stavljen IPID, twilio_app\auth_client.php
- 	// 	}else{
+		if(ConnectNowFunctions::isTwilioClient($from)){
+			$IPID = $request->IPID;
+ 		// $IPID = str_replace("client:", "", $from); // FUTURE
+ 		}else{
 	 		$from = substr($from, 1);
-	 		// $result = mysqli_query($con, "SELECT IPID FROM Login WHERE Phone= '$fromi'");
-	 		// $result = mysqli_query($con, "SELECT IPID FROM Login WHERE Phone= '$from'");
-	 		// if(mysqli_num_rows($result)>0){
-	 		// 	$row = mysqli_fetch_assoc($result);
-	 		// 	$IPID = $row['IPID'];
- 			// }
- 		// }
-	 	$IPID = $request->IPID;
-	 	mail("slavensakacic@gmail.com", "interpreter.php", "Interpreter" . "ovo je pair: $PairID, ovo je real_queue: $real_queue, ovo je $from, ovo je IPID: $IPID");
+	 		$result = mysqli_query($con, "SELECT IPID FROM Login WHERE Phone= '$from'");
+	 		if(mysqli_num_rows($result)>0){
+	 			$row = mysqli_fetch_assoc($result);
+	 			$IPID = $row['IPID'];
+ 			}
+ 		}
+
  		if($IPID){
 
- 			$query = mysqli_query($con,"SELECT * FROM LangPair WHERE IPID=".$IPID);
+ 			$query = mysqli_query($con,"SELECT * FROM LangPair WHERE IPID=" . $IPID);
 
  			if(mysqli_num_rows($query)<1){
  				$response = new Services_Twilio_Twiml;
 				$response->say('Sorry, the language pair that you are trying to select is currently not offered by Alliance Business Solutions phone interpreter services.');
  				$response->hangup();
  				return $response;
- 			}else if(mysqli_num_rows($query) == 1){ // Everythng OK
+ 			//If only one LangPair the lingust has. Assign $pair1 to that
+ 			}else if(mysqli_num_rows($query) == 1){
  				$row1 = mysqli_fetch_array($query);
 	    		$pair1 = $row1['PairID'];
 	    		$array = $pair1;
-
+	    		$real_queue = $row1['PairID'] . $row1['L1'] . $row1['L2'];
+	    		if(isset($request->PairID)){
+					$PairID = $request->PairID;
+				}
+				if(isset($request->real_queue)){
+					$real_queue = $request->real_queue;
+				}
 	   			$service->PairID = $PairID;
 				$service->real_queue = $real_queue;
 				$service->IPID = $IPID;
@@ -330,31 +335,26 @@ class ConnectNowController extends Controller {
 				$service->pair1 = $pair1;
 	    		$service->render('./resources/views/twilio/connect/interpreter.php');
  			}else if(mysqli_num_rows($query)>1){
-	    			$row1 = mysqli_fetch_array($query);
-		    		$pair1 = $row1['PairID'];
-		    		$array = $pair1;
+ 				$row1 = mysqli_fetch_array($query);
+		    	$pair1= $row1['PairID'];
+		    	$array=$pair1.",";
+		    	$real_queue = $row1['PairID'] . $row1['L1'] . $row1['L2'];
+		    	while($row1 = mysqli_fetch_array($query)){
+	    			$array.=$row1['PairID'].",";
+	    		}
+	        	if(isset($request->PairID)){
+	        		$PairID = $request->PairID;
+	        	}
+	        	if(isset($request->real_queue)){
+					$real_queue = $request->real_queue;
+				}
+	   			$service->PairID = $PairID;
+				$service->real_queue = $real_queue;
+				$service->IPID = $IPID;
+				$service->array = $array;
+				$service->pair1 = $pair1;
 
-		   			$service->PairID = $PairID;
-					$service->real_queue = $real_queue;
-					$service->IPID = $IPID;
-					$service->array = $array;
-					$service->pair1 = $pair1;
-		    		$service->render('./resources/views/twilio/connect/interpreter.php');
- 			// 	$row1 = mysqli_fetch_array($query);
-		  //   	$pair1= $row1['PairID'];
-		  //   	$array=$pair1.",";
-		  //   	while($row1 = mysqli_fetch_array($query)){
-	   //  			$array.=$row1['PairID'].","; // 12, 73
-	   //  		}
-	   //      	if(isset($request->PairID)){
-	   //      		$pair1 = $request->PairID;
-	   //      	}
-	   // 			$service->PairID = $PairID;
-				// $service->real_queue = $real_queue;
-				// $service->IPID = $IPID;
-				// $service->array = $array;
-				// $service->pair1 = $pair1;
-	   //      	$service->render('./resources/views/twilio/connect/nextCustomer.php');
+	        	$service->render('./resources/views/twilio/connect/nextCustomer.php');
 	       	}
 
 	    }else {
@@ -371,10 +371,10 @@ class ConnectNowController extends Controller {
 	 *
 	 */
 	public function redirectToConference($request, $response, $service, $app){
-		if(isset($PairID)){
+		if(isset($request->PairID)){
 			$PairID = $request->PairID;
 		}
-		if(isset($real_queue)){
+		if(isset($request->real_queue)){
 			$real_queue = $request->real_queue;
 		}
 		$IPID = $request->IPID;
@@ -386,12 +386,14 @@ class ConnectNowController extends Controller {
 			$result = mysqli_query($con,"SELECT * FROM LangRate WHERE PairID= '$pair1'");
 			$row = mysqli_fetch_array($result);
 			$real_queue = $row['PairID'] . $row['L1'] . $row['L2'];
+		} else {
+			$result = mysqli_query($con,"SELECT * FROM LangRate WHERE PairID= '$PairID'");
+			$row = mysqli_fetch_array($result);
+			$real_queue = $row['PairID'] . $row['L1'] . $row['L2'];
 		}
-
 		$response = new Services_Twilio_Twiml;
 		$query_string = array( 'real_queue' => $real_queue, 'IPID' => $IPID , 'array' => $array, 'pair1' => $pair1);
-						$urlCallback =  'http://alliantranslate.com/testgauss/connectNowConference' . '?' . http_build_query($query_string, '', '&');
-		// $response->redirect("connectNowConference?real_queue=$real_queue&amp;IPID=$IPID&amp;array=$array&amp;pair1=$pair1");
+		$urlCallback =  'http://alliantranslate.com/testgauss/connectNowConference' . '?' . http_build_query($query_string, '', '&');
 		$response->redirect($urlCallback);
 		return $response;
 	}
@@ -415,9 +417,121 @@ class ConnectNowController extends Controller {
 		$service->render('./resources/views/twilio/connect/connectNowConference.php');
 	}
 
+	public function handlePaymentTest($request, $response, $service, $app){
+		$IPID = $request->IPID;
+		$pairarray = $request->pairarray;
+		$times = $request->times;
+		$Previous = $request->Previous;
+
+		$result = mysqli_query($con,"DELETE FROM `connect_now_log` WHERE CustomerID = $CustomerID");
+
+		$log_file = "../linguist/phoneapp/log/main_log.txt";
+		$dt = gmdate('Y-m-d H:i:s');
+		$script = "@handlepayment.php";
+		$sid = getenv('LIVE_TWILIO_ALLIAN_SID');
+		$token = getenv('LIVE_TWILIO_ALLIAN_TOKEN');
+		$client = new Services_Twilio($sid, $token);
+		if(isset($request->DequeueResult) && $request->DequeueResult=="bridged"){
+			$ipid=$request->IPID;
+			$QueueSid=$request->QueueSid;
+			$DequeueResult=$request->DequeueResult; // From Dial
+			$DequeuedCallSid=$request->DequeuedCallSid; // From Dial
+			$DequeuedCallDuration=$request->DequeuedCallDuration; // From Dial
+			$queue = $client->account->queues->get($QueueSid);
+			$langpair= $queue->friendly_name;
+			$call = $client->account->calls->get($DequeuedCallSid);
+			file_put_contents($log_file, $dt.$script.", Call Made: ".$call."\n",FILE_APPEND);
+			$from = $call->from;
+			$callmin=ceil($DequeuedCallDuration/60);
+			$type=0;
+			if(file_exists("customertype/".$DequeuedCallSid.".txt")){
+		  		$data=getfromfile("../linguist/phoneapp/customertype/".$DequeuedCallSid); // MORAT CU STAVIT
+		  		$type=$data['type'];
+		  	}
+		  	if($type==0){
+				$query="SELECT * FROM CustLogin WHERE Phone = '$from'";
+				file_put_contents($log_file, $dt.$script.", Type 0 select query1: ".$query."\n",FILE_APPEND);
+				$select=(mysqli_query($con,$query));
+				$result=mysqli_fetch_array($select);
+				$customertoken=$result["token"];
+				$query="SELECT CustomerId FROM CustLogin WHERE token = '$customertoken'";
+				file_put_contents($log_file, $dt.$script.", Type 0 select query2: ".$query."\n",FILE_APPEND);
+				$result=mysqli_fetch_row(mysqli_query($con,$query));
+				$customerid=$result[0];
+			}else if($type==1){
+				$customerid=$data['CustomerID'];
+				$query="SELECT * FROM CustLogin WHERE CustomerID = '$customerid'";
+				file_put_contents($log_file, $dt.$script.", Type 1 select query: ".$query."\n",FILE_APPEND);
+				$select=(mysqli_query($con,$query));
+				$result=mysqli_fetch_array($select);
+				$customertoken=$result["token"];
+			}else{
+				$customerid=$data['CustomerID'];
+			}
+			file_put_contents($log_file, $dt.$script.", customertoken: ".$customertoken.", CustomerID: ".$customerid."\n",FILE_APPEND);
+			$query="SELECT Rate FROM LangRate WHERE PairID = '$langpair'";
+			$result=mysqli_fetch_row(mysqli_query($con,$query));
+			$rate=$result[0];
+			$timestamp = time() - $DequeuedCallDuration;
+			$actualrate = $callmin * $rate;
+			if($actualrate >= 2000){
+				$charged = $actualrate;
+			}else{
+				$charged = 2000;
+			}
+			$send_notification_alert = false;
+        	$call_id="";
+        	if($type!=2){ // is stripe
+				$stripe=shell_exec ('curl https://api.stripe.com/v1/charges \
+		   		-u '.getenv('STRIPE_KEY').' \
+		   		-d amount='.$charged.' \
+		   		-d currency=usd \
+		   		-d capture=true \
+		   		-d customer='.$customertoken.' \
+		  		-d "description=charging for service"');
+				$paymentresult=json_decode($stripe);
+				file_put_contents("../linguist/phoneapp/paymentlog.txt", $stripe."\n",FILE_APPEND);
+				file_put_contents($log_file, $dt.$script.", Final payment result: ".$stripe."\n",FILE_APPEND);
+				if(isset($paymentresult->id)){
+					if(mysqli_query($con,"INSERT INTO CallIdentify (type,starttime,CustomerID,FromNumber,state,duration,IPID,PairId,Rate,Charged) values ('$type','$timestamp','$customerid','$from','Success','$DequeuedCallDuration','$ipid','$langpair','$rate','$charged')")){
+						$send_notification_alert = true;
+		                $call_id = mysqli_insert_id($con);
+		            }
+		            mysqli_query($con,"UPDATE CustLogin  SET totalcharged=totalcharged+'$charged' WHERE CustomerId='$customerid'");
+				}else{
+					$charged=$charged."failure";
+					mysqli_query($con,"INSERT INTO CallIdentify (type,starttime,CustomerID,FromNumber,state,duration,IPID,PairId,Rate,Charged) values ('$type','$timestamp','$customerid','$from','Success','$DequeuedCallDuration','$ipid','$langpair','$rate','$charged')");
+					mysqli_query($con,"UPDATE CustLogin  SET totalcharged=totalcharged+'$charged' WHERE CustomerId='$customerid'");
+				}
+			}else{
+				if(mysqli_query($con,"INSERT INTO CallIdentify (type,starttime,CustomerID,FromNumber,state,duration,IPID,PairId,Rate,Billed) values ('$type','$timestamp','$customerid','$from','Success','$DequeuedCallDuration','$ipid','$langpair','$rate','$charged')")){
+           	 		$send_notification_alert = true;
+            		$call_id = mysqli_insert_id($con);
+        		}
+        	}
+			mysqli_query($con,"UPDATE CustLogin  SET totalbilled=totalbilled+'$charged' WHERE CustomerID='$customerid'");
+			if($send_notification_alert){
+				// Send Reciept to client
+			    $customerID = $data['CustomerID'];
+			    $con = Connect::con();
+			    $Customer=CustLogin::get_customer($customerID);
+			    $CustomerEmail = $Customer["Email"];
+			    $CustomerName=$Customer["FName"]." ".$Customer["LName"];
+			    $subject="Receipt For Phone Interpreter Services (Call ID#$call_id) ";
+			    $body= $this->order_its_details($call_id,"Email");
+			    Mail::send_notification_handle_payment($subject,$body,$CustomerEmail);
+			    $body = "<b>Dear $CustomerName</b>,<br><br><p>Thank you for using the Alliance Business Solutions phone interpreter line.</p><p>In order to help us improve our services please complete a brief survey about your experience with our phone interpreter system.</p><br><b>SURVEY LINK:</b><br><a href='http://allianinterpreter.com/en/telephonic-survey'>http://allianinterpreter.com/en/telephonic-survey</a><br><br><p>We thank you for choosing Alliance Business Solutions.</p><br>Kind Regards,<br>"."<p><span style='font-family: Arial; font-size: 12px; font-style: normal;'><strong>Alliance Business Solutions LLC<br /></strong><em>--Quality Assurance Team</em><strong><br />Email:</strong> cs@".getenv('TRANSLATION_DOMAIN')."<br /><strong>Toll Free:</strong> 1.877.512.1195<br /><strong>International:</strong> 1.615.866.5542<br /><strong>Fax:</strong> 1.615.472.7924<br /></span><a href='".getenv('HOME_SECURE')."' target='_blank'>Translate</a><span style='font-family: Arial; font-size: 12px; font-style: normal;'>. | </span><a href=".get('INTERPRETING_HOME_SECURE')."/' target='_blank'>Interpret</a><span style='font-family: Arial; font-size: 12px; font-style: normal;'>. | </span><a href='".getenv('TRANSCRIPTION_HOME_SECURE')."' target='_blank'>Transcribe</a><span style='font-family: Arial; font-size: 12px; font-style: normal;'>.<br /></span><img style='font-family: Arial; font-size: 12px; font-style: normal;' src='".getenv('HOME_SECURE')."logos/alliancebizsolutions_logo.png' alt='' width='150' height='58' /></p>";
+			    $subject = "Tell us about your Phone Interpreter Experience";
+			    $from = "Alliance Business Solutions LLC Client Services <feedback@alliancebizsolutions.com>";
+			    $reply_to = "feedback@alliancebizsolutions.com";
+			    Mail::send_notification_handle_payment($subject,$body,$CustomerEmail,$from,$reply_to);
+			}
+		}
+	}
+
 	/**
 	 *
-	 * Block comment
+	 * Enqueue action in connectOut.php
 	 *
 	 */
 	public function connectNowQueueCallback($request, $response, $service, $app){
@@ -469,7 +583,7 @@ class ConnectNowController extends Controller {
 				$sendToEmail = "slavensakacic@gmail.com";
 				Mail::sendStaffMail($sendToEmail, "staffRegularFailed", $param);
 			} else if($server=="alliantranslate"){
-				//TODO FOR PRODUCTION DONE
+				//TODO FOR PRODUCTION
 				$sendToEmail = getenv('ALEN_EMAIL');
 				//$sendToEmail = "orders@alliancebizsolutions.com";
 				Mail::sendStaffMailProduction($sendToEmail, "staffRegularFailed", $param);
@@ -503,63 +617,34 @@ class ConnectNowController extends Controller {
      * }")
      */
 	public function addNewMemberConnectNow($request, $response, $service, $app){
-		// TODO dodati column za restrikciju, jel se može lang i translationTo poslat u ovom requestu
 		$data = $this->decryptValues($request->data);
 		$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
 		$service->validate($data['phones'], 'Error: No phones array is present.')->notNull();
-		// TwilioTOken ce biti dodan
-		// $service->validate($data['lang'], 'Error: No lang is present.')->notNull(); // TODO Dodati novo
-		// $service->validate($data['translationTo'], 'Error: No translationTo is present.')->notNull(); // TODO Dodati novo
+		$service->validate($request->twilioToken, 'Error: No twilioToken is present.')->notNull();
+
+		$CustomerID = $data['CustomerID'];
+		$customer = CustLogin::get_customer($CustomerID);
+		$fullname = $customer['FName'] . ' ' . $customer['LName'];
 
 		$phones = $data['phones'];
-		// $lang = $data['lang'];
-		// $translationTo = $data['translationTo'];
-		$lang = 'TEST';
-		$translationTo ='English';
-
-		$l1 = LangList::langIdByName($lang);
-		$l2 = LangList::langIdByName($translationTo);
-		$chinese = LangList::selectChinese();
-		$mandarin = LangList::selectMandarin();
-		$chid = $chinese["LangId"];
-		if($l1 == $chid){
-			$l1 = $mandarin["LangId"];
-		}
-		if($l2 == $chid){
-			$l2 = $mandarin["LangId"];
-		}
+		$twilioToken = $request->twilioToken;
 		$con = Connect::con();
-		$result = mysqli_query($con,"SELECT * FROM LangRate WHERE L1= '$l1' and L2='$l2' ");
-		$numrows = mysqli_num_rows($result);
-		if($numrows != 0){
-			$flag = 1;
+		$get = mysqli_query($con, "SELECT real_queue FROM `connect_now_log` WHERE CustomerID = $CustomerID AND twilioToken = '$twilioToken'");
+		if(!$get){
+			return $this->encryptValues(json_encode($this->errorJson("No order in table was found for that CustomerID.")));
 		}
-		$result1 = mysqli_query($con,"SELECT * FROM LangRate WHERE L1= '$l2' and L2='$l1' ");
-		$numrows1= mysqli_num_rows ($result1);
-		if($numrows1 != 0){
-			$flag = 2;
-		}
-		if($flag == 1){
-			$row = mysqli_fetch_array($result);
-			$queue = $row['PairID'];
-			$real_queue = $row['PairID'] . $row['L1'] . $row['L2'];
-		}else if($flag == 2){
-			$row = mysqli_fetch_array($result1);
-			$queue = $row['PairID'];
-			$real_queue = $row['PairID'] . $row['L1'] . $row['L2'];
-		}
-
-
+		$cnl = mysqli_fetch_array($get);
 		$http = new Services_Twilio_TinyHttp('https://api.twilio.com', array('curlopts' => array(CURLOPT_SSL_VERIFYPEER => false)));
 		$sid = getenv('LIVE_TWILIO_ALLIAN_SID');
 		$token = getenv('LIVE_TWILIO_ALLIAN_TOKEN');
 		$client = new Services_Twilio($sid, $token, '2010-04-01', $http);
-		// $url = "addNewMemberConnectNowOut?real_queue=$real_queue";
-		$url = "http://alliantranslate.com/testgauss/addNewMemberConnectNowOut?real_queue=738268";
+		$query_string = array('real_queue' => $cnl['real_queue'], 'fullname' => $fullname);
+		$url = 'http://alliantranslate.com/testgauss/addNewMemberConnectNowOut'. '?' . http_build_query($query_string, '', '&');
 		foreach($phones as $phone){
 			// TODO FOR PRODUCTION DONE
 			$call = $client->account->calls->create(getenv('ADD_NEW_MEMBER'), $phone, $url, array());
 		}
+
 		$rArray['status'] = 1;
 		$rArray['userMessage'] = 'Added new Member.';
 		$base64Encrypted = $this->encryptValues(json_encode($rArray));
@@ -568,7 +653,38 @@ class ConnectNowController extends Controller {
 
 	public function addNewMemberConnectNowOut($request, $response, $service, $app){
 		$service->real_queue = $request->real_queue;
+		$service->fullname = $request->fullname;
 		$service->render('./resources/views/twilio/connect/addNewMemberConnectNowOut.php');
+	}
+
+	function order_its_details($order_id,$type = ""){
+	    $con = Connect::con();
+	   	$result = mysqli_query($con,"SELECT * FROM CallIdentify WHERE UnqID = $order_id");
+		$row = mysqli_fetch_array($result);
+		$IPID1=$row['IPID'];
+		CustLogin::get_customer($row["CustomerID"]);
+		$CustomerName=$Customer["FName"]." ".$Customer["LName"];
+	    $query = mysqli_query($con,"SELECT L1,L2 FROM LangRate WHERE PairID=".$row['PairID']);
+		$row1 = mysqli_fetch_array($query);
+		$lang1 = LangList::get_language_name($row1['L1']);
+		$lang2 = LangList::get_language_name($row1['L2']);
+		$PairID=$lang1." to ".$lang2;
+		$starttime=date("Y-m-d H:i:s",$row['starttime']);
+	    $msg_head="";
+	    $msg_foot="";
+		if($type=="Email"){
+		    $msg_head = "<b>Dear $CustomerName</b>,<br><br>". "Thank you for scheduling an ITS services with Alliance Business Solutions LLC.<br><br>". "Scheduling details are as below.<br><br>";
+		    $login_link = URL_SECURE."clientportal/loginform.php";
+			$msg_foot = "<br>You can view your scheduling details by loging into your online portal by clicking at the link below.<br><a href='$login_link' target='_blank'>$login_link</a><br><p  style='font-weight:bold'>Thank you for choosing Alliance Business Solutions LLC Language Services.</p><p><span style='font-family: Arial; font-size: 12px; font-style: normal;'><strong>Alliance Business Solutions LLC Language Services<br /></strong><em>--Client Services</em><strong><br />Email:</strong> cs@".TRANSLATION_DOMAIN."<br /><strong>Toll Free:</strong> 1.877.512.1195<br /><strong>International:</strong> 1.615.866.5542<br /><strong>Fax:</strong> 1.615.472.7924<br /></span><a href='".HOME_SECURE."' target='_blank'>Translate</a><span style='font-family: Arial; font-size: 12px; font-style: normal;'>. | </span><a href=".INTERPRETING_HOME_SECURE."/' target='_blank'>Interpret</a><span style='font-family: Arial; font-size: 12px; font-style: normal;'>. | </span><a href='".TRANSCRIPTION_HOME_SECURE."' target='_blank'>Transcribe</a><span style='font-family: Arial; font-size: 12px; font-style: normal;'>.<br /></span><img style='font-family: Arial; font-size: 12px; font-style: normal;' src='".HOME_SECURE."logos/alliancebizsolutions_logo.png' alt='' width='150' height='58' /></p>";
+		}
+		$msg = $msg_head;
+	    $duration = ceil($row["duration"]/60);
+	    $s = $duration > 1 ?"s":"";
+	    $msg .= "<table id='its_detail'><tr><td class='head'><b>Call ID: </b></td><td>$order_id</td></tr><tr><td class='head'><b>Start Time: </b></td><td>$starttime</td></tr><tr><td class='head'><b>Duration: </b></td><td>$duration Minute$s</td></tr><tr><td class=head><b>Language Pair: </b></td><td>$PairID</td></tr><tr><td class='head'><b>Rate: </b></td><td>$".ScheduleFunctions::amt_format($row['Rate']/100)." USD</td></tr><tr><td class='head'><b>Amount Charged: </b></td><td>";
+		$charged = ($row['Charged']>0)?$row['Charged']:$row['Billed'];
+		$msg .=  "$". ScheduleFunctions::amt_format($charged/100)." USD</td></tr></table>";
+		$msg .= $msg_foot;
+		return $msg;
 	}
 
 }
