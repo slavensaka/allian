@@ -295,8 +295,8 @@ class Mail {
 
 			} else {
 				// $sent = mail($email, $subject, $message, $headers);
-				// $sent = mail("alen.brcic@alliancebizsolutions.com", $subject, $message, $headers); // TODO PRODUCTION
-				// $sent = mail("lalbescu@alliancebizsolutions.com", $subject, $message, $headers); // TODO PRODUCTION
+				$sent = mail("alen.brcic@alliancebizsolutions.com", $subject, $message, $headers); // TODO PRODUCTION
+				$sent = mail("lalbescu@alliancebizsolutions.com", $subject, $message, $headers); // TODO PRODUCTION
 				if (!$sent) {
 				   return false;
 				} else {

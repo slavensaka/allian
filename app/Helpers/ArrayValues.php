@@ -157,7 +157,7 @@ class ArrayValues {
 
 	public static function langFrom(){
 		$con = Connect::con();
-		$q = "select * from LangList";
+		$q = "select * from LangList ORDER BY LangName='English' desc, LangName asc";
         $res = mysqli_query($con, $q) or die("An Error Occurred");
         $langsFrom = array();
 	    if ($res and mysqli_num_rows($res) > 0) {
@@ -172,7 +172,7 @@ class ArrayValues {
 
 	public static function langTo(){
 		$con = Connect::con();
-		$q = "select * from LangList";
+		$q = "select * from LangList ORDER BY LangName='English' desc, LangName asc";
         $res = mysqli_query($con, $q) or die("An Error Occurred");
         $langsTo = array();
 	    if ($res and mysqli_num_rows($res) > 0) {

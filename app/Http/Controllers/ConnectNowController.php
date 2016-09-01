@@ -391,11 +391,14 @@ class ConnectNowController extends Controller {
 			$row = mysqli_fetch_array($result);
 			$real_queue = $row['PairID'] . $row['L1'] . $row['L2'];
 		}
-		$response = new Services_Twilio_Twiml;
 		$query_string = array( 'real_queue' => $real_queue, 'IPID' => $IPID , 'array' => $array, 'pair1' => $pair1);
 		$urlCallback =  'http://alliantranslate.com/testgauss/connectNowConference' . '?' . http_build_query($query_string, '', '&');
-		$response->redirect($urlCallback);
-		return $response;
+
+		$sid = getenv('LIVE_TWILIO_ALLIAN_SID');
+		$token = getenv('LIVE_TWILIO_ALLIAN_TOKEN');
+		$client = new Services_Twilio($sid, $token);
+		$call = $client->account->calls->get($request->CallSid);
+		$call->update(array("Url" => $urlCallback));
 	}
 
 	/**
@@ -418,11 +421,17 @@ class ConnectNowController extends Controller {
 	}
 
 	public function handlePaymentTest($request, $response, $service, $app){
+		$all = $request->paramsGet()->all();
+		foreach( $all as $key => $value )
+  			$message .= "$key: $value\n";
+		Mail::simpleLocalMail("HandlePaymentTest", $message); // For testing
+
 		$IPID = $request->IPID;
 		$pairarray = $request->pairarray;
 		$times = $request->times;
 		$Previous = $request->Previous;
-
+		$CustomerID = $request->CustomerID;
+		$con = Connect::con();
 		$result = mysqli_query($con,"DELETE FROM `connect_now_log` WHERE CustomerID = $CustomerID");
 
 		$log_file = "../linguist/phoneapp/log/main_log.txt";
@@ -509,7 +518,7 @@ class ConnectNowController extends Controller {
             		$call_id = mysqli_insert_id($con);
         		}
         	}
-			mysqli_query($con,"UPDATE CustLogin  SET totalbilled=totalbilled+'$charged' WHERE CustomerID='$customerid'");
+			mysqli_query($con,"UPDATE CustLogin SET totalbilled=totalbilled+'$charged' WHERE CustomerID='$customerid'");
 			if($send_notification_alert){
 				// Send Reciept to client
 			    $customerID = $data['CustomerID'];
@@ -629,7 +638,7 @@ class ConnectNowController extends Controller {
 		$phones = $data['phones'];
 		$twilioToken = $request->twilioToken;
 		$con = Connect::con();
-		$get = mysqli_query($con, "SELECT real_queue FROM `connect_now_log` WHERE CustomerID = $CustomerID AND twilioToken = '$twilioToken'");
+		$get = mysqli_query($con, "SELECT real_queue FROM `connect_now_log` WHERE CustomerID = $CustomerID");
 		if(!$get){
 			return $this->encryptValues(json_encode($this->errorJson("No order in table was found for that CustomerID.")));
 		}

@@ -30,8 +30,8 @@ function selectIP($PairID, $real_queue, $istest=0){ // TODO FOR PRODUCTION $iste
 						$client = new Services_Twilio($sid, $token);
 						$call = $client->account->calls->create(getenv('TWILIO_CONF_OB_NUMBER'),
 							// "+" . $Phone['Phone'], // TODO production
-							// "+" . "16153967919", // Alen broj
-							"+" . "385919249906", // Slaven broj
+							"+" . "16153967919", // Alen broj
+							// "+" . "385919249906", // Slaven broj
 							$urlCallback
 						);
 					}catch(\Exception $e){
@@ -57,8 +57,8 @@ function selectIP($PairID, $real_queue, $istest=0){ // TODO FOR PRODUCTION $iste
 				$Pairname = trim($lang1['LangName']) . "-" . trim($lang2['LangName']);
 				if($istest == 0){
 					// mailagents($Email['Email'], $Pairname); // TODO production
-					// mailagents(getenv('ALEN_EMAIL'), $Pairname);
-					mailagents('slavensakacic@gmail.com', $Pairname);
+					mailagents(getenv('ALEN_EMAIL'), $Pairname);
+					// mailagents('slavensakacic@gmail.com', $Pairname); // POGLEDAJ U MAIL
 				}else{
 					echo "In mail " . $Email['Email'] . " " . $Pairname . "<br>";
 				}

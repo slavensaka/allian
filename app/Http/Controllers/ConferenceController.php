@@ -93,26 +93,26 @@ class ConferenceController extends Controller {
 		$con = Connect::con();
 		mysqli_query($con, "UPDATE `schedule_log` SET orderID = $orderID WHERE CustomerID = $CustomerID");
 
-		$response = new Services_Twilio_Twiml;
-		$response->say("Welcome to Allian interpreter conference service.");
-		$response->redirect("http://alliantranslate.com/linguist/twilio-conf-enhanced/conference.php?Digits=1&vcode=" . trim($conf_queue));// TODO THE EASY WAY
-		return $response;
-		// $CallSid = $request->CallSid;
-		// $customer = CustLogin::get_customer($request->CustomerID);
-		// $order = OrderOnsiteInterpreter::get_interpret_order($request->orderId, '*');
-		// $transOrder = TranslationOrders::getTranslationOrder($request->orderId, '*');
+		// $response = new Services_Twilio_Twiml;
+		// $response->say("Welcome to Allian interpreter conference service.");
+		// $response->redirect("http://alliantranslate.com/linguist/twilio-conf-enhanced/conference.php?Digits=1&vcode=" . trim($conf_queue));// TODO THE EASY WAY
+		// return $response;
+		$CallSid = $request->CallSid;
+		$customer = CustLogin::get_customer($request->CustomerID);
+		$order = OrderOnsiteInterpreter::get_interpret_order($request->orderId, '*');
+		$transOrder = TranslationOrders::getTranslationOrder($request->orderId, '*');
 		// Is client verified, by getting the customer by id and then checking it's orderId in the conference_schedule
-		// $verified = ConfFunc::verify_caller($conference['user_code']);
+		$verified = ConfFunc::verify_caller($conference['user_code']);
 		// $limit=ConfFunc::chech_limit($code,$count); // NE vidim $code
 		// ConfFunc::set_pre_log($conference['user_code'], $CallSid);
-		// $service->verified = $verified;
-		// $service->CustomerID = $request->CustomerID;
-		// $service->orderId = $request->orderId;
+		$service->verified = $verified;
+		$service->CustomerID = $request->CustomerID;
+		$service->orderId = $request->orderId;
 		// Set the conf_queue on the user
-		// $query = "UPDATE `order_onsite_interpreter` set conf_queue='$conf_queue' WHERE orderID='" . $request->orderId . "'";
-		// $con = Connect::con();
-		// $query_result = mysqli_query($con, $query);
-		// $service->render('./resources/views/twilio/conference/conferenceOut.php'); // THE HARD WAY
+		$query = "UPDATE `order_onsite_interpreter` set conf_queue='$conf_queue' WHERE orderID='" . $request->orderId . "'"; // STa
+		$con = Connect::con();
+		$query_result = mysqli_query($con, $query);
+		$service->render('./resources/views/twilio/conference/conferenceOut.php'); // THE HARD WAY
 	}
 
 	/**
@@ -151,7 +151,7 @@ class ConferenceController extends Controller {
 		$phones = $data['phones'];
 
 		$con = Connect::con();
-		$get = mysqli_query($con, "SELECT orderID FROM `schedule_log` WHERE CustomerID = $customer_id AND twilioToken = '$twilioToken'");
+		$get = mysqli_query($con, "SELECT orderID FROM `schedule_log` WHERE CustomerID = $customer_id");
 		if(!$get){
 			return $this->encryptValues(json_encode($this->errorJson("No order in table was found for that CustomerID.")));
 		}
@@ -186,4 +186,3 @@ class ConferenceController extends Controller {
 	}
 
 }
-

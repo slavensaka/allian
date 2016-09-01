@@ -263,12 +263,12 @@ class OrderOnsiteInterpreterController extends Controller {
 			$passphrase = getenv('PUSH_PASS_PHRASE');
 			// Put your alert message here:
 			$ctx = stream_context_create();
-			// stream_context_set_option($ctx, 'ssl', 'local_cert', '/home/alliantranslate/public_html/testgauss/cert/allianpushcertifikatprod.pem');
-			stream_context_set_option($ctx, 'ssl', 'local_cert', '/home/alliantranslate/public_html/testgauss/cert/allianpushcertfikat.pem');
+			stream_context_set_option($ctx, 'ssl', 'local_cert', '/home/alliantranslate/public_html/testgauss/cert/allianpushcertifikatprod.pem');
+			// stream_context_set_option($ctx, 'ssl', 'local_cert', '/home/alliantranslate/public_html/testgauss/cert/allianpushcertfikat.pem');
 			stream_context_set_option($ctx, 'ssl', 'passphrase', $passphrase);
 			// Open a connection to the APNS server
-			// $fp = stream_socket_client('ssl://gateway.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
-			$fp = stream_socket_client('ssl://gateway.sandbox.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
+			$fp = stream_socket_client('ssl://gateway.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
+			// $fp = stream_socket_client('ssl://gateway.sandbox.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
 			if(!$fp){
 				exit();
 			}
@@ -282,7 +282,7 @@ class OrderOnsiteInterpreterController extends Controller {
 			$msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
 			// Send it to the server
 			$result = fwrite($fp, $msg, strlen($msg));
-			mail('slavensakacic@gmail.com',"gaussAppScheduleCronJob Cron job fire success!", "$message + $result + $msg + $payload + $body + $fp + $deviceToken");
+			mail('slavensakacic@gmail.com',"gaussAppScheduleCronJob Cron job fire success!", "Poruka: $message + FP rezultat:$result + Binary poruka:$msg + Payload: $payload + Body: $body + Stream Clietn: $fp + Device Token: $deviceToken");
 			// fclose($fp);
 			// return $response->json($result);
 			// Close the connection to the server

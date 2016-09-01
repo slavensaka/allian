@@ -12,7 +12,7 @@ $pair1 = $this->pair1;
 		<Say>
 			You are now being connected to the client.
 		</Say>
-		<Dial timeout="60">
+		<Dial timeout="60" action='redirectToConference?IPID=<?php echo $IPID; ?>&amp;pairarray=<?php echo $array; ?>&amp;times=60&amp;Previous=<?php echo $pair1; ?>&amp;PairID=<?php echo $PairID; ?>&amp;real_queue=<?php echo $real_queue; ?>&amp;'>
 			<Queue
 				url = 'redirectToConference?IPID=<?php echo $IPID; ?>&amp;pairarray=<?php echo $array; ?>&amp;times=60&amp;Previous=<?php echo $pair1; ?>&amp;PairID=<?php echo $PairID; ?>&amp;real_queue=<?php echo $real_queue; ?>&amp;'
 			>
@@ -30,7 +30,7 @@ $pair1 = $this->pair1;
 <?php }else { ?>
 	<Response>
 		<Say>Please wait until the next customer dials in or hang up the phone.</Say>
-		<Dial timeout="1">
+		<Dial timeout="1" action='redirectToConference?IPID=<?php echo $IPID; ?>&amp;pairarray=<?php echo $array; ?>&amp;times=1&amp;Previous=<?php echo $pair1; ?>&amp;PairID=<?php echo $PairID; ?>&amp;real_queue=<?php echo $real_queue; ?>&amp;'>
     		<Queue
 				url = 'redirectToConference?IPID=<?php echo $IPID; ?>&amp;pairarray=<?php echo $array; ?>&amp;times=1&amp;Previous=<?php echo $pair1; ?>&amp;PairID=<?php echo $PairID; ?>&amp;real_queue=<?php echo $real_queue; ?>&amp;'
     		>
