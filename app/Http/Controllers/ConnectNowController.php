@@ -589,12 +589,10 @@ class ConnectNowController extends Controller {
 		    // Send email to staff, regular failed
 		    $server = $this->serverEnv();
 			if($server=="localhost"){
-				$sendToEmail = "slavensakacic@gmail.com";
+				$sendToEmail = getenv('SLAVEN_EMAIL');
 				Mail::sendStaffMail($sendToEmail, "staffRegularFailed", $param);
 			} else if($server=="alliantranslate"){
-				//TODO FOR PRODUCTION
-				$sendToEmail = getenv('ALEN_EMAIL');
-				//$sendToEmail = "orders@alliancebizsolutions.com";
+				$sendToEmail = getenv('ORDERS_EMAIL');
 				Mail::sendStaffMailProduction($sendToEmail, "staffRegularFailed", $param);
 			}
 			mysqli_query($con,"INSERT INTO CallIdentify(Type, starttime, CustomerId, FromNumber, state, duration, PairId) values ('$type', '$timestamp', '$CustomerID', '$number', '$queueresult', '0', '$langpair')");
@@ -650,7 +648,6 @@ class ConnectNowController extends Controller {
 		$query_string = array('real_queue' => $cnl['real_queue'], 'fullname' => $fullname);
 		$url = 'http://alliantranslate.com/testgauss/addNewMemberConnectNowOut'. '?' . http_build_query($query_string, '', '&');
 		foreach($phones as $phone){
-			// TODO FOR PRODUCTION DONE
 			$call = $client->account->calls->create(getenv('ADD_NEW_MEMBER'), $phone, $url, array());
 		}
 

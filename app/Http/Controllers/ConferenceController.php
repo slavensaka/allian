@@ -95,7 +95,7 @@ class ConferenceController extends Controller {
 
 		// $response = new Services_Twilio_Twiml;
 		// $response->say("Welcome to Allian interpreter conference service.");
-		// $response->redirect("http://alliantranslate.com/linguist/twilio-conf-enhanced/conference.php?Digits=1&vcode=" . trim($conf_queue));// TODO THE EASY WAY
+		// $response->redirect("http://alliantranslate.com/linguist/twilio-conf-enhanced/conference.php?Digits=1&vcode=" . trim($conf_queue));// THE EASY WAY
 		// return $response;
 		$CallSid = $request->CallSid;
 		$customer = CustLogin::get_customer($request->CustomerID);
@@ -142,7 +142,6 @@ class ConferenceController extends Controller {
 		$service->validate($data['CustomerID'], 'Error: No customer id is present.')->notNull()->isInt();
 		$service->validate($data['phones'], 'Error: No phones array is present.')->notNull();
 		$service->validate($request->twilioToken, 'Error: No twilioToken is present.')->notNull();
-		// TODO dodati column za restrikciju,orderID treba poslat u ovom requestu
 		// $service->validate($data['orderId'], 'Error: No orderId is present.')->notNull();
 		$customer_id = $data['CustomerID'];
 		$customer = CustLogin::get_customer($customer_id);
@@ -163,9 +162,7 @@ class ConferenceController extends Controller {
 		$client = new Services_Twilio($sid, $token, '2010-04-01', $http);
 		$url = "http://alliantranslate.com/testgauss/addNewMemberOut?vcode=$queue";
 		foreach($phones as $phone){
-			// TODO FOR PRODUCTION DONE
 			$call = $client->account->calls->create(getenv('ADD_NEW_MEMBER'), $phone, $url, array());
-			// $call = $client->account->calls->create("+15005550006", "+14108675309", $url, array());
 		}
 		$rArray['status'] = 1;
 		$rArray['userMessage'] = 'Added new member.';

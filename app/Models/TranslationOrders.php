@@ -88,7 +88,6 @@ class TranslationOrders extends DataObject {
 		try {
 			$complete = mysqli_query($con, "UPDATE " . getenv("TBL_TRANSLATION_ORDERS") . " SET
 				status = '1', stripe_id = '" . $dArray['stripe_id']
-				//TODO status je 0 ako je charged korisnik, status 1 ako je cus_ kreiran ili, stripe_id mora i biti invoice, ako je 1. DAKLE POPRAVIT ZA STRIPE_ID I STATUS COLUMN
 				. "',dtp='" . $dArray['DTP_Price'] // nevidim da se koristi
 				. "',rush_processing='" . $dArray['RP_Price'] // nevidim da se koristi
 				. "',verbatim='" . $dArray['Verbatim_Price'] // nevidim da se koristi

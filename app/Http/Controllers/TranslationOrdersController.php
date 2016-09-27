@@ -64,7 +64,7 @@ class TranslationOrdersController extends Controller {
 			$base64Encrypted = $this->encryptValues(json_encode(array('orderSummary' => $orders, 'status' => 1, 'userMessage' => 'Orders Summary')));
 			return $response->json(array('data' => $base64Encrypted));
 		} else {
-			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request.")));
      		return $response->json(array('data' => $base64Encrypted));
 		}
 	}
@@ -127,9 +127,8 @@ class TranslationOrdersController extends Controller {
 			$base64Encrypted = $this->encryptValues(json_encode($display_order));
 			return $response->json(array('data' => $base64Encrypted));
 		} else {
-			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request.")));
      		return $response->json(array('data' => $base64Encrypted));
 		}
 	}
-
 }

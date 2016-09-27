@@ -18,20 +18,18 @@ class ConferenceSchedule extends DataObject {
 	);
 
 	/**
-	 *
 	 * get_conference function resturns the value from conference_shedule database table against order id.
-  	 @Param $con: Required for database connection.
-  	 @Param $order_id: Order ID against what the value from table is returned.
-   	 @Param $get_value: The actual value that is returned from table.
+	  	@Param $con: Required for database connection.
+	  	@Param $order_id: Order ID against what the value from table is returned.
+	   	@Param $get_value: The actual value that is returned from table.
 	 *
 	 */
 	function get_conference($order_id, $get_value) {
 		$con = Connect::con();
-		$get_order_info = mysqli_query($con, "SELECT $get_value FROM conference_shedule WHERE orderID =  '$order_id'");
+		$get_order_info = mysqli_query($con, "SELECT $get_value FROM conference_shedule WHERE orderID = '$order_id'");
 		$order = mysqli_fetch_array($get_order_info);
 		$get = $order[$get_value];
 		// If whole record is required then return whole object
 		return ($get_value === "*") ? $order : $get;
-		}
-
+	}
 }

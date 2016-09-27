@@ -61,7 +61,7 @@ class ConferenceFunctions{
 	 */
 	function verify_caller($code){
 		$db = new DatabaseAccess();
-		if($db->codeused($code)){ // TODO Check only if the number if from client, because only clients will do request
+		if($db->codeused($code)){ // Check only if the number if from client, because only clients will do request
 			$conf=$db->get_conf_data($code);
 			if($conf['interpreter_code']==$code){ // Uvijek će biti klijent u app-u
 				$data['auto_start']="true";

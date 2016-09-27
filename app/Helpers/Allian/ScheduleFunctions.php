@@ -230,47 +230,45 @@ class ScheduleFunctions {
 	                $conf['project_ends'] = $toDateTime;
 	                $conf['timezone'] = OrderOnSiteInterpreter::get_interpret_order($order_id, "timezone");
 	                $conference_datails = self::get_conf_body($conf);
-	                // TODO FOR PRODUCTION DONE
+
+	                // TODO FOR PRODUCTION
 	                // Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, $customer->getValueEncoded('Email'));
-	                // FOR LOCALHOST
-	                // Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, "slavensakacic@gmail.com");
 	                Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, getenv('ALEN_EMAIL'));
+	                // Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, "slavensakacic@gmail.com");
+
 	                // if client added recipients send emails
 	                if (isset($clients)) {
 	                    foreach ($clients as $key => $recipient) {
 	                        if ($recipient != "") {
-	                        	//TODO FOR PRODUCTION DONE
+
+	                        	//TODO FOR PRODUCTION
 	                            // Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, $recipient);
-	                        	// FOR LOCALHOST
-	                        	// Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, "slavensakacic@gmail.com");
 	                        	Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, getenv('ALEN_EMAIL'));
+	                        	// Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, "slavensakacic@gmail.com");
+
 	                        }
 	                    }
 	                }
 	            }
 	        }
-	        // TODO FOR PRODUCTION DONE
-	        // $to = "lalbescu@alliancebizsolutions.com,alen.brcic@alliancebizsolutions.com,ialbescu@alliancebizsolutions.com";
-        	// $to = "slavensakacic@gmail.com";
-        	$to = getenv('ALEN_EMAIL');
+	        $to = array(getenv('LALBESCU_EMAIL'), getenv('ALEN_EMAIL'), getenv('IALBESCU_EMAIL'));
 	        Mail::send_notification("Resources for Project ($fromDate / Telephonic)", $interpreter_details, $to);
 	        $email = $CustEmail;
 	        $email_body = self::order_onsite_template($order_id, "login");
 	        if($email_body){
-	        	// TODO FOR PRODUCTION DONE
+
+	        	// TODO FOR PRODUCTION
         		// Mail::send_notification("Receipt for Telephonic Interpreter ID $order_id", $email_body, $email);
-        		// Mail::send_notification("Receipt for Telephonic Interpreter ID $order_id", $email_body, "slavensakacic@gmail.com");
         		Mail::send_notification("Receipt for Telephonic Interpreter ID $order_id", $email_body, getenv('ALEN_EMAIL'));
+        		// Mail::send_notification("Receipt for Telephonic Interpreter ID $order_id", $email_body, "slavensakacic@gmail.com");
+
 	        }
 	        $email_body_admin = self::order_onsite_template($order_id, "admin");
 	        if($email_body_admin){
 		        $name = $customer->getValueEncoded('FName') . ' ' .  $customer->getValueEncoded('LName');
 		        $from = $name . "<orders@alliancebizsolutions.com>";
 		        $reply_to = $email;
-		        // TODO FOR PROCUTION DONE
-		        // $to = "orders@alliancebizsolutions.com,iorders@alliancebizsolutions.com,support@alliancebizsolutions.com,support2@alliancebizsolutions.com";
-		        // $to = "slavensakacic@gmail.com";
-		        $to = getenv('ALEN_EMAIL');
+		        $to = array(getenv('ORDERS_EMAIL'), getenv('IORDERS_EMAIL'), getenv('SUPPORT_EMAIL'), getenv('SUPPORT2_EMAIL'));
 		        Mail::send_notification("ORDER - Telephonic Interpreter (PAID)", $email_body_admin, $to, $from, $reply_to);
 		    }
 	        if ($order["scheduling_type"] == "conference_call") {
@@ -747,8 +745,7 @@ class ScheduleFunctions {
 	    $conf_starts = date("Y-m-d h:i A", strtotime($conf['project_starts']));
 	    $conf_ends = date("Y-m-d h:i A", strtotime($conf['project_ends']));
 	    $client_name = $conf['client_name'];
-	    // $client_dial = getenv('CONF_DIAL_NUMBER_LIVE');// TODO FOR PRODUCTION DONE ///NOT NEEDED REMOVE
-	    $client_dial = getenv('CONF_DIAL_ALLIAN_LIVE');
+	    // $client_dial = getenv('CONF_DIAL_ALLIAN_LIVE');
 		// Send client conference notification
 	    $conf_title = "style='display: inline-block; width: 150px; font-weight:bold; text-transform:uppercase; background-color:#FFFFDD; border:1px solid #ccc; margin:5px 0; padding:5px; width:100%;color:#555'";
 	    $conference_datails = "<p>Dear $client_name, <br><br>Thank you for scheduling a Telephonic Interpreter with Alliance Business Solutions LLC</p><br>";

@@ -53,7 +53,7 @@ class StripeController extends Controller {
 	  	}
      * }")
      */
-	public function updateStripe($request, $response, $service, $app) { // DONT CHANGE
+	public function updateStripe($request, $response, $service, $app) {
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -69,7 +69,7 @@ class StripeController extends Controller {
 			$validated = $this->validateTokenInDatabase($request->token, $data['CustomerID']);
 			// If error validating token in database
 			if(!$validated){
-				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present")));
+				$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems present.")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
 			$this->getStripeKey();
@@ -123,7 +123,7 @@ class StripeController extends Controller {
 	  }
      * }")
      */
-	public function viewStripe($request, $response, $service, $app){ // DONT CHANGE
+	public function viewStripe($request, $response, $service, $app){
 		if($request->token){
 			// Validate token if not expired, or tampered with
 			$this->validateToken($request->token);
@@ -158,7 +158,7 @@ class StripeController extends Controller {
 			$base64Encrypted = $this->encryptValues(json_encode($rArray));
 	     	return $response->json(array('data' => $base64Encrypted));
 		} else {
-			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request")));
+			$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("No token provided in request.")));
      		return $response->json(array('data' => $base64Encrypted));
 		}
 	}
@@ -168,7 +168,7 @@ class StripeController extends Controller {
 	 * Charge the customer with stripe token
 	 *
 	 */
-	public function chargeCustomer($amount, $token, $email){ // DONT CHANGE
+	public function chargeCustomer($amount, $token, $email){
 		// Check the host, and get the stripeKey based on that
 		$this->getStripeKey();
 		try {

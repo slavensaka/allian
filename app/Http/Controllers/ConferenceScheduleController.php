@@ -486,15 +486,14 @@ class ConferenceScheduleController extends Controller {
 			$retArray['confEnds'] = $data['fromDate'] . ' ' . $data['timeEnds'];
 			if($data['schedulingType'] == 'conference_call'){
 				$retArray['confCode'] = "$user_code";
-				// TODO FOR PRODUCTION DONE OVAJ BROJ NIJE KORISTAN BRISAT
-				$retArray['confDialNumber'] = getenv('CONF_DIAL_ALLIAN_LIVE');
+				// $retArray['confDialNumber'] = getenv('CONF_DIAL_ALLIAN_LIVE');
 			} else if($data['schedulingType'] == 'get_call'){
 				$retArray['confCode'] = null;
 				$retArray['country'] = $sArray['country'];
 				$retArray['confDialNumber'] = $sArray['onsite_con_phone']; // Broj korisnika koji je unio
 			}
 
-		/* ==========================================================================
+		/* ====================================================================
 		   End Response Array
 		   ========================================================================== */
 			// Encrypt and return the values

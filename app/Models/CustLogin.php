@@ -8,6 +8,7 @@ use Allian\Helpers\PassHash;
 
 class CustLogin extends DataObject {
 
+	// Columns in database
 	protected $data = array(
 	    "CustomerID" => "",
 	    "PhLoginId" => "",
@@ -39,9 +40,10 @@ class CustLogin extends DataObject {
 	);
 
   	/**
-  	 *
-  	 * Block comment
-  	 *
+  	 * With email and pass auth the customer
+  	 * Check pass that's hashed and not hashed for old users
+  	 *	@param string $Email Customers email address
+  	 *  @param string $LoginPassword Customer Loginpassword
   	 */
   	public static function authenticate($Email, $LoginPassword) {
 	    $conn = parent::connect();
@@ -53,7 +55,7 @@ class CustLogin extends DataObject {
 		    $row = $st->fetch();
 		    parent::disconnect($conn);
 		    if ($row) {
-		    	// New hashed password
+		    	// Check hashed passwords
 			    if(PassHash::checkPass($row['LoginPassword'], $LoginPassword)) {
 				    return new CustLogin($row);
 				 // Old customers with no secure password
@@ -69,10 +71,15 @@ class CustLogin extends DataObject {
 	    }
   	}
 
+  	/**
+  	 *
+  	 * Update customers password
+  	 *	@param array $data['LoginPassword', 'CustomerID']
+  	 */
   	public static function updatePassword($data){
   		$conn = parent::connect();
 		$sql = "UPDATE " . getenv('TBL_CUSTLOGIN') . " SET LoginPassword = :LoginPassword WHERE CustomerID = :CustomerID";
-		try{
+		try {
 			$st = $conn->prepare($sql);
 			$st->bindValue(":LoginPassword", PassHash::hash($data['LoginPassword']), \PDO::PARAM_STR);
 			$st->bindValue(":CustomerID", $data['CustomerID'], \PDO::PARAM_STR);
@@ -85,9 +92,8 @@ class CustLogin extends DataObject {
   			}
 		} catch (\PDOException $e) {
 	    	parent::disconnect($conn);
-	    	throw new \Exception("Internal error occurred.");
+	    	throw new \Exception("Internal error occurred 1. Please contact customer support at cs@alliantranslate.com and provide the error code. The error code is 1.");
 	    }
-
   	}
 
   	/**
@@ -120,20 +126,23 @@ class CustLogin extends DataObject {
   				$update = self::updateRegLoginId($PhLoginId);
   				return $customer;
   			} else {
-  				throw new \Exception("There was a problem during registration.");
+  				throw new \Exception("There was a problem during registration. Please try again.");
   			}
 	    } catch (\PDOException $e) {
 	    	parent::disconnect($conn);
 	    	if ($e->errorInfo[1] == 1062) {
     			throw new \Exception("Email already taken. Please try another email.");
+			} else {
+				throw new \Exception("Internal error occurred 2. Please contact customer support at cs@alliantranslate.com and provide the error code. The error code is 2.");
 			}
 	    }
   	}
 
   	/**
   	 *
-  	 * Block comment
-  	 *
+  	 * Update the PhLoginId based on the way it's already used on the site.
+	 * Used the CustomerID & const and add them together and update PhLoginId
+   	 *
   	 */
   	public static function updateRegLoginId($PhLoginId){
   		$conn = parent::connect();
@@ -152,13 +161,13 @@ class CustLogin extends DataObject {
   			}
 		} catch (\PDOException $e) {
 	    	parent::disconnect($conn);
-	    	throw new \Exception("Internal error occurred.");
+	    	throw new \Exception("Internal error occurred code: 3. Please contact customer support at cs@alliantranslate.com and provide the error code. The error code is 3");
 	    }
   	}
 
   	/**
   	 *
-  	 * Block comment
+  	 * Delete the customer from the database
   	 *
   	 */
   	public static function deleteCustomer($CustomerID){
@@ -182,8 +191,8 @@ class CustLogin extends DataObject {
 
   	/**
   	 *
-  	 * Block comment NOT USED
-  	 *
+  	 * Used for easy customer deletion if registration all steps are not complete
+  	 * If stripe fails, you need to delete him.
   	 */
   	public static function deleteCustomerByEmail($Email, $LoginPassword){
   		$conn = parent::connect();
@@ -194,7 +203,7 @@ class CustLogin extends DataObject {
   			$st->bindValue(":LoginPassword", $LoginPassword, \PDO::PARAM_STR);
   			$success = $st->execute();
   			parent::disconnect($conn);
-  			if($success){ // TODO find if token is null, and password
+  			if($success){
   				return true;
   			} else {
   				return false;
@@ -207,8 +216,9 @@ class CustLogin extends DataObject {
 
   	/**
   	 *
-  	 * Block comment
-  	 *
+  	 * Used to update the jwt token
+  	 * @param string $jwt_token
+  	 * @param string $CustomerID
   	 */
   	public static function updateToken($jwt_token, $CustomerID){
   		$conn = parent::connect();
@@ -230,11 +240,16 @@ class CustLogin extends DataObject {
 	    }
   	}
 
+  	/**
+  	 *
+  	 * Null the jwtToken, that is update the token to null
+  	 * meaning, user has logged out
+  	 */
   	public static function nullToken($CustomerID){
   		$conn = parent::connect();
 		$sql = "UPDATE " . getenv('TBL_CUSTLOGIN') . " SET jwt_token = :jwt_token WHERE CustomerID= :CustomerID";
 		try {
-	    	$st = $conn->prepare( $sql );
+	    	$st = $conn->prepare($sql);
   			$st->bindValue(":jwt_token", null, \PDO::PARAM_STR);
   			$st->bindValue(":CustomerID", $CustomerID, \PDO::PARAM_STR);
   			$success = $st->execute();
@@ -244,21 +259,22 @@ class CustLogin extends DataObject {
   			} else {
   				return false;
   			}
-	    } catch (\PDOException $e) {
+	    } catch (\PDOException $e){
 	      parent::disconnect($conn);
 	      return false;
 	    }
   	}
+
   	/**
   	 *
-  	 * Block comment
+  	 * Reteieve the jwt_token from the database
   	 *
   	 */
   	public static function retrieveTokenInDatabase($CustomerID){
   		$conn = parent::connect();
 		$sql = "SELECT jwt_token FROM " . getenv('TBL_CUSTLOGIN') . " WHERE CustomerID= :CustomerID";
 		try {
-	    	$st = $conn->prepare( $sql );
+	    	$st = $conn->prepare($sql);
   			$st->bindValue(":CustomerID", $CustomerID, \PDO::PARAM_STR);
   			$st->execute();
   			$success = $st->fetch();
@@ -268,16 +284,15 @@ class CustLogin extends DataObject {
   			} else {
   				return false;
   			}
-	    } catch ( \PDOException $e ) {
-	      parent::disconnect( $conn );
+	    } catch (\PDOException $e) {
+	      parent::disconnect($conn);
 	      return false;
-	      exit;
 	    }
   	}
 
   	/**
   	 *
-  	 * Block comment
+  	 * On register, update the users stripe token in the database.
   	 *
   	 */
   	public static function updateCustLoginStripe($stripeToken, $CustomerID){
@@ -302,7 +317,7 @@ class CustLogin extends DataObject {
 
   	/**
   	 *
-  	 * Block comment
+  	 * Update customers registration information
   	 *
   	 */
   	public static function update($data){
@@ -334,14 +349,14 @@ class CustLogin extends DataObject {
 
   	/**
   	 *
-  	 * Block comment
+  	 * Used for forgotten password
+  	 * Check that the email if found in database
   	 *
   	 */
   	public static function checkEmail($Email){
   		$conn = parent::connect();
   		$sql = "SELECT Email FROM " . getenv('TBL_CUSTLOGIN') . " WHERE Email=:Email";
-  		// $sql = "SELECT Email FROM " . getenv('TBL_CUSTLOGIN') . " WHERE Email=:Email LIMIT 1";
-  		 try {
+  		try {
 		    $st = $conn->prepare($sql);
 		    $st->bindValue(":Email", $Email, \PDO::PARAM_INT);
 		    $st->execute();
@@ -359,14 +374,14 @@ class CustLogin extends DataObject {
 
   	/**
   	 *
-  	 * Block comment
+  	 * get all customers information
   	 *
   	 */
   	public static function getCustomer($CustomerID) {
 	    $conn = parent::connect();
 	    $sql = "SELECT * FROM " . getenv('TBL_CUSTLOGIN') . " WHERE CustomerID = :CustomerID";
 	    try {
-		    $st = $conn->prepare($sql );
+		    $st = $conn->prepare($sql);
 		    $st->bindValue(":CustomerID", $CustomerID, \PDO::PARAM_INT);
 		    $st->execute();
 		    $row = $st->fetch();
@@ -399,7 +414,7 @@ class CustLogin extends DataObject {
 
   	/**
   	 *
-  	 * Block comment
+  	 * Get the customer from his emial for forgotten password
   	 *
   	 */
   	public static function getCustomerByEmail($Email) {
@@ -424,7 +439,7 @@ class CustLogin extends DataObject {
 
   	/**
   	 *
-  	 * Block comment
+  	 * Hash and update the customer password
   	 *
   	 */
   	public static function insertPasswordCustLogin($LoginPassword, $CustomerID){
@@ -440,34 +455,6 @@ class CustLogin extends DataObject {
 	    } catch (\PDOException $e) {
 	      parent::disconnect($conn);
 	      throw new \Exception("Problems with storing password. Try again!");
-	    }
-  	}
-
-  	/**
-  	 *
-  	 * Block comment
-  	 *
-  	 */
-  	public static function getMembers( $startRow, $numRows, $order ) {
-	    $conn = parent::connect();
-	    $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM " . getenv('TBL_CUSTLOGIN') . " ORDER BY $order LIMIT :startRow, :numRows";
-
-	    try {
-		      $st = $conn->prepare( $sql );
-		      $st->bindValue( ":startRow", $startRow, \PDO::PARAM_INT );
-		      $st->bindValue( ":numRows", $numRows, \PDO::PARAM_INT );
-		      $st->execute();
-		      $members = array();
-		      foreach ( $st->fetchAll() as $row ) {
-		    	    $members[] = new CustLogin( $row );
-	      	}
-		      $st = $conn->query( "SELECT found_rows() AS totalRows" );
-		      $row = $st->fetch();
-		      parent::disconnect( $conn );
-		      return array( $members, $row["totalRows"] );
-	    } catch ( \PDOException $e ) {
-		      parent::disconnect( $conn );
-		      die( "Query failed: " . $e->getMessage() );
 	    }
   	}
 

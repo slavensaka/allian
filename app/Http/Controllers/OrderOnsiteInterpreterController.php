@@ -162,8 +162,8 @@ class OrderOnsiteInterpreterController extends Controller {
 			$rArray['status'] = 1;
 			$rArray['userMessage'] = 'Scheduled Session';
 		/* ==========================================================================
-	   End Return Array
-	   ========================================================================== */
+		   End Return Array
+		   ========================================================================== */
 			// Encrypt format json response
 			$base64Encrypted = $this->encryptValues(json_encode($rArray));
 	     	return $response->json(array('data' => $base64Encrypted));
@@ -246,10 +246,10 @@ class OrderOnsiteInterpreterController extends Controller {
 		    $amount = $rows['amount'];
 		    $date = $rows['assg_frm_st'] ." ". date('l', strtotime($$rows['assg_frm_date'])) . ' ' . $rows['assg_frm_date'] . ' ' . $rows['timezone'];
 		    if($scheduling_type == 'conference_call'){
-		    	$message = "Your scheduled conference call is about to start in 5 minutes. Translation:" . trim($frm_lang) . " <> " . trim($to_lang) . ". On date: $date. Cost: $amount $.";
+		    	$message = "Your scheduled conference call is about to start in 5 minutes. Phone interpreting:" . trim($frm_lang) . " <> " . trim($to_lang) . ". On date: $date.";
 		    } elseif($scheduling_type == 'get_call'){
 		    	$onsite_con_phone = $rows['onsite_con_phone'];
-		    	$message = "Your scheduled interpreters call is about to start in 5 minutes. Translation:" . trim($frm_lang) . " <> " . trim($to_lang) . ". On date: $date. Cost: $amount $. Call will be to $onsite_con_phone.";
+		    	$message = "Your scheduled interpreters call is about to start in 5 minutes. Phone interpreting:" . trim($frm_lang) . " <> " . trim($to_lang) . ". On date: $date. Call will be to $onsite_con_phone.";
 			} else{
 				exit();
 			}
@@ -282,12 +282,8 @@ class OrderOnsiteInterpreterController extends Controller {
 			$msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
 			// Send it to the server
 			$result = fwrite($fp, $msg, strlen($msg));
-			mail('slavensakacic@gmail.com',"gaussAppScheduleCronJob Cron job fire success!", "Poruka: $message + FP rezultat:$result + Binary poruka:$msg + Payload: $payload + Body: $body + Stream Clietn: $fp + Device Token: $deviceToken");
-			// fclose($fp);
-			// return $response->json($result);
-			// Close the connection to the server
-
+			mail('slavensakacic@gmail.com',"TestGauss Push CronJob FIRED!", "MESSAGE: $message ||| PAYLOAD JSON_ENCODED: $payload ||| DEVICE TOKEN: $deviceToken");
 		}
-
 	}
+
 }

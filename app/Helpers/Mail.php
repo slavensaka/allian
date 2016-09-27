@@ -294,9 +294,12 @@ class Mail {
 			if($email == 'nethramllc@gmail.com' || $email == 'goharulzaman@gmail.com' || $email == 'missridikas@gmail.com'){
 
 			} else {
+
+				// TODO PRODUCTION
 				// $sent = mail($email, $subject, $message, $headers);
-				$sent = mail("alen.brcic@alliancebizsolutions.com", $subject, $message, $headers); // TODO PRODUCTION
-				$sent = mail("lalbescu@alliancebizsolutions.com", $subject, $message, $headers); // TODO PRODUCTION
+				$sent = mail("alen.brcic@alliancebizsolutions.com", $subject, $message, $headers);
+				$sent = mail("lalbescu@alliancebizsolutions.com", $subject, $message, $headers);
+
 				if (!$sent) {
 				   return false;
 				} else {
@@ -316,11 +319,11 @@ class Mail {
 	}
 
 	/**
-	 * TODO SEND_NOTIFICATION DONE
-	 * Pravi za live production $to = "orders@alliancebizsolutions.com,cs@alliantranslate.com"
+	 *
+	 *
 	 *
 	 */
-	public function send_notification($subject = "", $body = "", $to = "alen.brcic@alliancebizsolutions.com", $from = "Alliance Business Solutions LLC Client Services <cs@alliantranslate.com>", $reply_to = "cs@alliantranslate.com", $attachment = ""){
+	public function send_notification($subject = "", $body = "", $to = "", $from = "Alliance Business Solutions LLC Client Services <cs@alliantranslate.com>", $reply_to = "cs@alliantranslate.com", $attachment = ""){
 
 		date_default_timezone_set('Etc/UTC');
 
@@ -336,7 +339,14 @@ class Mail {
 		$mail->Password = getenv('MAIL_PASSWORD');
 		$mail->setFrom($from, 'Allian Translate');
 		$mail->addReplyTo($reply_to, 'Allian Translate');
-		$mail->addAddress($to, $to);
+		if($to == ""){
+			$mail->addAddress(getenv('ORDERS_EMAIL'), "Allian");
+			$mail->addAddress(getenv('CUSTOMER_SUPPORT_EMAIL'), "Allian");
+		} else {
+			foreach($to as $adr){
+				$mail->addAddress($adr, "Allian");
+			}
+		}
 		$mail->IsHTML(true);
 		$mail->Subject = $subject;
 		$mail->MsgHTML($body);
@@ -348,11 +358,11 @@ class Mail {
 	}
 
 	/**
-	 * TODO SEND_NOTIFICATION DONE
-	 * Pravi za live production $to = "orders@alliancebizsolutions.com,cs@alliantranslate.com"
+	 *
+	 *
 	 *
 	 */
-	public function send_notification_handle_payment($subject = "", $body = "", $to = "slavensakacic@gmail.com", $from = "Alliance Business Solutions LLC Client Services <cs@alliantranslate.com>", $reply_to = "cs@alliantranslate.com", $attachment = ""){
+	public function send_notification_handle_payment($subject = "", $body = "", $to = "", $from = "Alliance Business Solutions LLC Client Services <cs@alliantranslate.com>", $reply_to = "cs@alliantranslate.com", $attachment = ""){
 
 		date_default_timezone_set('Etc/UTC');
 
@@ -368,7 +378,14 @@ class Mail {
 		$mail->Password = getenv('MAIL_PASSWORD');
 		$mail->setFrom($from, 'Allian Translate');
 		$mail->addReplyTo($reply_to, 'Allian Translate');
-		$mail->addAddress($to, $to);
+		if($to == ""){
+			$mail->addAddress(getenv('ORDERS_EMAIL'), "Allian");
+			$mail->addAddress(getenv('CUSTOMER_SUPPORT_EMAIL'), "Allian");
+		} else {
+			foreach($to as $adr){
+				$mail->addAddress($adr, "Allian");
+			}
+		}
 		$mail->IsHTML(true);
 		$mail->Subject = $subject;
 		$mail->MsgHTML($body);
@@ -379,7 +396,7 @@ class Mail {
 		}
 	}
 
-	public function simpleLocalMail($subject = "", $body = ""){
+	public function simpleLocalMail($subject = "", $body = "", $to = ""){
 
 		date_default_timezone_set('Etc/UTC');
 
@@ -394,7 +411,14 @@ class Mail {
 		$mail->Username = getenv('MAIL_USERNAME');
 		$mail->Password = getenv('MAIL_PASSWORD');
 		$mail->setFrom("slaven", 'Test local');
-		$mail->addAddress("slavensakacic@gmail.com");
+		if($to == ""){
+			$mail->addAddress(getenv('SLAVEN_EMAIL'), "Allian");
+			$mail->addAddress(getenv('SLAVEN_EMAIL'), "Allian");
+		} else {
+			foreach($to as $adr){
+				$mail->addAddress($adr, "Allian");
+			}
+		}
 		$mail->IsHTML(true);
 		$mail->Subject = $subject;
 		$mail->MsgHTML($body);

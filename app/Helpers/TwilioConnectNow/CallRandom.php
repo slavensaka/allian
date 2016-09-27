@@ -6,9 +6,8 @@ $PairID = $argv[1]; // 73
 $real_queue = $argv[2]; //738268
 
 selectIP($PairID, $real_queue);
-// SAD JE LIVE JER SAM STAVIO $istest = 0,
-// AKO JE $istest=1 ONDA NIJE LIVE
-function selectIP($PairID, $real_queue, $istest=0){ // TODO FOR PRODUCTION $istest = 0
+// SAD JE LIVE JER SAM STAVIO $istest = 0, AKO JE $istest=1 ONDA NIJE LIVE
+function selectIP($PairID, $real_queue, $istest=0){ // FOR PRODUCTION $istest = 0
 	$host = getenv('DB_HOST');
 	$db_username = getenv('DB_USERNAME');
 	$db_password = getenv('DB_PASSWORD');
@@ -58,7 +57,7 @@ function selectIP($PairID, $real_queue, $istest=0){ // TODO FOR PRODUCTION $iste
 				if($istest == 0){
 					// mailagents($Email['Email'], $Pairname); // TODO production
 					mailagents(getenv('ALEN_EMAIL'), $Pairname);
-					// mailagents('slavensakacic@gmail.com', $Pairname); // POGLEDAJ U MAIL
+					// mailagents('slavensakacic@gmail.com', $Pairname);
 				}else{
 					echo "In mail " . $Email['Email'] . " " . $Pairname . "<br>";
 				}

@@ -73,9 +73,7 @@ class TranslationFunctions {
 			$rArray['userMessage'] = "Order summary";
 			// $rArray['daily'] = "$scheduling_type Telephonic Scheduling ($$rate_per_min/Min) for $actual_minutes minutes";
 			if($interpret_order["scheduling_type"] == 'conference_call'){
-				// TODO FOR PRODUCTION DONE NOT NEEDED REMOVE IT
-				// $rArray['conferenceDialNumber'] = getenv('CONF_DIAL_NUMBER_LIVE');
-				$rArray['conferenceDialNumber'] = getenv('CONF_DIAL_ALLIAN_LIVE');
+				// $rArray['conferenceDialNumber'] = getenv('CONF_DIAL_ALLIAN_LIVE');
 			} else if($interpret_order["scheduling_type"] == 'get_call'){
 				$rArray['conferenceDialNumber'] = $interpret_order['onsite_con_phone'];
 			}

@@ -10,6 +10,7 @@ use Firebase\JWT\BeforeValidException;
 use RNCryptor\Encryptor;
 use RNCryptor\Decryptor;
 use Database\Connect;
+use Allian\Helpers\Mail;
 use Allian\Helpers\ArrayValues;
 use Services_Twilio;
 use Services_Twilio_TinyHttp;
@@ -223,6 +224,8 @@ class DeveloperController extends Controller {
 	 *
 	 */
 	public function getTester($request, $response, $service, $app){
+		$to = array(getenv('SLAVEN_EMAIL'), 'system0@net.hr');
+		Mail::simpleLocalMail("subject", "content", $to);
 		$con = Connect::con();
 		$customer = CustLogin::get_customer(800);
 		return $response->json(gettype($customer['CustomerID']));
