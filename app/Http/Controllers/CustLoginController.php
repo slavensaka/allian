@@ -215,7 +215,16 @@ class CustLoginController extends Controller {
 			$accountType = false;
 		}
 
-
+		$fname = $customer->getValueEncoded('FName');
+		$lname = $customer->getValueEncoded('LName');
+		$phone = $customer->getValueEncoded('Phone');
+		$services = $customer->getValueEncoded('Services');
+		$customerInfo = array('fname' => $fname, 'lname' => $lname, 'phone' => $phone, 'services' => $services);
+		// if(getenv('APP_MODE') == 'prod'){
+			Mail::newRegistration($customer->getValueEncoded('Email'), $customerInfo);
+		// } else{
+			// Mail::newRegistrationDev($customer->getValueEncoded('Email'), $customerInfo);
+		// }
 	 /* ==========================================================================
 	   Response Array
 	   ========================================================================== */
@@ -225,8 +234,9 @@ class CustLoginController extends Controller {
 		$jsonArray['CustomerID'] = $customer->getValueEncoded('CustomerID');
 		$fname = $customer->getValueEncoded('FName');
 		$lname = $customer->getValueEncoded('LName');
+
 		$jsonArray['userMessage'] = "Welcome $fname $lname.";
-		$jsonArray['userMessage1'] = "Registration Successfull.";
+		$jsonArray['userMessage1'] = "Registration Successful.";
 	 /* ==========================================================================
 	   End Response Array
 	   ========================================================================== */

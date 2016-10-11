@@ -152,7 +152,7 @@ class ConnectNowController extends Controller {
 		}else if($flag == 2){
 			$row = mysqli_fetch_array($result1);
 			$queue = $row['PairID'];
-			$real_queue = $row['PairID'] . $row['L1'] . $row['L2'];
+			$real_queue = $row['PairID'] . $row['L1'] . $row['L2']; // TODO SHOULD IT BE ROW['L2'] . ROW['L1'] ??
 		} else if($flag == 0){
 			$response = new Services_Twilio_Twiml;
 			$response->say('The interpreting service is not available between the selected two language pairs at this time.');
@@ -280,24 +280,31 @@ class ConnectNowController extends Controller {
 	 *
 	 */
 	public function interpreter($request, $response, $service, $app){
+		// Dolazi iz view-a callRandomHandle.php kada je cron pozvao interpretera
 		if($request->Direction == "outbound-api"){
 		 	$from = $request->To;
-
+		 // Kada intepreter nazove direktno
 		}else{
 		    $from = $request->From;
 		}
 
+		// Ako se poziva od negdje drugdje, da nema twilio varijablu, nevjerujem da ce ikad
 		if($from == null){
 			$response = new Services_Twilio_Twiml;
 			$response->say('Dear Interpreter, we are sorry the phone number that you are calling from does not match the phone number that is registered in our system. To be able to accept calls you must call from the number that you have registered with. Please call again from the phone number that you registered in the system or update your number in the linguist portal.');
  			$response->hangup();
  			return $response;
 		}
+
 		$IPID = false;
 		$con = Connect::con();
-		if(ConnectNowFunctions::isTwilioClient($from)){
+		// Ako je došao iz cronjoba, sa svojim ipom
+		$IPID = $request->IPID;
+		if(ConnectNowFunctions::isTwilioClient($from)){ // NE trebam
+		// if(isset($IPID)){
 			$IPID = $request->IPID;
- 		// $IPID = str_replace("client:", "", $from); // FUTURE
+ 			// $IPID = str_replace("client:", "", $from); // FUTURE
+ 		// Ako je direktno nazvao, onda pronadi njegovi IPID preko Phone u twilio from variajabli
  		}else{
 	 		$from = substr($from, 1);
 	 		$result = mysqli_query($con, "SELECT IPID FROM Login WHERE Phone= '$from'");
@@ -308,15 +315,12 @@ class ConnectNowController extends Controller {
  		}
 
  		if($IPID){
-
  			$query = mysqli_query($con,"SELECT * FROM LangPair WHERE IPID=" . $IPID);
-
  			if(mysqli_num_rows($query)<1){
  				$response = new Services_Twilio_Twiml;
 				$response->say('Sorry, the language pair that you are trying to select is currently not offered by Alliance Business Solutions phone interpreter services.');
  				$response->hangup();
  				return $response;
- 			//If only one LangPair the lingust has. Assign $pair1 to that
  			}else if(mysqli_num_rows($query) == 1){
  				$row1 = mysqli_fetch_array($query);
 	    		$pair1 = $row1['PairID'];
@@ -337,7 +341,6 @@ class ConnectNowController extends Controller {
  			}else if(mysqli_num_rows($query)>1){
  				$row1 = mysqli_fetch_array($query);
 		    	$pair1= $row1['PairID'];
-		    	$array=$pair1.",";
 		    	$real_queue = $row1['PairID'] . $row1['L1'] . $row1['L2'];
 		    	while($row1 = mysqli_fetch_array($query)){
 	    			$array.=$row1['PairID'].",";
@@ -354,7 +357,7 @@ class ConnectNowController extends Controller {
 				$service->array = $array;
 				$service->pair1 = $pair1;
 
-	        	$service->render('./resources/views/twilio/connect/nextCustomer.php');
+	        	$service->render('./resources/views/twilio/connect/interpreter.php');
 	       	}
 
 	    }else {
@@ -371,6 +374,23 @@ class ConnectNowController extends Controller {
 	 *
 	 */
 	public function redirectToConference($request, $response, $service, $app){
+		// Times when interpeter dials in and the first queue is empty, then action is called, send him to handlePayment
+		if(isset($request->times) && $request->times == 1){
+			$service->PairID = $request->PairID;
+			$service->pairarray = $request->pairarray;
+			$service->times = $request->times;
+			$service->real_queue = $request->real_queue;
+			$service->Previous = $request->Previous;
+			// $query_string = array( 'times' => $request->times, 'IPID' => $request->IPID , 'pairarray' => $request->pairarray, 'Previous' => $request->Previous, 'PairID' => $request->PairID, 'real_queue' => $request->real_queue, 'next' => $request->next);
+			// $url = 'https://alliantranslate.com/testgauss/handlePaymentTest' . '?' . http_build_query($query_string, '', '&');
+			// $service->url = $url;
+			return $service->render('./resources/views/twilio/connect/redirectToHandlePayment.php');
+
+			// $query_string = array( 'times' => $request->times, 'IPID' => $request->IPID , 'pairarray' => $request->pairarray, 'Previous' => $request->Previous);
+			// $url = 'https://alliantranslate.com/testgauss/handlePaymentTest' . '?' . http_build_query($query_string, '', '&');
+			// return $response->redirect($url);
+		}
+
 		if(isset($request->PairID)){
 			$PairID = $request->PairID;
 		}
@@ -380,7 +400,7 @@ class ConnectNowController extends Controller {
 		$IPID = $request->IPID;
 		$array = $request->array;
 		$pair1 = $request->pair1;
-
+		Mail::simpleLocalMail("otisao izvan request times", $request->times); // For testing
 		$con = Connect::con();
 		if(!isset($PairID)){
 			$result = mysqli_query($con,"SELECT * FROM LangRate WHERE PairID= '$pair1'");
@@ -424,13 +444,16 @@ class ConnectNowController extends Controller {
 		$all = $request->paramsGet()->all();
 		foreach( $all as $key => $value )
   			$message .= "$key: $value\n";
-		Mail::simpleLocalMail("HandlePaymentTest", $message); // For testing
+		Mail::simpleLocalMail("HandlePaymentTest All form request", $message); // For testing
 
 		$IPID = $request->IPID;
 		$pairarray = $request->pairarray;
 		$times = $request->times;
 		$Previous = $request->Previous;
 		$CustomerID = $request->CustomerID;
+		$message1 = 'pairarray:'. $pairarray . 'times:' . $times. ' PairID=' .$PairID . ' Previous:' . $Previous .' IPID:' . $IPID .' array:'. $array .' pair1:'. $pair1;
+		Mail::simpleLocalMail("HandlePaymentTest same here", $message1); // For testing
+
 		$con = Connect::con();
 		$result = mysqli_query($con,"DELETE FROM `connect_now_log` WHERE CustomerID = $CustomerID");
 
@@ -535,6 +558,32 @@ class ConnectNowController extends Controller {
 			    $reply_to = "feedback@alliancebizsolutions.com";
 			    Mail::send_notification_handle_payment($subject,$body,$CustomerEmail,$from,$reply_to);
 			}
+		} else if($request->DequeueResult == "queue-empty" || $request->DequeueResult == "queue-not_found"){
+			if($request->times >= 30){
+				$response = new Services_Twilio_Twiml;
+				$response->say('Sorry, No calls in queue right now. Please try again after some time.');
+				$response->hangup();
+				return $response;
+			}
+			$IPID = $request->IPID;
+			$langpair = $request->Previous;
+			$pairarray = $request->pairarray;
+			$parray = explode(",", $request->pairarray);
+			$length = count($parray) - 1;
+			if($currentindex == $length){
+				$next = $parray[0];
+			} else {
+				$next = $parray[$currentindex+1];
+			}
+			$times = $request->times;
+			$times++;
+
+			$service->IPID = $IPID;
+			$service->pairarray = $pairarray;
+			$service->times = $times;
+			$service->next = $next;
+			Mail::simpleLocalMail("Dosli do next Customer-a", $message1); // For testing
+        	$service->render('./resources/views/twilio/connect/nextCustomer.php');
 		}
 	}
 
@@ -567,7 +616,7 @@ class ConnectNowController extends Controller {
 		// Select the languages for the pairID
 		$con = Connect::con();
 		$result = mysqli_query($con,"SELECT L1,L2 FROM LangRate WHERE PairId = '$langpair'");
-		$time = date("m/d/y G.i:s", time());
+		$time = date("d/m/y G.i:s", time());
 		$timestamp = time();
 		// Retrieve the languages names
 		if($row = mysqli_fetch_array($result)){

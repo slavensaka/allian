@@ -475,6 +475,8 @@ class ConferenceScheduleController extends Controller {
 	    		$errorJson = $this->encryptValues(json_encode($this->errorJson("Couldn't find the order in our system. Contact support.")));
 	 			return $response->json(array('data' => $errorJson));
 	    	}
+	    	$time = strtotime($data['fromDate']);
+	    	$fromDate = date('d.m.Y',$time) . '.';
     	/* ==========================================================================
     	   Response Array
     	   ========================================================================== */
@@ -482,8 +484,8 @@ class ConferenceScheduleController extends Controller {
 			$retArray['timezone'] = $data['timezone'];
 			$retArray['status'] = 1;
 			$retArray['userMessage'] = 'Successfully created the session!';
-			$retArray['confStarts'] = $data['fromDate'] . ' ' . $data['timeStarts'];
-			$retArray['confEnds'] = $data['fromDate'] . ' ' . $data['timeEnds'];
+			$retArray['confStarts'] =  $fromDate . ' ' . $data['timeStarts'];
+			$retArray['confEnds'] = $fromDate . ' ' . $data['timeEnds'];
 			if($data['schedulingType'] == 'conference_call'){
 				$retArray['confCode'] = "$user_code";
 				// $retArray['confDialNumber'] = getenv('CONF_DIAL_ALLIAN_LIVE');

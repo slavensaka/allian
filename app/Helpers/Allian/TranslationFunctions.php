@@ -40,9 +40,11 @@ class TranslationFunctions {
 		    $project_langs = trim(LangList::get_language_name($interpret_order["frm_lang"])) . " <> " . trim(LangList::get_language_name($interpret_order["to_lang"]));
 		    $project_timezone = $interpret_order["timezone"];
 		    $project_date_from = $interpret_order["assg_frm_date"];
-		    $project_date_from = date('m.d.Y', strtotime($project_date_from));
+		    $project_date_from = date('d.m.Y', strtotime($project_date_from));
+		    $project_date_from = $project_date_from + '.';
 		    $project_date_to = $interpret_order["assg_to_date"];
-		    $project_date_to = date('m.d.Y', strtotime($project_date_to));
+		    $project_date_to = date('d.m.Y', strtotime($project_date_to));
+		    $project_date_to = $project_date_to + '.';
 		    $project_start_time = date('h:i A', strtotime($interpret_order["assg_frm_st"]));
 		    $project_end_time = date('h:i A', strtotime($interpret_order["assg_frm_en"]));
 		    $telephonic_duration = self::get_assignment_time($project_start_time, $project_end_time);

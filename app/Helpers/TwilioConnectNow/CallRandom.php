@@ -6,8 +6,13 @@ $PairID = $argv[1]; // 73
 $real_queue = $argv[2]; //738268
 
 selectIP($PairID, $real_queue);
-// SAD JE LIVE JER SAM STAVIO $istest = 0, AKO JE $istest=1 ONDA NIJE LIVE
-function selectIP($PairID, $real_queue, $istest=0){ // FOR PRODUCTION $istest = 0
+
+/**
+ * FOR PRODUCTION $istest = 0
+ * SAD JE LIVE JER SAM STAVIO $istest = 0, AKO JE $istest=1 ONDA NIJE LIVE
+ *
+ */
+function selectIP($PairID, $real_queue, $istest=0){
 	$host = getenv('DB_HOST');
 	$db_username = getenv('DB_USERNAME');
 	$db_password = getenv('DB_PASSWORD');
@@ -20,6 +25,9 @@ function selectIP($PairID, $real_queue, $istest=0){ // FOR PRODUCTION $istest = 
 	$result = mysqli_query($con, $query);
 	while($row = mysqli_fetch_array($result)){
 		if($Phone = mysqli_fetch_array(mysqli_query($con, "SELECT Phone FROM Login WHERE IPID=" . $row['IPID']))){
+			/*============================================================
+			=            TODO CHANGE FOR TESTING VERY DYNAMIC            =
+			============================================================*/
 			if($Phone['Phone'] == '13024404084' || $Phone['Phone'] == '19175459853' || $Phone['Phone'] == '16152038148'){ // TODO remove production
 			} else {
 				if($istest == 0){
@@ -40,6 +48,7 @@ function selectIP($PairID, $real_queue, $istest=0){ // FOR PRODUCTION $istest = 
 					echo "In call ". $Phone['Phone'] . "<br>";
 				}
 			}
+			/*=====  End of TODO CHANGE FOR TESTING VERY DYNAMIC  ======*/
 		}
 	}
 
@@ -54,6 +63,7 @@ function selectIP($PairID, $real_queue, $istest=0){ // FOR PRODUCTION $istest = 
 			  	$lang1 = mysqli_fetch_array(mysqli_query($con,"SELECT LangName FROM LangList WHERE LangId=" . $row1['L1']));
 				$lang2 = mysqli_fetch_array(mysqli_query($con,"SELECT LangName FROM LangList WHERE LangId=" . $row1['L2']));
 				$Pairname = trim($lang1['LangName']) . "-" . trim($lang2['LangName']);
+
 				if($istest == 0){
 					// mailagents($Email['Email'], $Pairname); // TODO production
 					mailagents(getenv('ALEN_EMAIL'), $Pairname);
@@ -78,7 +88,7 @@ function getcurrenthour(){
 }
 
 function mailagents($email, $queuename){
-	$time = date("m/d/y G.i:s", time());
+	$time = date("d/m/y G.i:s", time());
 	$param = $queuename . "," . $time;
 	Mail::sendClientCallWaitingProduction($email, $param);
 }

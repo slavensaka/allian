@@ -12,6 +12,79 @@ class Mail {
 	 * Send an email to customer when we
 	 * changes his password
 	 */
+	public function newRegistration($email, $customerInfo){
+		$mail = new PHPMailer;
+		$mail->From = getenv('MAIL_REPLY_TO');
+		$mail->FromName = "ALLIAN";
+
+		date_default_timezone_set('Etc/UTC');
+		$footer = self::footer_signature();
+		$message = file_get_contents('resources/views/emails/newregistration.php');
+		$message = str_replace('%fname%', $customerInfo['fname'], $message);
+		$message = str_replace('%lname%', $customerInfo['lname'], $message);
+		$message = str_replace('%phone%', $customerInfo['phone'], $message);
+		$message = str_replace('%services%', explode(":", $customerInfo['services']), $message);
+		$message = str_replace('%logo%', getenv('LOGO'), $message);
+		$message = str_replace('%FOOTER%', $footer, $message);
+
+		$mail->isHTML(true);
+		$mail->Subject = "Registration Successful for Alliance Business Solutions Mobile App";
+		$mail->MsgHTML($message);
+		$mail->addReplyTo(getenv('MAIL_REPLY_TO'), 'ALLIAN');
+		$mail->addAddress($email, $FName);
+
+		if(!$mail->send()) {
+		    return false;
+		} else {
+		    return true;
+		}
+	}
+
+	/**
+	 *
+	 * Send an email to customer when we
+	 * changes his password
+	 */
+	public function newRegistrationDev($email, $customerInfo){
+
+		date_default_timezone_set('Etc/UTC');
+		$footer = self::footer_signature();
+		$message = file_get_contents('resources/views/emails/newregistration.php');
+		$message = str_replace('%fname%', $customerInfo['fname'], $message);
+		$message = str_replace('%lname%', $customerInfo['lname'], $message);
+		$message = str_replace('%phone%', $customerInfo['phone'], $message);
+		$message = str_replace('%services%', explode(":", $customerInfo['services']), $message);
+		$message = str_replace('%logo%', getenv('LOGO'), $message);
+		$message = str_replace('%FOOTER%', $footer, $message);
+		$mail = new PHPMailer;
+		$mail->isSMTP();
+		$mail->CharSet='UTF-8';
+		$mail->SMTPAuth = true;
+
+		$mail->Host = getenv('MAIL_HOST');
+		$mail->Port = getenv('MAIL_PORT');
+		$mail->SMTPSecure = getenv('MAIL_ENCRYPTION');
+		$mail->Username = getenv('MAIL_USERNAME');
+		$mail->Password = getenv('MAIL_PASSWORD');
+		$mail->setFrom(getenv('MAIL_REPLY_TO'), 'ALLIAN');
+		$mail->addReplyTo(getenv('MAIL_REPLY_TO'), 'ALLIAN');
+
+		$mail->addAddress($email, $FName);
+		$mail->IsHTML(true);
+		$mail->Subject = 'Registration Successful for Alliance Business Solutions Mobile App';
+		$mail->MsgHTML($message);
+		if (!$mail->send()) {
+		   return false;
+		} else {
+		    return true;
+		}
+	}
+
+	/**
+	 *
+	 * Send an email to customer when we
+	 * changes his password
+	 */
 	public function newPassProduction($email, $FName, $LoginPassword){
 		$mail = new PHPMailer;
 		$mail->From = getenv('MAIL_REPLY_TO');

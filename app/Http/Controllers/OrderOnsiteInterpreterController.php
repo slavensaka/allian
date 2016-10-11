@@ -65,11 +65,13 @@ class OrderOnsiteInterpreterController extends Controller {
 			$arr = array();
 			while ($row = mysqli_fetch_array($result)) {
 				if($row['scheduling_type'] == 'get_call'){
-					$date = date('m.d.Y', strtotime($row['assg_frm_date']));
+					$date = date('d.m.Y', strtotime($row['assg_frm_date']));
+					$date =  $date . '.';
 					$schedulingType = 'Interpreters call';
 					$orderId = $row['orderID'];
 				} elseif($row['scheduling_type'] == 'conference_call'){
-					$date = date('m.d.Y', strtotime($row['assg_frm_date']));
+					$date = date('d.m.Y', strtotime($row['assg_frm_date']));
+					$date =  $date . '.';
 					$schedulingType = 'Conference Call';
 					$orderId = $row['orderID'];
 				} else {
@@ -145,7 +147,9 @@ class OrderOnsiteInterpreterController extends Controller {
 		   Return Array
 		   ========================================================================== */
 			$rArray['timezone'] =  $result['timezone'];
-			$rArray['date'] =  str_replace("/", ".", date("m/d/Y", strtotime($result['assg_frm_date'])));
+			$assgFrmDate = str_replace("/", ".", date("d/m/Y", strtotime($result['assg_frm_date'])));
+			$da = $assgFrmDate . '.';
+			$rArray['date'] =  $da;
 			if($result['scheduling_type'] == 'get_call'){
 				$rArray['schedulingType'] = 'Interpreters call';
 			} elseif($result['scheduling_type'] == 'conference_call'){

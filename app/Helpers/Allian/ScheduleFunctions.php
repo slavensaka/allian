@@ -232,8 +232,9 @@ class ScheduleFunctions {
 	                $conference_datails = self::get_conf_body($conf);
 
 	                // TODO FOR PRODUCTION
-	                // Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, $customer->getValueEncoded('Email'));
-	                Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, getenv('ALEN_EMAIL'));
+	                $to = array($customer->getValueEncoded('Email'));
+	                Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, $to);
+	                // Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, getenv('ALEN_EMAIL'));
 	                // Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, "slavensakacic@gmail.com");
 
 	                // if client added recipients send emails
@@ -243,7 +244,8 @@ class ScheduleFunctions {
 
 	                        	//TODO FOR PRODUCTION
 	                            // Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, $recipient);
-	                        	Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, getenv('ALEN_EMAIL'));
+	                            $to = array(getenv('ALEN_EMAIL'));
+	                        	Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, $to);
 	                        	// Mail::send_notification("Conference Access Codes for Telephonic Project $order_id", $conference_datails, "slavensakacic@gmail.com");
 
 	                        }
@@ -259,7 +261,8 @@ class ScheduleFunctions {
 
 	        	// TODO FOR PRODUCTION
         		// Mail::send_notification("Receipt for Telephonic Interpreter ID $order_id", $email_body, $email);
-        		Mail::send_notification("Receipt for Telephonic Interpreter ID $order_id", $email_body, getenv('ALEN_EMAIL'));
+        		$to = array(getenv('ALEN_EMAIL'));
+        		Mail::send_notification("Receipt for Telephonic Interpreter ID $order_id", $email_body, $to);
         		// Mail::send_notification("Receipt for Telephonic Interpreter ID $order_id", $email_body, "slavensakacic@gmail.com");
 
 	        }

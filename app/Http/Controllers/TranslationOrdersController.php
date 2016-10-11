@@ -55,7 +55,7 @@ class TranslationOrdersController extends Controller {
 			$orders = array();
 			while ($row = mysqli_fetch_array($result)) {
 				$order_id = $row["order_id"];
-				$order_time = str_replace("/", ".", date("m/d/Y", strtotime($row['order_time'])));
+				$order_time = str_replace("/", ".", date("d/m/Y", strtotime($row['order_time']))) . '.';
 				$order_type = $row["order_type"];
 				$cost = ($row["total_price"] - $row['discount']);
 					$orders[] = array('orderId' => $order_id, 'orderTime' => $order_time, 'cost' => 'Total: ' . $cost . '$');
