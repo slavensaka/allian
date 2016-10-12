@@ -130,7 +130,7 @@ class TranslationOrders extends DataObject {
 		$con = Connect::con();
 		$telephonic_type = 5;
 		// Return only those that are Paid, Invoiced & Project Submitted
-		$project_query =  "SELECT * FROM " . getenv("TBL_TRANSLATION_ORDERS") . " WHERE user_id='$CustomerID' AND status  IN(1,2,7) AND order_type = '$telephonic_type'  ORDER BY `order_id` DESC";
+		$project_query =  "SELECT * FROM " . getenv("TBL_TRANSLATION_ORDERS") . " WHERE user_id='$CustomerID' AND status IN(1,2,7) AND order_type = '$telephonic_type'  ORDER BY `order_id` DESC";
 		$result = mysqli_query($con, $project_query);
 		return $result;
 	}

@@ -7,8 +7,8 @@ $real_queue = $this->real_queue;
 $IPID = $this->IPID;
 $array = $this->array;
 $pair1 = $this->pair1;
-$message = 'PairID=' .$PairID . ' Real_queue:' . $real_queue .' IPID:' . $IPID .' array:'. $array .' pair1:'. $pair1;
-Mail::simpleLocalMail("interpreter.php sve varijable", $message);
+// $message = 'PairID=' .$PairID . ' Real_queue:' . $real_queue .' IPID:' . $IPID .' array:'. $array .' pair1:'. $pair1;
+// Mail::simpleLocalMail("interpreter.php sve varijable", $message);
 ?>
 <?php if(isset($PairID)){ ?>
 	<Response>
@@ -28,18 +28,6 @@ Mail::simpleLocalMail("interpreter.php sve varijable", $message);
 				?>
 			</Queue>
 		</Dial>
-		<Hangup/>
-	</Response>
-<?php }else { ?>
-	<Response>
-		<Say>Please wait until the next customer dials in or hang up the phone.</Say>
-		<Dial timeout="1" action='redirectToConference?IPID=<?php echo $IPID; ?>&amp;pairarray=<?php echo $array; ?>&amp;times=1&amp;Previous=<?php echo $pair1; ?>&amp;real_queue=<?php echo $real_queue; ?>&amp;'>
-    		<Queue
-				url = 'redirectToConference?IPID=<?php echo $IPID; ?>&amp;pairarray=<?php echo $array; ?>&amp;times=1&amp;Previous=<?php echo $pair1; ?>&amp;real_queue=<?php echo $real_queue; ?>&amp;'
-    		>
-    			<?php echo $pair1; ?>
-    		</Queue>
-   		</Dial>
 		<Hangup/>
 	</Response>
 <?php } ?>

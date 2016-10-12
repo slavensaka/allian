@@ -287,7 +287,9 @@ class ConnectNowController extends Controller {
 		}else{
 		    $from = $request->From;
 		}
-
+		if($from == 'client:Anonymous'){
+			$from = $request->Phone;
+		}
 		// Ako se poziva od negdje drugdje, da nema twilio varijablu, nevjerujem da ce ikad
 		if($from == null){
 			$response = new Services_Twilio_Twiml;
@@ -295,13 +297,13 @@ class ConnectNowController extends Controller {
  			$response->hangup();
  			return $response;
 		}
-
 		$IPID = false;
 		$con = Connect::con();
 		// Ako je došao iz cronjoba, sa svojim ipom
+		//interpreter?PairID=73&real_queue=738268&Phone=385919249906&IPID=28749
 		$IPID = $request->IPID;
-		if(ConnectNowFunctions::isTwilioClient($from)){ // NE trebam
-		// if(isset($IPID)){
+		// if(ConnectNowFunctions::isTwilioClient($from)){ // NE trebam
+		if(isset($IPID)){
 			$IPID = $request->IPID;
  			// $IPID = str_replace("client:", "", $from); // FUTURE
  		// Ako je direktno nazvao, onda pronadi njegovi IPID preko Phone u twilio from variajabli
@@ -328,16 +330,23 @@ class ConnectNowController extends Controller {
 	    		$real_queue = $row1['PairID'] . $row1['L1'] . $row1['L2'];
 	    		if(isset($request->PairID)){
 					$PairID = $request->PairID;
+					$service->PairID = $PairID;
+					$service->real_queue = $real_queue;
+					$service->IPID = $IPID;
+					$service->pair1 = $pair1;
+					$service->array = $array;
+		    		$service->render('./resources/views/twilio/connect/interpreter.php');
+				} else {
+					$service->real_queue = $real_queue;
+					$service->IPID = $IPID;
+					$service->pair1 = $pair1;
+					$service->array = $array;
+		    		$service->render('./resources/views/twilio/connect/nextCustomer.php');
 				}
-				if(isset($request->real_queue)){
-					$real_queue = $request->real_queue;
-				}
-	   			$service->PairID = $PairID;
-				$service->real_queue = $real_queue;
-				$service->IPID = $IPID;
-				$service->array = $array;
-				$service->pair1 = $pair1;
-	    		$service->render('./resources/views/twilio/connect/interpreter.php');
+				// if(isset($request->real_queue)){
+				// 	$real_queue = $request->real_queue;
+				// }
+
  			}else if(mysqli_num_rows($query)>1){
  				$row1 = mysqli_fetch_array($query);
 		    	$pair1= $row1['PairID'];
@@ -347,17 +356,24 @@ class ConnectNowController extends Controller {
 	    		}
 	        	if(isset($request->PairID)){
 	        		$PairID = $request->PairID;
-	        	}
-	        	if(isset($request->real_queue)){
-					$real_queue = $request->real_queue;
-				}
-	   			$service->PairID = $PairID;
-				$service->real_queue = $real_queue;
-				$service->IPID = $IPID;
-				$service->array = $array;
-				$service->pair1 = $pair1;
 
-	        	$service->render('./resources/views/twilio/connect/interpreter.php');
+	        		$service->PairID = $PairID;
+					$service->real_queue = $real_queue;
+					$service->IPID = $IPID;
+					$service->array = $array;
+					$service->pair1 = $pair1;
+		        	$service->render('./resources/views/twilio/connect/interpreter.php');
+	        	} else {
+	        		$service->real_queue = $real_queue;
+					$service->IPID = $IPID;
+					$service->pair1 = $pair1;
+					$service->array = $array;
+		    		$service->render('./resources/views/twilio/connect/nextCustomer.php');
+	        	}
+	   			//if(isset($request->real_queue)){
+				// 	$real_queue = $request->real_queue;
+				// }
+
 	       	}
 
 	    }else {
@@ -374,23 +390,44 @@ class ConnectNowController extends Controller {
 	 *
 	 */
 	public function redirectToConference($request, $response, $service, $app){
-		// Times when interpeter dials in and the first queue is empty, then action is called, send him to handlePayment
-		if(isset($request->times) && $request->times == 1){
-			$service->PairID = $request->PairID;
-			$service->pairarray = $request->pairarray;
-			$service->times = $request->times;
-			$service->real_queue = $request->real_queue;
-			$service->Previous = $request->Previous;
-			// $query_string = array( 'times' => $request->times, 'IPID' => $request->IPID , 'pairarray' => $request->pairarray, 'Previous' => $request->Previous, 'PairID' => $request->PairID, 'real_queue' => $request->real_queue, 'next' => $request->next);
-			// $url = 'https://alliantranslate.com/testgauss/handlePaymentTest' . '?' . http_build_query($query_string, '', '&');
-			// $service->url = $url;
-			return $service->render('./resources/views/twilio/connect/redirectToHandlePayment.php');
+		if(!isset($request->PairID)){
+			// nextCustomer.php ako je queue empty, povecaj times i odi na handleNextCustomer
+			if ($request->DequeueResult == "queue-empty" || $request->DequeueResult == "queue-not-found"){
+				if(isset($request->times) && !($request->times >= 5)){
+					$IPID = $request->IPID;
+					$pairarray = $request->pairarray;
+					$times = $request->times;
+					$real_queue = $request->real_queue;
+					$Previous = $request->Previous;
+					$parray = explode(",", $pairarray);
+					array_pop($parray);
+					$currentindex = array_search($Previous, $parray);
+					$length = count($parray) - 1;
+					if($currentindex == $length){
+						$next = $parray[0];
+					} else {
+						$next = $parray[$currentindex+1];
+					}
+					$times++;
 
-			// $query_string = array( 'times' => $request->times, 'IPID' => $request->IPID , 'pairarray' => $request->pairarray, 'Previous' => $request->Previous);
-			// $url = 'https://alliantranslate.com/testgauss/handlePaymentTest' . '?' . http_build_query($query_string, '', '&');
-			// return $response->redirect($url);
+					$service->IPID = $IPID;
+		        	$service->pairarray = $pairarray;
+		        	$service->real_queue = $real_queue;
+					$service->times = $times;
+					$service->next = $next;
+					return $service->render('./resources/views/twilio/connect/handleNextCustomer.php');
+				}
+
+				if(isset($request->times) && $request->times >= 5){
+					$response = new Services_Twilio_Twiml;
+					$response->say('Sorry, No calls in queue right now. Please try again after some time.');
+					$response->hangup();
+					return $response;
+				}
+			}
 		}
 
+		// Normal redirect to conference from API
 		if(isset($request->PairID)){
 			$PairID = $request->PairID;
 		}
@@ -400,7 +437,6 @@ class ConnectNowController extends Controller {
 		$IPID = $request->IPID;
 		$array = $request->array;
 		$pair1 = $request->pair1;
-		Mail::simpleLocalMail("otisao izvan request times", $request->times); // For testing
 		$con = Connect::con();
 		if(!isset($PairID)){
 			$result = mysqli_query($con,"SELECT * FROM LangRate WHERE PairID= '$pair1'");
@@ -442,8 +478,7 @@ class ConnectNowController extends Controller {
 
 	public function handlePaymentTest($request, $response, $service, $app){
 		$all = $request->paramsGet()->all();
-		foreach( $all as $key => $value )
-  			$message .= "$key: $value\n";
+		foreach( $all as $key => $value ) $message .= "$key: $value\n";
 		Mail::simpleLocalMail("HandlePaymentTest All form request", $message); // For testing
 
 		$IPID = $request->IPID;
@@ -451,11 +486,12 @@ class ConnectNowController extends Controller {
 		$times = $request->times;
 		$Previous = $request->Previous;
 		$CustomerID = $request->CustomerID;
-		$message1 = 'pairarray:'. $pairarray . 'times:' . $times. ' PairID=' .$PairID . ' Previous:' . $Previous .' IPID:' . $IPID .' array:'. $array .' pair1:'. $pair1;
-		Mail::simpleLocalMail("HandlePaymentTest same here", $message1); // For testing
+		$real_queue = $request->real_queue;
 
-		$con = Connect::con();
-		$result = mysqli_query($con,"DELETE FROM `connect_now_log` WHERE CustomerID = $CustomerID");
+		if(isset($CustomerID)){
+			$con = Connect::con();
+			$result = mysqli_query($con,"DELETE FROM `connect_now_log` WHERE CustomerID = $CustomerID");
+		}
 
 		$log_file = "../linguist/phoneapp/log/main_log.txt";
 		$dt = gmdate('Y-m-d H:i:s');
@@ -559,32 +595,56 @@ class ConnectNowController extends Controller {
 			    Mail::send_notification_handle_payment($subject,$body,$CustomerEmail,$from,$reply_to);
 			}
 		} else if($request->DequeueResult == "queue-empty" || $request->DequeueResult == "queue-not_found"){
-			if($request->times >= 30){
-				$response = new Services_Twilio_Twiml;
-				$response->say('Sorry, No calls in queue right now. Please try again after some time.');
-				$response->hangup();
-				return $response;
-			}
-			$IPID = $request->IPID;
-			$langpair = $request->Previous;
-			$pairarray = $request->pairarray;
-			$parray = explode(",", $request->pairarray);
-			$length = count($parray) - 1;
-			if($currentindex == $length){
-				$next = $parray[0];
-			} else {
-				$next = $parray[$currentindex+1];
-			}
-			$times = $request->times;
-			$times++;
+			// if($request->times >= 30){
+			// 	$response = new Services_Twilio_Twiml;
+			// 	$response->say('Sorry, No calls in queue right now. Please try again after some time.');
+			// 	$response->hangup();
+			// 	return $response;
+			// }
+			// $IPID = $request->IPID;
+			// $langpair = $request->Previous;
+			// $pairarray = $request->pairarray;
+			// $parray = explode(",", $request->pairarray);
+			// $length = count($parray) - 1;
+			// if($currentindex == $length){
+			// 	$next = $parray[0];
+			// } else {
+			// 	$next = $parray[$currentindex+1];
+			// }
+			// $times = $request->times;
+			// $times++;
 
-			$service->IPID = $IPID;
-			$service->pairarray = $pairarray;
-			$service->times = $times;
-			$service->next = $next;
-			Mail::simpleLocalMail("Dosli do next Customer-a", $message1); // For testing
-        	$service->render('./resources/views/twilio/connect/nextCustomer.php');
+			// $service->IPID = $IPID;
+			// $service->pairarray = $pairarray;
+			// $service->times = $times;
+			// $service->next = $next;
+   			// $service->render('./resources/views/twilio/connect/nextCustomer.php');
 		}
+
+		if($request->times >= 30){
+			$response = new Services_Twilio_Twiml;
+			$response->say('Sorry, No calls in queue right now. Please try again after some time.');
+			$response->hangup();
+			return $response;
+		}
+
+		$parray = explode(",", $pairarray);
+		array_pop($parray);
+		$currentindex = array_search($Previous, $parray);
+		$length = count($parray) - 1;
+		if($currentindex == $length){
+			$next = $parray[0];
+		} else {
+			$next = $parray[$currentindex+1];
+		}
+		$times++;
+
+		$service->real_queue = $real_queue;
+		$service->IPID = $IPID;
+		$service->pairarray = $pairarray;
+		$service->times = $times;
+		$service->next = $next;
+    	$service->render('./resources/views/twilio/connect/handleNextCustomer.php');
 	}
 
 	/**

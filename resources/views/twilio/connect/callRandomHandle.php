@@ -11,7 +11,6 @@ $IPID = $this->IPID;
 	<Gather
 		timeout="10"
 		numDigits="1"
-
 		action="interpreter?PairID=<?php echo $PairID."&amp;real_queue=".$real_queue."&amp;IPID=".$IPID; ?>"
 	>
 		<Say>

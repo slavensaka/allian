@@ -416,9 +416,11 @@ class Mail {
 			$mail->addAddress(getenv('ORDERS_EMAIL'), "Allian");
 			$mail->addAddress(getenv('CUSTOMER_SUPPORT_EMAIL'), "Allian");
 		} else {
-			foreach($to as $adr){
-				$mail->addAddress($adr, "Allian");
-			}
+			// if($to != ""){ //TODO
+			// 	foreach($to as $adr){
+			// 		$mail->addAddress($adr, "Allian");
+			// 	}
+			// }
 		}
 		$mail->IsHTML(true);
 		$mail->Subject = $subject;
