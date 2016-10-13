@@ -107,6 +107,7 @@ $klein->with('/testgauss', function() use ($klein){
 	$conference = new ConferenceController();
 		$klein->respond('POST', '/conference', array($conference, 'conference'));
 		$klein->respond('POST', '/conferenceOut', array($conference, 'conferenceOut'));
+		$klein->respond('POST', '/conferenceEndCallback', array($conference, 'conferenceEndCallback'));
 		$klein->respond('POST', '/addNewMember', array($conference, 'addNewMember'));
 		$klein->respond('POST', '/addNewMemberOut', array($conference, 'addNewMemberOut'));
 

@@ -4,6 +4,7 @@ namespace Allian\Http\Controllers;
 
 use \Dotenv\Dotenv;
 use Services_Twilio;
+use Allian\Helpers\Mail;
 use Database\Connect;
 use Services_Twilio_Twiml;
 use Allian\Models\CustLogin;
@@ -90,9 +91,8 @@ class ConferenceController extends Controller {
 		$conf_queue = $conference['user_code'];
 		$orderID = $request->orderId;
 		$CustomerID = $request->CustomerID;
-		$con = Connect::con();
-		mysqli_query($con, "UPDATE `schedule_log` SET orderID = $orderID WHERE CustomerID = $CustomerID");
-
+		// $con = Connect::con();
+		// mysqli_query($con, "UPDATE `schedule_log` SET orderID = $orderID WHERE CustomerID = $CustomerID");
 		// $response = new Services_Twilio_Twiml;
 		// $response->say("Welcome to Allian interpreter conference service.");
 		// $response->redirect("http://alliantranslate.com/linguist/twilio-conf-enhanced/conference.php?Digits=1&vcode=" . trim($conf_queue));// THE EASY WAY
@@ -109,10 +109,27 @@ class ConferenceController extends Controller {
 		$service->CustomerID = $request->CustomerID;
 		$service->orderId = $request->orderId;
 		// Set the conf_queue on the user
-		$query = "UPDATE `order_onsite_interpreter` set conf_queue='$conf_queue' WHERE orderID='" . $request->orderId . "'"; // STa
-		$con = Connect::con();
-		$query_result = mysqli_query($con, $query);
+		// $query = "UPDATE `order_onsite_interpreter` set conf_queue='$conf_queue' WHERE orderID='" . $request->orderId . "'"; // STa
+
+
 		$service->render('./resources/views/twilio/conference/conferenceOut.php'); // THE HARD WAY
+	}
+
+	/**
+	 *
+	 * Block comment
+	 *
+	 */
+	public function conferenceEndCallback($request, $response, $service, $app){
+		$conf_tag = $request->conf_tag;
+		if($request->CallStatus == 'busy' || $request->CallStatus == 'failed' || $request->CallStatus == 'no-answer' || $request->CallStatus == 'canceled'){
+		} else{
+			$query = "UPDATE `order_onsite_interpreter` set status='PAID' WHERE orderID='" . $request->orderId . "'";
+			$con = Connect::con();
+			$query_result = mysqli_query($con, $query);
+		}
+
+
 	}
 
 	/**

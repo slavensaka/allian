@@ -5,12 +5,14 @@ $real_queue = $this->real_queue;
 $IPID = $this->IPID;
 $array = $this->array;
 $pair1 = $this->pair1;
+//TODO  Moći ću ici na handlepaymentTest ?
 ?>
 <Response>
 	<Say>
 		Your being connected to a new conference.
 	</Say>
 	<Dial hangupOnStar="true"
+
 		action='handlepaymentTest?IPID=<?php echo $IPID ; ?>&amp;pairarray=<?php echo $array;?>&amp;times=60&amp;Previous=<?php echo $pair1 ; ?>'
 	>
 		<Conference

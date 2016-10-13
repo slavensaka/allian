@@ -50,16 +50,52 @@ class TranslationOrdersController extends Controller {
 	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token.")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
-			// Retrieve orders that are already paid, and are telephonic
-			$result = TranslationOrders::getTranslationOrders($data['CustomerID'], "*");
-			$orders = array();
-			while ($row = mysqli_fetch_array($result)) {
-				$order_id = $row["order_id"];
-				$order_time = str_replace("/", ".", date("d/m/Y", strtotime($row['order_time']))) . '.';
-				$order_type = $row["order_type"];
-				$cost = ($row["total_price"] - $row['discount']);
+
+			$interpret_order = OrderOnsiteInterpreter::getOrderOnsiteInterpretersSummary($data['CustomerID']);
+			while ($row = mysqli_fetch_array($interpret_order)) {
+				$order_id = $row["orderID"];
+				$scheduling_type = $row["scheduling_type"];
+				$assg_frm_timestamp = $row["assg_frm_timestamp"];
+				if($scheduling_type == 'get_call'){
+					if ((time() - $assg_frm_timestamp) < 600){
+					  $ooo[] = array('order_id' =>$order_id, 'scheduling_type' => $scheduling_type);
+					}
+				} else{
+					$ooo[] = array('order_id' =>$order_id, 'scheduling_type' => $scheduling_type);
+				}
+			}
+
+			// If no orders are found
+			if(empty($ooo)){
+				$orders[] = array('orderId' => "", 'orderTime' => "", 'cost' => "");
+				$base64Encrypted = $this->encryptValues(json_encode(array('orderSummary' => $orders, 'status' => 1, 'userMessage' => 'Orders Summary')));
+				return $response->json(array('data' => $base64Encrypted));
+			}
+
+			foreach($ooo as $key => $value){
+					$or[] =  TranslationOrders::getTranslationOrder($value['order_id'], '*');
+			}
+
+			foreach($or as $key => $value){
+				$order_id = $value["order_id"];
+				$order_time = str_replace("/", ".", date("d/m/Y", strtotime($value['order_time']))) . '.';
+				$order_type = $value["order_type"];
+				$cost = ($value["total_price"] - $value['discount']);
 					$orders[] = array('orderId' => $order_id, 'orderTime' => $order_time, 'cost' => 'Total: ' . $cost . '$');
 			}
+			// return $response->json(array('data' => $orders));
+
+			// Retrieve orders that are already paid, and are telephonic
+			// $result = TranslationOrders::getTranslationOrders($data['CustomerID'], "*");
+			// $orders = array();
+			// while ($row = mysqli_fetch_array($result)) {
+			// 	$order_id = $row["order_id"];
+			// 	$order_time = str_replace("/", ".", date("d/m/Y", strtotime($row['order_time']))) . '.';
+			// 	$order_type = $row["order_type"];
+			// 	$cost = ($row["total_price"] - $row['discount']);
+			// 		$orders[] = array('orderId' => $order_id, 'orderTime' => $order_time, 'cost' => 'Total: ' . $cost . '$');
+			// }
+
 			// Return response json
 			$base64Encrypted = $this->encryptValues(json_encode(array('orderSummary' => $orders, 'status' => 1, 'userMessage' => 'Orders Summary')));
 			return $response->json(array('data' => $base64Encrypted));
@@ -117,6 +153,8 @@ class TranslationOrdersController extends Controller {
 	     		$base64Encrypted = $this->encryptValues(json_encode($this->errorJson("Authentication problems. CustomerID doesn't match that with token.")));
 	     		return $response->json(array('data' => $base64Encrypted));
 			}
+
+
 
 			$display_order = TranslationFunctions::order_onsite_template($data['orderId'], 'account');
 

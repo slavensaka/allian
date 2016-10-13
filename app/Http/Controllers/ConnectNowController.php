@@ -510,6 +510,7 @@ class ConnectNowController extends Controller {
 			$call = $client->account->calls->get($DequeuedCallSid);
 			file_put_contents($log_file, $dt.$script.", Call Made: ".$call."\n",FILE_APPEND);
 			$from = $call->from;
+			// TODO Test if from is a valid 385919906923 number without the +
 			$callmin=ceil($DequeuedCallDuration/60);
 			$type=0;
 			if(file_exists("customertype/".$DequeuedCallSid.".txt")){
@@ -594,7 +595,8 @@ class ConnectNowController extends Controller {
 			    $reply_to = "feedback@alliancebizsolutions.com";
 			    Mail::send_notification_handle_payment($subject,$body,$CustomerEmail,$from,$reply_to);
 			}
-		} else if($request->DequeueResult == "queue-empty" || $request->DequeueResult == "queue-not_found"){
+		}
+		// else if($request->DequeueResult == "queue-empty" || $request->DequeueResult == "queue-not_found"){
 			// if($request->times >= 30){
 			// 	$response = new Services_Twilio_Twiml;
 			// 	$response->say('Sorry, No calls in queue right now. Please try again after some time.');
@@ -619,32 +621,15 @@ class ConnectNowController extends Controller {
 			// $service->times = $times;
 			// $service->next = $next;
    			// $service->render('./resources/views/twilio/connect/nextCustomer.php');
-		}
+		// }
 
-		if($request->times >= 30){
-			$response = new Services_Twilio_Twiml;
-			$response->say('Sorry, No calls in queue right now. Please try again after some time.');
-			$response->hangup();
-			return $response;
-		}
+		// if($request->times >= 30){
+		// 	$response = new Services_Twilio_Twiml;
+		// 	$response->say('Sorry, No calls in queue right now. Please try again after some time.');
+		// 	$response->hangup();
+		// 	return $response;
+		// }
 
-		$parray = explode(",", $pairarray);
-		array_pop($parray);
-		$currentindex = array_search($Previous, $parray);
-		$length = count($parray) - 1;
-		if($currentindex == $length){
-			$next = $parray[0];
-		} else {
-			$next = $parray[$currentindex+1];
-		}
-		$times++;
-
-		$service->real_queue = $real_queue;
-		$service->IPID = $IPID;
-		$service->pairarray = $pairarray;
-		$service->times = $times;
-		$service->next = $next;
-    	$service->render('./resources/views/twilio/connect/handleNextCustomer.php');
 	}
 
 	/**

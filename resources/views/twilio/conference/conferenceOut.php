@@ -4,6 +4,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 header('Content-type: text/xml');
 if(empty($conference)){
 	$data = $this->verified;
+	$orderId = $this->orderId;
 ?>
 	<Response>
 		<Say voice="woman">Welcome to Allian interpreter conference service. <?php echo $data['msg']; ?></Say>
@@ -19,7 +20,7 @@ if(empty($conference)){
 	// 	echo "<Response>";
 	// }
 ?>
-		<Dial hangupOnStar="true">
+		<Dial hangupOnStar="true" action='conferenceEndCallback?conf_tag=<?php echo $data['conf_tag']; ?>&amp;orderId=<?php echo $orderId; ?>'>
 			<Conference waitUrl="http://twimlets.com/holdmusic?Bucket=com.twilio.music.classical">
 <?php
 			if(empty($conference)) {
